@@ -9,15 +9,18 @@ export const GET: APIRoute = async ({ params }) => {
     return new Response("ID tidak ditemukan", { status: 404 });
   }
 
-  const registrant = db.prepare("SELECT * FROM registrants WHERE id = ?").get(id) as any;
+  const registrantResult = await db.execute("SELECT * FROM registrants WHERE id = ?", [id]);
+  const registrant = registrantResult.rows[0] as Record<string, any> | undefined;
   if (!registrant) {
     return new Response("Pendaftar tidak ditemukan", { status: 404 });
   }
 
-  const ticketRow = db.prepare("SELECT * FROM tickets WHERE id = ?").get(registrant.ticket) as any;
+  const ticketResult = await db.execute("SELECT * FROM tickets WHERE id = ?", [registrant.ticket]);
+  const ticketRow = ticketResult.rows[0] as Record<string, any> | undefined;
   const ticketName = ticketRow?.name || registrant.ticket;
 
-  const settingsRows = db.prepare("SELECT * FROM settings").all() as { key: string; value: string }[];
+  const settingsResult = await db.execute("SELECT * FROM settings");
+  const settingsRows = settingsResult.rows as Record<string, string>[];
   const settings: Record<string, string> = {};
   for (const row of settingsRows) settings[row.key] = row.value;
 
@@ -33,7 +36,6 @@ export const GET: APIRoute = async ({ params }) => {
   const page = pdfDoc.addPage([400, 620]);
   const { width, height } = page.getSize();
 
-  const rose = rgb(0.9, 0.3, 0.35);
   const dark = rgb(0.1, 0.1, 0.12);
   const gray = rgb(0.45, 0.45, 0.48);
   const lightBg = rgb(0.97, 0.97, 0.98);

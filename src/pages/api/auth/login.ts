@@ -12,7 +12,7 @@ export const POST: APIRoute = async ({ request }) => {
       });
     }
 
-    const admin = authenticateAdmin(username, password);
+    const admin = await authenticateAdmin(username, password);
     if (!admin) {
       return new Response(JSON.stringify({ error: "Username atau password salah" }), {
         status: 401, headers: { "Content-Type": "application/json" },

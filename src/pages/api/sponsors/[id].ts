@@ -8,25 +8,27 @@ export const PUT: APIRoute = async ({ params, request }) => {
   const { id } = params;
   try {
     const body = await request.json();
-    const existing = db.prepare("SELECT * FROM sponsors WHERE id = ?").get(id);
+    const existingResult = await db.execute("SELECT * FROM sponsors WHERE id = ?", [id]);
+    const existing = existingResult.rows[0] as Record<string, any> | undefined;
     if (!existing) {
       return new Response(JSON.stringify({ error: "Sponsor tidak ditemukan" }), {
         status: 404, headers: { "Content-Type": "application/json" },
       });
     }
-    db.prepare(
-      "UPDATE sponsors SET name = ?, website = ?, tier = ?, description = ?, logo_url = ?, is_active = ?, updated_at = datetime('now') WHERE id = ?"
-    ).run(
-      body.name || existing.name,
-      body.website ?? existing.website,
-      body.tier || existing.tier,
-      body.description ?? existing.description,
-      body.logo_url ?? existing.logo_url,
-      body.is_active !== undefined ? (body.is_active ? 1 : 0) : existing.is_active,
-      id
+    await db.execute(
+      "UPDATE sponsors SET name = ?, website = ?, tier = ?, description = ?, logo_url = ?, is_active = ?, updated_at = datetime('now') WHERE id = ?",
+      [
+        body.name || existing.name,
+        body.website ?? existing.website,
+        body.tier || existing.tier,
+        body.description ?? existing.description,
+        body.logo_url ?? existing.logo_url,
+        body.is_active !== undefined ? (body.is_active ? 1 : 0) : existing.is_active,
+        id
+      ]
     );
-    const sponsor = db.prepare("SELECT * FROM sponsors WHERE id = ?").get(id);
-    return new Response(JSON.stringify({ sponsor }), {
+    const sponsor = await db.execute("SELECT * FROM sponsors WHERE id = ?", [id]);
+    return new Response(JSON.stringify({ sponsor: sponsor.rows[0] }), {
       status: 200, headers: { "Content-Type": "application/json" },
     });
   } catch {
@@ -39,13 +41,13 @@ export const PUT: APIRoute = async ({ params, request }) => {
 export const DELETE: APIRoute = async ({ params }) => {
   const db = getDb();
   const { id } = params;
-  const existing = db.prepare("SELECT * FROM sponsors WHERE id = ?").get(id);
-  if (!existing) {
+  const existingResult = await db.execute("SELECT * FROM sponsors WHERE id = ?", [id]);
+  if (!existingResult.rows[0]) {
     return new Response(JSON.stringify({ error: "Sponsor tidak ditemukan" }), {
       status: 404, headers: { "Content-Type": "application/json" },
     });
   }
-  db.prepare("DELETE FROM sponsors WHERE id = ?").run(id);
+  await db.execute("DELETE FROM sponsors WHERE id = ?", [id]);
   return new Response(JSON.stringify({ success: true }), {
     status: 200, headers: { "Content-Type": "application/json" },
   });

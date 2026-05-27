@@ -3,7 +3,8 @@ import { getDb } from "../../lib/db";
 
 export const GET: APIRoute = async () => {
   const db = getDb();
-  const rows = db.prepare("SELECT * FROM settings").all() as { key: string; value: string }[];
+  const result = await db.execute("SELECT * FROM settings");
+  const rows = result.rows as Record<string, string>[];
   const settings: Record<string, string> = {};
   for (const row of rows) settings[row.key] = row.value;
   return new Response(JSON.stringify({ settings }), {
@@ -15,15 +16,12 @@ export const POST: APIRoute = async ({ request }) => {
   const db = getDb();
   try {
     const body = await request.json();
-    const upsert = db.prepare(
-      "INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value"
-    );
-    const tx = db.transaction((entries: Record<string, string>) => {
-      for (const [key, value] of Object.entries(entries)) {
-        upsert.run(key, value);
-      }
-    });
-    tx(body);
+    for (const [key, value] of Object.entries(body)) {
+      await db.execute(
+        "INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value",
+        [key, String(value)]
+      );
+    }
     return new Response(JSON.stringify({ success: true }), {
       status: 200, headers: { "Content-Type": "application/json" },
     });

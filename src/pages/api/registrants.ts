@@ -3,8 +3,8 @@ import { getDb } from "../../lib/db";
 
 export const GET: APIRoute = async () => {
   const db = getDb();
-  const registrants = db.prepare("SELECT * FROM registrants ORDER BY created_at DESC").all();
-  return new Response(JSON.stringify({ registrants }), {
+  const result = await db.execute("SELECT * FROM registrants ORDER BY created_at DESC");
+  return new Response(JSON.stringify({ registrants: result.rows }), {
     status: 200, headers: { "Content-Type": "application/json" },
   });
 };
@@ -20,20 +20,21 @@ export const POST: APIRoute = async ({ request }) => {
       });
     }
 
-    const existing = db.prepare("SELECT * FROM registrants WHERE id = ?").get(id) as any;
+    const existingResult = await db.execute("SELECT * FROM registrants WHERE id = ?", [id]);
+    const existing = existingResult.rows[0] as Record<string, any> | undefined;
 
     if (action === "verify") {
       const newStatus = existing?.status === "Verified" ? "Pending" : "Verified";
-      db.prepare("UPDATE registrants SET status = ? WHERE id = ?").run(newStatus, id);
-      const registrant = db.prepare("SELECT * FROM registrants WHERE id = ?").get(id);
-      return new Response(JSON.stringify({ registrant }), { status: 200, headers: { "Content-Type": "application/json" } });
+      await db.execute("UPDATE registrants SET status = ? WHERE id = ?", [newStatus, id]);
+      const r = await db.execute("SELECT * FROM registrants WHERE id = ?", [id]);
+      return new Response(JSON.stringify({ registrant: r.rows[0] }), { status: 200, headers: { "Content-Type": "application/json" } });
     }
 
     if (action === "checkin") {
       const newVal = existing?.checked_in ? 0 : 1;
-      db.prepare("UPDATE registrants SET checked_in = ? WHERE id = ?").run(newVal, id);
-      const registrant = db.prepare("SELECT * FROM registrants WHERE id = ?").get(id);
-      return new Response(JSON.stringify({ registrant }), { status: 200, headers: { "Content-Type": "application/json" } });
+      await db.execute("UPDATE registrants SET checked_in = ? WHERE id = ?", [newVal, id]);
+      const r = await db.execute("SELECT * FROM registrants WHERE id = ?", [id]);
+      return new Response(JSON.stringify({ registrant: r.rows[0] }), { status: 200, headers: { "Content-Type": "application/json" } });
     }
 
     if (!name) {
@@ -44,7 +45,8 @@ export const POST: APIRoute = async ({ request }) => {
 
     const ticketType = ticket || "general";
     if (!existing) {
-      const ticketRow = db.prepare("SELECT remaining FROM tickets WHERE id = ?").get(ticketType) as any;
+      const ticketResult = await db.execute("SELECT remaining FROM tickets WHERE id = ?", [ticketType]);
+      const ticketRow = ticketResult.rows[0] as Record<string, any> | undefined;
       if (!ticketRow) {
         return new Response(JSON.stringify({ error: "Jenis tiket tidak ditemukan" }), {
           status: 400, headers: { "Content-Type": "application/json" },
@@ -55,21 +57,20 @@ export const POST: APIRoute = async ({ request }) => {
           status: 400, headers: { "Content-Type": "application/json" },
         });
       }
-      const tx = db.transaction(() => {
-        db.prepare(
-          "INSERT INTO registrants (id, name, school, email, whatsapp, participant_type, ticket, status, checked_in) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
-        ).run(id, name, school || "", email || "", whatsapp || "", participant_type || "Student", ticketType, status || "Pending", checked_in ? 1 : 0);
-        db.prepare("UPDATE tickets SET remaining = remaining - 1 WHERE id = ? AND remaining > 0").run(ticketType);
-      });
-      tx();
+      await db.execute(
+        "INSERT INTO registrants (id, name, school, email, whatsapp, participant_type, ticket, status, checked_in) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        [id, name, school || "", email || "", whatsapp || "", participant_type || "Student", ticketType, status || "Pending", checked_in ? 1 : 0]
+      );
+      await db.execute("UPDATE tickets SET remaining = remaining - 1 WHERE id = ? AND remaining > 0", [ticketType]);
     } else {
-      db.prepare(
-        "UPDATE registrants SET name = ?, school = ?, email = ?, whatsapp = ?, participant_type = ?, ticket = ?, status = ?, checked_in = ? WHERE id = ?"
-      ).run(name, school || "", email || "", whatsapp || "", participant_type || "Student", ticketType, status || "Pending", checked_in ? 1 : 0, id);
+      await db.execute(
+        "UPDATE registrants SET name = ?, school = ?, email = ?, whatsapp = ?, participant_type = ?, ticket = ?, status = ?, checked_in = ? WHERE id = ?",
+        [name, school || "", email || "", whatsapp || "", participant_type || "Student", ticketType, status || "Pending", checked_in ? 1 : 0, id]
+      );
     }
 
-    const registrant = db.prepare("SELECT * FROM registrants WHERE id = ?").get(id);
-    return new Response(JSON.stringify({ registrant }), {
+    const r = await db.execute("SELECT * FROM registrants WHERE id = ?", [id]);
+    return new Response(JSON.stringify({ registrant: r.rows[0] }), {
       status: 200, headers: { "Content-Type": "application/json" },
     });
   } catch {

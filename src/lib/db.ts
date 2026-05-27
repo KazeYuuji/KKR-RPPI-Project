@@ -1,25 +1,21 @@
-import Database from "better-sqlite3";
+import { createClient } from "@libsql/client";
 import bcrypt from "bcryptjs";
-import fs from "node:fs";
-import path from "node:path";
 
-const DB_PATH = path.join(process.cwd(), "data", "natal.db");
+let client: ReturnType<typeof createClient> | null = null;
 
-let _db: Database.Database | null = null;
-
-export function getDb(): Database.Database {
-  if (!_db) {
-    fs.mkdirSync(path.dirname(DB_PATH), { recursive: true });
-    _db = new Database(DB_PATH);
-    _db.pragma("journal_mode = WAL");
-    _db.pragma("foreign_keys = ON");
-    initSchema(_db);
+export function getDb() {
+  if (!client) {
+    client = createClient({
+      url: process.env.TURSO_DATABASE_URL!,
+      authToken: process.env.TURSO_AUTH_TOKEN,
+    });
   }
-  return _db;
+  return client;
 }
 
-function initSchema(db: Database.Database) {
-  db.exec(`
+export async function initSchema() {
+  const db = getDb();
+  await db.execute(`
     CREATE TABLE IF NOT EXISTS admins (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       username TEXT UNIQUE NOT NULL,
@@ -27,7 +23,8 @@ function initSchema(db: Database.Database) {
       password TEXT NOT NULL,
       created_at TEXT DEFAULT (datetime('now'))
     );
-
+  `);
+  await db.execute(`
     CREATE TABLE IF NOT EXISTS sponsors (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL,
@@ -39,7 +36,8 @@ function initSchema(db: Database.Database) {
       created_at TEXT DEFAULT (datetime('now')),
       updated_at TEXT DEFAULT (datetime('now'))
     );
-
+  `);
+  await db.execute(`
     CREATE TABLE IF NOT EXISTS speakers (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL,
@@ -52,7 +50,8 @@ function initSchema(db: Database.Database) {
       created_at TEXT DEFAULT (datetime('now')),
       updated_at TEXT DEFAULT (datetime('now'))
     );
-
+  `);
+  await db.execute(`
     CREATE TABLE IF NOT EXISTS registrants (
       id TEXT PRIMARY KEY,
       name TEXT NOT NULL,
@@ -65,59 +64,77 @@ function initSchema(db: Database.Database) {
       checked_in INTEGER DEFAULT 0,
       created_at TEXT DEFAULT (datetime('now'))
     );
-
+  `);
+  await db.execute(`
     CREATE TABLE IF NOT EXISTS tickets (
       id TEXT PRIMARY KEY,
       name TEXT NOT NULL,
       remaining INTEGER DEFAULT 0,
       expiry_date TEXT DEFAULT ''
     );
-
+  `);
+  await db.execute(`
     CREATE TABLE IF NOT EXISTS settings (
       key TEXT PRIMARY KEY,
       value TEXT NOT NULL
     );
-
-    INSERT OR IGNORE INTO tickets (id, name, remaining, expiry_date) VALUES
-      ('early', 'Early Bird', 120, '2025-12-29'),
-      ('general', 'General Admission', 240, '2026-01-10'),
-      ('alumni', 'Alumni', 80, '2026-01-10');
   `);
 
-  // Migrations
-  for (const { table, column, def } of [
+  const existingTickets = await db.execute("SELECT id FROM tickets LIMIT 1");
+  if (existingTickets.rows.length === 0) {
+    await db.execute("INSERT INTO tickets (id, name, remaining, expiry_date) VALUES ('early', 'Early Bird', 120, '2025-12-29')");
+    await db.execute("INSERT INTO tickets (id, name, remaining, expiry_date) VALUES ('general', 'General Admission', 240, '2026-01-10')");
+    await db.execute("INSERT INTO tickets (id, name, remaining, expiry_date) VALUES ('alumni', 'Alumni', 80, '2026-01-10')");
+  }
+
+  await runMigrations(db);
+
+  const adminCount = await db.execute("SELECT COUNT(*) as c FROM admins");
+  const count = adminCount.rows[0] as unknown as Record<string, any>;
+  if (!(count?.c || 0)) {
+    const hash = bcrypt.hashSync("admin123", 10);
+    await db.execute("INSERT INTO admins (username, email, password) VALUES (?, ?, ?)", ["admin", "admin@kkrrppi.com", hash]);
+  }
+}
+
+async function runMigrations(db: ReturnType<typeof createClient>) {
+  const migrations = [
     { table: "tickets", column: "expiry_date", def: "TEXT DEFAULT ''" },
     { table: "sponsors", column: "logo_url", def: "TEXT DEFAULT ''" },
     { table: "registrants", column: "email", def: "TEXT DEFAULT ''" },
     { table: "registrants", column: "whatsapp", def: "TEXT DEFAULT ''" },
     { table: "registrants", column: "participant_type", def: "TEXT DEFAULT 'Student'" },
-  ]) {
+  ];
+  for (const { table, column, def } of migrations) {
     try {
-      db.prepare(`SELECT ${column} FROM ${table} LIMIT 1`).get();
+      await db.execute(`SELECT ${column} FROM ${table} LIMIT 1`);
     } catch {
-      db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${def}`);
+      await db.execute(`ALTER TABLE ${table} ADD COLUMN ${column} ${def}`);
     }
   }
-  // Migration: drop price column from tickets if present
   try {
-    db.prepare("SELECT price FROM tickets LIMIT 1").get();
-    const migrate = db.transaction(() => {
-      db.exec("DROP TABLE IF EXISTS tickets_new");
-      db.exec("CREATE TABLE tickets_new (id TEXT PRIMARY KEY, name TEXT NOT NULL, remaining INTEGER DEFAULT 0, expiry_date TEXT DEFAULT '')");
-      db.exec("INSERT INTO tickets_new (id, name, remaining, expiry_date) SELECT id, name, remaining, COALESCE(expiry_date, '') FROM tickets");
-      db.exec("DROP TABLE tickets");
-      db.exec("ALTER TABLE tickets_new RENAME TO tickets");
-    });
-    migrate();
+    await db.execute("SELECT price FROM tickets LIMIT 1");
+    // price column exists — migrate
+    const data = await db.execute("SELECT id, name, remaining, COALESCE(expiry_date, '') as expiry_date FROM tickets");
+    const oldTickets = data.rows.map((r: any) => ({ id: r.id, name: r.name, remaining: r.remaining, expiry_date: r.expiry_date }));
+    await db.execute("DROP TABLE IF EXISTS tickets_new");
+    await db.execute("CREATE TABLE tickets_new (id TEXT PRIMARY KEY, name TEXT NOT NULL, remaining INTEGER DEFAULT 0, expiry_date TEXT DEFAULT '')");
+    for (const t of oldTickets) {
+      await db.execute("INSERT INTO tickets_new (id, name, remaining, expiry_date) VALUES (?, ?, ?, ?)", [t.id, t.name, t.remaining, t.expiry_date || ""]);
+    }
+    await db.execute("DROP TABLE tickets");
+    await db.execute("ALTER TABLE tickets_new RENAME TO tickets");
   } catch {
-    // price column doesn't exist, nothing to migrate
+    // no price column
   }
+}
 
-  const adminCount = db.prepare("SELECT COUNT(*) as c FROM admins").get() as { c: number };
-  if (!adminCount.c) {
-    const hash = bcrypt.hashSync("admin123", 10);
-    db.prepare("INSERT INTO admins (username, email, password) VALUES (?, ?, ?)").run(
-      "admin", "admin@kkrrppi.com", hash
-    );
-  }
+export async function getRow(sql: string, params?: any[]) {
+  const result = await getDb().execute({ sql, args: params || [] });
+  return (result.rows[0] as Record<string, any>) || null;
+}
+
+export async function getAll(sql: string, params?: any[]) {
+  const result = await getDb().execute({ sql, args: params || [] });
+  return result.rows as Record<string, any>[];
 }

@@ -5,8 +5,8 @@ export const prerender = false;
 
 export const GET: APIRoute = async () => {
   const db = getDb();
-  const speakers = db.prepare("SELECT * FROM speakers ORDER BY is_active DESC, created_at DESC").all();
-  return new Response(JSON.stringify({ speakers }), {
+  const result = await db.execute("SELECT * FROM speakers ORDER BY is_active DESC, created_at DESC");
+  return new Response(JSON.stringify({ speakers: result.rows }), {
     status: 200, headers: { "Content-Type": "application/json" },
   });
 };
@@ -21,12 +21,12 @@ export const POST: APIRoute = async ({ request }) => {
         status: 400, headers: { "Content-Type": "application/json" },
       });
     }
-    const stmt = db.prepare(
-      "INSERT INTO speakers (name, title, organization, description, photo_url, tags) VALUES (?, ?, ?, ?, ?, ?)"
+    const result = await db.execute(
+      "INSERT INTO speakers (name, title, organization, description, photo_url, tags) VALUES (?, ?, ?, ?, ?, ?)",
+      [name, title || "", organization || "", description || "", photo_url || "", tags || ""]
     );
-    const result = stmt.run(name, title || "", organization || "", description || "", photo_url || "", tags || "");
-    const speaker = db.prepare("SELECT * FROM speakers WHERE id = ?").get(result.lastInsertRowid);
-    return new Response(JSON.stringify({ speaker }), {
+    const speaker = await db.execute("SELECT * FROM speakers WHERE id = ?", [result.lastInsertRowid]);
+    return new Response(JSON.stringify({ speaker: speaker.rows[0] }), {
       status: 201, headers: { "Content-Type": "application/json" },
     });
   } catch {

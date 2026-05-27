@@ -2,7 +2,7 @@ import type { APIRoute } from "astro";
 import fs from "node:fs";
 import path from "node:path";
 
-const UPLOADS_DIR = path.join(process.cwd(), "data", "uploads");
+const UPLOADS_DIR = path.join(process.env.VERCEL ? "/tmp" : process.cwd(), "data", "uploads");
 
 export const POST: APIRoute = async ({ request }) => {
   try {

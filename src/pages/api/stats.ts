@@ -3,18 +3,17 @@ import { getDb } from "../../lib/db";
 
 export const GET: APIRoute = async () => {
   const db = getDb();
-  const total = (db.prepare("SELECT COUNT(*) as c FROM registrants").get() as any).c;
-  const verified = (db.prepare("SELECT COUNT(*) as c FROM registrants WHERE status = 'Verified'").get() as any).c;
-  const pending = total - verified;
-  const checkedIn = (db.prepare("SELECT COUNT(*) as c FROM registrants WHERE checked_in = 1").get() as any).c;
-  const sponsorCount = (db.prepare("SELECT COUNT(*) as c FROM sponsors").get() as any).c;
+  const total = (await db.execute("SELECT COUNT(*) as c FROM registrants")).rows[0] as any;
+  const verified = (await db.execute("SELECT COUNT(*) as c FROM registrants WHERE status = 'Verified'")).rows[0] as any;
+  const checkedIn = (await db.execute("SELECT COUNT(*) as c FROM registrants WHERE checked_in = 1")).rows[0] as any;
+  const sponsorCount = (await db.execute("SELECT COUNT(*) as c FROM sponsors")).rows[0] as any;
 
   return new Response(JSON.stringify({
-    totalRegistrants: total,
-    verified,
-    pending,
-    checkedIn,
-    sponsorCount,
+    totalRegistrants: total.c,
+    verified: verified.c,
+    pending: total.c - verified.c,
+    checkedIn: checkedIn.c,
+    sponsorCount: sponsorCount.c,
   }), {
     status: 200, headers: { "Content-Type": "application/json" },
   });

@@ -5,8 +5,8 @@ export const prerender = false;
 
 export const GET: APIRoute = async () => {
   const db = getDb();
-  const sponsors = db.prepare("SELECT * FROM sponsors ORDER BY is_active DESC, created_at DESC").all();
-  return new Response(JSON.stringify({ sponsors }), {
+  const result = await db.execute("SELECT * FROM sponsors ORDER BY is_active DESC, created_at DESC");
+  return new Response(JSON.stringify({ sponsors: result.rows }), {
     status: 200, headers: { "Content-Type": "application/json" },
   });
 };
@@ -21,12 +21,12 @@ export const POST: APIRoute = async ({ request }) => {
         status: 400, headers: { "Content-Type": "application/json" },
       });
     }
-    const stmt = db.prepare(
-      "INSERT INTO sponsors (name, website, tier, description, logo_url) VALUES (?, ?, ?, ?, ?)"
+    const result = await db.execute(
+      "INSERT INTO sponsors (name, website, tier, description, logo_url) VALUES (?, ?, ?, ?, ?)",
+      [name, website || "", tier || "bronze", description || "", logo_url || ""]
     );
-    const result = stmt.run(name, website || "", tier || "bronze", description || "", logo_url || "");
-    const sponsor = db.prepare("SELECT * FROM sponsors WHERE id = ?").get(result.lastInsertRowid);
-    return new Response(JSON.stringify({ sponsor }), {
+    const sponsor = await db.execute("SELECT * FROM sponsors WHERE id = ?", [result.lastInsertRowid]);
+    return new Response(JSON.stringify({ sponsor: sponsor.rows[0] }), {
       status: 201, headers: { "Content-Type": "application/json" },
     });
   } catch {
