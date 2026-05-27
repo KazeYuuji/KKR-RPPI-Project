@@ -173,7 +173,7 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
             <td class="py-3.5 px-5 text-right">
               <div class="flex gap-1 justify-end">
                 <button data-action="verify" data-id="${r.id}" class="rounded-lg px-2.5 py-1.5 text-xs font-semibold transition ${r.status === 'Verified' ? 'bg-kkr-gold/30 text-kkr-maroon hover:bg-kkr-gold/40' : 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200'}">${r.status === 'Verified' ? 'Batal' : 'Verif'}</button>
-                <button data-action="checkin" data-id="${r.id}" class="rounded-lg px-2.5 py-1.5 text-xs font-semibold transition ${r.checked_in ? 'bg-kkr-light/60 text-kkr-purple hover:bg-slate-300' : 'bg-kkr-light/70 text-kkr-red hover:bg-kkr-light'}">${r.checked_in ? 'Batal' : 'CI'}</button>
+                ${r.checked_in ? '<span class="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-semibold bg-kkr-dark text-white"><svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Done</span>' : `<button data-action="checkin" data-id="${r.id}" class="rounded-lg px-2.5 py-1.5 text-xs font-semibold transition bg-emerald-100 text-emerald-700 hover:bg-emerald-200">CI</button>`}
               </div>
             </td>
           </tr>
@@ -193,7 +193,7 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
               <div class="w-2 h-2 rounded-full ${t.remaining > 0 ? 'bg-emerald-400' : 'bg-red-400'}"></div>
               <div>
                 <p class="text-sm font-semibold text-kkr-dark">${t.name}</p>
-                <p class="text-xs text-kkr-maroon/80 mt-0.5">Sisa: ${t.remaining} tiket${t.expiry_date ? ` · Exp: ${t.expiry_date}` : ""}</p>
+                <p class="text-xs text-kkr-maroon/80 mt-0.5">Sisa: ${t.remaining} tiket</p>
               </div>
             </div>
             <span class="text-xs font-semibold px-2.5 py-1 rounded-full ${t.remaining > 0 ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'}">${t.remaining > 0 ? 'Tersedia' : 'Habis'}</span>
@@ -224,9 +224,8 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
         const d = await res.json();
         if (res.ok) {
           const name = d.registrant?.name || "Peserta ditemukan";
-          const status = d.registrant?.checked_in ? "Checked-in" : "Belum check-in";
-          resultEl.className = `rounded-xl p-3 text-sm ${d.registrant?.checked_in ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-kkr-gold/20 text-kkr-maroon border border-kkr-gold/30'}`;
-          resultEl.textContent = `${name} — Status: ${status}`;
+          resultEl.className = "rounded-xl p-3 text-sm bg-emerald-50 text-emerald-700 border border-emerald-200";
+          resultEl.textContent = `${name} — Check-in berhasil!`;
           loadRegistrants(); loadStats();
         } else {
           resultEl.className = "rounded-xl p-3 text-sm bg-red-50 text-red-700 border border-red-200";

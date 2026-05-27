@@ -31,8 +31,12 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     if (action === "checkin") {
-      const newVal = existing?.checked_in ? 0 : 1;
-      await db.execute("UPDATE registrants SET checked_in = ? WHERE id = ?", [newVal, id]);
+      if (existing?.checked_in) {
+        return new Response(JSON.stringify({ error: "Tiket ini sudah check-in sebelumnya dan tidak dapat digunakan lagi" }), {
+          status: 400, headers: { "Content-Type": "application/json" },
+        });
+      }
+      await db.execute("UPDATE registrants SET checked_in = 1 WHERE id = ?", [id]);
       const r = await db.execute("SELECT * FROM registrants WHERE id = ?", [id]);
       return new Response(JSON.stringify({ registrant: r.rows[0] }), { status: 200, headers: { "Content-Type": "application/json" } });
     }

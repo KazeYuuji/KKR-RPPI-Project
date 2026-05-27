@@ -69,8 +69,7 @@ export async function initSchema() {
     CREATE TABLE IF NOT EXISTS tickets (
       id TEXT PRIMARY KEY,
       name TEXT NOT NULL,
-      remaining INTEGER DEFAULT 0,
-      expiry_date TEXT DEFAULT ''
+      remaining INTEGER DEFAULT 0
     );
   `);
   await db.execute(`
@@ -82,9 +81,9 @@ export async function initSchema() {
 
   const existingTickets = await db.execute("SELECT id FROM tickets LIMIT 1");
   if (existingTickets.rows.length === 0) {
-    await db.execute("INSERT INTO tickets (id, name, remaining, expiry_date) VALUES ('early', 'Early Bird', 120, '2025-12-29')");
-    await db.execute("INSERT INTO tickets (id, name, remaining, expiry_date) VALUES ('general', 'General Admission', 240, '2026-01-10')");
-    await db.execute("INSERT INTO tickets (id, name, remaining, expiry_date) VALUES ('alumni', 'Alumni', 80, '2026-01-10')");
+    await db.execute("INSERT INTO tickets (id, name, remaining) VALUES ('early', 'Early Bird', 120)");
+    await db.execute("INSERT INTO tickets (id, name, remaining) VALUES ('general', 'General Admission', 240)");
+    await db.execute("INSERT INTO tickets (id, name, remaining) VALUES ('alumni', 'Alumni', 80)");
   }
 
   await runMigrations(db);
@@ -99,7 +98,6 @@ export async function initSchema() {
 
 async function runMigrations(db: ReturnType<typeof createClient>) {
   const migrations = [
-    { table: "tickets", column: "expiry_date", def: "TEXT DEFAULT ''" },
     { table: "sponsors", column: "logo_url", def: "TEXT DEFAULT ''" },
     { table: "registrants", column: "email", def: "TEXT DEFAULT ''" },
     { table: "registrants", column: "whatsapp", def: "TEXT DEFAULT ''" },
@@ -112,15 +110,30 @@ async function runMigrations(db: ReturnType<typeof createClient>) {
       await db.execute(`ALTER TABLE ${table} ADD COLUMN ${column} ${def}`);
     }
   }
+  // Drop expiry_date from tickets if present
+  try {
+    await db.execute("SELECT expiry_date FROM tickets LIMIT 1");
+    const data = await db.execute("SELECT id, name, remaining FROM tickets");
+    const oldTickets = data.rows.map((r: any) => ({ id: r.id, name: r.name, remaining: r.remaining }));
+    await db.execute("DROP TABLE IF EXISTS tickets_new");
+    await db.execute("CREATE TABLE tickets_new (id TEXT PRIMARY KEY, name TEXT NOT NULL, remaining INTEGER DEFAULT 0)");
+    for (const t of oldTickets) {
+      await db.execute("INSERT INTO tickets_new (id, name, remaining) VALUES (?, ?, ?)", [t.id, t.name, t.remaining]);
+    }
+    await db.execute("DROP TABLE tickets");
+    await db.execute("ALTER TABLE tickets_new RENAME TO tickets");
+  } catch {
+    // no expiry_date column
+  }
+  // Drop price column if present
   try {
     await db.execute("SELECT price FROM tickets LIMIT 1");
-    // price column exists — migrate
-    const data = await db.execute("SELECT id, name, remaining, COALESCE(expiry_date, '') as expiry_date FROM tickets");
-    const oldTickets = data.rows.map((r: any) => ({ id: r.id, name: r.name, remaining: r.remaining, expiry_date: r.expiry_date }));
+    const data = await db.execute("SELECT id, name, remaining FROM tickets");
+    const oldTickets = data.rows.map((r: any) => ({ id: r.id, name: r.name, remaining: r.remaining }));
     await db.execute("DROP TABLE IF EXISTS tickets_new");
-    await db.execute("CREATE TABLE tickets_new (id TEXT PRIMARY KEY, name TEXT NOT NULL, remaining INTEGER DEFAULT 0, expiry_date TEXT DEFAULT '')");
+    await db.execute("CREATE TABLE tickets_new (id TEXT PRIMARY KEY, name TEXT NOT NULL, remaining INTEGER DEFAULT 0)");
     for (const t of oldTickets) {
-      await db.execute("INSERT INTO tickets_new (id, name, remaining, expiry_date) VALUES (?, ?, ?, ?)", [t.id, t.name, t.remaining, t.expiry_date || ""]);
+      await db.execute("INSERT INTO tickets_new (id, name, remaining) VALUES (?, ?, ?)", [t.id, t.name, t.remaining]);
     }
     await db.execute("DROP TABLE tickets");
     await db.execute("ALTER TABLE tickets_new RENAME TO tickets");

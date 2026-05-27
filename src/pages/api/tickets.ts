@@ -21,8 +21,8 @@ export const POST: APIRoute = async ({ request }) => {
     }
     if (body.action === "create") {
       const id = "ticket-" + Date.now().toString(36).toLowerCase();
-      await db.execute("INSERT INTO tickets (id, name, remaining, expiry_date) VALUES (?, ?, ?, ?)", [
-        id, body.name || "Tiket Baru", body.remaining || 0, body.expiry_date || ""
+      await db.execute("INSERT INTO tickets (id, name, remaining) VALUES (?, ?, ?)", [
+        id, body.name || "Tiket Baru", body.remaining || 0
       ]);
       return new Response(JSON.stringify({ id, success: true }), {
         status: 200, headers: { "Content-Type": "application/json" },
@@ -31,8 +31,8 @@ export const POST: APIRoute = async ({ request }) => {
     const tickets = Array.isArray(body) ? body : [body];
     for (const t of tickets) {
       await db.execute(
-        "INSERT INTO tickets (id, name, remaining, expiry_date) VALUES (?, ?, ?, ?) ON CONFLICT(id) DO UPDATE SET name = excluded.name, remaining = excluded.remaining, expiry_date = excluded.expiry_date",
-        [t.id, t.name, t.remaining, t.expiry_date]
+        "INSERT INTO tickets (id, name, remaining) VALUES (?, ?, ?) ON CONFLICT(id) DO UPDATE SET name = excluded.name, remaining = excluded.remaining",
+        [t.id, t.name, t.remaining]
       );
     }
     const updated = await db.execute("SELECT * FROM tickets ORDER BY id");
