@@ -1,0 +1,45 @@
+---
+export interface Props {
+  label: string;
+  value: string | number;
+  change?: string;
+  trend?: "up" | "down";
+  icon: string;
+  delay?: number;
+  colorIndex?: number;
+}
+
+const { label, value, change, trend, icon, delay = 0, colorIndex = 0 } = Astro.props;
+const colors = [
+  "from-kkr-light to-kkr-light/30 text-kkr-red",
+  "from-emerald-50 to-emerald-100/50 text-emerald-600",
+  "from-kkr-light to-kkr-light/50 text-kkr-gold",
+  "from-blue-50 to-blue-100/50 text-blue-600",
+];
+const colorClass = colors[colorIndex % colors.length];
+---
+
+<div
+  class="bg-white rounded-2xl border border-kkr-light/50 p-5 sm:p-6 flex items-start justify-between shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300"
+  style={`animation: fade-in-up 0.5s ease-out ${delay}ms both`}
+>
+  <div class="space-y-1.5">
+    <p class="text-sm text-kkr-maroon/80 font-medium">{label}</p>
+    <p class="text-2xl sm:text-3xl font-bold text-kkr-dark tracking-tight tabular-nums">{value}</p>
+    {change && trend && (
+      <div class="flex items-center gap-1.5">
+        <span class:list={[
+          "inline-flex items-center gap-0.5 text-xs font-semibold px-2 py-0.5 rounded-full",
+          trend === "up" ? "text-emerald-700 bg-emerald-50" : "text-red-700 bg-red-50",
+        ]}>
+          <span>{trend === "up" ? "↑" : "↓"}</span>
+          {change}
+        </span>
+        <span class="text-xs text-kkr-maroon/60">vs sebelumnya</span>
+      </div>
+    )}
+  </div>
+  <div class="w-10 h-10 rounded-xl bg-gradient-to-br {colorClass} flex items-center justify-center shrink-0 shadow-sm">
+    <span set:html={icon} />
+  </div>
+</div>

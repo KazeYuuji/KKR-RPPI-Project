@@ -1,0 +1,97 @@
+---
+const eventDate = "2026-01-10T08:00:00";
+const regClose = "2025-12-29T23:59:59";
+---
+
+<section id="countdown" class="scroll-mt-20">
+  <div class="mx-auto max-w-7xl px-6">
+    <div class="rounded-[2.5rem] bg-gradient-to-br from-kkr-dark via-kkr-purple to-kkr-maroon p-8 sm:p-12 shadow-2xl shadow-kkr-dark/30 text-white relative overflow-hidden">
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(251,207,232,.08),_transparent_50%)]"></div>
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,_rgba(251,191,36,.05),_transparent_50%)]"></div>
+
+      <div class="relative text-center space-y-10">
+        <div class="space-y-2">
+          <p class="text-sm uppercase tracking-[0.3em] text-kkr-light font-semibold">Waktu Terus Berjalan</p>
+          <h2 class="text-3xl sm:text-4xl font-semibold">Jangan Lewatkan!</h2>
+          <div class="w-8 h-0.5 bg-kkr-red/50 mx-auto rounded-full"></div>
+        </div>
+
+        <div class="grid gap-6 sm:grid-cols-2">
+          <div class="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
+            <p class="text-kkr-light text-sm font-semibold uppercase tracking-wider">Segera Ditutup</p>
+            <p class="text-kkr-gold text-lg font-semibold mt-1">29 Desember 2025</p>
+            <p class="text-sm text-kkr-maroon/60 mt-2">Batas Pendaftaran Tiket</p>
+            <div id="reg-countdown" class="grid grid-cols-4 gap-3 mt-5">
+              {["Hari", "Jam", "Menit", "Detik"].map((label) => (
+                <div class="bg-white/10 rounded-xl p-3 backdrop-blur-sm">
+                  <p class="text-2xl sm:text-3xl font-bold tabular-nums" data-reg={label.toLowerCase()}>00</p>
+                  <p class="text-xs text-kkr-maroon/60 mt-1 uppercase tracking-wider">{label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div class="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
+            <p class="text-kkr-light text-sm font-semibold uppercase tracking-wider">⛪ Hari H</p>
+            <p class="text-kkr-gold text-lg font-semibold mt-1">10 Januari 2026</p>
+            <p class="text-sm text-kkr-maroon/60 mt-2">Menuju Puncak Acara</p>
+            <div id="event-countdown" class="grid grid-cols-4 gap-3 mt-5">
+              {["Hari", "Jam", "Menit", "Detik"].map((label) => (
+                <div class="bg-white/10 rounded-xl p-3 backdrop-blur-sm">
+                  <p class="text-2xl sm:text-3xl font-bold tabular-nums" data-event={label.toLowerCase()}>00</p>
+                  <p class="text-xs text-kkr-maroon/60 mt-1 uppercase tracking-wider">{label}</p>
+                </div>
+              ))}
+            </div>
+            <div class="mt-5">
+              <a href="/registration" class="inline-flex items-center gap-2 rounded-xl bg-kkr-gold px-6 py-3 text-sm font-semibold text-kkr-dark transition hover:bg-kkr-gold">Daftar Sekarang</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let regDate = new Date("2025-12-29T23:59:59").getTime();
+    let eventDate = new Date("2026-01-10T08:00:00").getTime();
+
+    fetch("/api/settings").then(r => r.json()).then(d => {
+      const s = d.settings || {};
+      if (s.regDeadlineISO) regDate = new Date(s.regDeadlineISO).getTime();
+      if (s.eventDateISO) eventDate = new Date(s.eventDateISO).getTime();
+      if (s.locDate) {
+        const el = document.querySelector("#countdown .text-kkr-gold.text-lg.font-semibold.mt-1");
+        if (el) el.textContent = s.locDate;
+      }
+      if (s.regDeadline) {
+        const els = document.querySelectorAll("#countdown .text-kkr-gold.text-lg.font-semibold.mt-1");
+        if (els.length > 1) els[0].textContent = s.regDeadline;
+      }
+    }).catch(() => {});
+
+    function updateCountdown(target, prefix) {
+      const now = Date.now();
+      let diff = target - now;
+      if (diff < 0) diff = 0;
+      const days = Math.floor(diff / 86400000);
+      const hours = Math.floor((diff % 86400000) / 3600000);
+      const mins = Math.floor((diff % 3600000) / 60000);
+      const secs = Math.floor((diff % 60000) / 1000);
+      const els = document.querySelectorAll(`[data-${prefix}]`);
+      if (els.length >= 4) {
+        els[0].textContent = String(days).padStart(2, "0");
+        els[1].textContent = String(hours).padStart(2, "0");
+        els[2].textContent = String(mins).padStart(2, "0");
+        els[3].textContent = String(secs).padStart(2, "0");
+      }
+    }
+
+    setInterval(() => {
+      updateCountdown(regDate, "reg");
+      updateCountdown(eventDate, "event");
+    }, 1000);
+    updateCountdown(regDate, "reg");
+    updateCountdown(eventDate, "event");
+  </script>
+</section>

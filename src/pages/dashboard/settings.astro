@@ -1,0 +1,310 @@
+---
+import AdminLayout from "../../layouts/AdminLayout.astro";
+---
+
+<AdminLayout title="Pengaturan">
+  <div class="space-y-8 animate-fade-in max-w-3xl">
+    <!-- Location Settings -->
+    <div class="rounded-2xl border border-kkr-light/50 bg-white p-6 sm:p-8 shadow-sm">
+      <div class="flex items-center gap-3 mb-1">
+        <span class="text-xl">📍</span>
+        <h2 class="text-xl font-semibold text-kkr-dark">Lokasi Tempat</h2>
+      </div>
+      <p class="text-sm text-kkr-maroon/80 mt-1">Masukkan nama tempat dan link Google Maps. Peta akan otomatis ditampilkan di website.</p>
+      <form id="location-form" class="mt-6 space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-kkr-purple mb-1">Nama Tempat</label>
+          <input id="loc-venue" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="SMK PGRI 1 Kediri" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-kkr-purple mb-1">URL Google Maps</label>
+          <input id="loc-maps-link" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="https://maps.app.goo.gl/RCzwb8tiKNdVwXA59" />
+          <p class="text-xs text-kkr-maroon/60 mt-1">Link Google Maps (bisa dari share/bagikan atau URL maps). Embed peta akan otomatis dibuat.</p>
+        </div>
+        <button type="submit" class="rounded-xl bg-kkr-red px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-kkr-maroon">Simpan Lokasi</button>
+      </form>
+    </div>
+
+    <!-- Event Schedule -->
+    <div class="rounded-2xl border border-kkr-light/50 bg-white p-6 sm:p-8 shadow-sm">
+      <div class="flex items-center gap-3 mb-1">
+        <span class="text-xl">📅</span>
+        <h2 class="text-xl font-semibold text-kkr-dark">Jadwal Acara</h2>
+      </div>
+      <p class="text-sm text-kkr-maroon/80 mt-1">Tanggal dan waktu pelaksanaan acara. Juga ditampilkan di halaman utama (hero, countdown, lokasi).</p>
+      <form id="schedule-form" class="mt-6 space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-kkr-purple mb-1">Tanggal Acara</label>
+          <input id="loc-date" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Sabtu, 10 Januari 2026" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-kkr-purple mb-1">Waktu Mulai Acara</label>
+          <input id="loc-time" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="08:00 - 12:30 WIB" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-kkr-purple mb-1">Tanggal Terakhir Pendaftaran</label>
+          <input id="reg-deadline" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="29 Desember 2025" />
+          <p class="text-xs text-kkr-maroon/60 mt-1">Tanggal display (bebas format).</p>
+        </div>
+        <hr class="border-kkr-light/50" />
+        <p class="text-xs font-medium text-kkr-maroon/80 uppercase tracking-wider">Pengaturan Countdown (format ISO)</p>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label class="block text-sm font-medium text-kkr-purple mb-1">Tanggal & Jam Acara</label>
+            <input id="event-date-iso" type="datetime-local" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" />
+            <p class="text-xs text-kkr-maroon/60 mt-1">Contoh: 2026-01-10T08:00</p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-kkr-purple mb-1">Batas Pendaftaran</label>
+            <input id="reg-deadline-iso" type="datetime-local" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" />
+            <p class="text-xs text-kkr-maroon/60 mt-1">Contoh: 2025-12-29T23:59</p>
+          </div>
+        </div>
+        <button type="submit" class="rounded-xl bg-kkr-red px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-kkr-maroon">Simpan Jadwal</button>
+      </form>
+    </div>
+
+    <!-- Contact Settings -->
+    <div class="rounded-2xl border border-kkr-light/50 bg-white p-6 sm:p-8 shadow-sm">
+      <div class="flex items-center gap-3 mb-1">
+        <span class="text-xl">📞</span>
+        <h2 class="text-xl font-semibold text-kkr-dark">Kontak</h2>
+      </div>
+      <p class="text-sm text-kkr-maroon/80 mt-1">Informasi kontak yang ditampilkan di website.</p>
+      <form id="contact-form" class="mt-6 space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-kkr-purple mb-1">Email</label>
+          <input id="contact-email" type="email" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="kkrrppi@gmail.com" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-kkr-purple mb-1">Telepon</label>
+          <input id="contact-phone" type="tel" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="(0354) 682433" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-kkr-purple mb-1">Nomor WhatsApp (dengan kode negara)</label>
+          <input id="contact-wa" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="6285800753804" />
+        </div>
+        <button type="submit" class="rounded-xl bg-kkr-red px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-kkr-maroon">Simpan Kontak</button>
+      </form>
+    </div>
+
+    <!-- Landing Page Text -->
+    <div class="rounded-2xl border border-kkr-light/50 bg-white p-6 sm:p-8 shadow-sm">
+      <div class="flex items-center gap-3 mb-1">
+        <span class="text-xl">📝</span>
+        <h2 class="text-xl font-semibold text-kkr-dark">Teks Landing Page</h2>
+      </div>
+      <p class="text-sm text-kkr-maroon/80 mt-1">Sesuaikan teks yang muncul di halaman formulir pendaftaran (<strong>/registration</strong>). Judul dan subjudul di atas formulir.</p>
+      <form id="text-form" class="mt-6 space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-kkr-purple mb-1">Judul Formulir</label>
+          <input id="form-title" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Formulir Pendaftaran" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-kkr-purple mb-1">Subjudul Formulir</label>
+          <textarea id="form-subtitle" rows="2" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Lengkapi data diri dan pilih tiket untuk bergabung dalam KKR RPPI."></textarea>
+        </div>
+        <button type="submit" class="rounded-xl bg-kkr-red px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-kkr-maroon">Simpan Teks</button>
+      </form>
+    </div>
+
+    <!-- Ticket Manager -->
+    <div class="rounded-2xl border border-kkr-light/50 bg-white p-6 sm:p-8 shadow-sm">
+      <div class="flex items-center gap-3 mb-1">
+        <span class="text-xl">🎟️</span>
+        <h2 class="text-xl font-semibold text-kkr-dark">Manajemen Tiket</h2>
+      </div>
+      <p class="text-sm text-kkr-maroon/80 mt-1">Tambah, ubah, atau hapus tiket. Harga: GRATIS (event free).</p>
+      <div class="mt-6 space-y-4" id="ticket-list"></div>
+      <button id="add-ticket-btn" class="mt-4 w-full rounded-xl border-2 border-dashed border-kkr-light/80 px-4 py-3 text-sm font-semibold text-kkr-maroon/80 transition hover:border-kkr-red hover:text-kkr-red">+ Tambah Tiket Baru</button>
+      <div id="ticket-toast" class="mt-3"></div>
+    </div>
+
+    <!-- Security -->
+    <div class="rounded-2xl border border-kkr-light/50 bg-white p-6 sm:p-8 shadow-sm">
+      <h2 class="text-xl font-semibold text-kkr-dark">Keamanan</h2>
+      <p class="text-sm text-kkr-maroon/80 mt-1">Status keamanan akun admin.</p>
+      <div class="mt-6 space-y-5">
+        <div class="flex items-center justify-between py-3">
+          <div>
+            <p class="text-sm font-medium text-kkr-dark">Logout Otomatis</p>
+            <p class="text-xs text-kkr-maroon/80">Sesi akan berakhir setelah 24 jam tidak aktif</p>
+          </div>
+          <span class="text-xs bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-full font-medium">Aktif</span>
+        </div>
+        <div class="flex items-center justify-between py-3 border-t border-kkr-light/30">
+          <div>
+            <p class="text-sm font-medium text-kkr-dark">Password Default</p>
+            <p class="text-xs text-kkr-maroon/80">Ganti password default untuk keamanan lebih baik</p>
+          </div>
+          <span class="text-xs bg-kkr-gold/30 text-kkr-maroon px-2.5 py-1 rounded-full font-medium">admin123</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-container" class="fixed top-4 right-4 z-[100] flex flex-col gap-2 pointer-events-none"></div>
+
+  <script>
+    function toast(msg, type = "success") {
+      const c = document.getElementById("toast-container");
+      const el = document.createElement("div");
+      el.className = `pointer-events-auto toast-enter rounded-xl px-5 py-3 text-sm font-medium shadow-lg ${type === "success" ? "bg-emerald-600 text-white" : "bg-red-600 text-white"}`;
+      el.textContent = msg;
+      c.appendChild(el);
+      setTimeout(() => { el.className = el.className.replace("toast-enter", "toast-exit"); setTimeout(() => el.remove(), 300); }, 3000);
+    }
+
+    async function loadSettings() {
+      try {
+        const res = await fetch("/api/settings");
+        const d = await res.json();
+        const s = d.settings || {};
+
+        if (s.locVenue) document.getElementById("loc-venue").value = s.locVenue;
+        if (s.locMapsLink) document.getElementById("loc-maps-link").value = s.locMapsLink;
+        if (s.locDate) document.getElementById("loc-date").value = s.locDate;
+        if (s.locTime) document.getElementById("loc-time").value = s.locTime;
+        if (s.regDeadline) document.getElementById("reg-deadline").value = s.regDeadline;
+        if (s.eventDateISO) document.getElementById("event-date-iso").value = s.eventDateISO;
+        if (s.regDeadlineISO) document.getElementById("reg-deadline-iso").value = s.regDeadlineISO;
+        if (s.contactEmail) document.getElementById("contact-email").value = s.contactEmail;
+        if (s.contactPhone) document.getElementById("contact-phone").value = s.contactPhone;
+        if (s.contactWa) document.getElementById("contact-wa").value = s.contactWa;
+        if (s.formTitle) document.getElementById("form-title").value = s.formTitle;
+        if (s.formSubtitle) document.getElementById("form-subtitle").value = s.formSubtitle;
+      } catch {}
+    }
+
+    async function loadTickets() {
+      try {
+        const res = await fetch("/api/tickets");
+        const d = await res.json();
+        const list = d.tickets || [];
+        const container = document.getElementById("ticket-list");
+        container.innerHTML = list.map(t => `
+          <div class="rounded-xl border border-kkr-light/50 bg-white p-4 ticket-item" data-id="${t.id}">
+            <div class="grid gap-3 sm:grid-cols-[1fr_0.8fr_0.8fr_auto] items-end">
+              <label class="text-xs text-kkr-maroon">Nama Tiket
+                <input name="tname-${t.id}" type="text" value="${t.name}" class="mt-1 w-full rounded-lg border border-kkr-light/80 bg-white px-3 py-2 text-sm outline-none focus:border-kkr-red focus:ring-2 focus:ring-kkr-maroon/20" />
+              </label>
+              <label class="text-xs text-kkr-maroon">Jumlah Tersedia
+                <input name="tremaining-${t.id}" type="number" min="0" value="${t.remaining}" class="mt-1 w-full rounded-lg border border-kkr-light/80 bg-white px-3 py-2 text-sm outline-none focus:border-kkr-red focus:ring-2 focus:ring-kkr-maroon/20" />
+              </label>
+              <label class="text-xs text-kkr-maroon">Tanggal Expired
+                <input name="texpiry-${t.id}" type="date" value="${t.expiry_date}" class="mt-1 w-full rounded-lg border border-kkr-light/80 bg-white px-3 py-2 text-sm outline-none focus:border-kkr-red focus:ring-2 focus:ring-kkr-maroon/20" />
+              </label>
+              <button data-delete="${t.id}" class="shrink-0 rounded-lg bg-red-100 px-3 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-200">Hapus</button>
+            </div>
+          </div>
+        `).join("") + `<button id="save-all-tickets" class="mt-3 w-full rounded-xl bg-kkr-dark px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-kkr-purple">Simpan Semua Tiket</button>`;
+      } catch {}
+    }
+
+    document.addEventListener("click", (e) => {
+      const delBtn = e.target.closest("[data-delete]");
+      if (delBtn) {
+        const id = delBtn.dataset.delete;
+        if (!confirm("Hapus tiket ini?")) return;
+        fetch("/api/tickets", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "delete", id }) })
+          .then(r => r.ok ? (loadTickets(), toast("Tiket dihapus")) : toast("Gagal hapus", "error"))
+          .catch(() => toast("Gagal hapus", "error"));
+      }
+    });
+
+    document.addEventListener("click", (e) => {
+      if (e.target.id === "save-all-tickets") {
+        const items = document.querySelectorAll(".ticket-item");
+        const tickets = [];
+        items.forEach(el => {
+          const id = el.dataset.id;
+          tickets.push({
+            id,
+            name: el.querySelector(`[name="tname-${id}"]`).value,
+            remaining: Number(el.querySelector(`[name="tremaining-${id}"]`).value) || 0,
+            expiry_date: el.querySelector(`[name="texpiry-${id}"]`).value,
+          });
+        });
+        fetch("/api/tickets", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(tickets) })
+          .then(r => r.ok ? (toast("Tiket tersimpan"), loadTickets()) : toast("Gagal simpan", "error"))
+          .catch(() => toast("Gagal simpan", "error"));
+      }
+    });
+
+    document.getElementById("add-ticket-btn")?.addEventListener("click", async () => {
+      const name = prompt("Nama tiket baru:");
+      if (!name || !name.trim()) return;
+      try {
+        const res = await fetch("/api/tickets", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "create", name: name.trim(), remaining: 100, expiry_date: "" }) });
+        if (res.ok) { toast("Tiket ditambahkan"); loadTickets(); }
+        else toast("Gagal tambah tiket", "error");
+      } catch { toast("Gagal tambah tiket", "error"); }
+    });
+
+    document.getElementById("location-form")?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const btn = e.target.querySelector("button[type=submit]");
+      btn.disabled = true; btn.textContent = "Menyimpan...";
+      try {
+        const res = await fetch("/api/settings", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({
+          locVenue: document.getElementById("loc-venue").value.trim(),
+          locMapsLink: document.getElementById("loc-maps-link").value.trim(),
+        })});
+        if (res.ok) toast("Lokasi berhasil disimpan!");
+        else throw new Error();
+      } catch { toast("Gagal menyimpan lokasi", "error"); }
+      btn.disabled = false; btn.textContent = "Simpan Lokasi";
+    });
+
+    document.getElementById("schedule-form")?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const btn = e.target.querySelector("button[type=submit]");
+      btn.disabled = true; btn.textContent = "Menyimpan...";
+      try {
+        const res = await fetch("/api/settings", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({
+          locDate: document.getElementById("loc-date").value.trim(),
+          locTime: document.getElementById("loc-time").value.trim(),
+          regDeadline: document.getElementById("reg-deadline").value.trim(),
+          eventDateISO: document.getElementById("event-date-iso").value.trim(),
+          regDeadlineISO: document.getElementById("reg-deadline-iso").value.trim(),
+        })});
+        if (res.ok) toast("Jadwal berhasil disimpan!");
+        else throw new Error();
+      } catch { toast("Gagal menyimpan jadwal", "error"); }
+      btn.disabled = false; btn.textContent = "Simpan Jadwal";
+    });
+
+    document.getElementById("contact-form")?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const btn = e.target.querySelector("button[type=submit]");
+      btn.disabled = true; btn.textContent = "Menyimpan...";
+      try {
+        const res = await fetch("/api/settings", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({
+          contactEmail: document.getElementById("contact-email").value.trim(),
+          contactPhone: document.getElementById("contact-phone").value.trim(),
+          contactWa: document.getElementById("contact-wa").value.trim(),
+        })});
+        if (res.ok) toast("Kontak berhasil disimpan!");
+        else throw new Error();
+      } catch { toast("Gagal menyimpan kontak", "error"); }
+      btn.disabled = false; btn.textContent = "Simpan Kontak";
+    });
+
+    document.getElementById("text-form")?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const btn = e.target.querySelector("button[type=submit]");
+      btn.disabled = true; btn.textContent = "Menyimpan...";
+      try {
+        const res = await fetch("/api/settings", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({
+          formTitle: document.getElementById("form-title").value.trim(),
+          formSubtitle: document.getElementById("form-subtitle").value.trim(),
+        })});
+        if (res.ok) toast("Teks berhasil disimpan!");
+        else throw new Error();
+      } catch { toast("Gagal menyimpan teks", "error"); }
+      btn.disabled = false; btn.textContent = "Simpan Teks";
+    });
+
+    document.addEventListener("DOMContentLoaded", () => { loadSettings(); loadTickets(); });
+  </script>
+</AdminLayout>

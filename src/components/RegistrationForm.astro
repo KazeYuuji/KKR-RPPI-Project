@@ -1,0 +1,253 @@
+---
+export interface TicketType {
+  id: string;
+  name: string;
+  remaining: number;
+  expiry_date: string;
+}
+---
+
+<section class="mx-auto max-w-3xl rounded-[2rem] bg-white p-8 shadow-xl shadow-slate-200/40">
+  <div class="space-y-4 mb-8 text-center">
+    <p class="inline-flex rounded-full bg-kkr-light px-4 py-1 text-sm font-semibold text-kkr-red">Registrasi Tiket</p>
+    <h2 id="form-title" class="text-3xl font-semibold tracking-tight text-kkr-dark">Formulir Pendaftaran</h2>
+    <p id="form-subtitle" class="text-kkr-maroon">Lengkapi data diri dan pilih tiket untuk bergabung dalam KKR RPPI.</p>
+  </div>
+
+  <form id="registration-form" class="space-y-6">
+    <div class="grid gap-4 sm:grid-cols-2">
+      <label class="block">
+        <span class="text-sm font-medium text-kkr-purple">Nama Lengkap *</span>
+        <input name="name" required class="mt-2 w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-3 text-sm text-kkr-dark outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Masukkan nama sesuai identitas" />
+      </label>
+      <label id="school-field" class="block">
+        <span class="text-sm font-medium text-kkr-purple">Sekolah / Instansi <span id="school-required" class="text-kkr-red">*</span></span>
+        <input name="school" required class="mt-2 w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-3 text-sm text-kkr-dark outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Contoh: SMA Negeri 1 Jakarta" />
+      </label>
+    </div>
+
+    <div class="grid gap-4 sm:grid-cols-2">
+      <label class="block">
+        <span class="text-sm font-medium text-kkr-purple">Email *</span>
+        <input type="email" name="email" required class="mt-2 w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-3 text-sm text-kkr-dark outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="contoh@email.com" />
+      </label>
+      <label class="block">
+        <span class="text-sm font-medium text-kkr-purple">WhatsApp *</span>
+        <input name="whatsapp" required class="mt-2 w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-3 text-sm text-kkr-dark outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="0812xxxxxxx" />
+      </label>
+    </div>
+
+    <div class="space-y-4">
+      <div>
+        <p class="text-sm font-medium text-kkr-purple">Status Peserta</p>
+        <div class="mt-3 grid grid-cols-3 gap-3">
+          {[
+            { value: "Student", label: "Pelajar" },
+            { value: "General", label: "Umum" },
+            { value: "Alumni", label: "Alumni" },
+          ].map((option) => (
+            <label class="cursor-pointer rounded-xl border border-kkr-light/80 bg-white px-4 py-3 text-center text-sm font-semibold text-kkr-purple transition has-checked:border-kkr-red has-checked:bg-kkr-light has-checked:text-kkr-red hover:border-kkr-maroon">
+              <input type="radio" name="status" value={option.value} class="sr-only" checked={option.value === "Student"} data-status={option.value} />
+              {option.label}
+            </label>
+          ))}
+        </div>
+      </div>
+
+      <label class="block">
+        <span class="text-sm font-medium text-kkr-purple">Jenis Tiket *</span>
+        <div class="relative mt-2">
+          <select id="ticket-select" name="ticketType" required class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-3 text-sm text-kkr-dark outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20"></select>
+          <div id="ticket-stock" class="mt-1.5 flex flex-wrap gap-2"></div>
+        </div>
+      </label>
+    </div>
+
+    <button type="submit" id="submit-btn" class="w-full rounded-xl bg-gradient-to-r from-kkr-red to-kkr-gold px-6 py-4 text-sm font-semibold text-white shadow-lg shadow-kkr-maroon/30 transition hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed">
+      Konfirmasi Pendaftaran
+    </button>
+  </form>
+
+  <div id="success-modal" class="pointer-events-none fixed inset-0 z-50 flex items-center justify-center bg-kkr-dark/30 opacity-0 transition-opacity duration-300 p-4">
+    <div class="relative w-full max-w-xl rounded-[2rem] border border-kkr-light/50 bg-white p-8 shadow-2xl shadow-kkr-dark/20 animate-scale-in">
+      <button id="modal-close" class="absolute right-5 top-5 rounded-full bg-kkr-light/40 px-3 py-2 text-sm text-kkr-maroon/80 transition hover:bg-kkr-light/60">Tutup</button>
+      <div class="text-center">
+        <div class="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center mx-auto">✅</div>
+        <h3 id="success-title" class="mt-5 text-2xl font-semibold text-kkr-dark">Pendaftaran Berhasil!</h3>
+        <p id="success-subtitle" class="mt-2 text-kkr-maroon text-sm">Silakan simpan nomor tiket dan cek informasi lebih lanjut melalui WhatsApp atau email.</p>
+      </div>
+      <div class="mt-6 grid gap-4 sm:grid-cols-2">
+        <div class="rounded-2xl bg-kkr-light/40 p-5">
+          <p class="text-sm font-medium text-kkr-maroon/80">Nomor Tiket</p>
+          <p id="ticket-code" class="mt-2 text-lg font-semibold text-kkr-dark select-all">-</p>
+        </div>
+        <div class="rounded-2xl bg-kkr-light/40 p-5">
+          <p class="text-sm font-medium text-kkr-maroon/80">Jenis Tiket</p>
+          <p id="ticket-name" class="mt-2 text-lg font-semibold text-kkr-dark">-</p>
+        </div>
+      </div>
+      <div class="mt-5">
+        <a id="pdf-download-btn" href="#" target="_blank" class="flex items-center justify-center gap-2 rounded-xl bg-kkr-red px-5 py-3 text-sm font-semibold text-white transition hover:bg-kkr-maroon">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          Cetak Tiket (PDF)
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById("registration-form");
+    const select = document.getElementById("ticket-select");
+    const btn = document.getElementById("submit-btn");
+    const modal = document.getElementById("success-modal");
+    const closeModalBtn = document.getElementById("modal-close");
+    const codeEl = document.getElementById("ticket-code");
+    const nameEl = document.getElementById("ticket-name");
+    const stockEl = document.getElementById("ticket-stock");
+    const pdfBtn = document.getElementById("pdf-download-btn");
+
+    let lastTicketId = "";
+    let refreshInterval = null;
+
+    async function loadTickets() {
+      try {
+        const res = await fetch("/api/tickets");
+        const d = await res.json();
+        const tickets = d.tickets || [];
+        const prevVal = select.value;
+
+        renderTicketOptions(tickets);
+        renderStockIndicators(tickets);
+
+        if (prevVal && [...select.options].some(o => o.value === prevVal && !o.disabled)) {
+          select.value = prevVal;
+        }
+        validateSubmit();
+      } catch {
+        select.innerHTML = `<option value="general">General Admission</option><option value="early">Early Bird</option>`;
+      }
+    }
+
+    function renderTicketOptions(tickets) {
+      select.innerHTML = tickets.map(t => {
+        const habis = t.remaining <= 0;
+        return `<option value="${t.id}" ${habis ? "disabled" : ""}>${t.name}${habis ? " (Habis)" : " — Sisa " + t.remaining}</option>`;
+      }).join("");
+    }
+
+    function renderStockIndicators(tickets) {
+      stockEl.innerHTML = tickets.map(t => {
+        const habis = t.remaining <= 0;
+        return `<span class="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full font-medium ${habis ? "bg-red-50 text-red-700" : "bg-emerald-50 text-emerald-700"}">
+          <span class="w-1.5 h-1.5 rounded-full ${habis ? "bg-red-500" : "bg-emerald-500"}"></span>
+          ${t.name}: ${habis ? "Habis" : "Sisa " + t.remaining}
+        </span>`;
+      }).join("");
+    }
+
+    function validateSubmit() {
+      const opt = select.selectedOptions[0];
+      if (opt && opt.disabled) {
+        btn.disabled = true;
+        btn.textContent = "Tiket sudah habis";
+        return;
+      }
+      btn.disabled = false;
+      btn.textContent = "Konfirmasi Pendaftaran";
+    }
+
+    select.addEventListener("change", validateSubmit);
+
+    function genId() {
+      return "KR-" + Date.now().toString(36).toUpperCase() + Math.random().toString(36).substring(2, 5).toUpperCase();
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const selectedOpt = select.selectedOptions[0];
+      if (selectedOpt?.disabled) {
+        alert("Tiket yang dipilih sudah habis. Silakan pilih tiket lain.");
+        return;
+      }
+
+      const data = new FormData(form);
+      const id = genId();
+      const participantType = data.get("status")?.toString() || "Student";
+      const schoolVal = participantType === "Student" ? (data.get("school")?.toString().trim() || "-") : "";
+      const ticketType = data.get("ticketType")?.toString() || "general";
+      const payload = {
+        id,
+        name: data.get("name")?.toString().trim() || "-",
+        school: schoolVal,
+        email: data.get("email")?.toString().trim() || "",
+        whatsapp: data.get("whatsapp")?.toString().trim() || "",
+        participant_type: participantType,
+        ticket: ticketType,
+        status: "Pending",
+        checked_in: 0,
+      };
+
+      btn.disabled = true;
+      btn.textContent = "Memproses...";
+
+      try {
+        const res = await fetch("/api/registrants", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        const result = await res.json();
+        if (res.ok) {
+          lastTicketId = id;
+          codeEl.textContent = id;
+          const opt = select.selectedOptions[0];
+          nameEl.textContent = opt ? opt.textContent?.trim().replace(/\s*\(.*\)/, "") || ticketType : ticketType;
+          pdfBtn.href = "/api/ticket-pdf/" + id;
+          modal.classList.remove("pointer-events-none", "opacity-0");
+          form.reset();
+          loadTickets();
+        } else {
+          alert(result.error || "Gagal mendaftar");
+        }
+      } catch {
+        alert("Terjadi kesalahan. Silakan coba lagi.");
+      } finally {
+        if (!btn.dataset.preventReset) {
+          btn.disabled = false;
+          btn.textContent = "Konfirmasi Pendaftaran";
+        }
+        validateSubmit();
+      }
+    });
+
+    closeModalBtn.addEventListener("click", () => {
+      modal.classList.add("pointer-events-none", "opacity-0");
+    });
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) modal.classList.add("pointer-events-none", "opacity-0");
+    });
+
+    function toggleSchoolField() {
+      const selected = document.querySelector('input[name="status"]:checked');
+      const schoolField = document.getElementById("school-field");
+      const schoolInput = schoolField?.querySelector('input[name="school"]');
+      if (selected && (selected.value === "General" || selected.value === "Alumni")) {
+        schoolField.classList.add("hidden");
+        schoolInput.removeAttribute("required");
+      } else {
+        schoolField.classList.remove("hidden");
+        schoolInput.setAttribute("required", "");
+      }
+    }
+
+    document.querySelectorAll('input[name="status"]').forEach(el => {
+      el.addEventListener("change", toggleSchoolField);
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+      loadTickets();
+      toggleSchoolField();
+      refreshInterval = setInterval(loadTickets, 10000);
+    });
+  </script>
+</section>

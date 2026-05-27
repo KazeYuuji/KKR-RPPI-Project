@@ -1,0 +1,92 @@
+---
+const faqs = [
+  { q: "Apa itu KKR RPPI?", a: "KKR RPPI adalah kebaktian kebangunan rohani yang mempersatukan siswa, alumni, guru, dan masyarakat dari berbagai sekolah di Kediri untuk mengalami kebangunan rohani dalam Yesus Kristus." },
+  { q: "Kapan dan di mana acara dilaksanakan?", a: "Acara akan dilaksanakan pada Sabtu, 10 Januari 2026 di SMK PGRI 1 Kediri, Jl. Himalaya No.06, Kediri. Mulai pukul 08.00 - 12.30 WIB." },
+  { q: "Bagaimana cara mendaftar?", a: "Kunjungi halaman pendaftaran, isi data diri, pilih tiket gratis, dan dapatkan tiketmu langsung! Setelah itu tim kami akan memverifikasi pendaftaran Anda." },
+  { q: "Berapa harga tiketnya?", a: "Gratis! Semua tiket tersedia tanpa biaya. Event ini diselenggarakan secara gratis untuk seluruh peserta. Daftar sekarang dan amankan tiketmu." },
+  { q: "Apa yang perlu disiapkan?", a: "Cukup siapkan data diri (nama, email, WhatsApp), pilih tiket yang tersedia, dan kamu akan mendapatkan tiket digital secara instan." },
+  { q: "Bagaimana cara menghubungi panitia?", a: "Anda dapat menghubungi kami via WhatsApp di +62 858-0075-3804 atau email ke kkrrppi@gmail.com." },
+];
+---
+
+<div id="chatbot" class="fixed bottom-24 right-4 sm:right-6 z-50 flex flex-col items-end gap-3">
+  <div id="chat-window" class="hidden w-[340px] sm:w-[380px] bg-white rounded-2xl shadow-2xl border border-kkr-light/50 overflow-hidden animate-scale-in origin-bottom-right">
+    <div class="bg-gradient-to-r from-kkr-maroon to-kkr-red p-4 text-white">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center text-lg">🤖</div>
+        <div>
+          <p class="font-semibold text-sm">Elias</p>
+          <p class="text-xs text-kkr-light">Asisten KKR RPPI</p>
+        </div>
+        <button id="chat-close" class="ml-auto p-1 rounded-lg hover:bg-white/20 transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+    <div id="chat-body" class="p-4 max-h-[350px] overflow-y-auto space-y-3">
+      <div class="flex gap-2 items-start">
+        <div class="w-7 h-7 rounded-full bg-kkr-light/70 flex items-center justify-center text-xs shrink-0">🤖</div>
+        <div class="bg-kkr-light/40 rounded-2xl rounded-tl-sm px-4 py-2.5 text-sm text-kkr-purple">
+          Halo! 👋 Saya Elias, asisten KKR RPPI. Ada yang bisa saya bantu?
+        </div>
+      </div>
+      <div class="flex flex-wrap gap-2 pt-1">
+        {faqs.slice(0, 3).map((faq) => (
+          <button data-question={faq.q} class="text-xs bg-kkr-light text-kkr-red px-3 py-1.5 rounded-full hover:bg-kkr-light/70 transition-colors font-medium">{faq.q}</button>
+        ))}
+      </div>
+    </div>
+  </div>
+  <button id="chat-toggle" class="w-14 h-14 rounded-full bg-gradient-to-r from-kkr-red to-kkr-gold text-white shadow-lg shadow-kkr-maroon/30 flex items-center justify-center hover:scale-105 transition-transform active:scale-95">
+    <svg id="chat-icon" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    <svg id="close-icon" class="hidden w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+</div>
+
+<script>
+  const toggle = document.getElementById("chat-toggle");
+  const window = document.getElementById("chat-window");
+  const close = document.getElementById("chat-close");
+  const chatIcon = document.getElementById("chat-icon");
+  const closeIcon = document.getElementById("close-icon");
+  const body = document.getElementById("chat-body");
+
+  const faqs = [
+    { q: "Apa itu KKR RPPI?", a: "KKR RPPI adalah kebaktian kebangunan rohani yang mempersatukan siswa, alumni, guru, dan masyarakat dari berbagai sekolah di Kediri untuk mengalami kebangunan rohani dalam Yesus Kristus." },
+    { q: "Kapan dan di mana acara dilaksanakan?", a: "Acara akan dilaksanakan pada Sabtu, 10 Januari 2026 di SMK PGRI 1 Kediri, Jl. Himalaya No.06, Kediri. Mulai pukul 08.00 - 12.30 WIB." },
+    { q: "Bagaimana cara mendaftar?", a: "Kunjungi halaman pendaftaran, isi data diri, pilih tiket gratis, dan dapatkan tiketmu langsung! Setelah itu tim kami akan memverifikasi pendaftaran Anda." },
+    { q: "Berapa harga tiketnya?", a: "Gratis! Semua tiket tersedia tanpa biaya. Event ini diselenggarakan secara gratis untuk seluruh peserta. Daftar sekarang dan amankan tiketmu." },
+    { q: "Apa yang perlu disiapkan?", a: "Cukup siapkan data diri (nama, email, WhatsApp), pilih tiket yang tersedia, dan kamu akan mendapatkan tiket digital secara instan." },
+    { q: "Bagaimana cara menghubungi panitia?", a: "Anda dapat menghubungi kami via WhatsApp di +62 858-0075-3804 atau email ke kkrrppi@gmail.com." },
+  ];
+
+  function addBotMessage(text) {
+    const div = document.createElement("div");
+    div.className = "flex gap-2 items-start";
+    div.innerHTML = `<div class="w-7 h-7 rounded-full bg-kkr-light/70 flex items-center justify-center text-xs shrink-0">🤖</div><div class="bg-kkr-light/40 rounded-2xl rounded-tl-sm px-4 py-2.5 text-sm text-kkr-purple">${text}</div>`;
+    body.appendChild(div);
+    body.scrollTop = body.scrollHeight;
+  }
+
+  toggle.addEventListener("click", () => {
+    const isOpen = !window.classList.contains("hidden");
+    window.classList.toggle("hidden");
+    chatIcon.classList.toggle("hidden", !isOpen);
+    closeIcon.classList.toggle("hidden", isOpen);
+  });
+
+  close.addEventListener("click", () => {
+    window.classList.add("hidden");
+    chatIcon.classList.remove("hidden");
+    closeIcon.classList.add("hidden");
+  });
+
+  body.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-question]");
+    if (btn) {
+      const q = btn.dataset.question;
+      const faq = faqs.find(f => f.q === q);
+      if (faq) addBotMessage(faq.a);
+    }
+  });
+</script>

@@ -1,0 +1,398 @@
+---
+import PublicLayout from "../layouts/PublicLayout.astro";
+import ScrollReveal from "../components/ScrollReveal.astro";
+import Countdown from "../components/Countdown.astro";
+import ChatBot from "../components/ChatBot.astro";
+import WhatsAppFloat from "../components/WhatsAppFloat.astro";
+---
+
+<PublicLayout title="KKR RPPI | Kebangunan Rohani dalam Yesus Kristus" description="KKR RPPI mempersatukan pelajar, alumni, dan masyarakat dalam kebangunan rohani Yesus Kristus.">
+  <div class="space-y-24 pb-24">
+    <!-- Hero -->
+    <section id="home" class="relative min-h-[90vh] flex items-center overflow-hidden">
+      <div class="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-kkr-light"></div>
+      <div class="absolute top-20 left-0 w-64 h-64 bg-blue-200/30 rounded-full blur-3xl"></div>
+      <div class="absolute bottom-20 right-0 w-80 h-80 bg-kkr-red/15 rounded-full blur-3xl"></div>
+
+      <div class="absolute left-6 top-1/2 -translate-y-1/2 hidden lg:block text-[120px] opacity-10 pointer-events-none select-none leading-none">
+        ✝️
+      </div>
+      <div class="absolute right-6 top-1/3 hidden lg:block text-[80px] opacity-10 pointer-events-none select-none leading-none">
+        🕊️
+      </div>
+
+      <div class="relative mx-auto max-w-7xl px-6 w-full">
+        <div class="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+          <div class="space-y-8 animate-fade-in">
+            <div class="flex items-center gap-3">
+              <span class="inline-block w-12 h-px bg-kkr-red"></span>
+              <span class="text-sm font-semibold uppercase tracking-[0.25em] text-kkr-red">KKR RPPI 2025/2026</span>
+            </div>
+            <h1 class="text-5xl font-semibold tracking-tight text-kkr-dark sm:text-7xl leading-[1.1]">
+              Terang dalam<br/>
+              <span class="text-kkr-red">Kasih Kristus</span>
+            </h1>
+            <div class="w-16 h-1 bg-gradient-to-r from-kkr-red to-blue-500 rounded-full"></div>
+            <p class="max-w-xl text-lg leading-8 text-kkr-maroon italic">
+              "Jika umat-Ku yang disebut dengan nama-Ku merendahkan diri, berdoa dan mencari wajah-Ku, maka Aku akan mendengar dari sorga."
+            </p>
+            <p class="text-sm text-kkr-maroon/80 font-medium">— 2 Tawarikh 7:14</p>
+            <div class="flex flex-wrap gap-4">
+              <a href="/registration" class="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-kkr-maroon to-kkr-red px-8 py-4 text-sm font-semibold text-white shadow-lg shadow-kkr-maroon/20 transition hover:shadow-xl hover:shadow-kkr-maroon/30 hover:-translate-y-0.5">
+                Daftar Sekarang
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              </a>
+              <a href="#about" class="inline-flex items-center gap-2 rounded-full border border-kkr-light/80 bg-white/80 backdrop-blur-sm px-8 py-4 text-sm font-semibold text-kkr-purple transition hover:border-kkr-red hover:text-kkr-red hover:bg-white">
+                Lihat Info Acara
+              </a>
+            </div>
+          </div>
+
+          <div class="relative animate-fade-in-up">
+            <div class="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-blue-50 via-white to-kkr-light p-6 sm:p-8 shadow-2xl shadow-slate-200/40 border border-white/60">
+              <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(219,234,254,.4),_transparent_50%)]"></div>
+              <div class="relative grid gap-5 rounded-[2rem] bg-white/90 backdrop-blur-sm p-6 sm:p-8 shadow-lg">
+                <div class="rounded-[2rem] bg-gradient-to-br from-kkr-dark to-kkr-purple p-6 sm:p-8 text-white shadow-xl">
+                  <div class="flex items-center gap-3 mb-4">
+                    <span class="text-3xl">✝️</span>
+                    <span class="text-sm uppercase tracking-[0.3em] text-kkr-light font-semibold">Kebangunan Rohani</span>
+                  </div>
+                  <p class="text-2xl sm:text-3xl font-semibold leading-tight">Mengalami kebangunan rohani dalam Yesus Kristus.</p>
+                  <p class="mt-4 text-slate-300 text-sm leading-relaxed">Bersama dalam pujian, doa, dan firman Tuhan, kita bersukacita atas kasih karunia yang telah dianugerahkan kepada kita.</p>
+                </div>
+                <div class="grid gap-4 sm:grid-cols-2">
+                  <div class="rounded-2xl border border-kkr-light/50 bg-white p-5">
+                    <span class="text-2xl">🎟️</span>
+                    <p class="mt-2 text-sm font-semibold text-kkr-dark">Pendaftaran</p>
+                    <p class="text-xs text-kkr-maroon/80 mt-0.5">Tiket tersedia untuk semua peserta</p>
+                  </div>
+                  <div class="rounded-2xl border border-kkr-light/50 bg-white p-5">
+                    <span class="text-2xl">⛪</span>
+                    <p class="mt-2 text-sm font-semibold text-kkr-dark">Lokasi</p>
+                    <p id="hero-location" class="text-xs text-kkr-maroon/80 mt-0.5">Memuat...</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tentang Acara -->
+    <ScrollReveal>
+      <section id="about" class="scroll-mt-20 mx-auto max-w-7xl px-6">
+        <div class="grid gap-10 lg:grid-cols-[1fr_0.8fr] items-start">
+          <div class="space-y-6 rounded-[2.5rem] bg-white p-8 sm:p-10 shadow-xl shadow-slate-200/40 border border-kkr-light/30">
+            <div class="flex items-center gap-3">
+              <span class="inline-block w-8 h-px bg-kkr-red"></span>
+              <span class="text-sm font-semibold uppercase tracking-[0.25em] text-kkr-red">Tentang Acara</span>
+            </div>
+            <h2 class="text-3xl sm:text-4xl font-semibold text-kkr-dark leading-tight">KKR dengan Sukacita & Syukur</h2>
+            <p class="text-kkr-maroon leading-7">KKR RPPI 2025/2026 adalah kebaktian kebangunan rohani yang mempersatukan pelajar, alumni, dan masyarakat dari berbagai sekolah di Kediri. Sebuah momen untuk merenungkan kasih Tuhan dan mengalami pembaharuan iman.</p>
+            <p class="text-kkr-maroon leading-7">Bersama pembicara tamu dari Surabaya, kita akan merenungkan makna kebangunan rohani yang sesungguhnya — bahwa pertobatan dan pembaharuan membawa kita lebih dekat kepada Tuhan, sesuai dengan firman dalam 2 Tawarikh 7:14.</p>
+            <blockquote class="border-l-4 border-kkr-red pl-6 py-3 italic text-kkr-maroon">
+              "Jika umat-Ku yang disebut dengan nama-Ku merendahkan diri, berdoa dan mencari wajah-Ku, maka Aku akan mendengar dari sorga."
+              <br/><span class="text-sm not-italic text-kkr-maroon/60 font-medium">— 2 Tawarikh 7:14</span>
+            </blockquote>
+          </div>
+
+          <div class="space-y-4">
+            <div class="rounded-2xl bg-gradient-to-br from-kkr-dark to-kkr-purple p-6 sm:p-8 text-white shadow-2xl shadow-kkr-dark/20">
+              <span class="text-3xl">🎶</span>
+              <h3 class="mt-4 text-xl font-semibold">Pujian & Penyembahan</h3>
+              <p class="mt-2 text-sm text-slate-300 leading-relaxed">Nikmati pujian dan penyembahan yang membawa hati kita lebih dekat kepada Tuhan, mengalami kebangunan rohani dalam Yesus Kristus.</p>
+            </div>
+            <div class="rounded-2xl border border-kkr-light/50 bg-white p-6 sm:p-8 shadow-lg shadow-slate-200/30">
+              <span class="text-3xl">🤝</span>
+              <h3 class="mt-4 text-xl font-semibold text-kkr-dark">Persekutuan Lintas Sekolah</h3>
+              <p class="mt-2 text-sm text-kkr-maroon leading-relaxed">Acara ini mempertemukan siswa-siswi dari berbagai sekolah di Kediri dan sekitarnya untuk membangun persaudaraan dan memperkuat ikatan iman dalam Tuhan Yesus.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </ScrollReveal>
+
+    <!-- Pembicara (dinamis dari DB) -->
+    <ScrollReveal>
+      <section id="speakers" class="scroll-mt-20 mx-auto max-w-7xl px-6">
+        <div class="text-center max-w-2xl mx-auto space-y-4 mb-12">
+          <div class="flex items-center justify-center gap-3">
+            <span class="inline-block w-8 h-px bg-kkr-red"></span>
+            <span class="text-sm font-semibold uppercase tracking-[0.25em] text-kkr-red">Pembicara</span>
+            <span class="inline-block w-8 h-px bg-kkr-red"></span>
+          </div>
+          <h2 class="text-3xl sm:text-4xl font-semibold text-kkr-dark">Bersama Pembicara Rohani</h2>
+          <div class="w-12 h-0.5 bg-gradient-to-r from-kkr-red to-blue-500 mx-auto rounded-full"></div>
+        </div>
+
+        <div id="speaker-grid" class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div class="col-span-full text-center py-12 text-kkr-maroon/60">
+            <div class="inline-block w-8 h-8 border-2 border-kkr-maroon border-t-transparent rounded-full animate-spin"></div>
+            <p class="mt-3 text-sm">Memuat pembicara...</p>
+          </div>
+        </div>
+      </section>
+    </ScrollReveal>
+
+    <!-- Sponsor Section -->
+    <ScrollReveal>
+      <section id="sponsors" class="scroll-mt-20 mx-auto max-w-7xl px-6">
+        <div class="text-center max-w-2xl mx-auto space-y-4 mb-12">
+          <div class="flex items-center justify-center gap-3">
+            <span class="inline-block w-8 h-px bg-kkr-red"></span>
+            <span class="text-sm font-semibold uppercase tracking-[0.25em] text-kkr-red">Sponsor & Mitra</span>
+            <span class="inline-block w-8 h-px bg-kkr-red"></span>
+          </div>
+          <h2 class="text-3xl sm:text-4xl font-semibold text-kkr-dark">Didukung oleh</h2>
+          <p class="text-kkr-maroon">Para sponsor dan mitra yang mendukung terselenggaranya KKR RPPI 2026</p>
+          <div class="w-12 h-0.5 bg-gradient-to-r from-kkr-red to-blue-500 mx-auto rounded-full"></div>
+        </div>
+
+        <div id="sponsor-grid" class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div class="col-span-full text-center py-12 text-kkr-maroon/60">
+            <div class="inline-block w-8 h-8 border-2 border-kkr-maroon border-t-transparent rounded-full animate-spin"></div>
+            <p class="mt-3 text-sm">Memuat sponsor...</p>
+          </div>
+        </div>
+
+        <div class="text-center mt-10">
+          <a href="#contact" class="inline-flex items-center gap-2 rounded-full bg-kkr-red px-8 py-4 text-sm font-semibold text-white transition hover:bg-kkr-maroon">
+            Tertarik jadi Sponsor? Hubungi Kami
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
+        </div>
+      </section>
+    </ScrollReveal>
+
+    <!-- Countdown -->
+    <Countdown />
+
+    <!-- Lokasi -->
+    <ScrollReveal>
+      <section id="location" class="scroll-mt-20 mx-auto max-w-7xl px-6">
+        <div class="text-center max-w-2xl mx-auto space-y-4 mb-12">
+          <div class="flex items-center justify-center gap-3">
+            <span class="inline-block w-8 h-px bg-kkr-red"></span>
+            <span class="text-sm font-semibold uppercase tracking-[0.25em] text-kkr-red">Lokasi & Waktu</span>
+            <span class="inline-block w-8 h-px bg-kkr-red"></span>
+          </div>
+          <div class="w-12 h-0.5 bg-gradient-to-r from-kkr-red to-blue-500 mx-auto rounded-full"></div>
+        </div>
+
+        <div class="grid gap-8 lg:grid-cols-[1fr_0.9fr] items-start">
+          <div class="rounded-[2.5rem] bg-white p-6 sm:p-8 shadow-xl shadow-slate-200/40 border border-kkr-light/30">
+            <div class="flex items-center gap-2 mb-4">
+              <span class="text-2xl">📍</span>
+              <span class="text-sm font-semibold uppercase tracking-[0.2em] text-kkr-red">Temui Kami di Sini</span>
+            </div>
+            <h2 id="loc-venue" class="text-2xl sm:text-3xl font-semibold text-kkr-dark">Memuat...</h2>
+            <div class="mt-6 space-y-4 divide-y divide-kkr-light/30">
+              <div class="flex items-start gap-4 pb-4">
+                <span class="text-xl shrink-0 mt-0.5">🏫</span>
+                <div>
+                  <p class="font-medium text-kkr-dark">Alamat</p>
+                  <p id="loc-address" class="text-sm text-kkr-maroon">Memuat...</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-4 py-4">
+                <span class="text-xl shrink-0 mt-0.5">📅</span>
+                <div>
+                  <p class="font-medium text-kkr-dark">Tanggal</p>
+                  <p id="loc-date" class="text-sm text-kkr-maroon">Memuat...</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-4 py-4">
+                <span class="text-xl shrink-0 mt-0.5">⏰</span>
+                <div>
+                  <p class="font-medium text-kkr-dark">Waktu</p>
+                  <p id="loc-time" class="text-sm text-kkr-maroon">Memuat...</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-4 py-4">
+                <span class="text-xl shrink-0 mt-0.5">⏳</span>
+                <div>
+                  <p class="font-medium text-kkr-dark">Batas Pendaftaran</p>
+                  <p id="reg-deadline" class="text-sm text-kkr-maroon">Memuat...</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-4 pt-4">
+                <span class="text-xl shrink-0 mt-0.5">📞</span>
+                <div>
+                  <p class="font-medium text-kkr-dark">Kontak</p>
+                  <p id="loc-phone" class="text-sm text-kkr-maroon">Memuat...</p>
+                  <a id="loc-wa" href="#" target="_blank" class="text-sm text-kkr-red hover:text-kkr-red font-medium">Memuat...</a>
+                </div>
+              </div>
+            </div>
+            <div class="mt-6 flex flex-wrap gap-3">
+              <a id="loc-maps-btn" href="#" target="_blank" class="inline-flex items-center gap-2 rounded-xl border border-kkr-light/80 px-5 py-3 text-sm font-semibold text-kkr-purple transition hover:bg-white hover:border-kkr-red">
+                Buka di Google Maps
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              </a>
+              <a href="/registration" class="inline-flex items-center gap-2 rounded-xl bg-kkr-red px-5 py-3 text-sm font-semibold text-white transition hover:bg-kkr-maroon">Daftar Sekarang</a>
+            </div>
+          </div>
+
+          <div class="overflow-hidden rounded-[2.5rem] border border-kkr-light/50 bg-white shadow-xl shadow-slate-200/40 h-[400px]">
+            <iframe id="loc-maps-iframe" class="h-full w-full" src="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          </div>
+        </div>
+      </section>
+    </ScrollReveal>
+
+    <!-- CTA -->
+    <ScrollReveal>
+      <section id="contact" class="mx-auto max-w-7xl px-6">
+        <div class="rounded-[2.5rem] bg-gradient-to-br from-kkr-dark via-kkr-purple to-kkr-maroon p-8 sm:p-14 text-white shadow-2xl shadow-kkr-dark/30 relative overflow-hidden">
+          <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(251,207,232,.08),_transparent_50%)]"></div>
+          <div class="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,_rgba(219,234,254,.05),_transparent_50%)]"></div>
+          <div class="relative grid gap-8 lg:grid-cols-[1.3fr_0.9fr] lg:items-center">
+            <div>
+              <div class="flex items-center gap-3">
+                <span class="inline-block w-8 h-px bg-kkr-red"></span>
+                <span class="text-sm font-semibold uppercase tracking-[0.3em] text-kkr-light">Siap Bergabung?</span>
+              </div>
+              <h2 class="mt-4 text-3xl sm:text-4xl font-semibold">Daftar sekarang, dan ikuti KKR dalam kasih Kristus.</h2>
+              <p class="mt-4 max-w-xl text-slate-300 leading-relaxed">Isi formulir pendaftaran, pilih tiket, dan amankan tempatmu dalam KKR RPPI yang penuh sukacita dan berkat.</p>
+            </div>
+            <div class="space-y-4">
+              <a href="/registration" class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-kkr-gold to-kkr-gold px-8 py-4 text-sm font-semibold text-kkr-dark shadow-lg shadow-kkr-gold/30 transition hover:shadow-xl hover:shadow-kkr-gold/40 hover:-translate-y-0.5">
+                Daftar Sekarang
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              </a>
+              <div class="rounded-xl border border-white/10 bg-white/5 p-5 backdrop-blur-sm">
+                <p class="text-xs uppercase tracking-[0.2em] text-kkr-light font-semibold">Kontak</p>
+                <p class="mt-2 text-lg font-semibold" id="cta-email">kkrrppi@gmail.com</p>
+                <p class="text-slate-300 text-sm" id="cta-phone">Memuat...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </ScrollReveal>
+  </div>
+
+  <!-- Floating Components -->
+  <ChatBot />
+  <WhatsAppFloat />
+
+  <script>
+    function deriveEmbedUrl(link, venue) {
+      if (!link) return `https://www.google.com/maps?q=${encodeURIComponent(venue || "Lokasi Acara")}&output=embed`;
+      if (link.includes("output=embed")) return link;
+      if (link.includes("google.com/maps")) {
+        if (link.includes("?")) return link + "&output=embed";
+        return `https://www.google.com/maps?q=${encodeURIComponent(venue || "Lokasi Acara")}&output=embed`;
+      }
+      return `https://www.google.com/maps?q=${encodeURIComponent(venue || "Lokasi Acara")}&output=embed`;
+    }
+
+    async function loadSettings() {
+      try {
+        const res = await fetch("/api/settings");
+        const d = await res.json();
+        const s = d.settings || {};
+        const venue = s.locVenue || "SMK PGRI 1 Kediri";
+        const date = s.locDate || "Sabtu, 10 Januari 2026";
+        const time = s.locTime || "08:00 - 12:30 WIB";
+        const regDeadline = s.regDeadline || "29 Desember 2025";
+        const mapsLink = s.locMapsLink || "https://maps.app.goo.gl/RCzwb8tiKNdVwXA59";
+        const mapsSrc = s.locMaps || deriveEmbedUrl(mapsLink, venue);
+        const email = s.contactEmail || "kkrrppi@gmail.com";
+        const phone = s.contactPhone || "(0354) 682433";
+        const wa = s.contactWa || "6285800753804";
+        document.getElementById("hero-location").textContent = venue;
+        document.getElementById("loc-venue").textContent = venue;
+        if (document.getElementById("loc-address")) document.getElementById("loc-address").textContent = "Lihat peta di bawah";
+        document.getElementById("loc-date").textContent = date;
+        document.getElementById("loc-time").textContent = time;
+        if (document.getElementById("reg-deadline")) document.getElementById("reg-deadline").textContent = regDeadline;
+        document.getElementById("loc-phone").textContent = phone;
+        document.getElementById("loc-wa").href = "https://wa.me/" + wa;
+        document.getElementById("loc-wa").textContent = "WhatsApp: +" + wa;
+        document.getElementById("loc-maps-btn").href = mapsLink;
+        document.getElementById("loc-maps-iframe").src = mapsSrc;
+        document.getElementById("cta-email").textContent = email;
+        document.getElementById("cta-phone").textContent = phone;
+        const waFloat = document.querySelector(".wa-float-link");
+        if (waFloat) waFloat.href = "https://wa.me/" + wa;
+      } catch {}
+    }
+
+    async function loadSpeakers() {
+      try {
+        const res = await fetch("/api/speakers");
+        const d = await res.json();
+        const grid = document.getElementById("speaker-grid");
+        const list = (d.speakers || []).filter(s => s.is_active);
+        if (!list.length) {
+          grid.innerHTML = `<div class="col-span-full text-center py-12 text-kkr-maroon/60"><p class="text-sm">Belum ada pembicara.</p></div>`;
+          return;
+        }
+        grid.innerHTML = list.map(s => `
+          <div class="rounded-[2.5rem] bg-white border border-kkr-light/50 p-6 sm:p-8 shadow-xl shadow-slate-200/40 text-center hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
+            ${s.photo_url
+              ? `<img src="${s.photo_url}" class="w-28 h-28 rounded-full object-cover mx-auto shadow-lg shadow-kkr-light/50 border-2 border-white" />`
+              : `<div class="w-28 h-28 rounded-full bg-gradient-to-br from-blue-100 to-kkr-light mx-auto flex items-center justify-center text-5xl shadow-lg shadow-kkr-light/50">✝️</div>`
+            }
+            <div class="mt-5 space-y-1">
+              ${s.title ? `<span class="inline-block text-xs font-semibold uppercase tracking-wider text-kkr-red bg-kkr-light px-3 py-1 rounded-full">${s.title}</span>` : ""}
+              <h3 class="text-2xl font-semibold text-kkr-dark mt-2">${s.name}</h3>
+              ${s.organization ? `<p class="text-kkr-maroon/80 text-sm">${s.organization}</p>` : ""}
+            </div>
+            ${s.description ? `<p class="mt-4 text-sm text-kkr-maroon leading-relaxed max-w-md mx-auto">${s.description}</p>` : ""}
+            ${s.tags ? `<div class="flex flex-wrap justify-center gap-2 mt-5">${s.tags.split(",").map(t => `<span class="text-xs bg-kkr-light text-kkr-red px-3 py-1 rounded-full font-medium">${t.trim()}</span>`).join("")}</div>` : ""}
+          </div>
+        `).join("");
+      } catch {
+        document.getElementById("speaker-grid").innerHTML = `<div class="col-span-full text-center py-12 text-red-500"><p>Gagal memuat pembicara.</p></div>`;
+      }
+    }
+
+    async function loadSponsors() {
+      try {
+        const res = await fetch("/api/sponsors");
+        const data = await res.json();
+        const grid = document.getElementById("sponsor-grid");
+        const list = data.sponsors || [];
+        if (!list.length) {
+          grid.innerHTML = `<div class="col-span-full text-center py-12 text-kkr-maroon/60"><p class="text-sm">Belum ada sponsor. Jadilah yang pertama!</p></div>`;
+          return;
+        }
+        const tiers = { platinum: [], gold: [], silver: [], bronze: [] };
+        for (const s of list) { if (tiers[s.tier]) tiers[s.tier].push(s); else tiers.bronze.push(s); }
+        const tierMeta = {
+          platinum: { label: "Platinum", color: "bg-gradient-to-br from-kkr-light to-kkr-light/50 border-kkr-light/80", badge: "bg-kkr-dark text-white ring-2 ring-kkr-dark/20" },
+          gold: { label: "Gold", color: "bg-gradient-to-br from-kkr-light to-kkr-light border-kkr-gold/30", badge: "bg-kkr-gold text-white" },
+          silver: { label: "Silver", color: "bg-gradient-to-br from-gray-50 to-gray-100 border-gray-200", badge: "bg-gray-400 text-white" },
+          bronze: { label: "Bronze", color: "bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200", badge: "bg-orange-400 text-white" },
+        };
+        grid.innerHTML = "";
+        for (const [tier, items] of Object.entries(tiers)) {
+          if (!items.length) continue;
+          const meta = tierMeta[tier];
+          grid.innerHTML += `<div class="col-span-full"><div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">${items.map(s => `
+            <div class="rounded-2xl border ${meta.color} p-6 shadow-sm transition hover:shadow-md hover:-translate-y-0.5 duration-200">
+              <div class="flex items-start justify-between gap-3">
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-3">
+                    ${s.logo_url ? `<img src="${s.logo_url}" class="w-10 h-10 rounded-lg object-contain border border-kkr-light/50 bg-white shrink-0" />` : ""}
+                    <h3 class="font-semibold text-kkr-dark truncate">${s.name}</h3>
+                  </div>
+                  ${s.description ? `<p class="mt-2 text-sm text-kkr-maroon line-clamp-2">${s.description}</p>` : ""}
+                </div>
+                <span class="shrink-0 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${meta.badge}">${meta.label}</span>
+              </div>
+              ${s.website ? `<a href="${s.website}" target="_blank" class="mt-3 inline-flex items-center gap-1 text-sm text-kkr-red hover:text-kkr-red font-medium">Kunjungi <span>→</span></a>` : ""}
+            </div>
+          `).join("")}</div></div>`;
+        }
+      } catch {
+        document.getElementById("sponsor-grid").innerHTML = `<div class="col-span-full text-center py-12 text-red-500"><p>Gagal memuat data sponsor.</p></div>`;
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => { loadSettings(); loadSpeakers(); loadSponsors(); });
+  </script>
+</PublicLayout>
