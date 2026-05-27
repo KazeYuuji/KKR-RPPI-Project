@@ -86,27 +86,27 @@ import WhatsAppFloat from "../components/WhatsAppFloat.astro";
           <div class="space-y-6 rounded-[2.5rem] bg-white p-8 sm:p-10 shadow-xl shadow-slate-200/40 border border-kkr-light/30">
             <div class="flex items-center gap-3">
               <span class="inline-block w-8 h-px bg-kkr-red"></span>
-              <span class="text-sm font-semibold uppercase tracking-[0.25em] text-kkr-red">Tentang Acara</span>
+              <span id="about-badge" class="text-sm font-semibold uppercase tracking-[0.25em] text-kkr-red">Tentang Acara</span>
             </div>
             <h2 id="about-heading" class="text-3xl sm:text-4xl font-semibold text-kkr-dark leading-tight">KKR dengan Sukacita & Syukur</h2>
             <p id="about-desc1" class="text-kkr-maroon leading-7">KKR RPPI 2025/2026 adalah kebaktian kebangunan rohani yang mempersatukan pelajar, alumni, dan masyarakat dari berbagai sekolah di Kediri. Sebuah momen untuk merenungkan kasih Tuhan dan mengalami pembaharuan iman.</p>
             <p id="about-desc2" class="text-kkr-maroon leading-7">Bersama pembicara tamu dari Surabaya, kita akan merenungkan makna kebangunan rohani yang sesungguhnya — bahwa pertobatan dan pembaharuan membawa kita lebih dekat kepada Tuhan, sesuai dengan firman dalam 2 Tawarikh 7:14.</p>
             <blockquote class="border-l-4 border-kkr-red pl-6 py-3 italic text-kkr-maroon">
-              "Jika umat-Ku yang disebut dengan nama-Ku merendahkan diri, berdoa dan mencari wajah-Ku, maka Aku akan mendengar dari sorga."
-              <br/><span class="text-sm not-italic text-kkr-maroon/60 font-medium">— 2 Tawarikh 7:14</span>
+              <span id="about-blockquote">"Jika umat-Ku yang disebut dengan nama-Ku merendahkan diri, berdoa dan mencari wajah-Ku, maka Aku akan mendengar dari sorga."</span>
+              <br/><span id="about-blockquote-ref" class="text-sm not-italic text-kkr-maroon/60 font-medium">— 2 Tawarikh 7:14</span>
             </blockquote>
           </div>
 
           <div class="space-y-4">
             <div class="rounded-2xl bg-gradient-to-br from-kkr-dark to-kkr-purple p-6 sm:p-8 text-white shadow-2xl shadow-kkr-dark/20">
-              <span class="text-3xl">🎶</span>
-              <h3 class="mt-4 text-xl font-semibold">Pujian & Penyembahan</h3>
-              <p class="mt-2 text-sm text-slate-300 leading-relaxed">Nikmati pujian dan penyembahan yang membawa hati kita lebih dekat kepada Tuhan, mengalami kebangunan rohani dalam Yesus Kristus.</p>
+              <span id="about-card1-emoji" class="text-3xl">🎶</span>
+              <h3 id="about-card1-title" class="mt-4 text-xl font-semibold">Pujian & Penyembahan</h3>
+              <p id="about-card1-desc" class="mt-2 text-sm text-slate-300 leading-relaxed">Nikmati pujian dan penyembahan yang membawa hati kita lebih dekat kepada Tuhan, mengalami kebangunan rohani dalam Yesus Kristus.</p>
             </div>
             <div class="rounded-2xl border border-kkr-light/50 bg-white p-6 sm:p-8 shadow-lg shadow-slate-200/30">
-              <span class="text-3xl">🤝</span>
-              <h3 class="mt-4 text-xl font-semibold text-kkr-dark">Persekutuan Lintas Sekolah</h3>
-              <p class="mt-2 text-sm text-kkr-maroon leading-relaxed">Acara ini mempertemukan siswa-siswi dari berbagai sekolah di Kediri dan sekitarnya untuk membangun persaudaraan dan memperkuat ikatan iman dalam Tuhan Yesus.</p>
+              <span id="about-card2-emoji" class="text-3xl">🤝</span>
+              <h3 id="about-card2-title" class="mt-4 text-xl font-semibold text-kkr-dark">Persekutuan Lintas Sekolah</h3>
+              <p id="about-card2-desc" class="mt-2 text-sm text-kkr-maroon leading-relaxed">Acara ini mempertemukan siswa-siswi dari berbagai sekolah di Kediri dan sekitarnya untuk membangun persaudaraan dan memperkuat ikatan iman dalam Tuhan Yesus.</p>
             </div>
           </div>
         </div>
@@ -315,6 +315,15 @@ import WhatsAppFloat from "../components/WhatsAppFloat.astro";
         if (s.aboutDesc2) document.getElementById("about-desc2").textContent = s.aboutDesc2;
         if (s.ctaTitle) document.getElementById("cta-title").textContent = s.ctaTitle;
         if (s.ctaDesc) document.getElementById("cta-desc").textContent = s.ctaDesc;
+        if (s.aboutBadge) document.getElementById("about-badge").textContent = s.aboutBadge;
+        if (s.aboutBlockquote) document.getElementById("about-blockquote").textContent = s.aboutBlockquote;
+        if (s.aboutBlockquoteRef) document.getElementById("about-blockquote-ref").textContent = "— " + s.aboutBlockquoteRef;
+        if (s.aboutCard1Emoji) document.getElementById("about-card1-emoji").textContent = s.aboutCard1Emoji;
+        if (s.aboutCard1Title) document.getElementById("about-card1-title").textContent = s.aboutCard1Title;
+        if (s.aboutCard1Desc) document.getElementById("about-card1-desc").textContent = s.aboutCard1Desc;
+        if (s.aboutCard2Emoji) document.getElementById("about-card2-emoji").textContent = s.aboutCard2Emoji;
+        if (s.aboutCard2Title) document.getElementById("about-card2-title").textContent = s.aboutCard2Title;
+        if (s.aboutCard2Desc) document.getElementById("about-card2-desc").textContent = s.aboutCard2Desc;
         document.getElementById("hero-location").textContent = venue;
         document.getElementById("loc-venue").textContent = venue;
         if (document.getElementById("loc-address")) document.getElementById("loc-address").textContent = "Lihat peta di bawah";

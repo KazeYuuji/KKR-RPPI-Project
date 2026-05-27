@@ -139,6 +139,65 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
       </form>
     </div>
 
+    <!-- About Section -->
+    <div class="rounded-2xl border border-kkr-light/50 bg-white p-6 sm:p-8 shadow-sm">
+      <div class="flex items-center gap-3 mb-1">
+        <span class="text-xl">📖</span>
+        <h2 class="text-xl font-semibold text-kkr-dark">Section About</h2>
+      </div>
+      <p class="text-sm text-kkr-maroon/80 mt-1">Sesuaikan konten di section "Tentang Acara" pada halaman utama.</p>
+      <form id="about-form" class="mt-6 space-y-4">
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label class="block text-sm font-medium text-kkr-purple mb-1">Badge Label</label>
+            <input id="about-badge" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Tentang Acara" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-kkr-purple mb-1">Blockquote Ayat</label>
+            <input id="about-blockquote" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder='"Jika umat-Ku..."' />
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-kkr-purple mb-1">Blockquote Referensi</label>
+          <input id="about-blockquote-ref" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="2 Tawarikh 7:14" />
+        </div>
+        <div class="border-t border-kkr-light/30 pt-4">
+          <p class="text-xs font-semibold uppercase tracking-wider text-kkr-purple mb-3">Kartu Samping (Kolom Kanan)</p>
+          <div class="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label class="block text-sm font-medium text-kkr-purple mb-1">Emoji Kartu 1</label>
+              <input id="about-card1-emoji" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="🎶" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-kkr-purple mb-1">Emoji Kartu 2</label>
+              <input id="about-card2-emoji" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="🤝" />
+            </div>
+          </div>
+          <div class="grid gap-4 sm:grid-cols-2 mt-4">
+            <div>
+              <label class="block text-sm font-medium text-kkr-purple mb-1">Judul Kartu 1</label>
+              <input id="about-card1-title" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Pujian & Penyembahan" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-kkr-purple mb-1">Judul Kartu 2</label>
+              <input id="about-card2-title" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Persekutuan Lintas Sekolah" />
+            </div>
+          </div>
+          <div class="grid gap-4 sm:grid-cols-2 mt-4">
+            <div>
+              <label class="block text-sm font-medium text-kkr-purple mb-1">Deskripsi Kartu 1</label>
+              <textarea id="about-card1-desc" rows="3" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Nikmati pujian dan penyembahan..."></textarea>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-kkr-purple mb-1">Deskripsi Kartu 2</label>
+              <textarea id="about-card2-desc" rows="3" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Acara ini mempertemukan siswa-siswi..."></textarea>
+            </div>
+          </div>
+        </div>
+        <button type="submit" class="rounded-xl bg-kkr-red px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-kkr-maroon">Simpan About</button>
+      </form>
+    </div>
+
     <!-- Ticket Manager -->
     <div class="rounded-2xl border border-kkr-light/50 bg-white p-6 sm:p-8 shadow-sm">
       <div class="flex items-center gap-3 mb-1">
@@ -210,6 +269,15 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
         if (s.aboutDesc2) document.getElementById("about-desc2").value = s.aboutDesc2;
         if (s.ctaTitle) document.getElementById("cta-title").value = s.ctaTitle;
         if (s.ctaDesc) document.getElementById("cta-desc").value = s.ctaDesc;
+        if (s.aboutBadge) document.getElementById("about-badge").value = s.aboutBadge;
+        if (s.aboutBlockquote) document.getElementById("about-blockquote").value = s.aboutBlockquote;
+        if (s.aboutBlockquoteRef) document.getElementById("about-blockquote-ref").value = s.aboutBlockquoteRef;
+        if (s.aboutCard1Emoji) document.getElementById("about-card1-emoji").value = s.aboutCard1Emoji;
+        if (s.aboutCard1Title) document.getElementById("about-card1-title").value = s.aboutCard1Title;
+        if (s.aboutCard1Desc) document.getElementById("about-card1-desc").value = s.aboutCard1Desc;
+        if (s.aboutCard2Emoji) document.getElementById("about-card2-emoji").value = s.aboutCard2Emoji;
+        if (s.aboutCard2Title) document.getElementById("about-card2-title").value = s.aboutCard2Title;
+        if (s.aboutCard2Desc) document.getElementById("about-card2-desc").value = s.aboutCard2Desc;
       } catch {}
     }
 
@@ -411,6 +479,28 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
         else throw new Error();
       } catch { toast("Gagal menyimpan teks", "error"); }
       btn.disabled = false; btn.textContent = "Simpan Teks";
+    });
+
+    document.getElementById("about-form")?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const btn = e.target.querySelector("button[type=submit]");
+      btn.disabled = true; btn.textContent = "Menyimpan...";
+      try {
+        const res = await fetch("/api/settings", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({
+          aboutBadge: document.getElementById("about-badge").value.trim(),
+          aboutBlockquote: document.getElementById("about-blockquote").value.trim(),
+          aboutBlockquoteRef: document.getElementById("about-blockquote-ref").value.trim(),
+          aboutCard1Emoji: document.getElementById("about-card1-emoji").value.trim(),
+          aboutCard1Title: document.getElementById("about-card1-title").value.trim(),
+          aboutCard1Desc: document.getElementById("about-card1-desc").value.trim(),
+          aboutCard2Emoji: document.getElementById("about-card2-emoji").value.trim(),
+          aboutCard2Title: document.getElementById("about-card2-title").value.trim(),
+          aboutCard2Desc: document.getElementById("about-card2-desc").value.trim(),
+        })});
+        if (res.ok) toast("About berhasil disimpan!");
+        else throw new Error();
+      } catch { toast("Gagal menyimpan about", "error"); }
+      btn.disabled = false; btn.textContent = "Simpan About";
     });
 
     document.addEventListener("DOMContentLoaded", () => { loadSettings(); loadTickets(); });
