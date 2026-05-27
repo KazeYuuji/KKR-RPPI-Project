@@ -32,9 +32,9 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
     <!-- Stats -->
     <div id="stats-grid" class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
       <StatCard label="Total Pendaftar" value="—" icon={userIcon} colorIndex={0} />
-      <StatCard label="Terverifikasi" value="—" icon={checkIcon} colorIndex={1} />
-      <StatCard label="Menunggu" value="—" icon={clockIcon} colorIndex={2} />
-      <StatCard label="Check-in" value="—" icon={pinIcon} colorIndex={3} />
+      <StatCard label="Sudah Check-in" value="—" icon={checkIcon} colorIndex={1} />
+      <StatCard label="Belum Check-in" value="—" icon={clockIcon} colorIndex={2} />
+      <StatCard label="Sponsor" value="—" icon={pinIcon} colorIndex={3} />
     </div>
 
     <!-- Main Grid -->
@@ -60,7 +60,6 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
                 <th class="py-3.5 px-5 font-semibold text-left">Nama</th>
                 <th class="py-3.5 px-5 font-semibold text-left hidden sm:table-cell">Sekolah</th>
                 <th class="py-3.5 px-5 font-semibold text-left">Tiket</th>
-                <th class="py-3.5 px-5 font-semibold text-left">Status</th>
                 <th class="py-3.5 px-5 font-semibold text-left hidden md:table-cell">Check-in</th>
                 <th class="py-3.5 px-5 font-semibold text-right">Aksi</th>
               </tr>
@@ -130,7 +129,7 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
         const d = await res.json();
         const cards = document.querySelectorAll("#stats-grid > div");
         if (cards.length >= 4) {
-          const values = [d.totalRegistrants, d.verified, d.pending, d.checkedIn];
+          const values = [d.totalRegistrants, d.checkedIn, d.totalRegistrants - d.checkedIn, d.sponsorCount];
           cards.forEach((card, i) => {
             const valEl = card.querySelector(".text-2xl");
             if (valEl && values[i] !== undefined) {
@@ -155,7 +154,7 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
         const list = d.registrants || [];
         const tbody = document.getElementById("registrant-rows");
         if (!list.length) {
-          tbody.innerHTML = `<tr><td colspan="6" class="py-12 text-center text-kkr-maroon/60 text-sm">Belum ada pendaftar.</td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="5" class="py-12 text-center text-kkr-maroon/60 text-sm">Belum ada pendaftar.</td></tr>`;
           return;
         }
         tbody.innerHTML = list.map((r) => `
@@ -168,13 +167,9 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
             </td>
             <td class="py-3.5 px-5 text-kkr-maroon hidden sm:table-cell">${r.school}</td>
             <td class="py-3.5 px-5 text-kkr-maroon">${r.ticket}</td>
-            <td class="py-3.5 px-5"><span class="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold ${r.status === 'Verified' ? 'bg-emerald-50 text-emerald-700' : 'bg-kkr-gold/20 text-kkr-maroon'}"><span class="w-1 h-1 rounded-full ${r.status === 'Verified' ? 'bg-emerald-500' : 'bg-kkr-gold'}"></span>${r.status}</span></td>
             <td class="py-3.5 px-5 hidden md:table-cell"><span class="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold ${r.checked_in ? 'bg-kkr-dark text-white' : 'bg-kkr-light/40 text-kkr-maroon'}">${r.checked_in ? '✓ Checked-in' : '— Belum'}</span></td>
             <td class="py-3.5 px-5 text-right">
-              <div class="flex gap-1 justify-end">
-                <button data-action="verify" data-id="${r.id}" class="rounded-lg px-2.5 py-1.5 text-xs font-semibold transition ${r.status === 'Verified' ? 'bg-kkr-gold/30 text-kkr-maroon hover:bg-kkr-gold/40' : 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200'}">${r.status === 'Verified' ? 'Batal' : 'Verif'}</button>
-                ${r.checked_in ? '<span class="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-semibold bg-kkr-dark text-white"><svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Done</span>' : `<button data-action="checkin" data-id="${r.id}" class="rounded-lg px-2.5 py-1.5 text-xs font-semibold transition bg-emerald-100 text-emerald-700 hover:bg-emerald-200">CI</button>`}
-              </div>
+              ${r.checked_in ? '<span class="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-semibold bg-kkr-dark text-white"><svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Done</span>' : `<button data-action="checkin" data-id="${r.id}" class="rounded-lg px-2.5 py-1.5 text-xs font-semibold transition bg-emerald-100 text-emerald-700 hover:bg-emerald-200">CI</button>`}
             </td>
           </tr>
         `).join("");
@@ -206,11 +201,14 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
       const btn = e.target.closest("button[data-action]");
       if (!btn) return;
       const id = btn.dataset.id;
-      const action = btn.dataset.action;
       try {
-        const res = await fetch("/api/registrants", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id, action }) });
-        if (res.ok) { loadRegistrants(); loadStats(); toast("Berhasil diperbarui"); }
-      } catch { toast("Gagal memperbarui", "error"); }
+        const res = await fetch("/api/registrants", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id, action: "checkin" }) });
+        if (res.ok) { loadRegistrants(); loadStats(); toast("Check-in berhasil!"); }
+        else {
+          const d = await res.json();
+          toast(d.error || "Gagal", "error");
+        }
+      } catch { toast("Gagal check-in", "error"); }
     });
 
     document.getElementById("checkin-form")?.addEventListener("submit", async (e) => {

@@ -58,8 +58,16 @@ const regClose = "2025-12-29T23:59:59";
 
     fetch("/api/settings").then(r => r.json()).then(d => {
       const s = d.settings || {};
-      if (s.regDeadlineISO) regDate = new Date(s.regDeadlineISO).getTime();
-      if (s.eventDateISO) eventDate = new Date(s.eventDateISO).getTime();
+      if (s.regDeadlineISO) {
+        let dl = s.regDeadlineISO;
+        if (!dl.endsWith("Z") && !/[+-]\d{2}:\d{2}$/.test(dl)) dl += "+07:00";
+        regDate = new Date(dl).getTime();
+      }
+      if (s.eventDateISO) {
+        let dl = s.eventDateISO;
+        if (!dl.endsWith("Z") && !/[+-]\d{2}:\d{2}$/.test(dl)) dl += "+07:00";
+        eventDate = new Date(dl).getTime();
+      }
       if (s.locDate) {
         const el = document.querySelector("#countdown .text-kkr-gold.text-lg.font-semibold.mt-1");
         if (el) el.textContent = s.locDate;

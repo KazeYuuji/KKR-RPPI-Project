@@ -107,6 +107,7 @@ export interface TicketType {
 
     let lastTicketId = "";
     let refreshInterval = null;
+    let deadlinePassed = false;
 
     async function loadTickets() {
       try {
@@ -163,6 +164,11 @@ export interface TicketType {
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
+      if (deadlinePassed) {
+        alert("Pendaftaran telah ditutup.");
+        return;
+      }
+
       const selectedOpt = select.selectedOptions[0];
       if (selectedOpt?.disabled) {
         alert("Tiket yang dipilih sudah habis. Silakan pilih tiket lain.");
@@ -182,7 +188,6 @@ export interface TicketType {
         whatsapp: data.get("whatsapp")?.toString().trim() || "",
         participant_type: participantType,
         ticket: ticketType,
-        status: "Pending",
         checked_in: 0,
       };
 
@@ -243,8 +248,32 @@ export interface TicketType {
       el.addEventListener("change", toggleSchoolField);
     });
 
+    async function checkDeadline() {
+      try {
+        const res = await fetch("/api/settings");
+        const d = await res.json();
+        const s = d.settings || {};
+        if (s.regDeadlineISO) {
+          let dl = s.regDeadlineISO;
+          if (!dl.endsWith("Z") && !/[+-]\d{2}:\d{2}$/.test(dl)) dl += "+07:00";
+          const deadline = new Date(dl).getTime();
+          if (Date.now() > deadline) {
+            deadlinePassed = true;
+            if (refreshInterval) clearInterval(refreshInterval);
+            form.querySelectorAll("input, select, button").forEach(el => el.disabled = true);
+            form.innerHTML = `<div class="rounded-2xl bg-red-50 p-8 text-center">
+              <span class="text-4xl">⏰</span>
+              <h3 class="mt-4 text-xl font-semibold text-red-700">Pendaftaran Ditutup</h3>
+              <p class="mt-2 text-red-600/80">Batas waktu pendaftaran telah berakhir. Terima kasih atas minat Anda.</p>
+            </div>`;
+          }
+        }
+      } catch {}
+    }
+
     document.addEventListener("DOMContentLoaded", () => {
       loadTickets();
+      checkDeadline();
       toggleSchoolField();
       refreshInterval = setInterval(loadTickets, 10000);
     });

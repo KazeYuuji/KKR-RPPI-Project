@@ -28,15 +28,15 @@ import WhatsAppFloat from "../components/WhatsAppFloat.astro";
               <span class="inline-block w-12 h-px bg-kkr-red"></span>
               <span class="text-sm font-semibold uppercase tracking-[0.25em] text-kkr-red">KKR RPPI 2025/2026</span>
             </div>
-            <h1 class="text-5xl font-semibold tracking-tight text-kkr-dark sm:text-7xl leading-[1.1]">
-              Terang dalam<br/>
-              <span class="text-kkr-red">Kasih Kristus</span>
+            <h1 id="hero-heading" class="text-5xl font-semibold tracking-tight text-kkr-dark sm:text-7xl leading-[1.1]">
+              <span id="hero-title1">Terang dalam</span><br/>
+              <span id="hero-title2" class="text-kkr-red">Kasih Kristus</span>
             </h1>
             <div class="w-16 h-1 bg-gradient-to-r from-kkr-red to-blue-500 rounded-full"></div>
-            <p class="max-w-xl text-lg leading-8 text-kkr-maroon italic">
+            <p id="hero-verse" class="max-w-xl text-lg leading-8 text-kkr-maroon italic">
               "Jika umat-Ku yang disebut dengan nama-Ku merendahkan diri, berdoa dan mencari wajah-Ku, maka Aku akan mendengar dari sorga."
             </p>
-            <p class="text-sm text-kkr-maroon/80 font-medium">— 2 Tawarikh 7:14</p>
+            <p id="hero-verse-ref" class="text-sm text-kkr-maroon/80 font-medium">— 2 Tawarikh 7:14</p>
             <div class="flex flex-wrap gap-4">
               <a href="/registration" class="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-kkr-maroon to-kkr-red px-8 py-4 text-sm font-semibold text-white shadow-lg shadow-kkr-maroon/20 transition hover:shadow-xl hover:shadow-kkr-maroon/30 hover:-translate-y-0.5">
                 Daftar Sekarang
@@ -88,9 +88,9 @@ import WhatsAppFloat from "../components/WhatsAppFloat.astro";
               <span class="inline-block w-8 h-px bg-kkr-red"></span>
               <span class="text-sm font-semibold uppercase tracking-[0.25em] text-kkr-red">Tentang Acara</span>
             </div>
-            <h2 class="text-3xl sm:text-4xl font-semibold text-kkr-dark leading-tight">KKR dengan Sukacita & Syukur</h2>
-            <p class="text-kkr-maroon leading-7">KKR RPPI 2025/2026 adalah kebaktian kebangunan rohani yang mempersatukan pelajar, alumni, dan masyarakat dari berbagai sekolah di Kediri. Sebuah momen untuk merenungkan kasih Tuhan dan mengalami pembaharuan iman.</p>
-            <p class="text-kkr-maroon leading-7">Bersama pembicara tamu dari Surabaya, kita akan merenungkan makna kebangunan rohani yang sesungguhnya — bahwa pertobatan dan pembaharuan membawa kita lebih dekat kepada Tuhan, sesuai dengan firman dalam 2 Tawarikh 7:14.</p>
+            <h2 id="about-heading" class="text-3xl sm:text-4xl font-semibold text-kkr-dark leading-tight">KKR dengan Sukacita & Syukur</h2>
+            <p id="about-desc1" class="text-kkr-maroon leading-7">KKR RPPI 2025/2026 adalah kebaktian kebangunan rohani yang mempersatukan pelajar, alumni, dan masyarakat dari berbagai sekolah di Kediri. Sebuah momen untuk merenungkan kasih Tuhan dan mengalami pembaharuan iman.</p>
+            <p id="about-desc2" class="text-kkr-maroon leading-7">Bersama pembicara tamu dari Surabaya, kita akan merenungkan makna kebangunan rohani yang sesungguhnya — bahwa pertobatan dan pembaharuan membawa kita lebih dekat kepada Tuhan, sesuai dengan firman dalam 2 Tawarikh 7:14.</p>
             <blockquote class="border-l-4 border-kkr-red pl-6 py-3 italic text-kkr-maroon">
               "Jika umat-Ku yang disebut dengan nama-Ku merendahkan diri, berdoa dan mencari wajah-Ku, maka Aku akan mendengar dari sorga."
               <br/><span class="text-sm not-italic text-kkr-maroon/60 font-medium">— 2 Tawarikh 7:14</span>
@@ -126,7 +126,7 @@ import WhatsAppFloat from "../components/WhatsAppFloat.astro";
           <div class="w-12 h-0.5 bg-gradient-to-r from-kkr-red to-blue-500 mx-auto rounded-full"></div>
         </div>
 
-        <div id="speaker-grid" class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div id="speaker-grid" class="speaker-grid-container">
           <div class="col-span-full text-center py-12 text-kkr-maroon/60">
             <div class="inline-block w-8 h-8 border-2 border-kkr-maroon border-t-transparent rounded-full animate-spin"></div>
             <p class="mt-3 text-sm">Memuat pembicara...</p>
@@ -149,10 +149,11 @@ import WhatsAppFloat from "../components/WhatsAppFloat.astro";
           <div class="w-12 h-0.5 bg-gradient-to-r from-kkr-red to-blue-500 mx-auto rounded-full"></div>
         </div>
 
-        <div id="sponsor-grid" class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          <div class="col-span-full text-center py-12 text-kkr-maroon/60">
-            <div class="inline-block w-8 h-8 border-2 border-kkr-maroon border-t-transparent rounded-full animate-spin"></div>
-            <p class="mt-3 text-sm">Memuat sponsor...</p>
+        <!-- Sponsor Marquee -->
+        <div id="sponsor-grid" class="overflow-hidden" style="mask-image: linear-gradient(to right, transparent 0, black 40px, black calc(100% - 40px), transparent 100%);">
+          <div class="sponsor-track flex gap-6" style="width: max-content; animation: scroll-left 30s linear infinite;">
+            <div class="flex gap-6 items-stretch" data-copy="1"></div>
+            <div class="flex gap-6 items-stretch" data-copy="2" aria-hidden="true"></div>
           </div>
         </div>
 
@@ -253,8 +254,8 @@ import WhatsAppFloat from "../components/WhatsAppFloat.astro";
                 <span class="inline-block w-8 h-px bg-kkr-red"></span>
                 <span class="text-sm font-semibold uppercase tracking-[0.3em] text-kkr-light">Siap Bergabung?</span>
               </div>
-              <h2 class="mt-4 text-3xl sm:text-4xl font-semibold">Daftar sekarang, dan ikuti KKR dalam kasih Kristus.</h2>
-              <p class="mt-4 max-w-xl text-slate-300 leading-relaxed">Isi formulir pendaftaran, pilih tiket, dan amankan tempatmu dalam KKR RPPI yang penuh sukacita dan berkat.</p>
+              <h2 id="cta-title" class="mt-4 text-3xl sm:text-4xl font-semibold">Daftar sekarang, dan ikuti KKR dalam kasih Kristus.</h2>
+              <p id="cta-desc" class="mt-4 max-w-xl text-slate-300 leading-relaxed">Isi formulir pendaftaran, pilih tiket, dan amankan tempatmu dalam KKR RPPI yang penuh sukacita dan berkat.</p>
             </div>
             <div class="space-y-4">
               <a href="/registration" class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-kkr-gold to-kkr-gold px-8 py-4 text-sm font-semibold text-kkr-dark shadow-lg shadow-kkr-gold/30 transition hover:shadow-xl hover:shadow-kkr-gold/40 hover:-translate-y-0.5">
@@ -302,6 +303,18 @@ import WhatsAppFloat from "../components/WhatsAppFloat.astro";
         const email = s.contactEmail || "kkrrppi@gmail.com";
         const phone = s.contactPhone || "(0354) 682433";
         const wa = s.contactWa || "6285800753804";
+        if (s.heroTitle1) document.getElementById("hero-title1").textContent = s.heroTitle1;
+        if (s.heroTitle2) document.getElementById("hero-title2").textContent = s.heroTitle2;
+        if (s.heroSubtitle) {
+          const parts = s.heroSubtitle.split("—");
+          document.getElementById("hero-verse").textContent = parts[0].trim();
+          if (parts[1]) document.getElementById("hero-verse-ref").textContent = "— " + parts[1].trim();
+        }
+        if (s.aboutTitle) document.getElementById("about-heading").textContent = s.aboutTitle;
+        if (s.aboutDesc1) document.getElementById("about-desc1").textContent = s.aboutDesc1;
+        if (s.aboutDesc2) document.getElementById("about-desc2").textContent = s.aboutDesc2;
+        if (s.ctaTitle) document.getElementById("cta-title").textContent = s.ctaTitle;
+        if (s.ctaDesc) document.getElementById("cta-desc").textContent = s.ctaDesc;
         document.getElementById("hero-location").textContent = venue;
         document.getElementById("loc-venue").textContent = venue;
         if (document.getElementById("loc-address")) document.getElementById("loc-address").textContent = "Lihat peta di bawah";
@@ -324,14 +337,14 @@ import WhatsAppFloat from "../components/WhatsAppFloat.astro";
       try {
         const res = await fetch("/api/speakers");
         const d = await res.json();
-        const grid = document.getElementById("speaker-grid");
+        const container = document.getElementById("speaker-grid");
         const list = (d.speakers || []).filter(s => s.is_active);
         if (!list.length) {
-          grid.innerHTML = `<div class="col-span-full text-center py-12 text-kkr-maroon/60"><p class="text-sm">Belum ada pembicara.</p></div>`;
+          container.innerHTML = `<div class="text-center py-12 text-kkr-maroon/60"><p class="text-sm">Belum ada pembicara.</p></div>`;
           return;
         }
-        grid.innerHTML = list.map(s => `
-          <div class="rounded-[2.5rem] bg-white border border-kkr-light/50 p-6 sm:p-8 shadow-xl shadow-slate-200/40 text-center hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
+        const makeCard = (baseClass) => s => `
+          <div class="${baseClass}">
             ${s.photo_url
               ? `<img src="${s.photo_url}" class="w-28 h-28 rounded-full object-cover mx-auto shadow-lg shadow-kkr-light/50 border-2 border-white" />`
               : `<div class="w-28 h-28 rounded-full bg-gradient-to-br from-blue-100 to-kkr-light mx-auto flex items-center justify-center text-5xl shadow-lg shadow-kkr-light/50">✝️</div>`
@@ -343,10 +356,29 @@ import WhatsAppFloat from "../components/WhatsAppFloat.astro";
             </div>
             ${s.description ? `<p class="mt-4 text-sm text-kkr-maroon leading-relaxed max-w-md mx-auto">${s.description}</p>` : ""}
             ${s.tags ? `<div class="flex flex-wrap justify-center gap-2 mt-5">${s.tags.split(",").map(t => `<span class="text-xs bg-kkr-light text-kkr-red px-3 py-1 rounded-full font-medium">${t.trim()}</span>`).join("")}</div>` : ""}
-          </div>
-        `).join("");
+          </div>`;
+        if (list.length > 3) {
+          const base = "rounded-[2.5rem] bg-white border border-kkr-light/50 p-6 sm:p-8 shadow-xl shadow-slate-200/40 text-center hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 shrink-0 max-w-md";
+          const html = list.map(makeCard(base)).join("");
+          container.innerHTML = `
+            <div class="overflow-hidden" style="mask-image: linear-gradient(to right, transparent 0, black 40px, black calc(100% - 40px), transparent 100%);">
+              <div class="flex gap-6" style="width: max-content; animation: scroll-left 30s linear infinite;">
+                <div class="flex gap-6">${html}</div>
+                <div class="flex gap-6" aria-hidden="true">${html}</div>
+              </div>
+            </div>`;
+        } else {
+          const base = "rounded-[2.5rem] bg-white border border-kkr-light/50 p-6 sm:p-8 shadow-xl shadow-slate-200/40 text-center hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 w-full max-w-md";
+          const html = list.map(makeCard(base)).join("");
+          container.innerHTML = `<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">${html}</div>`;
+          if (list.length === 1) {
+            const inner = container.firstElementChild;
+            inner.style.display = "flex";
+            inner.style.justifyContent = "center";
+          }
+        }
       } catch {
-        document.getElementById("speaker-grid").innerHTML = `<div class="col-span-full text-center py-12 text-red-500"><p>Gagal memuat pembicara.</p></div>`;
+        document.getElementById("speaker-grid").innerHTML = `<div class="text-center py-12 text-red-500"><p>Gagal memuat pembicara.</p></div>`;
       }
     }
 
@@ -354,42 +386,36 @@ import WhatsAppFloat from "../components/WhatsAppFloat.astro";
       try {
         const res = await fetch("/api/sponsors");
         const data = await res.json();
-        const grid = document.getElementById("sponsor-grid");
         const list = data.sponsors || [];
         if (!list.length) {
-          grid.innerHTML = `<div class="col-span-full text-center py-12 text-kkr-maroon/60"><p class="text-sm">Belum ada sponsor. Jadilah yang pertama!</p></div>`;
+          document.getElementById("sponsor-grid").innerHTML = `<div class="text-center py-12 text-kkr-maroon/60"><p class="text-sm">Belum ada sponsor. Jadilah yang pertama!</p></div>`;
           return;
         }
-        const tiers = { platinum: [], gold: [], silver: [], bronze: [] };
-        for (const s of list) { if (tiers[s.tier]) tiers[s.tier].push(s); else tiers.bronze.push(s); }
         const tierMeta = {
-          platinum: { label: "Platinum", color: "bg-gradient-to-br from-kkr-light to-kkr-light/50 border-kkr-light/80", badge: "bg-kkr-dark text-white ring-2 ring-kkr-dark/20" },
-          gold: { label: "Gold", color: "bg-gradient-to-br from-kkr-light to-kkr-light border-kkr-gold/30", badge: "bg-kkr-gold text-white" },
-          silver: { label: "Silver", color: "bg-gradient-to-br from-gray-50 to-gray-100 border-gray-200", badge: "bg-gray-400 text-white" },
-          bronze: { label: "Bronze", color: "bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200", badge: "bg-orange-400 text-white" },
+          platinum: { label: "Platinum", color: "from-kkr-dark/5 to-white border-kkr-gold/30", badge: "bg-gradient-to-r from-kkr-dark to-kkr-purple text-white" },
+          gold: { label: "Gold", color: "from-kkr-gold/15 to-white border-kkr-gold/50", badge: "bg-kkr-gold text-white" },
+          silver: { label: "Silver", color: "from-gray-100 to-white border-gray-300", badge: "bg-gray-400 text-white" },
+          bronze: { label: "Bronze", color: "from-kkr-maroon/10 to-white border-kkr-red/30", badge: "bg-kkr-red text-white" },
         };
-        grid.innerHTML = "";
-        for (const [tier, items] of Object.entries(tiers)) {
-          if (!items.length) continue;
-          const meta = tierMeta[tier];
-          grid.innerHTML += `<div class="col-span-full"><div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">${items.map(s => `
-            <div class="rounded-2xl border ${meta.color} p-6 shadow-sm transition hover:shadow-md hover:-translate-y-0.5 duration-200">
-              <div class="flex items-start justify-between gap-3">
-                <div class="flex-1 min-w-0">
-                  <div class="flex items-center gap-3">
-                    ${s.logo_url ? `<img src="${s.logo_url}" class="w-10 h-10 rounded-lg object-contain border border-kkr-light/50 bg-white shrink-0" />` : ""}
-                    <h3 class="font-semibold text-kkr-dark truncate">${s.name}</h3>
-                  </div>
-                  ${s.description ? `<p class="mt-2 text-sm text-kkr-maroon line-clamp-2">${s.description}</p>` : ""}
-                </div>
-                <span class="shrink-0 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${meta.badge}">${meta.label}</span>
-              </div>
-              ${s.website ? `<a href="${s.website}" target="_blank" class="mt-3 inline-flex items-center gap-1 text-sm text-kkr-red hover:text-kkr-red font-medium">Kunjungi <span>→</span></a>` : ""}
+        const sorted = list.sort((a, b) => {
+          const order = ["platinum", "gold", "silver", "bronze"];
+          return order.indexOf(a.tier) - order.indexOf(b.tier);
+        });
+        const card = (s) => {
+          const meta = tierMeta[s.tier] || tierMeta.bronze;
+          return `<div class="flex items-center gap-4 rounded-2xl border bg-gradient-to-br ${meta.color} px-6 py-5 shadow-sm shrink-0 min-w-[260px]">
+            ${s.logo_url ? `<img src="${s.logo_url}" class="w-12 h-12 rounded-xl object-cover shrink-0" />` : ""}
+            <div class="min-w-0">
+              <p class="font-semibold text-kkr-dark truncate">${s.name}</p>
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${meta.badge}">${meta.label}</span>
             </div>
-          `).join("")}</div></div>`;
-        }
+          </div>`;
+        };
+        const html = sorted.map(card).join("");
+        document.querySelector('[data-copy="1"]').innerHTML = html;
+        document.querySelector('[data-copy="2"]').innerHTML = html;
       } catch {
-        document.getElementById("sponsor-grid").innerHTML = `<div class="col-span-full text-center py-12 text-red-500"><p>Gagal memuat data sponsor.</p></div>`;
+        document.getElementById("sponsor-grid").innerHTML = `<div class="text-center py-12 text-red-500"><p>Gagal memuat data sponsor.</p></div>`;
       }
     }
 

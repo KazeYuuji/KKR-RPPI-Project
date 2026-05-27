@@ -60,7 +60,6 @@ export async function initSchema() {
       whatsapp TEXT DEFAULT '',
       participant_type TEXT DEFAULT 'Student',
       ticket TEXT DEFAULT '',
-      status TEXT DEFAULT 'Pending',
       checked_in INTEGER DEFAULT 0,
       created_at TEXT DEFAULT (datetime('now'))
     );
@@ -139,6 +138,21 @@ async function runMigrations(db: ReturnType<typeof createClient>) {
     await db.execute("ALTER TABLE tickets_new RENAME TO tickets");
   } catch {
     // no price column
+  }
+  // Drop status column from registrants
+  try {
+    await db.execute("SELECT status FROM registrants LIMIT 1");
+    const data = await db.execute("SELECT id, name, school, email, whatsapp, participant_type, ticket, checked_in, created_at FROM registrants");
+    const oldRows = data.rows.map((r: any) => ({ id: r.id, name: r.name, school: r.school, email: r.email, whatsapp: r.whatsapp, participant_type: r.participant_type, ticket: r.ticket, checked_in: r.checked_in, created_at: r.created_at }));
+    await db.execute("DROP TABLE IF EXISTS registrants_new");
+    await db.execute("CREATE TABLE registrants_new (id TEXT PRIMARY KEY, name TEXT NOT NULL, school TEXT DEFAULT '', email TEXT DEFAULT '', whatsapp TEXT DEFAULT '', participant_type TEXT DEFAULT 'Student', ticket TEXT DEFAULT '', checked_in INTEGER DEFAULT 0, created_at TEXT DEFAULT (datetime('now')))");
+    for (const r of oldRows) {
+      await db.execute("INSERT INTO registrants_new (id, name, school, email, whatsapp, participant_type, ticket, checked_in, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", [r.id, r.name, r.school, r.email, r.whatsapp, r.participant_type, r.ticket, r.checked_in, r.created_at]);
+    }
+    await db.execute("DROP TABLE registrants");
+    await db.execute("ALTER TABLE registrants_new RENAME TO registrants");
+  } catch {
+    // no status column
   }
 }
 

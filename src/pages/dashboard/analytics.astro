@@ -23,7 +23,7 @@ const clockIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewB
     <!-- Stat Cards -->
     <div id="stats-grid" class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
       <StatCard label="Total Pendaftar" value="—" icon={usersIcon} colorIndex={0} />
-      <StatCard label="Terverifikasi" value="—" icon={trendIcon} colorIndex={1} />
+      <StatCard label="Sudah Check-in" value="—" icon={trendIcon} colorIndex={1} />
       <StatCard label="Total Sponsor" value="—" icon={ticketIcon} colorIndex={2} />
       <StatCard label="Check-in Rate" value="—" icon={clockIcon} colorIndex={3} />
     </div>
@@ -68,34 +68,25 @@ const clockIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewB
         </div>
         <div class="space-y-5" id="status-distribution">
           <div class="flex items-center gap-4 text-sm">
-            <span class="w-3 h-3 rounded-full bg-emerald-500 shrink-0"></span>
-            <span class="text-kkr-maroon flex-1">Terverifikasi</span>
-            <span class="font-semibold text-kkr-dark">
-              <span id="stat-verified-pct">0</span>%
-              <span class="font-normal text-kkr-maroon/60">(<span id="stat-verified">0</span>)</span>
-            </span>
-          </div>
-          <div class="flex items-center gap-4 text-sm">
-            <span class="w-3 h-3 rounded-full bg-kkr-gold shrink-0"></span>
-            <span class="text-kkr-maroon flex-1">Menunggu</span>
-            <span class="font-semibold text-kkr-dark">
-              <span id="stat-pending-pct">0</span>%
-              <span class="font-normal text-kkr-maroon/60">(<span id="stat-pending">0</span>)</span>
-            </span>
-          </div>
-          <div class="flex items-center gap-4 text-sm">
             <span class="w-3 h-3 rounded-full bg-kkr-red shrink-0"></span>
-            <span class="text-kkr-maroon flex-1">Check-in</span>
+            <span class="text-kkr-maroon flex-1">Sudah Check-in</span>
             <span class="font-semibold text-kkr-dark">
               <span id="stat-checkin-pct">0</span>%
               <span class="font-normal text-kkr-maroon/60">(<span id="stat-checkin">0</span>)</span>
             </span>
           </div>
+          <div class="flex items-center gap-4 text-sm">
+            <span class="w-3 h-3 rounded-full bg-kkr-gold shrink-0"></span>
+            <span class="text-kkr-maroon flex-1">Belum Check-in</span>
+            <span class="font-semibold text-kkr-dark">
+              <span id="stat-unchecked-pct">0</span>%
+              <span class="font-normal text-kkr-maroon/60">(<span id="stat-unchecked">0</span>)</span>
+            </span>
+          </div>
         </div>
         <div class="mt-6 w-full h-3 bg-kkr-light/40 rounded-full overflow-hidden flex">
-          <div id="bar-verified" class="h-full bg-emerald-500 transition-all duration-700" style="width: 0%"></div>
-          <div id="bar-pending" class="h-full bg-kkr-gold transition-all duration-700" style="width: 0%"></div>
           <div id="bar-checkin" class="h-full bg-kkr-red transition-all duration-700" style="width: 0%"></div>
+          <div id="bar-unchecked" class="h-full bg-kkr-gold transition-all duration-700" style="width: 0%"></div>
         </div>
       </div>
     </div>
@@ -118,8 +109,8 @@ const clockIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewB
           <tbody>
             {[
               { metric: "Total Pendaftar", desc: "Semua peserta yang mendaftar" },
-              { metric: "Terverifikasi", desc: "Peserta yang sudah diverifikasi" },
-              { metric: "Check-in", desc: "Peserta yang sudah check-in" },
+              { metric: "Belum Check-in", desc: "Peserta yang belum check-in" },
+              { metric: "Sudah Check-in", desc: "Peserta yang sudah check-in" },
               { metric: "Sponsor Aktif", desc: "Sponsor yang terdaftar dan aktif" },
               { metric: "Pembicara", desc: "Pembicara yang terdaftar dan aktif" },
             ].map((row) => (
@@ -141,14 +132,13 @@ const clockIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewB
         const res = await fetch("/api/stats");
         const d = await res.json();
         const total = d.totalRegistrants || 0;
-        const verified = d.verified || 0;
-        const pending = d.pending || 0;
         const checkedIn = d.checkedIn || 0;
+        const unchecked = total - checkedIn;
 
         // Stat cards
         const cards = document.querySelectorAll("#stats-grid > div");
         if (cards.length >= 4) {
-          const vals = [total, verified, d.sponsorCount || 0, total > 0 ? Math.round((checkedIn / total) * 100) + "%" : "0%"];
+          const vals = [total, checkedIn, d.sponsorCount || 0, total > 0 ? Math.round((checkedIn / total) * 100) + "%" : "0%"];
           cards.forEach((card, i) => { const el = card.querySelector(".text-2xl"); if (el) el.textContent = vals[i] ?? "—"; });
         }
 
@@ -156,7 +146,7 @@ const clockIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewB
         const cells = document.querySelectorAll("[data-stat]");
         if (cells.length >= 5) {
           cells[0].textContent = total;
-          cells[1].textContent = verified;
+          cells[1].textContent = unchecked;
           cells[2].textContent = checkedIn;
         }
 
@@ -173,18 +163,14 @@ const clockIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewB
         } catch {}
 
         // Status distribution
-        const vPct = total > 0 ? Math.round((verified / total) * 100) : 0;
-        const pPct = total > 0 ? Math.round((pending / total) * 100) : 0;
         const cPct = total > 0 ? Math.round((checkedIn / total) * 100) : 0;
-        document.getElementById("stat-verified-pct").textContent = vPct;
-        document.getElementById("stat-pending-pct").textContent = pPct;
+        const uPct = total > 0 ? Math.round((unchecked / total) * 100) : 0;
         document.getElementById("stat-checkin-pct").textContent = cPct;
-        document.getElementById("stat-verified").textContent = verified;
-        document.getElementById("stat-pending").textContent = pending;
+        document.getElementById("stat-unchecked-pct").textContent = uPct;
         document.getElementById("stat-checkin").textContent = checkedIn;
-        document.getElementById("bar-verified").style.width = vPct + "%";
-        document.getElementById("bar-pending").style.width = pPct + "%";
+        document.getElementById("stat-unchecked").textContent = unchecked;
         document.getElementById("bar-checkin").style.width = cPct + "%";
+        document.getElementById("bar-unchecked").style.width = uPct + "%";
       } catch {}
     }
 

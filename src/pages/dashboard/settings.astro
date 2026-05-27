@@ -87,15 +87,53 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
         <span class="text-xl">📝</span>
         <h2 class="text-xl font-semibold text-kkr-dark">Teks Landing Page</h2>
       </div>
-      <p class="text-sm text-kkr-maroon/80 mt-1">Sesuaikan teks yang muncul di halaman formulir pendaftaran (<strong>/registration</strong>). Judul dan subjudul di atas formulir.</p>
+      <p class="text-sm text-kkr-maroon/80 mt-1">Sesuaikan teks yang muncul di halaman utama dan halaman pendaftaran.</p>
       <form id="text-form" class="mt-6 space-y-4">
-        <div>
-          <label class="block text-sm font-medium text-kkr-purple mb-1">Judul Formulir</label>
-          <input id="form-title" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Formulir Pendaftaran" />
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label class="block text-sm font-medium text-kkr-purple mb-1">Judul Hero (baris 1)</label>
+            <input id="hero-title1" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Terang dalam" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-kkr-purple mb-1">Judul Hero (baris 2, warna merah)</label>
+            <input id="hero-title2" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Kasih Kristus" />
+          </div>
         </div>
         <div>
-          <label class="block text-sm font-medium text-kkr-purple mb-1">Subjudul Formulir</label>
-          <textarea id="form-subtitle" rows="2" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Lengkapi data diri dan pilih tiket untuk bergabung dalam KKR RPPI."></textarea>
+          <label class="block text-sm font-medium text-kkr-purple mb-1">Subtitle Hero (ayat + ref)</label>
+          <textarea id="hero-subtitle" rows="2" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder='"Jika umat-Ku yang disebut dengan nama-Ku merendahkan diri, berdoa dan mencari wajah-Ku, maka Aku akan mendengar dari sorga." — 2 Tawarikh 7:14'></textarea>
+        </div>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label class="block text-sm font-medium text-kkr-purple mb-1">Judul Tentang Acara</label>
+            <input id="about-title" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="KKR dengan Sukacita & Syukur" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-kkr-purple mb-1">Judul Formulir</label>
+            <input id="form-title" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Formulir Pendaftaran" />
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-kkr-purple mb-1">Deskripsi Tentang Acara (paragraf 1)</label>
+          <textarea id="about-desc1" rows="3" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="KKR RPPI 2025/2026 adalah kebaktian kebangunan rohani yang mempersatukan pelajar, alumni, dan masyarakat..."></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-kkr-purple mb-1">Deskripsi Tentang Acara (paragraf 2)</label>
+          <textarea id="about-desc2" rows="3" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Bersama pembicara tamu dari Surabaya, kita akan merenungkan makna kebangunan rohani yang sesungguhnya..."></textarea>
+        </div>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label class="block text-sm font-medium text-kkr-purple mb-1">Judul CTA</label>
+            <input id="cta-title" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Daftar sekarang, dan ikuti KKR dalam kasih Kristus." />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-kkr-purple mb-1">Subjudul Formulir</label>
+            <textarea id="form-subtitle" rows="3" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Lengkapi data diri dan pilih tiket untuk bergabung dalam KKR RPPI."></textarea>
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-kkr-purple mb-1">Deskripsi CTA</label>
+          <textarea id="cta-desc" rows="2" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Isi formulir pendaftaran, pilih tiket, dan amankan tempatmu dalam KKR RPPI yang penuh sukacita dan berkat."></textarea>
         </div>
         <button type="submit" class="rounded-xl bg-kkr-red px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-kkr-maroon">Simpan Teks</button>
       </form>
@@ -156,14 +194,22 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
 
         if (s.locVenue) document.getElementById("loc-venue").value = s.locVenue;
         if (s.locMapsLink) document.getElementById("loc-maps-link").value = s.locMapsLink;
-        if (s.eventDateISO) document.getElementById("event-date-iso").value = s.eventDateISO;
+        if (s.eventDateISO) document.getElementById("event-date-iso").value = utcToLocal(s.eventDateISO);
         if (s.eventTimeEnd) document.getElementById("event-time-end").value = s.eventTimeEnd;
-        if (s.regDeadlineISO) document.getElementById("reg-deadline-iso").value = s.regDeadlineISO;
+        if (s.regDeadlineISO) document.getElementById("reg-deadline-iso").value = utcToLocal(s.regDeadlineISO);
         if (s.contactEmail) document.getElementById("contact-email").value = s.contactEmail;
         if (s.contactPhone) document.getElementById("contact-phone").value = s.contactPhone;
         if (s.contactWa) document.getElementById("contact-wa").value = s.contactWa;
         if (s.formTitle) document.getElementById("form-title").value = s.formTitle;
         if (s.formSubtitle) document.getElementById("form-subtitle").value = s.formSubtitle;
+        if (s.heroTitle1) document.getElementById("hero-title1").value = s.heroTitle1;
+        if (s.heroTitle2) document.getElementById("hero-title2").value = s.heroTitle2;
+        if (s.heroSubtitle) document.getElementById("hero-subtitle").value = s.heroSubtitle;
+        if (s.aboutTitle) document.getElementById("about-title").value = s.aboutTitle;
+        if (s.aboutDesc1) document.getElementById("about-desc1").value = s.aboutDesc1;
+        if (s.aboutDesc2) document.getElementById("about-desc2").value = s.aboutDesc2;
+        if (s.ctaTitle) document.getElementById("cta-title").value = s.ctaTitle;
+        if (s.ctaDesc) document.getElementById("cta-desc").value = s.ctaDesc;
       } catch {}
     }
 
@@ -245,14 +291,32 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
 
     function formatDateIndo(dateStr) {
       if (!dateStr) return "";
-      const d = new Date(dateStr);
+      let d;
+      if (dateStr.endsWith("Z") || /[+-]\d{2}:\d{2}$/.test(dateStr)) {
+        d = new Date(dateStr);
+      } else {
+        const [dp, tp] = dateStr.split("T");
+        if (!dp) return "";
+        const [y, m, dd] = dp.split("-").map(Number);
+        const [h, min] = tp ? tp.split(":").map(Number) : [0, 0];
+        d = new Date(y, m - 1, dd, h, min);
+      }
       if (isNaN(d)) return "";
       return d.toLocaleDateString("id-ID", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
     }
 
     function formatTimeRange(dateStr, endTime) {
       if (!dateStr) return "";
-      const d = new Date(dateStr);
+      let d;
+      if (dateStr.endsWith("Z") || /[+-]\d{2}:\d{2}$/.test(dateStr)) {
+        d = new Date(dateStr);
+      } else {
+        const [dp, tp] = dateStr.split("T");
+        if (!dp) return "";
+        const [y, m, dd] = dp.split("-").map(Number);
+        const [h, min] = tp ? tp.split(":").map(Number) : [0, 0];
+        d = new Date(y, m - 1, dd, h, min);
+      }
       if (isNaN(d)) return "";
       const start = d.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
       const end = endTime || "";
@@ -273,6 +337,19 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
     document.getElementById("event-time-end")?.addEventListener("change", updatePreview);
     document.getElementById("reg-deadline-iso")?.addEventListener("change", updatePreview);
 
+    function localToUTC(val) {
+      if (!val) return "";
+      return new Date(val).toISOString();
+    }
+
+    function utcToLocal(val) {
+      if (!val) return "";
+      const d = new Date(val);
+      if (isNaN(d)) return "";
+      const pad = n => String(n).padStart(2, "0");
+      return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    }
+
     document.getElementById("schedule-form")?.addEventListener("submit", async (e) => {
       e.preventDefault();
       const btn = e.target.querySelector("button[type=submit]");
@@ -287,9 +364,9 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
           locDate: formatDateIndo(eventIso),
           locTime: formatTimeRange(eventIso, timeEnd),
           regDeadline: formatDateIndo(deadlineIso),
-          eventDateISO: eventIso,
+          eventDateISO: localToUTC(eventIso),
           eventTimeEnd: timeEnd,
-          regDeadlineISO: deadlineIso,
+          regDeadlineISO: localToUTC(deadlineIso),
         })});
         if (res.ok) toast("Jadwal berhasil disimpan!");
         else throw new Error();
@@ -321,6 +398,14 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
         const res = await fetch("/api/settings", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({
           formTitle: document.getElementById("form-title").value.trim(),
           formSubtitle: document.getElementById("form-subtitle").value.trim(),
+          heroTitle1: document.getElementById("hero-title1").value.trim(),
+          heroTitle2: document.getElementById("hero-title2").value.trim(),
+          heroSubtitle: document.getElementById("hero-subtitle").value.trim(),
+          aboutTitle: document.getElementById("about-title").value.trim(),
+          aboutDesc1: document.getElementById("about-desc1").value.trim(),
+          aboutDesc2: document.getElementById("about-desc2").value.trim(),
+          ctaTitle: document.getElementById("cta-title").value.trim(),
+          ctaDesc: document.getElementById("cta-desc").value.trim(),
         })});
         if (res.ok) toast("Teks berhasil disimpan!");
         else throw new Error();

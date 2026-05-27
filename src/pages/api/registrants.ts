@@ -13,7 +13,7 @@ export const POST: APIRoute = async ({ request }) => {
   const db = getDb();
   try {
     const body = await request.json();
-    const { id, name, school, email, whatsapp, participant_type, ticket, status, checked_in, action } = body;
+    const { id, name, school, email, whatsapp, participant_type, ticket, checked_in, action } = body;
     if (!id) {
       return new Response(JSON.stringify({ error: "ID wajib diisi" }), {
         status: 400, headers: { "Content-Type": "application/json" },
@@ -22,13 +22,6 @@ export const POST: APIRoute = async ({ request }) => {
 
     const existingResult = await db.execute("SELECT * FROM registrants WHERE id = ?", [id]);
     const existing = existingResult.rows[0] as Record<string, any> | undefined;
-
-    if (action === "verify") {
-      const newStatus = existing?.status === "Verified" ? "Pending" : "Verified";
-      await db.execute("UPDATE registrants SET status = ? WHERE id = ?", [newStatus, id]);
-      const r = await db.execute("SELECT * FROM registrants WHERE id = ?", [id]);
-      return new Response(JSON.stringify({ registrant: r.rows[0] }), { status: 200, headers: { "Content-Type": "application/json" } });
-    }
 
     if (action === "checkin") {
       if (existing?.checked_in) {
@@ -47,6 +40,25 @@ export const POST: APIRoute = async ({ request }) => {
       });
     }
 
+    // Check registration deadline
+    if (!existing) {
+      const deadlineResult = await db.execute("SELECT value FROM settings WHERE key = 'regDeadlineISO'");
+      const deadlineRow = deadlineResult.rows[0] as Record<string, any> | undefined;
+      if (deadlineRow?.value) {
+        let deadlineStr = deadlineRow.value;
+        // Naive ISO format (no Z or offset) — assume WIB (UTC+7)
+        if (!deadlineStr.endsWith('Z') && !/[+-]\d{2}:\d{2}$/.test(deadlineStr)) {
+          deadlineStr += '+07:00';
+        }
+        const deadline = new Date(deadlineStr).getTime();
+        if (Date.now() > deadline) {
+          return new Response(JSON.stringify({ error: "Maaf, batas waktu pendaftaran telah berakhir" }), {
+            status: 400, headers: { "Content-Type": "application/json" },
+          });
+        }
+      }
+    }
+
     const ticketType = ticket || "general";
     if (!existing) {
       const ticketResult = await db.execute("SELECT remaining FROM tickets WHERE id = ?", [ticketType]);
@@ -62,14 +74,14 @@ export const POST: APIRoute = async ({ request }) => {
         });
       }
       await db.execute(
-        "INSERT INTO registrants (id, name, school, email, whatsapp, participant_type, ticket, status, checked_in) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-        [id, name, school || "", email || "", whatsapp || "", participant_type || "Student", ticketType, status || "Pending", checked_in ? 1 : 0]
+        "INSERT INTO registrants (id, name, school, email, whatsapp, participant_type, ticket, checked_in) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+        [id, name, school || "", email || "", whatsapp || "", participant_type || "Student", ticketType, checked_in ? 1 : 0]
       );
       await db.execute("UPDATE tickets SET remaining = remaining - 1 WHERE id = ? AND remaining > 0", [ticketType]);
     } else {
       await db.execute(
-        "UPDATE registrants SET name = ?, school = ?, email = ?, whatsapp = ?, participant_type = ?, ticket = ?, status = ?, checked_in = ? WHERE id = ?",
-        [name, school || "", email || "", whatsapp || "", participant_type || "Student", ticketType, status || "Pending", checked_in ? 1 : 0, id]
+        "UPDATE registrants SET name = ?, school = ?, email = ?, whatsapp = ?, participant_type = ?, ticket = ?, checked_in = ? WHERE id = ?",
+        [name, school || "", email || "", whatsapp || "", participant_type || "Student", ticketType, checked_in ? 1 : 0, id]
       );
     }
 
