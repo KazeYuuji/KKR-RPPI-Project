@@ -31,34 +31,27 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
         <span class="text-xl">📅</span>
         <h2 class="text-xl font-semibold text-kkr-dark">Jadwal Acara</h2>
       </div>
-      <p class="text-sm text-kkr-maroon/80 mt-1">Tanggal dan waktu pelaksanaan acara. Juga ditampilkan di halaman utama (hero, countdown, lokasi).</p>
+      <p class="text-sm text-kkr-maroon/80 mt-1">Pilih tanggal dan waktu acara. Tampilan tanggal akan dibuat otomatis.</p>
       <form id="schedule-form" class="mt-6 space-y-4">
-        <div>
-          <label class="block text-sm font-medium text-kkr-purple mb-1">Tanggal Acara</label>
-          <input id="loc-date" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Sabtu, 10 Januari 2026" />
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-kkr-purple mb-1">Waktu Mulai Acara</label>
-          <input id="loc-time" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="08:00 - 12:30 WIB" />
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-kkr-purple mb-1">Tanggal Terakhir Pendaftaran</label>
-          <input id="reg-deadline" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="29 Desember 2025" />
-          <p class="text-xs text-kkr-maroon/60 mt-1">Tanggal display (bebas format).</p>
-        </div>
-        <hr class="border-kkr-light/50" />
-        <p class="text-xs font-medium text-kkr-maroon/80 uppercase tracking-wider">Pengaturan Countdown (format ISO)</p>
         <div class="grid gap-4 sm:grid-cols-2">
           <div>
-            <label class="block text-sm font-medium text-kkr-purple mb-1">Tanggal & Jam Acara</label>
+            <label class="block text-sm font-medium text-kkr-purple mb-1">Tanggal & Jam Mulai Acara</label>
             <input id="event-date-iso" type="datetime-local" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" />
-            <p class="text-xs text-kkr-maroon/60 mt-1">Contoh: 2026-01-10T08:00</p>
           </div>
           <div>
-            <label class="block text-sm font-medium text-kkr-purple mb-1">Batas Pendaftaran</label>
-            <input id="reg-deadline-iso" type="datetime-local" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" />
-            <p class="text-xs text-kkr-maroon/60 mt-1">Contoh: 2025-12-29T23:59</p>
+            <label class="block text-sm font-medium text-kkr-purple mb-1">Jam Selesai Acara</label>
+            <input id="event-time-end" type="time" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" />
           </div>
+        </div>
+        <div class="rounded-xl bg-kkr-light/30 p-4 text-sm text-kkr-maroon/80 space-y-1">
+          <p>📌 <strong>Preview tampilan:</strong></p>
+          <p id="preview-date" class="text-kkr-dark">Tanggal: —</p>
+          <p id="preview-time" class="text-kkr-dark">Waktu: —</p>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-kkr-purple mb-1">Batas Akhir Pendaftaran</label>
+          <input id="reg-deadline-iso" type="datetime-local" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" />
+          <p id="preview-deadline" class="text-xs text-kkr-maroon/60 mt-1">Tampilan: —</p>
         </div>
         <button type="submit" class="rounded-xl bg-kkr-red px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-kkr-maroon">Simpan Jadwal</button>
       </form>
@@ -163,10 +156,8 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
 
         if (s.locVenue) document.getElementById("loc-venue").value = s.locVenue;
         if (s.locMapsLink) document.getElementById("loc-maps-link").value = s.locMapsLink;
-        if (s.locDate) document.getElementById("loc-date").value = s.locDate;
-        if (s.locTime) document.getElementById("loc-time").value = s.locTime;
-        if (s.regDeadline) document.getElementById("reg-deadline").value = s.regDeadline;
         if (s.eventDateISO) document.getElementById("event-date-iso").value = s.eventDateISO;
+        if (s.eventTimeEnd) document.getElementById("event-time-end").value = s.eventTimeEnd;
         if (s.regDeadlineISO) document.getElementById("reg-deadline-iso").value = s.regDeadlineISO;
         if (s.contactEmail) document.getElementById("contact-email").value = s.contactEmail;
         if (s.contactPhone) document.getElementById("contact-phone").value = s.contactPhone;
@@ -256,17 +247,53 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
       btn.disabled = false; btn.textContent = "Simpan Lokasi";
     });
 
+    function formatDateIndo(dateStr) {
+      if (!dateStr) return "";
+      const d = new Date(dateStr);
+      if (isNaN(d)) return "";
+      return d.toLocaleDateString("id-ID", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
+    }
+
+    function formatTimeRange(dateStr, endTime) {
+      if (!dateStr) return "";
+      const d = new Date(dateStr);
+      if (isNaN(d)) return "";
+      const start = d.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
+      const end = endTime || "";
+      return `${start}${end ? " - " + end : ""} WIB`;
+    }
+
+    function updatePreview() {
+      const iso = document.getElementById("event-date-iso").value;
+      const end = document.getElementById("event-time-end").value;
+      document.getElementById("preview-date").textContent = "Tanggal: " + (formatDateIndo(iso) || "—");
+      document.getElementById("preview-time").textContent = "Waktu: " + (iso ? formatTimeRange(iso, end) : "—");
+
+      const deadlineIso = document.getElementById("reg-deadline-iso").value;
+      document.getElementById("preview-deadline").textContent = "Tampilan: " + (formatDateIndo(deadlineIso) || "—");
+    }
+
+    document.getElementById("event-date-iso")?.addEventListener("change", updatePreview);
+    document.getElementById("event-time-end")?.addEventListener("change", updatePreview);
+    document.getElementById("reg-deadline-iso")?.addEventListener("change", updatePreview);
+
     document.getElementById("schedule-form")?.addEventListener("submit", async (e) => {
       e.preventDefault();
       const btn = e.target.querySelector("button[type=submit]");
       btn.disabled = true; btn.textContent = "Menyimpan...";
+
+      const eventIso = document.getElementById("event-date-iso").value;
+      const timeEnd = document.getElementById("event-time-end").value;
+      const deadlineIso = document.getElementById("reg-deadline-iso").value;
+
       try {
         const res = await fetch("/api/settings", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({
-          locDate: document.getElementById("loc-date").value.trim(),
-          locTime: document.getElementById("loc-time").value.trim(),
-          regDeadline: document.getElementById("reg-deadline").value.trim(),
-          eventDateISO: document.getElementById("event-date-iso").value.trim(),
-          regDeadlineISO: document.getElementById("reg-deadline-iso").value.trim(),
+          locDate: formatDateIndo(eventIso),
+          locTime: formatTimeRange(eventIso, timeEnd),
+          regDeadline: formatDateIndo(deadlineIso),
+          eventDateISO: eventIso,
+          eventTimeEnd: timeEnd,
+          regDeadlineISO: deadlineIso,
         })});
         if (res.ok) toast("Jadwal berhasil disimpan!");
         else throw new Error();

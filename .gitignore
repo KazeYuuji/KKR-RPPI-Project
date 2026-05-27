@@ -12,3 +12,4 @@ data/uploads/*
 Thumbs.db
 .vercel/
 !.env.example
+.vercel
