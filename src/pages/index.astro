@@ -131,7 +131,7 @@ import WhatsAppFloat from "../components/WhatsAppFloat.astro";
           <div class="w-12 h-0.5 bg-gradient-to-r from-kkr-red to-blue-500 mx-auto rounded-full"></div>
         </div>
 
-        <div id="speaker-grid">
+        <div id="speaker-grid" class="speaker-grid-container">
           <div class="col-span-full text-center py-12 text-kkr-maroon/60">
             <div class="inline-block w-8 h-8 border-2 border-kkr-maroon border-t-transparent rounded-full animate-spin"></div>
             <p class="mt-3 text-sm">Memuat pembicara...</p>
@@ -281,17 +281,17 @@ import WhatsAppFloat from "../components/WhatsAppFloat.astro";
 
   <!-- Sponsor Detail Modal -->
   <div id="sponsor-modal" class="hidden fixed inset-0 z-[70] items-center justify-center bg-black/30 backdrop-blur-sm p-4">
-    <div class="relative w-full max-w-lg max-h-[85vh] rounded-[2rem] bg-white shadow-2xl animate-scale-in flex flex-col">
-      <div class="flex items-center justify-between shrink-0 px-8 pt-8 pb-4 border-b border-kkr-light/30">
-        <h3 id="sp-modal-name" class="text-2xl font-semibold text-kkr-dark truncate pr-4"></h3>
-        <button id="sp-modal-close" class="rounded-full bg-kkr-light/40 px-3 py-2 text-sm text-kkr-maroon/80 transition hover:bg-kkr-light/60 shrink-0">Tutup</button>
+    <div class="relative w-full max-w-lg rounded-[2rem] bg-white shadow-2xl animate-scale-in">
+      <button id="sp-modal-close" class="absolute right-5 top-5 z-10 rounded-full bg-kkr-light/40 px-3 py-2 text-sm text-kkr-maroon/80 transition hover:bg-kkr-light/60">Tutup</button>
+      <div class="p-8 text-center">
+        <img id="sp-modal-logo" class="hidden w-24 h-24 rounded-2xl object-contain mx-auto border border-kkr-light/50 bg-white shadow-sm" />
+        <h3 id="sp-modal-name" class="mt-5 text-2xl font-semibold text-kkr-dark"></h3>
       </div>
-      <div class="overflow-y-auto px-8 py-6">
-        <div class="flex flex-col items-center text-center">
-          <img id="sp-modal-logo" class="hidden w-24 h-24 rounded-2xl object-contain mx-auto border border-kkr-light/50 bg-white shadow-sm" />
-          <p id="sp-modal-desc" class="mt-4 text-kkr-maroon leading-relaxed text-left w-full"></p>
-          <a id="sp-modal-web" href="#" target="_blank" class="mt-4 inline-flex items-center gap-1 text-sm text-kkr-red hover:text-kkr-red font-medium">Kunjungi Website <span>↗</span></a>
-        </div>
+      <div id="sp-modal-desc-wrap" class="px-8 pb-6 text-left max-h-60 overflow-y-auto">
+        <p id="sp-modal-desc" class="text-kkr-maroon leading-relaxed text-sm"></p>
+      </div>
+      <div class="px-8 pb-8 pt-2 text-center border-t border-kkr-light/30">
+        <a id="sp-modal-web" href="#" target="_blank" class="hidden inline-flex items-center gap-1.5 rounded-xl bg-kkr-red px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-kkr-maroon">Kunjungi Website <span>↗</span></a>
       </div>
     </div>
   </div>
@@ -381,11 +381,11 @@ import WhatsAppFloat from "../components/WhatsAppFloat.astro";
               <h3 class="text-2xl font-semibold text-kkr-dark mt-2">${s.name}</h3>
               ${s.organization ? `<p class="text-kkr-maroon/80 text-sm">${s.organization}</p>` : ""}
             </div>
-            ${s.description ? `<p class="mt-4 text-sm text-kkr-maroon leading-relaxed max-w-md mx-auto">${s.description}</p>` : ""}
+            ${s.description ? `<p class="mt-4 text-sm text-kkr-maroon leading-relaxed mx-auto flex-1">${s.description}</p>` : '<div class="flex-1"></div>'}
             ${s.tags ? `<div class="flex flex-wrap justify-center gap-2 mt-5">${s.tags.split(",").map(t => `<span class="text-xs bg-kkr-light text-kkr-red px-3 py-1 rounded-full font-medium">${t.trim()}</span>`).join("")}</div>` : ""}
           </div>`;
         if (list.length > 3) {
-          const base = "rounded-[2.5rem] bg-white border border-kkr-light/50 p-5 sm:p-8 shadow-xl shadow-slate-200/40 text-center hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 shrink-0 w-[280px] sm:w-[320px]";
+          const base = "rounded-[2.5rem] bg-white border border-kkr-light/50 p-5 sm:p-8 shadow-xl shadow-slate-200/40 text-center hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 shrink-0 w-[280px] sm:w-[320px] flex flex-col";
           const html = list.map(makeCard(base)).join("");
           container.innerHTML = `
             <div class="overflow-hidden" style="mask-image: linear-gradient(to right, transparent 0, black 40px, black calc(100% - 40px), transparent 100%);">
@@ -395,14 +395,10 @@ import WhatsAppFloat from "../components/WhatsAppFloat.astro";
               </div>
             </div>`;
         } else {
-          const base = "rounded-[2.5rem] bg-white border border-kkr-light/50 p-6 sm:p-8 shadow-xl shadow-slate-200/40 text-center hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 w-full max-w-sm mx-auto";
+          const base = "rounded-[2.5rem] bg-white border border-kkr-light/50 p-6 sm:p-8 shadow-xl shadow-slate-200/40 text-center hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 w-full max-w-md flex flex-col";
           const html = list.map(makeCard(base)).join("");
-          container.innerHTML = `<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 place-items-center">${html}</div>`;
-          if (list.length === 1) {
-            const inner = container.firstElementChild;
-            inner.style.display = "flex";
-            inner.style.justifyContent = "center";
-          }
+          const cols = list.length === 1 ? "flex justify-center" : "grid gap-6 sm:grid-cols-2 mx-auto";
+          container.innerHTML = `<div class="${cols}" style="${list.length === 2 ? 'max-width: 42rem;' : ''}">${html}</div>`;
         }
       } catch {
         document.getElementById("speaker-grid").innerHTML = `<div class="text-center py-12 text-red-500"><p>Gagal memuat pembicara.</p></div>`;
@@ -443,16 +439,18 @@ import WhatsAppFloat from "../components/WhatsAppFloat.astro";
       const sponsor = allSponsors.find(s => s.id == id);
       if (!sponsor) return;
       const modal = document.getElementById("sponsor-modal");
-      const logo = document.getElementById("sp-modal-logo");
-      if (sponsor.logo_url) {
-        logo.src = sponsor.logo_url;
-        logo.classList.remove("hidden");
-      } else {
-        logo.classList.add("hidden");
-      }
+      document.getElementById("sp-modal-logo").src = sponsor.logo_url || "";
+      document.getElementById("sp-modal-logo").classList.toggle("hidden", !sponsor.logo_url);
       document.getElementById("sp-modal-name").textContent = sponsor.name;
-      const desc = document.getElementById("sp-modal-desc");
-      desc.textContent = sponsor.description || "Tidak ada deskripsi.";
+      const descEl = document.getElementById("sp-modal-desc");
+      const descWrap = document.getElementById("sp-modal-desc-wrap");
+      if (sponsor.description) {
+        descEl.textContent = sponsor.description;
+        descWrap.classList.remove("hidden");
+      } else {
+        descWrap.classList.add("hidden");
+      }
+      descWrap.scrollTop = 0;
       const webLink = document.getElementById("sp-modal-web");
       if (sponsor.website) {
         webLink.href = sponsor.website;
@@ -462,23 +460,6 @@ import WhatsAppFloat from "../components/WhatsAppFloat.astro";
       }
       modal.classList.remove("hidden");
       modal.classList.add("flex");
-      document.body.style.overflow = "hidden";
-    });
-
-    document.getElementById("sp-modal-close")?.addEventListener("click", () => {
-      const modal = document.getElementById("sponsor-modal");
-      modal.classList.add("hidden");
-      modal.classList.remove("flex");
-      document.body.style.overflow = "";
-    });
-
-    document.getElementById("sponsor-modal")?.addEventListener("click", (e) => {
-      if (e.target === e.currentTarget) {
-        const modal = document.getElementById("sponsor-modal");
-        modal.classList.add("hidden");
-        modal.classList.remove("flex");
-        document.body.style.overflow = "";
-      }
     });
 
     document.getElementById("sp-modal-close")?.addEventListener("click", () => {
