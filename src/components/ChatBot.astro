@@ -18,7 +18,7 @@ const faqs = [
           <p class="font-semibold text-sm">Elias</p>
           <p class="text-xs text-kkr-light">Asisten KKR RPPI</p>
         </div>
-        <button id="chat-close" class="ml-auto p-1 rounded-lg hover:bg-white/20 transition-colors">
+        <button id="chat-close" class="ml-auto p-1 rounded-lg hover:bg-white/20 transition-colors" aria-label="Tutup chat">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
       </div>
@@ -32,7 +32,7 @@ const faqs = [
       </div>
       <div class="flex flex-wrap gap-2 pt-1">
         {faqs.slice(0, 3).map((faq) => (
-          <button data-question={faq.q} class="text-xs bg-kkr-light text-kkr-red px-3 py-1.5 rounded-full hover:bg-kkr-light/70 transition-colors font-medium">{faq.q}</button>
+          <button data-question={faq.q} data-answer={faq.a} class="text-xs bg-kkr-light text-kkr-red px-3 py-1.5 rounded-full hover:bg-kkr-light/70 transition-colors font-medium">{faq.q}</button>
         ))}
       </div>
     </div>
@@ -45,20 +45,11 @@ const faqs = [
 
 <script>
   const toggle = document.getElementById("chat-toggle");
-  const window = document.getElementById("chat-window");
+  const chatWindow = document.getElementById("chat-window");
   const close = document.getElementById("chat-close");
   const chatIcon = document.getElementById("chat-icon");
   const closeIcon = document.getElementById("close-icon");
   const body = document.getElementById("chat-body");
-
-  const faqs = [
-    { q: "Apa itu KKR RPPI?", a: "KKR RPPI adalah kebaktian kebangunan rohani yang mempersatukan siswa, alumni, guru, dan masyarakat dari berbagai sekolah di Kediri untuk mengalami kebangunan rohani dalam Yesus Kristus." },
-    { q: "Kapan dan di mana acara dilaksanakan?", a: "Acara akan dilaksanakan pada Sabtu, 10 Januari 2026 di SMK PGRI 1 Kediri, Jl. Himalaya No.06, Kediri. Mulai pukul 08.00 - 12.30 WIB." },
-    { q: "Bagaimana cara mendaftar?", a: "Kunjungi halaman pendaftaran, isi data diri, pilih tiket gratis, dan dapatkan tiketmu langsung! Setelah itu tim kami akan memverifikasi pendaftaran Anda." },
-    { q: "Berapa harga tiketnya?", a: "Gratis! Semua tiket tersedia tanpa biaya. Event ini diselenggarakan secara gratis untuk seluruh peserta. Daftar sekarang dan amankan tiketmu." },
-    { q: "Apa yang perlu disiapkan?", a: "Cukup siapkan data diri (nama, email, WhatsApp), pilih tiket yang tersedia, dan kamu akan mendapatkan tiket digital secara instan." },
-    { q: "Bagaimana cara menghubungi panitia?", a: "Anda dapat menghubungi kami via WhatsApp di +62 858-0075-3804 atau email ke kkrrppi@gmail.com." },
-  ];
 
   function addBotMessage(text) {
     const div = document.createElement("div");
@@ -69,14 +60,14 @@ const faqs = [
   }
 
   toggle.addEventListener("click", () => {
-    const isOpen = !window.classList.contains("hidden");
-    window.classList.toggle("hidden");
+    const isOpen = !chatWindow.classList.contains("hidden");
+    chatWindow.classList.toggle("hidden");
     chatIcon.classList.toggle("hidden", !isOpen);
     closeIcon.classList.toggle("hidden", isOpen);
   });
 
   close.addEventListener("click", () => {
-    window.classList.add("hidden");
+    chatWindow.classList.add("hidden");
     chatIcon.classList.remove("hidden");
     closeIcon.classList.add("hidden");
   });
@@ -84,9 +75,8 @@ const faqs = [
   body.addEventListener("click", (e) => {
     const btn = e.target.closest("[data-question]");
     if (btn) {
-      const q = btn.dataset.question;
-      const faq = faqs.find(f => f.q === q);
-      if (faq) addBotMessage(faq.a);
+      const answer = btn.dataset.answer;
+      if (answer) addBotMessage(answer);
     }
   });
 </script>

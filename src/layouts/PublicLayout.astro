@@ -39,8 +39,9 @@ const { title, description = "KKR RPPI - Kebaktian kebangunan rohani yang memper
               Daftar
               <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
             </a>
-            <button id="mobile-menu-btn" class="md:hidden p-2 rounded-xl hover:bg-kkr-light/40 text-kkr-maroon transition-colors">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            <button id="mobile-menu-btn" class="md:hidden p-2 rounded-xl hover:bg-kkr-light/40 text-kkr-maroon transition-colors" aria-label="Menu navigasi">
+              <svg id="menu-icon" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+              <svg id="close-icon" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
           </div>
         </div>
@@ -99,12 +100,17 @@ const { title, description = "KKR RPPI - Kebaktian kebangunan rohani yang memper
     <script>
       const menuBtn = document.getElementById("mobile-menu-btn");
       const mobileMenu = document.getElementById("mobile-menu");
-      menuBtn?.addEventListener("click", () => {
+      const menuIcon = document.getElementById("menu-icon");
+      const closeIcon = document.getElementById("close-icon");
+      function toggleMenu() {
         mobileMenu?.classList.toggle("hidden");
         const isOpen = !mobileMenu?.classList.contains("hidden");
-        menuBtn.innerHTML = isOpen
-          ? `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`
-          : `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>`;
+        menuIcon?.classList.toggle("hidden", isOpen);
+        closeIcon?.classList.toggle("hidden", !isOpen);
+      }
+      menuBtn?.addEventListener("click", toggleMenu);
+      mobileMenu?.addEventListener("click", (e) => {
+        if (e.target.tagName === "A") toggleMenu();
       });
 
       async function loadContact() {

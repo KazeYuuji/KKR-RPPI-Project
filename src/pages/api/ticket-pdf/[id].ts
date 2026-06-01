@@ -79,10 +79,11 @@ export const GET: APIRoute = async ({ params }) => {
     { label: "ALAMAT", value: address },
   ];
 
-  for (const field of fields) {
+  for (let i = 0; i < fields.length; i++) {
+    const field = fields[i];
     page.drawRectangle({
       x: 30, y: yPos - 8, width: width - 60, height: 32,
-      color: yPos % 64 === 0 ? white : undefined,
+      color: i % 2 === 0 ? white : undefined,
     });
     page.drawText(field.label, { x: 35, y: yPos, size: 8, font: fontReg, color: gray });
     page.drawText(field.value, { x: 35, y: yPos - 14, size: 11, font: font, color: dark });

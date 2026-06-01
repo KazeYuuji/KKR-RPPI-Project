@@ -29,7 +29,7 @@ import WhatsAppFloat from "../components/WhatsAppFloat.astro";
               <span class="text-sm font-semibold uppercase tracking-[0.25em] text-kkr-red">KKR RPPI 2025/2026</span>
             </div>
             <div class="flex flex-col gap-8 xl:flex-row xl:items-start xl:justify-between xl:gap-10">
-              <h1 id="hero-heading" class="text-5xl font-semibold tracking-tight text-kkr-dark sm:text-7xl leading-[1.1]">
+              <h1 id="hero-heading" class="text-4xl font-semibold tracking-tight text-kkr-dark sm:text-5xl xl:text-7xl leading-[1.1]">
                 <span id="hero-title1">Terang dalam</span><br/>
                 <span id="hero-title2" class="text-kkr-red">Kasih Kristus</span>
               </h1>
@@ -42,12 +42,12 @@ import WhatsAppFloat from "../components/WhatsAppFloat.astro";
               "Jika umat-Ku yang disebut dengan nama-Ku merendahkan diri, berdoa dan mencari wajah-Ku, maka Aku akan mendengar dari sorga."
             </p>
             <p id="hero-verse-ref" class="text-sm text-kkr-maroon/80 font-medium">— 2 Tawarikh 7:14</p>
-            <div class="flex flex-wrap gap-4">
-              <a href="/registration" class="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-kkr-maroon to-kkr-red px-8 py-4 text-sm font-semibold text-white shadow-lg shadow-kkr-maroon/20 transition hover:shadow-xl hover:shadow-kkr-maroon/30 hover:-translate-y-0.5">
+            <div class="flex flex-wrap gap-3 sm:gap-4">
+              <a href="/registration" class="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-kkr-maroon to-kkr-red px-6 sm:px-8 py-3 sm:py-4 text-xs sm:text-sm font-semibold text-white shadow-lg shadow-kkr-maroon/20 transition hover:shadow-xl hover:shadow-kkr-maroon/30 hover:-translate-y-0.5">
                 Daftar Sekarang
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
               </a>
-              <a href="#about" class="inline-flex items-center gap-2 rounded-full border border-kkr-light/80 bg-white/80 backdrop-blur-sm px-8 py-4 text-sm font-semibold text-kkr-purple transition hover:border-kkr-red hover:text-kkr-red hover:bg-white">
+              <a href="#about" class="inline-flex items-center gap-2 rounded-full border border-kkr-light/80 bg-white/80 backdrop-blur-sm px-6 sm:px-8 py-3 sm:py-4 text-xs sm:text-sm font-semibold text-kkr-purple transition hover:border-kkr-red hover:text-kkr-red hover:bg-white">
                 Lihat Info Acara
               </a>
             </div>
@@ -294,6 +294,8 @@ import WhatsAppFloat from "../components/WhatsAppFloat.astro";
       return `https://www.google.com/maps?q=${encodeURIComponent(venue || "Lokasi Acara")}&output=embed`;
     }
 
+    function safe(id) { return document.getElementById(id); }
+
     async function loadSettings() {
       try {
         const res = await fetch("/api/settings");
@@ -308,35 +310,30 @@ import WhatsAppFloat from "../components/WhatsAppFloat.astro";
         const email = s.contactEmail || "kkrrppi@gmail.com";
         const phone = s.contactPhone || "(0354) 682433";
         const wa = s.contactWa || "6285800753804";
-        if (s.heroTitle1) document.getElementById("hero-title1").textContent = s.heroTitle1;
-        if (s.heroTitle2) document.getElementById("hero-title2").textContent = s.heroTitle2;
+        if (s.heroTitle1 && safe("hero-title1")) safe("hero-title1").textContent = s.heroTitle1;
+        if (s.heroTitle2 && safe("hero-title2")) safe("hero-title2").textContent = s.heroTitle2;
         if (s.heroSubtitle) {
           const parts = s.heroSubtitle.split("—");
-          document.getElementById("hero-verse").textContent = parts[0].trim();
-          if (parts[1]) document.getElementById("hero-verse-ref").textContent = "— " + parts[1].trim();
+          if (safe("hero-verse")) safe("hero-verse").textContent = parts[0].trim();
+          if (parts[1] && safe("hero-verse-ref")) safe("hero-verse-ref").textContent = "— " + parts[1].trim();
         }
-        if (s.aboutTitle) document.getElementById("about-heading").textContent = s.aboutTitle;
-        if (s.aboutDesc1) document.getElementById("about-desc1").textContent = s.aboutDesc1;
-        if (s.aboutDesc2) document.getElementById("about-desc2").textContent = s.aboutDesc2;
-        if (s.ctaTitle) document.getElementById("cta-title").textContent = s.ctaTitle;
-        if (s.ctaDesc) document.getElementById("cta-desc").textContent = s.ctaDesc;
-        if (s.aboutCard1Title) document.getElementById("about-card1-title").textContent = s.aboutCard1Title;
-        if (s.aboutCard1Desc) document.getElementById("about-card1-desc").textContent = s.aboutCard1Desc;
-        if (s.aboutCard2Title) document.getElementById("about-card2-title").textContent = s.aboutCard2Title;
-        if (s.aboutCard2Desc) document.getElementById("about-card2-desc").textContent = s.aboutCard2Desc;
-        document.getElementById("hero-location").textContent = venue;
-        document.getElementById("loc-venue").textContent = venue;
-        if (document.getElementById("loc-address")) document.getElementById("loc-address").textContent = "Lihat peta di bawah";
-        document.getElementById("loc-date").textContent = date;
-        document.getElementById("loc-time").textContent = time;
-        if (document.getElementById("reg-deadline")) document.getElementById("reg-deadline").textContent = regDeadline;
-        document.getElementById("loc-phone").textContent = phone;
-        document.getElementById("loc-wa").href = "https://wa.me/" + wa;
-        document.getElementById("loc-wa").textContent = "WhatsApp: +" + wa;
-        document.getElementById("loc-maps-btn").href = mapsLink;
-        document.getElementById("loc-maps-iframe").src = mapsSrc;
-        document.getElementById("cta-email").textContent = email;
-        document.getElementById("cta-phone").textContent = phone;
+        if (s.aboutTitle && safe("about-heading")) safe("about-heading").textContent = s.aboutTitle;
+        if (s.aboutDesc1 && safe("about-desc1")) safe("about-desc1").textContent = s.aboutDesc1;
+        if (s.aboutDesc2 && safe("about-desc2")) safe("about-desc2").textContent = s.aboutDesc2;
+        if (s.ctaTitle && safe("cta-title")) safe("cta-title").textContent = s.ctaTitle;
+        if (s.ctaDesc && safe("cta-desc")) safe("cta-desc").textContent = s.ctaDesc;
+        if (safe("hero-location")) safe("hero-location").textContent = venue;
+        if (safe("loc-venue")) safe("loc-venue").textContent = venue;
+        if (safe("loc-address")) safe("loc-address").textContent = "Lihat peta di bawah";
+        if (safe("loc-date")) safe("loc-date").textContent = date;
+        if (safe("loc-time")) safe("loc-time").textContent = time;
+        if (safe("reg-deadline")) safe("reg-deadline").textContent = regDeadline;
+        if (safe("loc-phone")) safe("loc-phone").textContent = phone;
+        if (safe("loc-wa")) { safe("loc-wa").href = "https://wa.me/" + wa; safe("loc-wa").textContent = "WhatsApp: +" + wa; }
+        if (safe("loc-maps-btn")) safe("loc-maps-btn").href = mapsLink;
+        if (safe("loc-maps-iframe")) safe("loc-maps-iframe").src = mapsSrc;
+        if (safe("cta-email")) safe("cta-email").textContent = email;
+        if (safe("cta-phone")) safe("cta-phone").textContent = phone;
         const waFloat = document.querySelector(".wa-float-link");
         if (waFloat) waFloat.href = "https://wa.me/" + wa;
       } catch {}
