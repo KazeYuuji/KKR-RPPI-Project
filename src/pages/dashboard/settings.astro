@@ -215,28 +215,29 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
         const d = await res.json();
         const s = d.settings || {};
 
-        if (s.locVenue) document.getElementById("loc-venue").value = s.locVenue;
-        if (s.locMapsLink) document.getElementById("loc-maps-link").value = s.locMapsLink;
-        if (s.eventDateISO) document.getElementById("event-date-iso").value = utcToLocal(s.eventDateISO);
-        if (s.eventTimeEnd) document.getElementById("event-time-end").value = s.eventTimeEnd;
-        if (s.regDeadlineISO) document.getElementById("reg-deadline-iso").value = utcToLocal(s.regDeadlineISO);
-        if (s.contactEmail) document.getElementById("contact-email").value = s.contactEmail;
-        if (s.contactPhone) document.getElementById("contact-phone").value = s.contactPhone;
-        if (s.contactWa) document.getElementById("contact-wa").value = s.contactWa;
-        if (s.formTitle) document.getElementById("form-title").value = s.formTitle;
-        if (s.formSubtitle) document.getElementById("form-subtitle").value = s.formSubtitle;
-        if (s.heroTitle1) document.getElementById("hero-title1").value = s.heroTitle1;
-        if (s.heroTitle2) document.getElementById("hero-title2").value = s.heroTitle2;
-        if (s.heroSubtitle) document.getElementById("hero-subtitle").value = s.heroSubtitle;
-        if (s.aboutTitle) document.getElementById("about-title").value = s.aboutTitle;
-        if (s.aboutDesc1) document.getElementById("about-desc1").value = s.aboutDesc1;
-        if (s.aboutDesc2) document.getElementById("about-desc2").value = s.aboutDesc2;
-        if (s.ctaTitle) document.getElementById("cta-title").value = s.ctaTitle;
-        if (s.ctaDesc) document.getElementById("cta-desc").value = s.ctaDesc;
-        if (s.aboutCard1Title) document.getElementById("about-card1-title").value = s.aboutCard1Title;
-        if (s.aboutCard1Desc) document.getElementById("about-card1-desc").value = s.aboutCard1Desc;
-        if (s.aboutCard2Title) document.getElementById("about-card2-title").value = s.aboutCard2Title;
-        if (s.aboutCard2Desc) document.getElementById("about-card2-desc").value = s.aboutCard2Desc;
+        const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
+        setVal("loc-venue", s.locVenue || "");
+        setVal("loc-maps-link", s.locMapsLink || "");
+        setVal("event-date-iso", s.eventDateISO ? utcToLocal(s.eventDateISO) : "");
+        setVal("event-time-end", s.eventTimeEnd || "");
+        setVal("reg-deadline-iso", s.regDeadlineISO ? utcToLocal(s.regDeadlineISO) : "");
+        setVal("contact-email", s.contactEmail || "");
+        setVal("contact-phone", s.contactPhone || "");
+        setVal("contact-wa", s.contactWa || "");
+        setVal("form-title", s.formTitle || "");
+        setVal("form-subtitle", s.formSubtitle || "");
+        setVal("hero-title1", s.heroTitle1 || "");
+        setVal("hero-title2", s.heroTitle2 || "");
+        setVal("hero-subtitle", s.heroSubtitle || "");
+        setVal("about-title", s.aboutTitle || "");
+        setVal("about-desc1", s.aboutDesc1 || "");
+        setVal("about-desc2", s.aboutDesc2 || "");
+        setVal("cta-title", s.ctaTitle || "");
+        setVal("cta-desc", s.ctaDesc || "");
+        setVal("about-card1-title", s.aboutCard1Title || "");
+        setVal("about-card1-desc", s.aboutCard1Desc || "");
+        setVal("about-card2-title", s.aboutCard2Title || "");
+        setVal("about-card2-desc", s.aboutCard2Desc || "");
       } catch {}
     }
 
@@ -265,7 +266,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
     document.addEventListener("click", (e) => {
       const delBtn = e.target.closest("[data-delete]");
       if (delBtn) {
-        const id = delBtn.dataset.delete;
+        const id = delBtn.getAttribute("data-delete");
         if (!confirm("Hapus tiket ini?")) return;
         fetch("/api/tickets", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "delete", id }) })
           .then(r => r.ok ? (loadTickets(), toast("Tiket dihapus")) : toast("Gagal hapus", "error"))

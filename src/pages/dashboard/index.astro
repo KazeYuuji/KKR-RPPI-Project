@@ -129,7 +129,9 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
         const d = await res.json();
         const cards = document.querySelectorAll("#stats-grid > div");
         if (cards.length >= 4) {
-          const values = [d.totalRegistrants, d.checkedIn, d.totalRegistrants - d.checkedIn, d.sponsorCount];
+          const tr = d.totalRegistrants || 0;
+          const ci = d.checkedIn || 0;
+          const values = [tr, ci, tr - ci, d.sponsorCount || 0];
           cards.forEach((card, i) => {
             const valEl = card.querySelector(".text-2xl");
             if (valEl && values[i] !== undefined) {
@@ -165,7 +167,7 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
                 <span class="font-medium text-kkr-dark">${r.name}</span>
               </div>
             </td>
-            <td class="py-3.5 px-5 text-kkr-maroon hidden sm:table-cell">${r.school}</td>
+            <td class="py-3.5 px-5 text-kkr-maroon hidden sm:table-cell">${r.school || ""}</td>
             <td class="py-3.5 px-5 text-kkr-maroon">${r.ticket}</td>
             <td class="py-3.5 px-5 hidden md:table-cell"><span class="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold ${r.checked_in ? 'bg-kkr-dark text-white' : 'bg-kkr-light/40 text-kkr-maroon'}">${r.checked_in ? '✓ Checked-in' : '— Belum'}</span></td>
             <td class="py-3.5 px-5 text-right">

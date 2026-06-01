@@ -10,13 +10,12 @@ export interface Props {
 }
 
 const { label, value, change, trend, icon, delay = 0, colorIndex = 0 } = Astro.props;
-const colors = [
-  "from-kkr-light to-kkr-light/30 text-kkr-red",
-  "from-emerald-50 to-emerald-100/50 text-emerald-600",
-  "from-kkr-light to-kkr-light/50 text-kkr-gold",
-  "from-blue-50 to-blue-100/50 text-blue-600",
+const colorMap = [
+  "bg-gradient-to-br from-kkr-light to-kkr-light/30 text-kkr-red",
+  "bg-gradient-to-br from-emerald-50 to-emerald-100/50 text-emerald-600",
+  "bg-gradient-to-br from-kkr-light to-kkr-light/50 text-kkr-gold",
+  "bg-gradient-to-br from-blue-50 to-blue-100/50 text-blue-600",
 ];
-const colorClass = colors[colorIndex % colors.length];
 ---
 
 <div
@@ -39,7 +38,7 @@ const colorClass = colors[colorIndex % colors.length];
       </div>
     )}
   </div>
-  <div class="w-10 h-10 rounded-xl bg-gradient-to-br {colorClass} flex items-center justify-center shrink-0 shadow-sm">
+  <div class="w-10 h-10 rounded-xl {colorMap[colorIndex % colorMap.length]} flex items-center justify-center shrink-0 shadow-sm">
     <span set:html={icon} />
   </div>
 </div>

@@ -131,7 +131,7 @@ import WhatsAppFloat from "../components/WhatsAppFloat.astro";
           <div class="w-12 h-0.5 bg-gradient-to-r from-kkr-red to-blue-500 mx-auto rounded-full"></div>
         </div>
 
-        <div id="speaker-grid" class="speaker-grid-container">
+        <div id="speaker-grid" class="w-full">
           <div class="col-span-full text-center py-12 text-kkr-maroon/60">
             <div class="inline-block w-8 h-8 border-2 border-kkr-maroon border-t-transparent rounded-full animate-spin"></div>
             <p class="mt-3 text-sm">Memuat pembicara...</p>
@@ -284,13 +284,13 @@ import WhatsAppFloat from "../components/WhatsAppFloat.astro";
     <div class="relative w-full max-w-lg rounded-[2rem] bg-white shadow-2xl animate-scale-in">
       <button id="sp-modal-close" class="absolute right-5 top-5 z-10 rounded-full bg-kkr-light/40 px-3 py-2 text-sm text-kkr-maroon/80 transition hover:bg-kkr-light/60">Tutup</button>
       <div class="p-8 text-center">
-        <img id="sp-modal-logo" class="hidden w-24 h-24 rounded-2xl object-contain mx-auto border border-kkr-light/50 bg-white shadow-sm" />
+        <img id="sp-modal-logo" class="hidden w-24 h-24 rounded-2xl object-contain mx-auto border border-kkr-light/50 bg-white shadow-sm" alt="" />
         <h3 id="sp-modal-name" class="mt-5 text-2xl font-semibold text-kkr-dark"></h3>
       </div>
-      <div id="sp-modal-desc-wrap" class="px-8 pb-6 text-left max-h-60 overflow-y-auto">
+      <div id="sp-modal-desc-wrap" class="hidden px-8 pb-6 text-left max-h-60 overflow-y-auto">
         <p id="sp-modal-desc" class="text-kkr-maroon leading-relaxed text-sm"></p>
       </div>
-      <div class="px-8 pb-8 pt-2 text-center border-t border-kkr-light/30">
+      <div id="sp-modal-web-wrap" class="hidden px-8 pb-8 pt-2 text-center border-t border-kkr-light/30">
         <a id="sp-modal-web" href="#" target="_blank" class="hidden inline-flex items-center gap-1.5 rounded-xl bg-kkr-red px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-kkr-maroon">Kunjungi Website <span>↗</span></a>
       </div>
     </div>
@@ -439,24 +439,31 @@ import WhatsAppFloat from "../components/WhatsAppFloat.astro";
       const sponsor = allSponsors.find(s => s.id == id);
       if (!sponsor) return;
       const modal = document.getElementById("sponsor-modal");
-      document.getElementById("sp-modal-logo").src = sponsor.logo_url || "";
-      document.getElementById("sp-modal-logo").classList.toggle("hidden", !sponsor.logo_url);
+      const logoEl = document.getElementById("sp-modal-logo");
+      if (sponsor.logo_url) {
+        logoEl.src = sponsor.logo_url;
+        logoEl.alt = sponsor.name + " logo";
+        logoEl.classList.remove("hidden");
+      } else {
+        logoEl.classList.add("hidden");
+      }
       document.getElementById("sp-modal-name").textContent = sponsor.name;
       const descEl = document.getElementById("sp-modal-desc");
       const descWrap = document.getElementById("sp-modal-desc-wrap");
       if (sponsor.description) {
         descEl.textContent = sponsor.description;
         descWrap.classList.remove("hidden");
+        descWrap.scrollTop = 0;
       } else {
         descWrap.classList.add("hidden");
       }
-      descWrap.scrollTop = 0;
+      const webWrap = document.getElementById("sp-modal-web-wrap");
       const webLink = document.getElementById("sp-modal-web");
       if (sponsor.website) {
         webLink.href = sponsor.website;
-        webLink.classList.remove("hidden");
+        webWrap.classList.remove("hidden");
       } else {
-        webLink.classList.add("hidden");
+        webWrap.classList.add("hidden");
       }
       modal.classList.remove("hidden");
       modal.classList.add("flex");
