@@ -29,7 +29,6 @@ export async function initSchema() {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL,
       website TEXT DEFAULT '',
-      tier TEXT DEFAULT 'bronze',
       description TEXT DEFAULT '',
       logo_url TEXT DEFAULT '',
       is_active INTEGER DEFAULT 1,
@@ -153,6 +152,21 @@ async function runMigrations(db: ReturnType<typeof createClient>) {
     await db.execute("ALTER TABLE registrants_new RENAME TO registrants");
   } catch {
     // no status column
+  }
+  // Drop tier column from sponsors if present
+  try {
+    await db.execute("SELECT tier FROM sponsors LIMIT 1");
+    const data = await db.execute("SELECT id, name, website, description, logo_url, is_active, created_at, updated_at FROM sponsors");
+    const oldRows = data.rows.map((r: any) => ({ id: r.id, name: r.name, website: r.website, description: r.description, logo_url: r.logo_url, is_active: r.is_active, created_at: r.created_at, updated_at: r.updated_at }));
+    await db.execute("DROP TABLE IF EXISTS sponsors_new");
+    await db.execute("CREATE TABLE sponsors_new (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, website TEXT DEFAULT '', description TEXT DEFAULT '', logo_url TEXT DEFAULT '', is_active INTEGER DEFAULT 1, created_at TEXT DEFAULT (datetime('now')), updated_at TEXT DEFAULT (datetime('now')))");
+    for (const r of oldRows) {
+      await db.execute("INSERT INTO sponsors_new (id, name, website, description, logo_url, is_active, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", [r.id, r.name, r.website, r.description, r.logo_url, r.is_active, r.created_at, r.updated_at]);
+    }
+    await db.execute("DROP TABLE sponsors");
+    await db.execute("ALTER TABLE sponsors_new RENAME TO sponsors");
+  } catch {
+    // no tier column
   }
 }
 

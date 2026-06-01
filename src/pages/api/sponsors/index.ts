@@ -15,15 +15,15 @@ export const POST: APIRoute = async ({ request }) => {
   const db = getDb();
   try {
     const body = await request.json();
-    const { name, website, tier, description, logo_url } = body;
+    const { name, website, description, logo_url } = body;
     if (!name) {
       return new Response(JSON.stringify({ error: "Nama sponsor wajib diisi" }), {
         status: 400, headers: { "Content-Type": "application/json" },
       });
     }
     const result = await db.execute(
-      "INSERT INTO sponsors (name, website, tier, description, logo_url) VALUES (?, ?, ?, ?, ?)",
-      [name, website || "", tier || "bronze", description || "", logo_url || ""]
+      "INSERT INTO sponsors (name, website, description, logo_url) VALUES (?, ?, ?, ?)",
+      [name, website || "", description || "", logo_url || ""]
     );
     const sponsor = await db.execute("SELECT * FROM sponsors WHERE id = ?", [result.lastInsertRowid]);
     return new Response(JSON.stringify({ sponsor: sponsor.rows[0] }), {

@@ -34,20 +34,9 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
             <label class="block text-xs font-semibold text-kkr-purple mb-1.5 uppercase tracking-wider">Deskripsi</label>
             <textarea id="sp-desc" rows="2" class="w-full rounded-xl border border-kkr-light/50 bg-white px-4 py-2.5 text-sm text-kkr-dark outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20 placeholder:text-kkr-maroon/60" placeholder="Deskripsi singkat"></textarea>
           </div>
-          <div class="grid grid-cols-2 gap-3">
-            <div>
-              <label class="block text-xs font-semibold text-kkr-purple mb-1.5 uppercase tracking-wider">Tier</label>
-              <select id="sp-tier" class="w-full rounded-xl border border-kkr-light/50 bg-white px-4 py-2.5 text-sm text-kkr-dark outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20">
-                <option value="platinum">Platinum</option>
-                <option value="gold">Gold</option>
-                <option value="silver">Silver</option>
-                <option value="bronze" selected>Bronze</option>
-              </select>
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-kkr-purple mb-1.5 uppercase tracking-wider">Website</label>
-              <input id="sp-web" class="w-full rounded-xl border border-kkr-light/50 bg-white px-4 py-2.5 text-sm text-kkr-dark outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20 placeholder:text-kkr-maroon/60" placeholder="https://" />
-            </div>
+          <div>
+            <label class="block text-xs font-semibold text-kkr-purple mb-1.5 uppercase tracking-wider">Website</label>
+            <input id="sp-web" class="w-full rounded-xl border border-kkr-light/50 bg-white px-4 py-2.5 text-sm text-kkr-dark outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20 placeholder:text-kkr-maroon/60" placeholder="https://" />
           </div>
           <div>
             <label class="block text-xs font-semibold text-kkr-purple mb-1.5 uppercase tracking-wider">Logo Sponsor</label>
@@ -96,9 +85,6 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
       return d.url || null;
     }
 
-    const tierBadge = { platinum: "bg-kkr-dark text-white ring-1 ring-kkr-dark/10", gold: "bg-kkr-gold text-white", silver: "bg-slate-400 text-white", bronze: "bg-orange-400 text-white" };
-    const tierColors = { platinum: "border-kkr-light/80 bg-gradient-to-br from-slate-50 to-slate-100", gold: "border-kkr-gold/30 bg-gradient-to-br from-kkr-light to-kkr-light/50", silver: "border-kkr-light/50 bg-gradient-to-br from-slate-50 to-slate-100", bronze: "border-orange-200 bg-gradient-to-br from-orange-50 to-orange-100/50" };
-
     async function loadSponsors() {
       try {
         const res = await fetch("/api/sponsors");
@@ -110,13 +96,12 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
           return;
         }
         container.innerHTML = list.map((s) => `
-          <div class="rounded-2xl border ${tierColors[s.tier] || tierColors.bronze} p-4 sm:p-5 shadow-sm transition-all duration-200 hover:shadow-md" data-id="${s.id}">
+          <div class="rounded-2xl border border-kkr-light/50 bg-white p-4 sm:p-5 shadow-sm transition-all duration-200 hover:shadow-md" data-id="${s.id}">
             <div class="flex items-start gap-3 sm:gap-4">
               ${s.logo_url ? `<img src="${s.logo_url}" class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl object-contain border border-kkr-light/50 bg-white shadow-sm shrink-0" />` : `<div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-white border border-kkr-light/50 flex items-center justify-center text-xl shrink-0 shadow-sm">🏢</div>`}
               <div class="flex-1 min-w-0">
                 <div class="flex items-center gap-2 flex-wrap">
                   <h4 class="font-semibold text-kkr-dark truncate">${s.name}</h4>
-                  <span class="shrink-0 inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider ${tierBadge[s.tier] || tierBadge.bronze}">${s.tier}</span>
                   <span class="inline-flex items-center gap-1 text-[10px] font-medium ${s.is_active ? 'text-emerald-600' : 'text-kkr-maroon/60'}"><span class="w-1 h-1 rounded-full ${s.is_active ? 'bg-emerald-500' : 'bg-slate-300'}"></span>${s.is_active ? 'Aktif' : 'Nonaktif'}</span>
                 </div>
                 ${s.description ? `<p class="mt-1.5 text-sm text-kkr-maroon line-clamp-2">${s.description}</p>` : ""}
@@ -139,7 +124,6 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
       document.getElementById("sp-id").value = s.id;
       document.getElementById("sp-name").value = s.name;
       document.getElementById("sp-desc").value = s.description || "";
-      document.getElementById("sp-tier").value = s.tier || "bronze";
       document.getElementById("sp-web").value = s.website || "";
       document.getElementById("sp-logo").value = s.logo_url || "";
       document.getElementById("form-title").textContent = "Edit Sponsor";
@@ -153,7 +137,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
     document.getElementById("sponsor-form")?.addEventListener("submit", async (e) => {
       e.preventDefault();
       const id = document.getElementById("sp-id").value;
-      const payload = { name: document.getElementById("sp-name").value.trim(), description: document.getElementById("sp-desc").value.trim(), tier: document.getElementById("sp-tier").value, website: document.getElementById("sp-web").value.trim(), logo_url: document.getElementById("sp-logo").value.trim() };
+      const payload = { name: document.getElementById("sp-name").value.trim(), description: document.getElementById("sp-desc").value.trim(), website: document.getElementById("sp-web").value.trim(), logo_url: document.getElementById("sp-logo").value.trim() };
       try {
         const url = id ? `/api/sponsors/${id}` : "/api/sponsors";
         const method = id ? "PUT" : "POST";

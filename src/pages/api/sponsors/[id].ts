@@ -37,11 +37,10 @@ export const PUT: APIRoute = async ({ params, request }) => {
       });
     }
     await db.execute(
-      "UPDATE sponsors SET name = ?, website = ?, tier = ?, description = ?, logo_url = ?, is_active = ?, updated_at = datetime('now') WHERE id = ?",
+      "UPDATE sponsors SET name = ?, website = ?, description = ?, logo_url = ?, is_active = ?, updated_at = datetime('now') WHERE id = ?",
       [
         body.name || existing.name,
         body.website ?? existing.website,
-        body.tier || existing.tier,
         body.description ?? existing.description,
         body.logo_url ?? existing.logo_url,
         body.is_active !== undefined ? (body.is_active ? 1 : 0) : existing.is_active,
