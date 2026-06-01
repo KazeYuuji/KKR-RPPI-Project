@@ -3,7 +3,7 @@ import PublicLayout from "../layouts/PublicLayout.astro";
 import ScrollReveal from "../components/ScrollReveal.astro";
 import Countdown from "../components/Countdown.astro";
 import ChatBot from "../components/ChatBot.astro";
-import WhatsAppFloat from "../components/WhatsAppFloat.astro";
+
 ---
 
 <PublicLayout title="KKR RPPI | Kebangunan Rohani dalam Yesus Kristus" description="KKR RPPI mempersatukan pelajar, alumni, dan masyarakat dalam kebangunan rohani Yesus Kristus.">
@@ -298,7 +298,6 @@ import WhatsAppFloat from "../components/WhatsAppFloat.astro";
 
   <!-- Floating Components -->
   <ChatBot />
-  <WhatsAppFloat />
 
   <script>
     function deriveEmbedUrl(link, venue) {
@@ -355,8 +354,6 @@ import WhatsAppFloat from "../components/WhatsAppFloat.astro";
         if (safe("loc-maps-iframe")) safe("loc-maps-iframe").src = mapsSrc;
         if (safe("cta-email")) safe("cta-email").textContent = email;
         if (safe("cta-phone")) safe("cta-phone").textContent = phone;
-        const waFloat = document.querySelector(".wa-float-link");
-        if (waFloat) waFloat.href = "https://wa.me/" + wa;
       } catch {}
     }
 
