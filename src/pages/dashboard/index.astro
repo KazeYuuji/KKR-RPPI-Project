@@ -37,6 +37,53 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
       <StatCard label="Sponsor" value="—" icon={pinIcon} colorIndex={3} />
     </div>
 
+    <!-- Analytics Ringkasan -->
+    <div class="grid gap-6 lg:grid-cols-[1fr_1.5fr]">
+      <div class="rounded-2xl border border-kkr-light/50 bg-white p-5 sm:p-6 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-sm font-semibold text-kkr-dark">Distribusi Status</h3>
+          <span id="checkin-rate" class="text-xs font-semibold text-kkr-maroon/60">—</span>
+        </div>
+        <div class="flex items-center gap-4 text-sm mb-3">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-kkr-red shrink-0"></span>
+            <span class="text-kkr-maroon">Check-in</span>
+            <span class="font-semibold text-kkr-dark" id="summary-checked">0</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-kkr-gold shrink-0"></span>
+            <span class="text-kkr-maroon">Belum</span>
+            <span class="font-semibold text-kkr-dark" id="summary-unchecked">0</span>
+          </div>
+        </div>
+        <div class="w-full h-2.5 bg-kkr-light/40 rounded-full overflow-hidden flex">
+          <div id="summary-bar-checkin" class="h-full bg-kkr-red transition-all duration-700 rounded-l-full" style="width:0%"></div>
+          <div id="summary-bar-unchecked" class="h-full bg-kkr-gold transition-all duration-700 rounded-r-full" style="width:0%"></div>
+        </div>
+      </div>
+      <div class="rounded-2xl border border-kkr-light/50 bg-white p-5 sm:p-6 shadow-sm">
+        <h3 class="text-sm font-semibold text-kkr-dark mb-4">Ringkasan Data</h3>
+        <div class="grid grid-cols-2 gap-x-6 gap-y-3 text-sm" id="summary-metrics">
+          <div class="flex justify-between">
+            <span class="text-kkr-maroon">Total Pendaftar</span>
+            <span class="font-semibold text-kkr-dark tabular-nums" id="metric-total">—</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-kkr-maroon">Check-in Rate</span>
+            <span class="font-semibold text-kkr-dark tabular-nums" id="metric-rate">—</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-kkr-maroon">Sponsor Aktif</span>
+            <span class="font-semibold text-kkr-dark tabular-nums" id="metric-sponsors">—</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-kkr-maroon">Pembicara Aktif</span>
+            <span class="font-semibold text-kkr-dark tabular-nums" id="metric-speakers">—</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Main Grid -->
     <div class="grid gap-6 xl:grid-cols-[1.5fr_1fr]">
       <!-- Registrants Table -->
@@ -128,9 +175,9 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
         const res = await fetch("/api/stats");
         const d = await res.json();
         const cards = document.querySelectorAll("#stats-grid > div");
+        const tr = d.totalRegistrants || 0;
+        const ci = d.checkedIn || 0;
         if (cards.length >= 4) {
-          const tr = d.totalRegistrants || 0;
-          const ci = d.checkedIn || 0;
           const values = [tr, ci, tr - ci, d.sponsorCount || 0];
           cards.forEach((card, i) => {
             const valEl = card.querySelector(".text-2xl");
@@ -146,6 +193,29 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
             }
           });
         }
+
+        // Analytics ringkasan
+        const uc = tr - ci;
+        const rate = tr > 0 ? Math.round((ci / tr) * 100) : 0;
+        document.getElementById("summary-checked").textContent = ci;
+        document.getElementById("summary-unchecked").textContent = uc;
+        document.getElementById("checkin-rate").textContent = rate + "% check-in";
+        document.getElementById("summary-bar-checkin").style.width = rate + "%";
+        document.getElementById("summary-bar-unchecked").style.width = (100 - rate) + "%";
+        document.getElementById("metric-total").textContent = tr;
+        document.getElementById("metric-rate").textContent = rate + "%";
+
+        // Sponsor & speaker counts
+        try {
+          const spRes = await fetch("/api/sponsors");
+          const spData = await spRes.json();
+          document.getElementById("metric-sponsors").textContent = (spData.sponsors || []).filter(s => s.is_active).length;
+        } catch {}
+        try {
+          const spkRes = await fetch("/api/speakers");
+          const spkData = await spkRes.json();
+          document.getElementById("metric-speakers").textContent = (spkData.speakers || []).filter(s => s.is_active).length;
+        } catch {}
       } catch {}
     }
 
