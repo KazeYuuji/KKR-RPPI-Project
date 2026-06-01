@@ -10,9 +10,9 @@ import ChatBot from "../components/ChatBot.astro";
   <div class="space-y-16 sm:space-y-24 pb-24">
     <!-- Hero -->
     <section id="home" class="relative min-h-[90vh] flex items-center overflow-hidden">
-      <div class="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-kkr-light"></div>
-      <div class="absolute top-20 left-0 w-64 h-64 bg-blue-200/30 rounded-full blur-3xl"></div>
-      <div class="absolute bottom-20 right-0 w-80 h-80 bg-kkr-red/15 rounded-full blur-3xl"></div>
+      <div class="absolute inset-0 bg-gradient-to-br from-amber-50 via-white to-kkr-light"></div>
+      <div class="absolute top-20 left-0 w-64 h-64 bg-kkr-gold/20 rounded-full blur-3xl"></div>
+      <div class="absolute bottom-20 right-0 w-80 h-80 bg-kkr-red/10 rounded-full blur-3xl"></div>
 
       <div class="absolute left-6 top-1/2 -translate-y-1/2 hidden lg:block text-[120px] opacity-10 pointer-events-none select-none leading-none">
         ✝️
@@ -37,7 +37,7 @@ import ChatBot from "../components/ChatBot.astro";
                 <img src="/logo.png" alt="Logo KKR RPPI" class="h-32 w-auto rounded-[2rem] border border-kkr-light/80 bg-white/90 p-4 shadow-2xl" />
               </div>
             </div>
-            <div class="w-16 h-1 bg-gradient-to-r from-kkr-red to-blue-500 rounded-full"></div>
+            <div class="w-16 h-1 bg-gradient-to-r from-kkr-red to-kkr-gold rounded-full"></div>
             <p id="hero-verse" class="max-w-xl text-lg leading-8 text-kkr-maroon italic">
               "Jika umat-Ku yang disebut dengan nama-Ku merendahkan diri, berdoa dan mencari wajah-Ku, maka Aku akan mendengar dari sorga."
             </p>
@@ -54,8 +54,8 @@ import ChatBot from "../components/ChatBot.astro";
           </div>
 
           <div class="relative animate-fade-in-up">
-            <div class="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-blue-50 via-white to-kkr-light p-6 sm:p-8 shadow-2xl shadow-slate-200/40 border border-white/60">
-              <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(219,234,254,.4),_transparent_50%)]"></div>
+            <div class="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-amber-50 via-white to-kkr-light p-6 sm:p-8 shadow-2xl shadow-slate-200/40 border border-white/60">
+              <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(243,159,90,.15),_transparent_50%)]"></div>
               <div class="relative grid gap-5 rounded-[2rem] bg-white/90 backdrop-blur-sm p-6 sm:p-8 shadow-lg">
                 <div class="rounded-[2rem] bg-gradient-to-br from-kkr-dark to-kkr-purple p-6 sm:p-8 text-white shadow-xl">
                   <div class="flex items-center gap-3 mb-4">
@@ -63,7 +63,7 @@ import ChatBot from "../components/ChatBot.astro";
                     <span class="text-sm uppercase tracking-[0.3em] text-kkr-light font-semibold">Kebangunan Rohani</span>
                   </div>
                   <p class="text-2xl sm:text-3xl font-semibold leading-tight">Mengalami kebangunan rohani dalam Yesus Kristus.</p>
-                  <p class="mt-4 text-slate-300 text-sm leading-relaxed">Bersama dalam pujian, doa, dan firman Tuhan, kita bersukacita atas kasih karunia yang telah dianugerahkan kepada kita.</p>
+                  <p class="mt-4 text-white/70 text-sm leading-relaxed">Bersama dalam pujian, doa, dan firman Tuhan, kita bersukacita atas kasih karunia yang telah dianugerahkan kepada kita.</p>
                 </div>
                 <div class="grid gap-4 sm:grid-cols-2">
                   <div class="rounded-2xl border border-kkr-light/50 bg-white p-5">
@@ -103,12 +103,12 @@ import ChatBot from "../components/ChatBot.astro";
           </div>
 
           <div class="space-y-4">
-            <div class="rounded-2xl bg-gradient-to-br from-kkr-dark to-kkr-purple p-6 sm:p-8 text-white shadow-2xl shadow-kkr-dark/20">
+            <div class="rounded-2xl bg-gradient-to-br from-kkr-dark via-kkr-purple to-kkr-maroon p-6 sm:p-8 text-white shadow-2xl shadow-kkr-dark/20">
               <span class="text-3xl">🎶</span>
               <h3 id="about-card1-title" class="mt-4 text-xl font-semibold">Pujian & Penyembahan</h3>
-              <p id="about-card1-desc" class="mt-2 text-sm text-slate-300 leading-relaxed">Nikmati pujian dan penyembahan yang membawa hati kita lebih dekat kepada Tuhan, mengalami kebangunan rohani dalam Yesus Kristus.</p>
+              <p id="about-card1-desc" class="mt-2 text-sm text-white/70 leading-relaxed">Nikmati pujian dan penyembahan yang membawa hati kita lebih dekat kepada Tuhan, mengalami kebangunan rohani dalam Yesus Kristus.</p>
             </div>
-            <div class="rounded-2xl border border-kkr-light/50 bg-white p-6 sm:p-8 shadow-lg shadow-slate-200/30">
+            <div class="rounded-2xl border border-kkr-light/50 bg-white p-6 sm:p-8 shadow-lg shadow-slate-200/30 transition hover:shadow-xl hover:border-kkr-light">
               <span class="text-3xl">🤝</span>
               <h3 id="about-card2-title" class="mt-4 text-xl font-semibold text-kkr-dark">Persekutuan Lintas Sekolah</h3>
               <p id="about-card2-desc" class="mt-2 text-sm text-kkr-maroon leading-relaxed">Acara ini mempertemukan siswa-siswi dari berbagai sekolah di Kediri dan sekitarnya untuk membangun persaudaraan dan memperkuat ikatan iman dalam Tuhan Yesus.</p>
@@ -128,7 +128,7 @@ import ChatBot from "../components/ChatBot.astro";
             <span class="inline-block w-8 h-px bg-kkr-red"></span>
           </div>
           <h2 class="text-3xl sm:text-4xl font-semibold text-kkr-dark">Bersama Pembicara Rohani</h2>
-          <div class="w-12 h-0.5 bg-gradient-to-r from-kkr-red to-blue-500 mx-auto rounded-full"></div>
+          <div class="w-12 h-0.5 bg-gradient-to-r from-kkr-red to-kkr-gold mx-auto rounded-full"></div>
         </div>
 
         <div id="speaker-grid" class="w-full">
@@ -151,7 +151,7 @@ import ChatBot from "../components/ChatBot.astro";
           </div>
           <h2 class="text-3xl sm:text-4xl font-semibold text-kkr-dark">Didukung oleh</h2>
           <p class="text-kkr-maroon">Para sponsor dan mitra yang mendukung terselenggaranya KKR RPPI 2026</p>
-          <div class="w-12 h-0.5 bg-gradient-to-r from-kkr-red to-blue-500 mx-auto rounded-full"></div>
+          <div class="w-12 h-0.5 bg-gradient-to-r from-kkr-red to-kkr-gold mx-auto rounded-full"></div>
         </div>
 
         <!-- Sponsor Marquee -->
@@ -183,7 +183,7 @@ import ChatBot from "../components/ChatBot.astro";
             <span class="text-sm font-semibold uppercase tracking-[0.25em] text-kkr-red">Lokasi & Waktu</span>
             <span class="inline-block w-8 h-px bg-kkr-red"></span>
           </div>
-          <div class="w-12 h-0.5 bg-gradient-to-r from-kkr-red to-blue-500 mx-auto rounded-full"></div>
+          <div class="w-12 h-0.5 bg-gradient-to-r from-kkr-red to-kkr-gold mx-auto rounded-full"></div>
         </div>
 
         <div class="grid gap-8 lg:grid-cols-[1fr_0.9fr] items-start">
@@ -260,7 +260,7 @@ import ChatBot from "../components/ChatBot.astro";
                 <span class="text-sm font-semibold uppercase tracking-[0.3em] text-kkr-light">Siap Bergabung?</span>
               </div>
               <h2 id="cta-title" class="mt-4 text-3xl sm:text-4xl font-semibold">Daftar sekarang, dan ikuti KKR dalam kasih Kristus.</h2>
-              <p id="cta-desc" class="mt-4 max-w-xl text-slate-300 leading-relaxed">Isi formulir pendaftaran, pilih tiket, dan amankan tempatmu dalam KKR RPPI yang penuh sukacita dan berkat.</p>
+              <p id="cta-desc" class="mt-4 max-w-xl text-white/70 leading-relaxed">Isi formulir pendaftaran, pilih tiket, dan amankan tempatmu dalam KKR RPPI yang penuh sukacita dan berkat.</p>
             </div>
             <div class="space-y-4">
               <a href="/registration" class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-kkr-gold to-kkr-gold px-8 py-4 text-sm font-semibold text-kkr-dark shadow-lg shadow-kkr-gold/30 transition hover:shadow-xl hover:shadow-kkr-gold/40 hover:-translate-y-0.5">
@@ -270,7 +270,7 @@ import ChatBot from "../components/ChatBot.astro";
               <div class="rounded-xl border border-white/10 bg-white/5 p-5 backdrop-blur-sm">
                 <p class="text-xs uppercase tracking-[0.2em] text-kkr-light font-semibold">Kontak</p>
                 <p class="mt-2 text-lg font-semibold" id="cta-email">kkrrppi@gmail.com</p>
-                <p class="text-slate-300 text-sm" id="cta-phone">Memuat...</p>
+                <p class="text-white/70 text-sm" id="cta-phone">Memuat...</p>
               </div>
             </div>
           </div>
@@ -371,7 +371,7 @@ import ChatBot from "../components/ChatBot.astro";
           <div class="${baseClass}">
             ${s.photo_url
               ? `<img src="${s.photo_url}" class="w-28 h-28 rounded-full object-cover mx-auto shadow-lg shadow-kkr-light/50 border-2 border-white" />`
-              : `<div class="w-28 h-28 rounded-full bg-gradient-to-br from-blue-100 to-kkr-light mx-auto flex items-center justify-center text-5xl shadow-lg shadow-kkr-light/50">✝️</div>`
+              : `<div class="w-28 h-28 rounded-full bg-gradient-to-br from-kkr-light/80 to-white mx-auto flex items-center justify-center text-5xl shadow-lg shadow-kkr-light/50">✝️</div>`
             }
             <div class="mt-5 space-y-1">
               ${s.title ? `<span class="inline-block text-xs font-semibold uppercase tracking-wider text-kkr-red bg-kkr-light px-3 py-1 rounded-full">${s.title}</span>` : ""}
@@ -382,7 +382,7 @@ import ChatBot from "../components/ChatBot.astro";
             ${s.tags ? `<div class="flex flex-wrap justify-center gap-2 mt-5">${s.tags.split(",").map(t => `<span class="text-xs bg-kkr-light text-kkr-red px-3 py-1 rounded-full font-medium">${t.trim()}</span>`).join("")}</div>` : ""}
           </div>`;
         if (list.length > 3) {
-          const base = "rounded-[2.5rem] bg-white border border-kkr-light/50 p-5 sm:p-8 shadow-xl shadow-slate-200/40 text-center hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 shrink-0 w-[280px] sm:w-[320px] flex flex-col";
+          const base = "rounded-[2.5rem] bg-white border border-kkr-light/50 p-5 sm:p-8 shadow-xl shadow-kkr-light/30 text-center hover:shadow-2xl hover:shadow-kkr-light/40 hover:-translate-y-1 transition-all duration-300 shrink-0 w-[280px] sm:w-[320px] flex flex-col";
           const html = list.map(makeCard(base)).join("");
           container.innerHTML = `
             <div class="overflow-hidden" style="mask-image: linear-gradient(to right, transparent 0, black 40px, black calc(100% - 40px), transparent 100%);">
@@ -392,7 +392,7 @@ import ChatBot from "../components/ChatBot.astro";
               </div>
             </div>`;
         } else {
-          const base = "rounded-[2.5rem] bg-white border border-kkr-light/50 p-6 sm:p-8 shadow-xl shadow-slate-200/40 text-center hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 w-full max-w-md flex flex-col";
+          const base = "rounded-[2.5rem] bg-white border border-kkr-light/50 p-6 sm:p-8 shadow-xl shadow-kkr-light/30 text-center hover:shadow-2xl hover:shadow-kkr-light/40 hover:-translate-y-1 transition-all duration-300 w-full max-w-md flex flex-col";
           const html = list.map(makeCard(base)).join("");
           const cols = list.length === 1 ? "flex justify-center" : "grid gap-6 sm:grid-cols-2 mx-auto";
           container.innerHTML = `<div class="${cols}" style="${list.length === 2 ? 'max-width: 42rem;' : ''}">${html}</div>`;
@@ -415,7 +415,7 @@ import ChatBot from "../components/ChatBot.astro";
           return;
         }
         const card = (s) =>
-          `<div class="sponsor-card flex items-center gap-4 rounded-2xl border border-kkr-light/50 bg-white px-6 py-5 shadow-sm shrink-0 min-w-[260px] cursor-pointer transition hover:shadow-md hover:-translate-y-0.5" data-id="${s.id}">
+          `<div class="sponsor-card flex items-center gap-4 rounded-2xl border border-kkr-light/50 bg-white px-6 py-5 shadow-md shrink-0 min-w-[260px] cursor-pointer transition-all duration-300 hover:shadow-xl hover:border-kkr-red/30 hover:-translate-y-1" data-id="${s.id}">
             ${s.logo_url ? `<img src="${s.logo_url}" class="w-12 h-12 rounded-xl object-cover shrink-0" />` : `<div class="w-12 h-12 rounded-xl bg-gradient-to-br from-kkr-light to-white border border-kkr-light/50 flex items-center justify-center text-xl shrink-0">🏢</div>`}
             <div class="min-w-0">
               <p class="font-semibold text-kkr-dark truncate">${s.name}</p>
