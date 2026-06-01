@@ -288,7 +288,7 @@ import WhatsAppFloat from "../components/WhatsAppFloat.astro";
         <h3 id="sp-modal-name" class="mt-5 text-2xl font-semibold text-kkr-dark"></h3>
       </div>
       <div id="sp-modal-desc-wrap" class="hidden px-8 pb-6 text-left">
-        <p id="sp-modal-desc" class="text-kkr-maroon leading-7 text-sm"></p>
+        <p id="sp-modal-desc" class="text-kkr-maroon leading-7 text-sm break-words"></p>
       </div>
       <div id="sp-modal-web-wrap" class="hidden px-8 pb-8 pt-4 text-center border-t border-kkr-light/30">
         <a id="sp-modal-web" href="#" target="_blank" class="hidden inline-flex items-center gap-1.5 rounded-xl bg-kkr-red px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-kkr-maroon">Kunjungi Website <span>↗</span></a>
@@ -381,7 +381,7 @@ import WhatsAppFloat from "../components/WhatsAppFloat.astro";
               <h3 class="text-2xl font-semibold text-kkr-dark mt-2">${s.name}</h3>
               ${s.organization ? `<p class="text-kkr-maroon/80 text-sm">${s.organization}</p>` : ""}
             </div>
-            ${s.description ? `<div class="mt-4"><p class="text-sm text-kkr-maroon leading-relaxed text-center max-w-xs mx-auto">${s.description}</p></div>` : '<div class="flex-1"></div>'}
+            ${s.description ? `<div class="mt-4"><p class="text-sm text-kkr-maroon leading-relaxed text-center max-w-xs mx-auto break-words">${s.description}</p></div>` : '<div class="flex-1"></div>'}
             ${s.tags ? `<div class="flex flex-wrap justify-center gap-2 mt-5">${s.tags.split(",").map(t => `<span class="text-xs bg-kkr-light text-kkr-red px-3 py-1 rounded-full font-medium">${t.trim()}</span>`).join("")}</div>` : ""}
           </div>`;
         if (list.length > 3) {
