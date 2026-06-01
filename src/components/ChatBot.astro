@@ -18,7 +18,7 @@ const faqs = [
           <p class="font-semibold text-sm">Elias</p>
           <p class="text-xs text-kkr-light">Asisten KKR RPPI</p>
         </div>
-        <button id="chat-close" class="ml-auto p-1 rounded-lg hover:bg-white/20 transition-colors" aria-label="Tutup chat">
+        <button id="chat-close" class="ml-auto p-1 rounded-lg hover:bg-white/20 transition-colors">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
       </div>
@@ -32,7 +32,7 @@ const faqs = [
       </div>
       <div class="flex flex-wrap gap-2 pt-1">
         {faqs.slice(0, 3).map((faq) => (
-          <button data-question={faq.q} data-answer={faq.a} class="text-xs bg-kkr-light text-kkr-red px-3 py-1.5 rounded-full hover:bg-kkr-light/70 transition-colors font-medium">{faq.q}</button>
+          <button data-question={faq.q} class="text-xs bg-kkr-light text-kkr-red px-3 py-1.5 rounded-full hover:bg-kkr-light/70 transition-colors font-medium">{faq.q}</button>
         ))}
       </div>
     </div>
@@ -75,8 +75,9 @@ const faqs = [
   body.addEventListener("click", (e) => {
     const btn = e.target.closest("[data-question]");
     if (btn) {
-      const answer = btn.dataset.answer;
-      if (answer) addBotMessage(answer);
+      const q = btn.dataset.question;
+      const faq = faqs.find(f => f.q === q);
+      if (faq) addBotMessage(faq.a);
     }
   });
 </script>

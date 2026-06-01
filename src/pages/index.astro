@@ -7,7 +7,7 @@ import WhatsAppFloat from "../components/WhatsAppFloat.astro";
 ---
 
 <PublicLayout title="KKR RPPI | Kebangunan Rohani dalam Yesus Kristus" description="KKR RPPI mempersatukan pelajar, alumni, dan masyarakat dalam kebangunan rohani Yesus Kristus.">
-  <div class="space-y-24 pb-24">
+  <div class="space-y-16 sm:space-y-24 pb-24">
     <!-- Hero -->
     <section id="home" class="relative min-h-[90vh] flex items-center overflow-hidden">
       <div class="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-kkr-light"></div>
@@ -21,9 +21,9 @@ import WhatsAppFloat from "../components/WhatsAppFloat.astro";
         🕊️
       </div>
 
-      <div class="relative mx-auto max-w-7xl px-6 w-full">
-        <div class="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
-          <div class="space-y-8 animate-fade-in">
+      <div class="relative mx-auto max-w-7xl px-4 sm:px-6 w-full">
+        <div class="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+          <div class="space-y-6 sm:space-y-8 animate-fade-in">
             <div class="flex items-center gap-3">
               <span class="inline-block w-12 h-px bg-kkr-red"></span>
               <span class="text-sm font-semibold uppercase tracking-[0.25em] text-kkr-red">KKR RPPI 2025/2026</span>
@@ -42,12 +42,12 @@ import WhatsAppFloat from "../components/WhatsAppFloat.astro";
               "Jika umat-Ku yang disebut dengan nama-Ku merendahkan diri, berdoa dan mencari wajah-Ku, maka Aku akan mendengar dari sorga."
             </p>
             <p id="hero-verse-ref" class="text-sm text-kkr-maroon/80 font-medium">— 2 Tawarikh 7:14</p>
-            <div class="flex flex-wrap gap-3 sm:gap-4">
-              <a href="/registration" class="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-kkr-maroon to-kkr-red px-6 sm:px-8 py-3 sm:py-4 text-xs sm:text-sm font-semibold text-white shadow-lg shadow-kkr-maroon/20 transition hover:shadow-xl hover:shadow-kkr-maroon/30 hover:-translate-y-0.5">
+            <div class="flex flex-wrap gap-4">
+              <a href="/registration" class="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-kkr-maroon to-kkr-red px-8 py-4 text-sm font-semibold text-white shadow-lg shadow-kkr-maroon/20 transition hover:shadow-xl hover:shadow-kkr-maroon/30 hover:-translate-y-0.5">
                 Daftar Sekarang
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
               </a>
-              <a href="#about" class="inline-flex items-center gap-2 rounded-full border border-kkr-light/80 bg-white/80 backdrop-blur-sm px-6 sm:px-8 py-3 sm:py-4 text-xs sm:text-sm font-semibold text-kkr-purple transition hover:border-kkr-red hover:text-kkr-red hover:bg-white">
+              <a href="#about" class="inline-flex items-center gap-2 rounded-full border border-kkr-light/80 bg-white/80 backdrop-blur-sm px-8 py-4 text-sm font-semibold text-kkr-purple transition hover:border-kkr-red hover:text-kkr-red hover:bg-white">
                 Lihat Info Acara
               </a>
             </div>
@@ -312,9 +312,9 @@ import WhatsAppFloat from "../components/WhatsAppFloat.astro";
         const wa = s.contactWa || "6285800753804";
         if (s.heroTitle1 && safe("hero-title1")) safe("hero-title1").textContent = s.heroTitle1;
         if (s.heroTitle2 && safe("hero-title2")) safe("hero-title2").textContent = s.heroTitle2;
-        if (s.heroSubtitle) {
+        if (s.heroSubtitle && safe("hero-verse")) {
           const parts = s.heroSubtitle.split("—");
-          if (safe("hero-verse")) safe("hero-verse").textContent = parts[0].trim();
+          safe("hero-verse").textContent = parts[0].trim();
           if (parts[1] && safe("hero-verse-ref")) safe("hero-verse-ref").textContent = "— " + parts[1].trim();
         }
         if (s.aboutTitle && safe("about-heading")) safe("about-heading").textContent = s.aboutTitle;
@@ -322,6 +322,10 @@ import WhatsAppFloat from "../components/WhatsAppFloat.astro";
         if (s.aboutDesc2 && safe("about-desc2")) safe("about-desc2").textContent = s.aboutDesc2;
         if (s.ctaTitle && safe("cta-title")) safe("cta-title").textContent = s.ctaTitle;
         if (s.ctaDesc && safe("cta-desc")) safe("cta-desc").textContent = s.ctaDesc;
+        if (s.aboutCard1Title && safe("about-card1-title")) safe("about-card1-title").textContent = s.aboutCard1Title;
+        if (s.aboutCard1Desc && safe("about-card1-desc")) safe("about-card1-desc").textContent = s.aboutCard1Desc;
+        if (s.aboutCard2Title && safe("about-card2-title")) safe("about-card2-title").textContent = s.aboutCard2Title;
+        if (s.aboutCard2Desc && safe("about-card2-desc")) safe("about-card2-desc").textContent = s.aboutCard2Desc;
         if (safe("hero-location")) safe("hero-location").textContent = venue;
         if (safe("loc-venue")) safe("loc-venue").textContent = venue;
         if (safe("loc-address")) safe("loc-address").textContent = "Lihat peta di bawah";
@@ -364,13 +368,13 @@ import WhatsAppFloat from "../components/WhatsAppFloat.astro";
             ${s.tags ? `<div class="flex flex-wrap justify-center gap-2 mt-5">${s.tags.split(",").map(t => `<span class="text-xs bg-kkr-light text-kkr-red px-3 py-1 rounded-full font-medium">${t.trim()}</span>`).join("")}</div>` : ""}
           </div>`;
         if (list.length > 3) {
-          const base = "rounded-[2.5rem] bg-white border border-kkr-light/50 p-6 sm:p-8 shadow-xl shadow-slate-200/40 text-center hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 shrink-0 max-w-md";
+          const base = "rounded-[2.5rem] bg-white border border-kkr-light/50 p-5 sm:p-8 shadow-xl shadow-slate-200/40 text-center hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 shrink-0 w-[280px] sm:w-[320px]";
           const html = list.map(makeCard(base)).join("");
           container.innerHTML = `
             <div class="overflow-hidden" style="mask-image: linear-gradient(to right, transparent 0, black 40px, black calc(100% - 40px), transparent 100%);">
-              <div class="flex gap-6" style="width: max-content; animation: scroll-left 30s linear infinite;">
-                <div class="flex gap-6">${html}</div>
-                <div class="flex gap-6" aria-hidden="true">${html}</div>
+              <div class="flex gap-4 sm:gap-6" style="width: max-content; animation: scroll-left 30s linear infinite;">
+                <div class="flex gap-4 sm:gap-6">${html}</div>
+                <div class="flex gap-4 sm:gap-6" aria-hidden="true">${html}</div>
               </div>
             </div>`;
         } else {
