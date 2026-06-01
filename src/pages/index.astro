@@ -284,8 +284,10 @@ import ChatBot from "../components/ChatBot.astro";
     <div class="relative w-full max-w-lg rounded-[2rem] bg-white shadow-2xl animate-scale-in">
       <button id="sp-modal-close" class="absolute right-5 top-5 z-10 rounded-full bg-kkr-light/40 px-3 py-2 text-sm text-kkr-maroon/80 transition hover:bg-kkr-light/60">Tutup</button>
       <div class="p-8 text-center">
-        <img id="sp-modal-logo" class="hidden w-24 h-24 rounded-2xl object-contain mx-auto border border-kkr-light/50 bg-white shadow-sm" alt="" />
-        <h3 id="sp-modal-name" class="mt-5 text-2xl font-semibold text-kkr-dark"></h3>
+        <div class="flex justify-center mb-4">
+          <img id="sp-modal-logo" class="hidden w-28 h-28 rounded-2xl object-scale-down mx-auto border-2 border-kkr-light/60 bg-white shadow-lg shadow-kkr-light/30 p-2" alt="" />
+        </div>
+        <h3 id="sp-modal-name" class="text-2xl font-semibold text-kkr-dark"></h3>
       </div>
       <div id="sp-modal-desc-wrap" class="hidden px-8 pb-6 text-left">
         <p id="sp-modal-desc" class="text-kkr-maroon leading-7 text-sm break-words"></p>
