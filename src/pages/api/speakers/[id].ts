@@ -3,6 +3,27 @@ import { getDb } from "../../../lib/db";
 
 export const prerender = false;
 
+export const GET: APIRoute = async ({ params }) => {
+  const db = getDb();
+  const { id } = params;
+  try {
+    const result = await db.execute("SELECT * FROM speakers WHERE id = ?", [id]);
+    const speaker = result.rows[0] as Record<string, any> | undefined;
+    if (!speaker) {
+      return new Response(JSON.stringify({ error: "Pembicara tidak ditemukan" }), {
+        status: 404, headers: { "Content-Type": "application/json" },
+      });
+    }
+    return new Response(JSON.stringify({ speaker }), {
+      status: 200, headers: { "Content-Type": "application/json" },
+    });
+  } catch {
+    return new Response(JSON.stringify({ error: "Gagal memuat pembicara" }), {
+      status: 500, headers: { "Content-Type": "application/json" },
+    });
+  }
+};
+
 export const PUT: APIRoute = async ({ params, request }) => {
   const db = getDb();
   const { id } = params;

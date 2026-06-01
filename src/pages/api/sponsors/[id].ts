@@ -3,6 +3,27 @@ import { getDb } from "../../../lib/db";
 
 export const prerender = false;
 
+export const GET: APIRoute = async ({ params }) => {
+  const db = getDb();
+  const { id } = params;
+  try {
+    const result = await db.execute("SELECT * FROM sponsors WHERE id = ?", [id]);
+    const sponsor = result.rows[0] as Record<string, any> | undefined;
+    if (!sponsor) {
+      return new Response(JSON.stringify({ error: "Sponsor tidak ditemukan" }), {
+        status: 404, headers: { "Content-Type": "application/json" },
+      });
+    }
+    return new Response(JSON.stringify({ sponsor }), {
+      status: 200, headers: { "Content-Type": "application/json" },
+    });
+  } catch {
+    return new Response(JSON.stringify({ error: "Gagal memuat sponsor" }), {
+      status: 500, headers: { "Content-Type": "application/json" },
+    });
+  }
+};
+
 export const PUT: APIRoute = async ({ params, request }) => {
   const db = getDb();
   const { id } = params;

@@ -21,7 +21,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const method = context.request.method;
 
   // Public GET endpoints
-  if ((url.startsWith("/api/tickets") || url.startsWith("/api/settings")) && method === "GET") {
+  if ((url.startsWith("/api/tickets") || url.startsWith("/api/settings") || url.startsWith("/api/speakers") || url.startsWith("/api/sponsors")) && method === "GET") {
     return next();
   }
 
@@ -39,8 +39,8 @@ export const onRequest = defineMiddleware(async (context, next) => {
     url.startsWith("/api/registrants") ||
     (url.startsWith("/api/tickets") && method !== "GET") ||
     (url.startsWith("/api/settings") && method !== "GET") ||
-    url.startsWith("/api/speakers") ||
-    url.startsWith("/api/sponsors");
+    (url.startsWith("/api/speakers") && method !== "GET") ||
+    (url.startsWith("/api/sponsors") && method !== "GET");
 
   if (isProtected) {
     const admin = getAdminFromRequest(context.request);
