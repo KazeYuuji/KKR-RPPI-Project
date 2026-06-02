@@ -5,9 +5,10 @@ export interface Props {
   direction?: "up" | "down" | "left" | "right" | "scale" | "none";
   duration?: number;
   distance?: number;
+  spring?: boolean;
 }
 
-const { class: className, delay = 0, direction = "up", duration = 0.6, distance = 30 } = Astro.props;
+const { class: className, delay = 0, direction = "up", duration = 0.7, distance = 30, spring = false } = Astro.props;
 const dirMap: Record<string, Record<string, string>> = {
   up: { x: "0", y: `${distance}px` },
   down: { x: "0", y: `${-distance}px` },
@@ -17,9 +18,10 @@ const dirMap: Record<string, Record<string, string>> = {
   none: { x: "0", y: "0" },
 };
 const d = dirMap[direction] || dirMap.up;
+const ease = spring ? "cubic-bezier(0.34, 1.56, 0.64, 1)" : "cubic-bezier(0.22, 1, 0.36, 1)";
 ---
 
-<div class="reveal {className}" style={`transition-delay: ${delay}ms; transition-duration: ${duration}s; --reveal-x: ${d.x}; --reveal-y: ${d.y};`}>
+<div class="reveal {className}" style={`transition-delay: ${delay}ms; transition-duration: ${duration}s; --reveal-x: ${d.x}; --reveal-y: ${d.y}; --reveal-ease: ${ease};`}>
   <slot />
 </div>
 
@@ -64,7 +66,7 @@ const d = dirMap[direction] || dirMap.up;
   .reveal {
     opacity: 0;
     transform: translate(var(--reveal-x, 0px), var(--reveal-y, 30px)) scale(var(--reveal-scale, 1));
-    transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1), transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: opacity 0.7s var(--reveal-ease, cubic-bezier(0.22, 1, 0.36, 1)), transform 0.7s var(--reveal-ease, cubic-bezier(0.22, 1, 0.36, 1));
     will-change: transform, opacity;
   }
   .reveal.revealed {
@@ -74,7 +76,7 @@ const d = dirMap[direction] || dirMap.up;
   .reveal[data-stagger] > * {
     opacity: 0;
     transform: translateY(20px);
-    transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1), transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1), transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
     will-change: transform, opacity;
   }
   .reveal[data-stagger].revealed > *,
