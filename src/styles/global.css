@@ -37,15 +37,8 @@ body:not(.admin) {
 }
 
 body.admin {
-  background-image:
-    linear-gradient(180deg, rgba(29,26,57,.92) 0%, rgba(69,25,82,.55) 50%, rgba(102,37,73,.60) 100%),
-    url('/images/concert-bg.jpeg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  background-blend-mode: overlay;
-  color: var(--color-kkr-light);
+  background: linear-gradient(180deg, #f8f6f3 0%, #f1ece7 40%, #e8e0d8 100%);
+  color: #1D1A39;
 }
 
 .section-panel {
