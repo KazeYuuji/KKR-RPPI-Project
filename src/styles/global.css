@@ -17,38 +17,56 @@ html {
   scroll-behavior: smooth;
 }
 
-body:not(.admin) {
-  @apply text-kkr-light antialiased;
+body {
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   min-height: 100vh;
   background-color: var(--color-kkr-dark);
+  text-rendering: optimizeLegibility;
+}
+
+body:not(.admin) {
   background-image:
-    linear-gradient(180deg, rgba(29,26,57,.92), rgba(101,37,73,.65)),
-    url('/images/concert-bg.jpg');
+    linear-gradient(180deg, rgba(29,26,57,.88) 0%, rgba(69,25,82,.50) 40%, rgba(102,37,73,.55) 100%),
+    url('/images/concert-bg.jpeg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-blend-mode: overlay;
   color: var(--color-kkr-light);
-  text-rendering: optimizeLegibility;
 }
 
 body.admin {
-  @apply text-kkr-light antialiased;
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  min-height: 100vh;
-  background: radial-gradient(circle at top left, rgba(243,159,90,0.14), transparent 20%),
-    linear-gradient(180deg, #1d1a39 0%, #451952 40%, #662549 100%);
+  background-image:
+    linear-gradient(180deg, rgba(29,26,57,.92) 0%, rgba(69,25,82,.55) 50%, rgba(102,37,73,.60) 100%),
+    url('/images/concert-bg.jpeg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-blend-mode: overlay;
   color: var(--color-kkr-light);
-  text-rendering: optimizeLegibility;
 }
 
 .section-panel {
-  background: rgba(255, 255, 255, 0.96);
+  background: rgba(255, 255, 255, 0.92);
   color: var(--color-kkr-dark);
-  backdrop-filter: blur(18px);
-  box-shadow: 0 24px 80px rgba(15, 23, 42, 0.12);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.25);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.40);
+}
+
+.glass-card-dark {
+  background: rgba(29, 26, 57, 0.70);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.30);
 }
 
 .bg-panel-dark {

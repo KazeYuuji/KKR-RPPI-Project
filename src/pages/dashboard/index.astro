@@ -12,7 +12,7 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
 <AdminLayout title="Dashboard">
   <div class="space-y-8 animate-fade-in">
     <!-- Welcome -->
-    <div class="rounded-2xl border border-kkr-light/50 bg-white p-6 sm:p-8 shadow-sm">
+    <div class="rounded-2xl glass-card p-6 sm:p-8">
       <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div class="flex items-center gap-2">
@@ -39,7 +39,7 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
 
     <!-- Analytics Ringkasan -->
     <div class="grid gap-6 lg:grid-cols-[1fr_1.5fr]">
-      <div class="rounded-2xl border border-kkr-light/50 bg-white p-5 sm:p-6 shadow-sm">
+      <div class="rounded-2xl glass-card p-5 sm:p-6">
         <div class="flex items-center justify-between mb-4">
           <h3 class="text-sm font-semibold text-kkr-dark">Distribusi Status</h3>
           <span id="checkin-rate" class="text-xs font-semibold text-kkr-maroon/60">—</span>
@@ -61,7 +61,7 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
           <div id="summary-bar-unchecked" class="h-full bg-kkr-gold transition-all duration-700 rounded-r-full" style="width:0%"></div>
         </div>
       </div>
-      <div class="rounded-2xl border border-kkr-light/50 bg-white p-5 sm:p-6 shadow-sm">
+      <div class="rounded-2xl glass-card p-5 sm:p-6">
         <h3 class="text-sm font-semibold text-kkr-dark mb-4">Ringkasan Data</h3>
         <div class="grid grid-cols-2 gap-x-6 gap-y-3 text-sm" id="summary-metrics">
           <div class="flex justify-between">
@@ -91,8 +91,8 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
     <!-- Main Grid -->
     <div class="grid gap-6 xl:grid-cols-[1.5fr_1fr]">
       <!-- Registrants Table -->
-      <div class="rounded-2xl border border-kkr-light/50 bg-white shadow-sm overflow-hidden">
-        <div class="p-5 sm:p-6 border-b border-kkr-light/30">
+      <div class="rounded-2xl glass-card overflow-hidden">
+        <div class="p-5 sm:p-6 border-b border-white/20">
           <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h3 class="text-lg font-semibold text-kkr-dark">Daftar Peserta</h3>
@@ -107,7 +107,7 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
         <div class="overflow-x-auto">
           <table class="min-w-full text-sm">
             <thead>
-              <tr class="bg-white text-kkr-maroon/80 text-xs uppercase tracking-wider">
+              <tr class="text-kkr-dark/80 text-xs uppercase tracking-wider">
                 <th class="py-3.5 px-5 font-semibold text-left">Nama</th>
                 <th class="py-3.5 px-5 font-semibold text-left hidden sm:table-cell">Sekolah</th>
                 <th class="py-3.5 px-5 font-semibold text-left">Tiket</th>
@@ -125,7 +125,7 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
       <!-- Sidebar Widgets -->
       <div class="space-y-5">
         <!-- Tickets -->
-        <div class="rounded-2xl border border-kkr-light/50 bg-white p-5 sm:p-6 shadow-sm">
+        <div class="rounded-2xl glass-card p-5 sm:p-6">
           <div class="flex items-center gap-2.5 mb-1">
             <span class="w-8 h-8 rounded-xl bg-kkr-light flex items-center justify-center text-kkr-red" set:html={ticketIcon} />
             <h3 class="text-base font-semibold text-kkr-dark">Stok Tiket</h3>
@@ -139,7 +139,7 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
         </div>
 
         <!-- Check-in -->
-        <div class="rounded-2xl border border-kkr-light/50 bg-white p-5 sm:p-6 shadow-sm">
+        <div class="rounded-2xl glass-card p-5 sm:p-6">
           <div class="flex items-center gap-2.5 mb-1">
             <span class="w-8 h-8 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>

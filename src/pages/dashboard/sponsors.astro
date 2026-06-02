@@ -5,7 +5,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
 <AdminLayout title="Kelola Sponsor">
   <div class="space-y-8 animate-fade-in">
     <!-- Header -->
-    <div class="rounded-2xl border border-kkr-light/50 bg-white p-6 sm:p-8 shadow-sm">
+    <div class="glass-card p-6 sm:p-8">
       <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div class="flex items-center gap-2 mb-1">
@@ -13,7 +13,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
             <span class="text-xs font-semibold uppercase tracking-wider text-kkr-maroon/60">Sponsor</span>
           </div>
           <h2 class="text-2xl sm:text-3xl font-semibold text-kkr-dark">Daftar Sponsor & Mitra</h2>
-          <p class="mt-1 text-sm text-kkr-maroon/80">Tambah, edit, atau hapus sponsor yang tampil di halaman publik.</p>
+          <p class="mt-1 text-sm text-kkr-maroon">Tambah, edit, atau hapus sponsor yang tampil di halaman publik.</p>
         </div>
         <a href="/#sponsors" target="_blank" class="inline-flex items-center gap-1.5 rounded-xl border border-kkr-light/50 bg-white px-4 py-2.5 text-sm font-semibold text-kkr-maroon shadow-sm transition hover:bg-white hover:border-kkr-light/80">Lihat Halaman Publik</a>
       </div>
@@ -21,9 +21,9 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
 
     <div class="grid gap-6 lg:grid-cols-[1fr_1.8fr] min-w-0">
       <!-- Form -->
-      <div class="rounded-2xl border border-kkr-light/50 bg-white p-5 sm:p-6 shadow-sm h-fit lg:sticky lg:top-24">
+      <div class="glass-card p-5 sm:p-6 h-fit lg:sticky lg:top-24">
         <h3 class="text-base font-semibold text-kkr-dark" id="form-title">Tambah Sponsor</h3>
-        <p class="text-xs text-kkr-maroon/80 mt-0.5" id="form-subtitle">Lengkapi data sponsor baru.</p>
+        <p class="text-xs text-kkr-maroon mt-0.5" id="form-subtitle">Lengkapi data sponsor baru.</p>
         <form id="sponsor-form" class="mt-5 space-y-4">
           <input type="hidden" id="sp-id" />
           <div>
@@ -58,7 +58,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
 
       <!-- List -->
       <div id="sponsor-list" class="space-y-3 min-w-0">
-        <div class="rounded-2xl border border-kkr-light/50 bg-white p-8 text-center text-kkr-maroon/60">
+        <div class="glass-card p-8 text-center text-kkr-maroon/60">
           <div class="inline-block w-6 h-6 border-2 border-kkr-maroon border-t-transparent rounded-full animate-spin"></div>
           <p class="mt-2 text-sm">Memuat sponsor...</p>
         </div>
@@ -92,11 +92,11 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
         const list = d.sponsors || [];
         const container = document.getElementById("sponsor-list");
         if (!list.length) {
-          container.innerHTML = `<div class="rounded-2xl border border-kkr-light/50 bg-white p-8 sm:p-12 text-center"><div class="text-3xl mb-3">🏢</div><p class="text-kkr-maroon/80 font-medium">Belum ada sponsor</p><p class="text-sm text-kkr-maroon/60 mt-1">Tambah sponsor pertama Anda melalui form di samping.</p></div>`;
+          container.innerHTML = `<div class="glass-card p-8 sm:p-12 text-center"><div class="text-3xl mb-3">🏢</div><p class="text-kkr-maroon font-medium">Belum ada sponsor</p><p class="text-sm text-kkr-maroon/60 mt-1">Tambah sponsor pertama Anda melalui form di samping.</p></div>`;
           return;
         }
         container.innerHTML = list.map((s) => `
-          <div class="rounded-2xl border border-kkr-light/50 bg-white p-4 sm:p-5 shadow-sm transition-all duration-200 hover:shadow-md" data-id="${s.id}">
+          <div class="glass-card p-4 sm:p-5 transition-all duration-200 hover:shadow-md" data-id="${s.id}">
             <div class="flex items-start gap-3 sm:gap-4">
               ${s.logo_url ? `<img src="${s.logo_url}" class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl object-contain border border-kkr-light/50 bg-white shadow-sm shrink-0" />` : `<div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-white border border-kkr-light/50 flex items-center justify-center text-xl shrink-0 shadow-sm">🏢</div>`}
               <div class="flex-1 min-w-0">

@@ -17,21 +17,22 @@ const { title, description = "KKR RPPI - Kebaktian kebangunan rohani yang memper
     <meta name="description" content={description} />
     <title>{title}</title>
   </head>
-  <body class="text-kkr-light antialiased">
+  <body>
     <div class="min-h-screen">
-      <header class="sticky top-0 z-40 border-b border-white/15 bg-white/90 backdrop-blur-xl shadow-sm">
+      <header class="sticky top-0 z-40 border-b border-white/10 bg-kkr-dark/85 backdrop-blur-xl shadow-lg shadow-black/20">
         <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-          <a href="/" class="flex items-center gap-3 text-lg font-semibold tracking-tight text-kkr-dark">
+          <a href="/" class="flex items-center gap-3 text-lg font-semibold tracking-tight text-white">
             <img src="/logo-header.png" alt="KKR RPPI logo" class="h-10 w-10 object-contain rounded-full" />
-            <span>KKR <span class="text-kkr-red">RPPI</span></span>
+            <span>KKR <span class="text-kkr-gold">RPPI</span></span>
           </a>
 
-          <nav class="hidden items-center gap-7 text-sm font-semibold text-kkr-maroon md:flex">
-            <a href="/#home" class="transition hover:text-kkr-red">Beranda</a>
-            <a href="/#about" class="transition hover:text-kkr-red">Info</a>
-            <a href="/#speakers" class="transition hover:text-kkr-red">Pembicara</a>
-            <a href="/#sponsors" class="transition hover:text-kkr-red">Sponsor</a>
-            <a href="/#location" class="transition hover:text-kkr-red">Lokasi</a>
+          <nav class="hidden items-center gap-7 text-sm font-semibold text-white/80 md:flex">
+            <a href="/#home" class="transition hover:text-kkr-gold">Beranda</a>
+            <a href="/#about" class="transition hover:text-kkr-gold">Info</a>
+            <a href="/#speakers" class="transition hover:text-kkr-gold">Pembicara</a>
+            <a href="/#altar" class="transition hover:text-kkr-gold">Pelayan Altar</a>
+            <a href="/#sponsors" class="transition hover:text-kkr-gold">Sponsor</a>
+            <a href="/#location" class="transition hover:text-kkr-gold">Lokasi</a>
           </nav>
 
           <div class="flex items-center gap-3">
@@ -39,20 +40,20 @@ const { title, description = "KKR RPPI - Kebaktian kebangunan rohani yang memper
               Daftar
               <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
             </a>
-            <button id="mobile-menu-btn" class="md:hidden p-2 rounded-xl hover:bg-kkr-light/40 text-kkr-maroon transition-colors" aria-label="Menu navigasi">
+            <button id="mobile-menu-btn" class="md:hidden p-2 rounded-xl hover:bg-white/10 text-white/70 transition-colors" aria-label="Menu navigasi">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
             </button>
           </div>
         </div>
 
-        <div id="mobile-menu" class="md:hidden hidden border-t border-white/15 bg-white/95 px-6 py-5 space-y-2">
-          {["Beranda", "Info", "Pembicara", "Sponsor", "Lokasi"].map((label, i) => {
-            const hrefs = ["#home", "#about", "#speakers", "#sponsors", "#location"];
+        <div id="mobile-menu" class="md:hidden hidden border-t border-white/10 bg-kkr-dark/95 px-6 py-5 space-y-2">
+          {["Beranda", "Info", "Pembicara", "Pelayan Altar", "Sponsor", "Lokasi"].map((label, i) => {
+            const hrefs = ["#home", "#about", "#speakers", "#altar", "#sponsors", "#location"];
             return (
-              <a href={hrefs[i]} class="block px-4 py-2.5 rounded-xl text-sm font-semibold text-kkr-purple hover:bg-kkr-light hover:text-kkr-red transition-colors">{label}</a>
+              <a href={hrefs[i]} class="block px-4 py-2.5 rounded-xl text-sm font-semibold text-white/80 hover:bg-white/10 hover:text-kkr-gold transition-colors">{label}</a>
             );
           })}
-          <a href="/registration" class="block px-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-kkr-red text-center mt-3">Daftar Sekarang</a>
+          <a href="/registration" class="block px-4 py-2.5 rounded-xl text-sm font-semibold text-kkr-dark bg-gradient-to-r from-kkr-gold to-kkr-gold text-center mt-3">Daftar Sekarang</a>
         </div>
       </header>
 
@@ -60,20 +61,20 @@ const { title, description = "KKR RPPI - Kebaktian kebangunan rohani yang memper
         <slot />
       </main>
 
-      <footer class="border-t border-white/15 bg-white/95 px-6 py-4 text-kkr-maroon">
+      <footer class="border-t border-white/10 bg-kkr-dark/80 backdrop-blur-lg px-6 py-4">
         <div class="mx-auto max-w-7xl flex flex-col sm:flex-row items-center justify-between gap-2">
           <div class="flex items-center gap-3 text-sm">
-            <a href="/" class="flex items-center gap-2 font-semibold text-kkr-dark">
+            <a href="/" class="flex items-center gap-2 font-semibold text-white">
               <img src="/logo-header.png" alt="KKR RPPI logo" class="h-7 w-7 object-contain rounded-full" />
-              KKR <span class="text-kkr-red">RPPI</span>
+              KKR <span class="text-kkr-gold">RPPI</span>
             </a>
-            <span class="text-kkr-light/60 hidden sm:inline">|</span>
-            <span class="text-xs text-kkr-maroon/60 hidden sm:inline">Panitia KKR RPPI Kediri 2025/2026</span>
+            <span class="text-white/30 hidden sm:inline">|</span>
+            <span class="text-xs text-white/50 hidden sm:inline">Panitia KKR RPPI Kediri 2025/2026</span>
           </div>
-          <div class="flex items-center gap-4 text-xs text-kkr-maroon/60" id="footer-contact">
+          <div class="flex items-center gap-4 text-xs text-white/60" id="footer-contact">
             <span>Memuat...</span>
-            <span class="text-kkr-light/40 hidden sm:inline">|</span>
-            <a href="/registration" class="hover:text-kkr-red transition-colors">Daftar</a>
+            <span class="text-white/20 hidden sm:inline">|</span>
+            <a href="/registration" class="hover:text-kkr-gold transition-colors">Daftar</a>
           </div>
         </div>
       </footer>
@@ -106,12 +107,12 @@ const { title, description = "KKR RPPI - Kebaktian kebangunan rohani yang memper
           const phone = s.contactPhone || "";
           const wa = s.contactWa || "6285800753804";
           el.innerHTML = `
-            <a href="mailto:${email}" class="hover:text-kkr-red transition-colors">Email</a>
-            <span class="text-kkr-light/40">|</span>
-            <a href="https://wa.me/${wa}" target="_blank" class="hover:text-kkr-red transition-colors">WhatsApp</a>
-            ${phone ? `<span class="text-kkr-light/40">|</span><a href="tel:${phone}" class="hover:text-kkr-red transition-colors">Telp</a>` : ""}
-            <span class="text-kkr-light/40 hidden sm:inline">|</span>
-            <a href="/registration" class="hover:text-kkr-red transition-colors">Daftar</a>
+            <a href="mailto:${email}" class="hover:text-kkr-gold transition-colors">Email</a>
+            <span class="text-white/20">|</span>
+            <a href="https://wa.me/${wa}" target="_blank" class="hover:text-kkr-gold transition-colors">WhatsApp</a>
+            ${phone ? `<span class="text-white/20">|</span><a href="tel:${phone}" class="hover:text-kkr-gold transition-colors">Telp</a>` : ""}
+            <span class="text-white/20 hidden sm:inline">|</span>
+            <a href="/registration" class="hover:text-kkr-gold transition-colors">Daftar</a>
           `;
         } catch {}
       }
