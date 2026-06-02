@@ -88,10 +88,16 @@ const regClose = "2025-12-29T23:59:59";
       const secs = Math.floor((diff % 60000) / 1000);
       const els = document.querySelectorAll(`[data-${prefix}]`);
       if (els.length >= 4) {
-        els[0].textContent = String(days).padStart(2, "0");
-        els[1].textContent = String(hours).padStart(2, "0");
-        els[2].textContent = String(mins).padStart(2, "0");
-        els[3].textContent = String(secs).padStart(2, "0");
+        const vals = [days, hours, mins, secs];
+        els.forEach((el, i) => {
+          const newVal = String(vals[i]).padStart(2, "0");
+          if (el.textContent !== newVal) {
+            el.textContent = newVal;
+            el.classList.remove("animate-count-flip");
+            void el.offsetWidth;
+            el.classList.add("animate-count-flip");
+          }
+        });
       }
     }
 

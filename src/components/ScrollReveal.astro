@@ -2,12 +2,24 @@
 export interface Props {
   class?: string;
   delay?: number;
+  direction?: "up" | "down" | "left" | "right" | "scale" | "none";
+  duration?: number;
+  distance?: number;
 }
 
-const { class: className, delay = 0 } = Astro.props;
+const { class: className, delay = 0, direction = "up", duration = 0.6, distance = 30 } = Astro.props;
+const dirMap: Record<string, Record<string, string>> = {
+  up: { x: "0", y: `${distance}px` },
+  down: { x: "0", y: `${-distance}px` },
+  left: { x: `${distance}px`, y: "0" },
+  right: { x: `${-distance}px`, y: "0" },
+  scale: { x: "0", y: "0" },
+  none: { x: "0", y: "0" },
+};
+const d = dirMap[direction] || dirMap.up;
 ---
 
-<div class="reveal {className}" style={`transition-delay: ${delay}ms`}>
+<div class="reveal {className}" style={`transition-delay: ${delay}ms; transition-duration: ${duration}s; --reveal-x: ${d.x}; --reveal-y: ${d.y};`}>
   <slot />
 </div>
 
@@ -17,26 +29,56 @@ const { class: className, delay = 0 } = Astro.props;
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            entry.target.classList.add("revealed");
-            observer.unobserve(entry.target);
+            const el = entry.target;
+            const delay = parseInt(el.style.getPropertyValue("transition-delay")) || 0;
+            const stagger = el.dataset.stagger;
+            if (stagger) {
+              const children = el.children;
+              Array.from(children).forEach((child, i) => {
+                const childDelay = parseInt(el.dataset.staggerDelay || "80");
+                (child as HTMLElement).style.transitionDelay = `${delay + i * childDelay}ms`;
+                child.classList.add("revealed");
+              });
+              el.classList.add("revealed");
+            } else {
+              el.classList.add("revealed");
+            }
+            observer.unobserve(el);
           }
         });
       },
-      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
+      { threshold: 0.05, rootMargin: "0px 0px -40px 0px" }
     );
     document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
   } else {
-    document.querySelectorAll(".reveal").forEach((el) => el.classList.add("revealed"));
+    document.querySelectorAll(".reveal").forEach((el) => {
+      if (el.dataset.stagger) {
+        Array.from(el.children).forEach((child) => child.classList.add("revealed"));
+      }
+      el.classList.add("revealed");
+    });
   }
 </script>
 
 <style>
   .reveal {
     opacity: 0;
-    transform: translateY(30px);
-    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    transform: translate(var(--reveal-x, 0px), var(--reveal-y, 30px)) scale(var(--reveal-scale, 1));
+    transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1), transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform, opacity;
   }
   .reveal.revealed {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+  .reveal[data-stagger] > * {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1), transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform, opacity;
+  }
+  .reveal[data-stagger].revealed > *,
+  .reveal[data-stagger] > *.revealed {
     opacity: 1;
     transform: translateY(0);
   }

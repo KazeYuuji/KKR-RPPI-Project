@@ -19,24 +19,24 @@ const { title, description = "KKR RPPI - Kebaktian kebangunan rohani yang memper
   </head>
   <body>
     <div class="min-h-screen">
-      <header class="sticky top-0 z-40 border-b border-white/10 bg-kkr-dark/85 backdrop-blur-xl shadow-lg shadow-black/20">
-        <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+      <header id="site-header" class="sticky top-0 z-40 border-b border-white/10 bg-kkr-dark/85 backdrop-blur-xl shadow-lg shadow-black/20 transition-all duration-300">
+        <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 transition-all duration-300">
           <a href="/" class="flex items-center gap-3 text-lg font-semibold tracking-tight text-white">
-            <img src="/logo-header.png" alt="KKR RPPI logo" class="h-10 w-10 object-contain rounded-full" />
+            <img src="/logo-header.png" alt="KKR RPPI logo" class="h-10 w-10 object-contain rounded-full transition-all duration-300" />
             <span>KKR <span class="text-kkr-gold">RPPI</span></span>
           </a>
 
           <nav class="hidden items-center gap-7 text-sm font-semibold text-white/80 md:flex">
-            <a href="/#home" class="transition hover:text-kkr-gold">Beranda</a>
-            <a href="/#about" class="transition hover:text-kkr-gold">Info</a>
-            <a href="/#speakers" class="transition hover:text-kkr-gold">Pembicara</a>
-            <a href="/#altar" class="transition hover:text-kkr-gold">Pelayan Altar</a>
-            <a href="/#sponsors" class="transition hover:text-kkr-gold">Sponsor</a>
-            <a href="/#location" class="transition hover:text-kkr-gold">Lokasi</a>
+            <a href="/#home" class="transition-all duration-200 hover:text-kkr-gold hover:-translate-y-0.5">Beranda</a>
+            <a href="/#about" class="transition-all duration-200 hover:text-kkr-gold hover:-translate-y-0.5">Info</a>
+            <a href="/#speakers" class="transition-all duration-200 hover:text-kkr-gold hover:-translate-y-0.5">Pembicara</a>
+            <a href="/#altar" class="transition-all duration-200 hover:text-kkr-gold hover:-translate-y-0.5">Pelayan Altar</a>
+            <a href="/#sponsors" class="transition-all duration-200 hover:text-kkr-gold hover:-translate-y-0.5">Sponsor</a>
+            <a href="/#location" class="transition-all duration-200 hover:text-kkr-gold hover:-translate-y-0.5">Lokasi</a>
           </nav>
 
           <div class="flex items-center gap-3">
-            <a href="/registration" class="hidden sm:inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-kkr-gold to-kkr-gold px-5 py-2.5 text-sm font-semibold text-kkr-dark shadow-lg shadow-kkr-gold/30 transition hover:shadow-xl hover:shadow-kkr-gold/40 hover:-translate-y-0.5">
+            <a href="/registration" class="hidden sm:inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-kkr-gold to-kkr-gold px-5 py-2.5 text-sm font-semibold text-kkr-dark shadow-lg shadow-kkr-gold/30 transition-all duration-200 hover:shadow-xl hover:shadow-kkr-gold/40 hover:-translate-y-0.5 active:scale-[0.97]">
               Daftar
               <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
             </a>
@@ -46,18 +46,18 @@ const { title, description = "KKR RPPI - Kebaktian kebangunan rohani yang memper
           </div>
         </div>
 
-        <div id="mobile-menu" class="md:hidden hidden border-t border-white/10 bg-kkr-dark/95 px-6 py-5 space-y-2">
+        <div id="mobile-menu" class="md:hidden overflow-hidden border-t border-white/10 bg-kkr-dark/95 px-6 space-y-2" style="max-height: 0; opacity: 0; transition: max-height 0.4s cubic-bezier(0.22,1,0.36,1), opacity 0.3s ease, padding 0.3s ease;">
           {["Beranda", "Info", "Pembicara", "Pelayan Altar", "Sponsor", "Lokasi"].map((label, i) => {
             const hrefs = ["#home", "#about", "#speakers", "#altar", "#sponsors", "#location"];
             return (
-              <a href={hrefs[i]} class="block px-4 py-2.5 rounded-xl text-sm font-semibold text-white/80 hover:bg-white/10 hover:text-kkr-gold transition-colors">{label}</a>
+              <a href={hrefs[i]} class="block px-4 py-2.5 rounded-xl text-sm font-semibold text-white/80 hover:bg-white/10 hover:text-kkr-gold transition-all duration-200 hover:translate-x-1">{label}</a>
             );
           })}
-          <a href="/registration" class="block px-4 py-2.5 rounded-xl text-sm font-semibold text-kkr-dark bg-gradient-to-r from-kkr-gold to-kkr-gold text-center mt-3">Daftar Sekarang</a>
+          <a href="/registration" class="block px-4 py-2.5 rounded-xl text-sm font-semibold text-kkr-dark bg-gradient-to-r from-kkr-gold to-kkr-gold text-center mt-3 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]">Daftar Sekarang</a>
         </div>
       </header>
 
-      <main>
+      <main id="main-content" class="animate-fade-in">
         <slot />
       </main>
 
@@ -81,18 +81,47 @@ const { title, description = "KKR RPPI - Kebaktian kebangunan rohani yang memper
     </div>
 
     <script>
+      const header = document.getElementById("site-header");
       const menuBtn = document.getElementById("mobile-menu-btn");
       const mobileMenu = document.getElementById("mobile-menu");
+
+      let lastScroll = 0;
+      window.addEventListener("scroll", () => {
+        const curr = window.scrollY;
+        if (curr > 80) {
+          header?.classList.add("shadow-2xl");
+          header?.classList.remove("shadow-lg");
+        } else {
+          header?.classList.remove("shadow-2xl");
+          header?.classList.add("shadow-lg");
+        }
+        lastScroll = curr;
+      }, { passive: true });
+
       menuBtn?.addEventListener("click", () => {
-        mobileMenu?.classList.toggle("hidden");
-        const isOpen = !mobileMenu?.classList.contains("hidden");
-        menuBtn.innerHTML = isOpen
-          ? `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`
-          : `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>`;
+        const isOpen = mobileMenu?.style.maxHeight !== "0px" && mobileMenu?.style.maxHeight !== "";
+        if (isOpen) {
+          mobileMenu.style.maxHeight = "0";
+          mobileMenu.style.opacity = "0";
+          mobileMenu.style.paddingTop = "0";
+          mobileMenu.style.paddingBottom = "0";
+          menuBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>`;
+        } else {
+          const fullHeight = mobileMenu.scrollHeight;
+          mobileMenu.style.maxHeight = fullHeight + "px";
+          mobileMenu.style.opacity = "1";
+          mobileMenu.style.paddingTop = "1.25rem";
+          mobileMenu.style.paddingBottom = "1.25rem";
+          menuBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
+        }
       });
+
       mobileMenu?.querySelectorAll("a").forEach(a => {
         a.addEventListener("click", () => {
-          mobileMenu.classList.add("hidden");
+          mobileMenu.style.maxHeight = "0";
+          mobileMenu.style.opacity = "0";
+          mobileMenu.style.paddingTop = "0";
+          mobileMenu.style.paddingBottom = "0";
           menuBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>`;
         });
       });
