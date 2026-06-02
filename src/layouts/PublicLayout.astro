@@ -17,9 +17,9 @@ const { title, description = "KKR RPPI - Kebaktian kebangunan rohani yang memper
     <meta name="description" content={description} />
     <title>{title}</title>
   </head>
-  <body class="bg-kkr-light text-kkr-dark antialiased">
+  <body class="text-kkr-dark antialiased">
     <div class="min-h-screen">
-      <header class="sticky top-0 z-40 border-b border-kkr-light/30 bg-white/90 backdrop-blur-sm">
+      <header class="sticky top-0 z-40 border-b border-white/15 bg-white/90 backdrop-blur-xl shadow-sm">
         <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
           <a href="/" class="flex items-center gap-3 text-lg font-semibold tracking-tight text-kkr-dark">
             <img src="/logo-header.png" alt="KKR RPPI logo" class="h-10 w-10 object-contain rounded-full" />
@@ -45,7 +45,7 @@ const { title, description = "KKR RPPI - Kebaktian kebangunan rohani yang memper
           </div>
         </div>
 
-        <div id="mobile-menu" class="md:hidden hidden border-t border-kkr-light/50 bg-white px-6 py-5 space-y-2">
+        <div id="mobile-menu" class="md:hidden hidden border-t border-white/15 bg-white/95 px-6 py-5 space-y-2">
           {["Beranda", "Info", "Pembicara", "Sponsor", "Lokasi"].map((label, i) => {
             const hrefs = ["#home", "#about", "#speakers", "#sponsors", "#location"];
             return (
@@ -60,7 +60,7 @@ const { title, description = "KKR RPPI - Kebaktian kebangunan rohani yang memper
         <slot />
       </main>
 
-      <footer class="border-t border-kkr-light/30 bg-white px-6 py-4 text-kkr-maroon">
+      <footer class="border-t border-white/15 bg-white/95 px-6 py-4 text-kkr-maroon">
         <div class="mx-auto max-w-7xl flex flex-col sm:flex-row items-center justify-between gap-2">
           <div class="flex items-center gap-3 text-sm">
             <a href="/" class="flex items-center gap-2 font-semibold text-kkr-dark">
