@@ -20,8 +20,10 @@ import ChatBot from "../components/ChatBot.astro";
         <div class="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
           <div class="space-y-8 text-white relative z-10 animate-fade-in">
             <p class="text-sm uppercase tracking-[0.3em] text-kkr-light">Ibadah Kebaktian Kebangunan Rohani</p>
-            <h1 class="hero-text-shadow text-5xl sm:text-6xl md:text-7xl xl:text-[6rem] font-black leading-[0.9] tracking-[-0.04em]">
-              TRUST<br />IN<br />GOD
+            <h1 id="hero-heading" class="hero-text-shadow text-5xl sm:text-6xl md:text-7xl xl:text-[6rem] font-black leading-[0.9] tracking-[-0.04em]">
+              <span id="hero-line1">TRUST</span><br />
+              <span id="hero-line2">IN</span><br />
+              <span id="hero-line3">GOD</span>
             </h1>
             <div class="max-w-xl space-y-4">
               <p class="hero-copy text-lg sm:text-xl leading-9 max-w-3xl">Percayalah kepada TUHAN dengan segenap hatimu dan janganlah bersandar kepada pengertianmu sendiri.</p>
@@ -46,18 +48,18 @@ import ChatBot from "../components/ChatBot.astro";
                   <span class="text-sm font-semibold text-kkr-light/80">KKR RPPI</span>
                 </div>
                 <div class="space-y-3">
-                  <p class="text-xs uppercase tracking-[0.24em] text-kkr-light/70">Minggu</p>
-                  <h2 class="text-4xl font-semibold text-white">26 Mei 2024</h2>
-                  <p class="text-sm text-kkr-light/70">Aula Gereja Jemaat Kasih Karunia</p>
+                  <p id="hero-day" class="text-xs uppercase tracking-[0.24em] text-kkr-light/70">Minggu</p>
+                  <h2 id="hero-date" class="text-4xl font-semibold text-white">Memuat...</h2>
+                  <p id="hero-venue" class="text-sm text-kkr-light/70">Memuat...</p>
                 </div>
                 <div class="grid gap-4 sm:grid-cols-2">
                   <div class="rounded-[2rem] bg-kkr-dark/90 p-5 border border-white/10">
                     <p class="text-xs uppercase tracking-[0.22em] text-kkr-gold/90">Pukul</p>
-                    <p class="mt-2 text-2xl font-semibold text-white">09.00 WIB</p>
+                    <p id="hero-time" class="mt-2 text-2xl font-semibold text-white">Memuat...</p>
                   </div>
                   <div class="rounded-[2rem] bg-kkr-purple/90 p-5 border border-white/10">
                     <p class="text-xs uppercase tracking-[0.22em] text-kkr-light">Tempat</p>
-                    <p class="mt-2 text-2xl font-semibold text-white">Aula Gereja</p>
+                    <p id="hero-place" class="mt-2 text-2xl font-semibold text-white">Memuat...</p>
                   </div>
                 </div>
               </div>
@@ -83,9 +85,9 @@ import ChatBot from "../components/ChatBot.astro";
               <p id="about-desc1" class="text-kkr-dark/90 leading-8">KKR RPPI 2025/2026 adalah kebaktian kebangunan rohani yang mempersatukan pelajar, alumni, dan masyarakat dari berbagai sekolah di Kediri. Sebuah momen untuk merenungkan kasih Tuhan dan mengalami pembaharuan iman.</p>
               <p id="about-desc2" class="text-kkr-dark/90 leading-8">Bersama pembicara tamu dari Surabaya, kita akan merenungkan makna kebangunan rohani yang sesungguhnya — bahwa pertobatan dan pembaharuan membawa kita lebih dekat kepada Tuhan, sesuai dengan firman dalam 2 Tawarikh 7:14.</p>
             </div>
-            <blockquote class="border-l-4 border-kkr-red pl-6 py-3 italic text-kkr-dark/80">
+            <blockquote id="about-blockquote" class="border-l-4 border-kkr-red pl-6 py-3 italic text-kkr-dark/80">
               "Jika umat-Ku yang disebut dengan nama-Ku merendahkan diri, berdoa dan mencari wajah-Ku, maka Aku akan mendengar dari sorga."
-              <br/><span class="text-sm not-italic text-kkr-maroon/60 font-medium">— 2 Tawarikh 7:14</span>
+              <br/><span id="about-blockquote-ref" class="text-sm not-italic text-kkr-maroon/60 font-medium">— 2 Tawarikh 7:14</span>
             </blockquote>
           </div>
 
@@ -341,11 +343,24 @@ import ChatBot from "../components/ChatBot.astro";
         const wa = s.contactWa || "6285800753804";
         if (s.heroTitle1 && safe("hero-title1")) safe("hero-title1").textContent = s.heroTitle1;
         if (s.heroTitle2 && safe("hero-title2")) safe("hero-title2").textContent = s.heroTitle2;
-        if (s.heroSubtitle && safe("hero-verse")) {
+        if (s.heroHeading1 && safe("hero-line1")) safe("hero-line1").textContent = s.heroHeading1;
+        if (s.heroHeading2 && safe("hero-line2")) safe("hero-line2").textContent = s.heroHeading2;
+        if (s.heroHeading3 && safe("hero-line3")) safe("hero-line3").textContent = s.heroHeading3;
+        if (safe("hero-verse")) {
+          const vt = s.heroVerseText || "Percayalah kepada TUHAN dengan segenap hatimu dan janganlah bersandar kepada pengertianmu sendiri.";
+          const ref = s.heroVerseRef || "Amsal 3:5";
+          safe("hero-verse").textContent = vt;
+          if (safe("hero-verse-ref")) safe("hero-verse-ref").textContent = "— " + ref;
+        }
+        if (s.heroSubtitle && safe("hero-subtitle")) {
           const parts = s.heroSubtitle.split("—");
           safe("hero-verse").textContent = parts[0].trim();
           if (parts[1] && safe("hero-verse-ref")) safe("hero-verse-ref").textContent = "— " + parts[1].trim();
         }
+        if (s.locDate && safe("hero-date")) safe("hero-date").textContent = s.locDate;
+        if (s.locTime && safe("hero-time")) safe("hero-time").textContent = s.locTime;
+        if (safe("hero-venue")) safe("hero-venue").textContent = venue;
+        if (safe("hero-place")) safe("hero-place").textContent = venue.split(",")[0] || venue;
         if (s.aboutTitle && safe("about-heading")) safe("about-heading").textContent = s.aboutTitle;
         if (s.aboutDesc1 && safe("about-desc1")) safe("about-desc1").textContent = s.aboutDesc1;
         if (s.aboutDesc2 && safe("about-desc2")) safe("about-desc2").textContent = s.aboutDesc2;
@@ -355,6 +370,11 @@ import ChatBot from "../components/ChatBot.astro";
         if (s.aboutCard1Desc && safe("about-card1-desc")) safe("about-card1-desc").textContent = s.aboutCard1Desc;
         if (s.aboutCard2Title && safe("about-card2-title")) safe("about-card2-title").textContent = s.aboutCard2Title;
         if (s.aboutCard2Desc && safe("about-card2-desc")) safe("about-card2-desc").textContent = s.aboutCard2Desc;
+        if (s.aboutBlockquote && safe("about-blockquote")) {
+          const bq = s.aboutBlockquote;
+          const parts = bq.split("—");
+          safe("about-blockquote").innerHTML = (parts[0] ? `"${parts[0].trim()}"` : "") + '<br/><span id="about-blockquote-ref" class="text-sm not-italic text-kkr-maroon/60 font-medium">— ' + (parts[1] ? parts[1].trim() : "") + "</span>";
+        }
         if (safe("hero-location")) safe("hero-location").textContent = venue;
         if (safe("loc-venue")) safe("loc-venue").textContent = venue;
         if (safe("loc-address")) safe("loc-address").textContent = "Lihat peta di bawah";

@@ -89,6 +89,20 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
       </div>
       <p class="text-sm text-kkr-maroon mt-1">Sesuaikan teks yang muncul di halaman utama dan halaman pendaftaran.</p>
       <form id="text-form" class="mt-6 space-y-4">
+        <div class="grid gap-4 sm:grid-cols-3">
+          <div>
+            <label class="block text-sm font-medium text-kkr-purple mb-1">Hero Heading (baris 1)</label>
+            <input id="hero-heading1" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="TRUST" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-kkr-purple mb-1">Hero Heading (baris 2)</label>
+            <input id="hero-heading2" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="IN" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-kkr-purple mb-1">Hero Heading (baris 3)</label>
+            <input id="hero-heading3" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="GOD" />
+          </div>
+        </div>
         <div class="grid gap-4 sm:grid-cols-2">
           <div>
             <label class="block text-sm font-medium text-kkr-purple mb-1">Judul Hero (baris 1)</label>
@@ -158,6 +172,10 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
             </div>
           </div>
         </div>
+        <div>
+          <label class="block text-sm font-medium text-kkr-purple mb-1">Kutipan About (blockquote)</label>
+          <textarea id="about-blockquote" rows="2" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder='"Jika umat-Ku yang disebut dengan nama-Ku merendahkan diri, berdoa dan mencari wajah-Ku, maka Aku akan mendengar dari sorga." — 2 Tawarikh 7:14'></textarea>
+        </div>
         <button type="submit" class="rounded-xl bg-kkr-red px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-kkr-maroon">Simpan Teks</button>
       </form>
     </div>
@@ -226,6 +244,9 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
         setVal("contact-wa", s.contactWa || "");
         setVal("form-title", s.formTitle || "");
         setVal("form-subtitle", s.formSubtitle || "");
+        setVal("hero-heading1", s.heroHeading1 || "");
+        setVal("hero-heading2", s.heroHeading2 || "");
+        setVal("hero-heading3", s.heroHeading3 || "");
         setVal("hero-title1", s.heroTitle1 || "");
         setVal("hero-title2", s.heroTitle2 || "");
         setVal("hero-subtitle", s.heroSubtitle || "");
@@ -238,6 +259,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
         setVal("about-card1-desc", s.aboutCard1Desc || "");
         setVal("about-card2-title", s.aboutCard2Title || "");
         setVal("about-card2-desc", s.aboutCard2Desc || "");
+        setVal("about-blockquote", s.aboutBlockquote || "");
       } catch {}
     }
 
@@ -428,6 +450,9 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
           formSubtitle: document.getElementById("form-subtitle").value.trim(),
           heroTitle1: document.getElementById("hero-title1").value.trim(),
           heroTitle2: document.getElementById("hero-title2").value.trim(),
+          heroHeading1: document.getElementById("hero-heading1").value.trim(),
+          heroHeading2: document.getElementById("hero-heading2").value.trim(),
+          heroHeading3: document.getElementById("hero-heading3").value.trim(),
           heroSubtitle: document.getElementById("hero-subtitle").value.trim(),
           aboutTitle: document.getElementById("about-title").value.trim(),
           aboutDesc1: document.getElementById("about-desc1").value.trim(),
@@ -438,6 +463,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
           aboutCard1Desc: document.getElementById("about-card1-desc").value.trim(),
           aboutCard2Title: document.getElementById("about-card2-title").value.trim(),
           aboutCard2Desc: document.getElementById("about-card2-desc").value.trim(),
+          aboutBlockquote: document.getElementById("about-blockquote").value.trim(),
         })});
         if (res.ok) toast("Teks berhasil disimpan!");
         else throw new Error();

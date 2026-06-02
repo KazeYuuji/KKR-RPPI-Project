@@ -277,6 +277,12 @@ export interface TicketType {
       checkDeadline();
       toggleSchoolField();
       refreshInterval = setInterval(loadTickets, 10000);
+      // Load form text from settings
+      fetch("/api/settings").then(r => r.json()).then(d => {
+        const s = d.settings || {};
+        if (s.formTitle && document.getElementById("form-title")) document.getElementById("form-title").textContent = s.formTitle;
+        if (s.formSubtitle && document.getElementById("form-subtitle")) document.getElementById("form-subtitle").textContent = s.formSubtitle;
+      }).catch(() => {});
     });
   </script>
 </section>
