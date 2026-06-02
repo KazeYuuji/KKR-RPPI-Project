@@ -192,70 +192,70 @@ import ChatBot from "../components/ChatBot.astro";
     <!-- Lokasi -->
     <ScrollReveal>
       <section id="location" class="scroll-mt-20 mx-auto max-w-7xl px-6">
-        <div class="text-center max-w-2xl mx-auto space-y-4 mb-12">
+        <div class="text-center max-w-2xl mx-auto space-y-3 mb-8">
           <div class="flex items-center justify-center gap-3">
-            <span class="inline-block w-8 h-px bg-kkr-red"></span>
-            <span class="text-sm font-semibold uppercase tracking-[0.25em] text-kkr-red">Lokasi & Waktu</span>
-            <span class="inline-block w-8 h-px bg-kkr-red"></span>
+            <span class="inline-block w-6 h-px bg-kkr-red"></span>
+            <span class="text-xs font-semibold uppercase tracking-[0.25em] text-kkr-red">Lokasi & Waktu</span>
+            <span class="inline-block w-6 h-px bg-kkr-red"></span>
           </div>
-          <div class="w-12 h-0.5 bg-gradient-to-r from-kkr-red to-kkr-gold mx-auto rounded-full"></div>
+          <div class="w-10 h-0.5 bg-gradient-to-r from-kkr-red to-kkr-gold mx-auto rounded-full"></div>
         </div>
 
-        <div class="grid gap-8 lg:grid-cols-[1fr_0.9fr] items-start">
-          <div class="rounded-[2.5rem] glass-card p-6 sm:p-8">
-            <div class="flex items-center gap-2 mb-4">
-              <span class="text-2xl">📍</span>
-              <span class="text-sm font-semibold uppercase tracking-[0.2em] text-kkr-red">Temui Kami di Sini</span>
+        <div class="grid gap-6 lg:grid-cols-[1fr_0.8fr] items-start">
+          <div class="rounded-[2.5rem] glass-card p-5 sm:p-6">
+            <div class="flex items-center gap-2 mb-3">
+              <span class="text-xl">📍</span>
+              <span class="text-xs font-semibold uppercase tracking-[0.2em] text-kkr-red">Temui Kami di Sini</span>
             </div>
-            <h2 id="loc-venue" class="text-2xl sm:text-3xl font-semibold text-kkr-dark">Memuat...</h2>
-            <div class="mt-6 space-y-4 divide-y divide-kkr-light/30">
-              <div class="flex items-start gap-4 pb-4">
-                <span class="text-xl shrink-0 mt-0.5">🏫</span>
+            <h2 id="loc-venue" class="text-xl sm:text-2xl font-semibold text-kkr-dark">Memuat...</h2>
+            <div class="mt-4 space-y-3 divide-y divide-kkr-light/30">
+              <div class="flex items-start gap-3 pb-3">
+                <span class="text-lg shrink-0 mt-0.5">🏫</span>
                 <div>
-                  <p class="font-medium text-kkr-dark">Alamat</p>
-                  <p id="loc-address" class="text-sm text-kkr-maroon">Memuat...</p>
+                  <p class="text-xs font-semibold uppercase tracking-wider text-kkr-purple">Alamat</p>
+                  <p id="loc-address" class="text-sm text-kkr-maroon mt-0.5">Memuat...</p>
                 </div>
               </div>
-              <div class="flex items-start gap-4 py-4">
-                <span class="text-xl shrink-0 mt-0.5">📅</span>
+              <div class="flex items-start gap-3 py-3">
+                <span class="text-lg shrink-0 mt-0.5">📅</span>
                 <div>
-                  <p class="font-medium text-kkr-dark">Tanggal</p>
-                  <p id="loc-date" class="text-sm text-kkr-maroon">Memuat...</p>
+                  <p class="text-xs font-semibold uppercase tracking-wider text-kkr-purple">Tanggal</p>
+                  <p id="loc-date" class="text-sm text-kkr-maroon mt-0.5">Memuat...</p>
                 </div>
               </div>
-              <div class="flex items-start gap-4 py-4">
-                <span class="text-xl shrink-0 mt-0.5">⏰</span>
+              <div class="flex items-start gap-3 py-3">
+                <span class="text-lg shrink-0 mt-0.5">⏰</span>
                 <div>
-                  <p class="font-medium text-kkr-dark">Waktu</p>
-                  <p id="loc-time" class="text-sm text-kkr-maroon">Memuat...</p>
+                  <p class="text-xs font-semibold uppercase tracking-wider text-kkr-purple">Waktu</p>
+                  <p id="loc-time" class="text-sm text-kkr-maroon mt-0.5">Memuat...</p>
                 </div>
               </div>
-              <div class="flex items-start gap-4 py-4">
-                <span class="text-xl shrink-0 mt-0.5">⏳</span>
+              <div class="flex items-start gap-3 py-3">
+                <span class="text-lg shrink-0 mt-0.5">⏳</span>
                 <div>
-                  <p class="font-medium text-kkr-dark">Batas Pendaftaran</p>
-                  <p id="reg-deadline" class="text-sm text-kkr-maroon">Memuat...</p>
+                  <p class="text-xs font-semibold uppercase tracking-wider text-kkr-purple">Batas Pendaftaran</p>
+                  <p id="reg-deadline" class="text-sm text-kkr-maroon mt-0.5">Memuat...</p>
                 </div>
               </div>
-              <div class="flex items-start gap-4 pt-4">
-                <span class="text-xl shrink-0 mt-0.5">📞</span>
+              <div class="flex items-start gap-3 pt-3">
+                <span class="text-lg shrink-0 mt-0.5">📞</span>
                 <div>
-                  <p class="font-medium text-kkr-dark">Kontak</p>
-                  <p id="loc-phone" class="text-sm text-kkr-maroon">Memuat...</p>
+                  <p class="text-xs font-semibold uppercase tracking-wider text-kkr-purple">Kontak</p>
+                  <p id="loc-phone" class="text-sm text-kkr-maroon mt-0.5">Memuat...</p>
                   <a id="loc-wa" href="#" target="_blank" class="text-sm text-kkr-red hover:text-kkr-red font-medium">Memuat...</a>
                 </div>
               </div>
             </div>
-            <div class="mt-6 flex flex-wrap gap-3">
-              <a id="loc-maps-btn" href="#" target="_blank" class="inline-flex items-center gap-2 rounded-xl border border-kkr-light/80 px-5 py-3 text-sm font-semibold text-kkr-purple transition hover:bg-white hover:border-kkr-red">
+            <div class="mt-4 flex flex-wrap gap-2">
+              <a id="loc-maps-btn" href="#" target="_blank" class="inline-flex items-center gap-2 rounded-xl border border-kkr-light/80 px-4 py-2.5 text-sm font-semibold text-kkr-purple transition hover:bg-white hover:border-kkr-red">
                 Buka di Google Maps
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
               </a>
-              <a href="/registration" class="inline-flex items-center gap-2 rounded-xl bg-kkr-red px-5 py-3 text-sm font-semibold text-white transition hover:bg-kkr-maroon">Daftar Sekarang</a>
+              <a href="/registration" class="inline-flex items-center gap-2 rounded-xl bg-kkr-red px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-kkr-maroon">Daftar Sekarang</a>
             </div>
           </div>
 
-          <div class="overflow-hidden rounded-[2.5rem] glass-card h-[400px]">
+          <div class="overflow-hidden rounded-[2.5rem] glass-card h-[300px]">
             <iframe id="loc-maps-iframe" class="h-full w-full" src="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
           </div>
         </div>
