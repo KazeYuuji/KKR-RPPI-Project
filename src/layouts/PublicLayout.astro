@@ -80,6 +80,9 @@ const { title, description = "KKR RPPI - Kebaktian kebangunan rohani yang memper
       </footer>
     </div>
 
+    <!-- Mouse Follower -->
+    <div id="mouse-follower" style="opacity: 0;"></div>
+
     <script>
       const header = document.getElementById("site-header");
       const headerInner = document.getElementById("header-inner");
@@ -159,6 +162,124 @@ const { title, description = "KKR RPPI - Kebaktian kebangunan rohani yang memper
         } catch {}
       }
       loadContact();
+
+      /* ══════════════════════════════════════════
+         ScrollTrigger Parallax
+         ══════════════════════════════════════════ */
+      function initParallax() {
+        const els = document.querySelectorAll(".parallax-slow, .parallax-medium, .parallax-fast");
+        if (!els.length || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        const speeds = { slow: 0.15, medium: 0.3, fast: 0.5 };
+        const rects = new Map();
+        function update() {
+          const sy = window.scrollY;
+          els.forEach((el) => {
+            if (!rects.has(el)) rects.set(el, el.getBoundingClientRect().top + sy);
+            const base = rects.get(el);
+            const offset = (sy - base + window.innerHeight / 2) * (speeds[el.classList.contains("parallax-slow") ? "slow" : el.classList.contains("parallax-medium") ? "medium" : "fast"] || 0.15);
+            el.style.transform = `translateY(${Math.round(offset)}px)`;
+          });
+          raf = requestAnimationFrame(update);
+        }
+        let raf = requestAnimationFrame(update);
+        window.addEventListener("resize", () => rects.clear(), { passive: true });
+      }
+
+      /* ══════════════════════════════════════════
+         Mouse Follower Glow
+         ══════════════════════════════════════════ */
+      function initMouseFollower() {
+        const el = document.getElementById("mouse-follower");
+        if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        el.style.opacity = "1";
+        let mx = -200, my = -200;
+        let cx = -200, cy = -200;
+        function tick() {
+          cx += (mx - cx) * 0.08;
+          cy += (my - cy) * 0.08;
+          el.style.left = cx + "px";
+          el.style.top = cy + "px";
+          raf2 = requestAnimationFrame(tick);
+        }
+        let raf2 = requestAnimationFrame(tick);
+        document.addEventListener("mousemove", (e) => {
+          mx = e.clientX;
+          my = e.clientY;
+        }, { passive: true });
+        document.addEventListener("mouseleave", () => {
+          mx = -200; my = -200;
+        }, { passive: true });
+        document.addEventListener("touchstart", () => { el.style.opacity = "0"; }, { passive: true });
+      }
+
+      /* ══════════════════════════════════════════
+         Card Tilt 3D on Hover
+         ══════════════════════════════════════════ */
+      function initCardTilt() {
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        document.querySelectorAll(".tilt-card").forEach((card) => {
+          card.addEventListener("mousemove", (e) => {
+            const r = card.getBoundingClientRect();
+            const x = (e.clientX - r.left) / r.width - 0.5;
+            const y = (e.clientY - r.top) / r.height - 0.5;
+            card.style.transform = `perspective(600px) rotateY(${x * 8}deg) rotateX(${-y * 8}deg) translateZ(10px)`;
+          });
+          card.addEventListener("mouseleave", () => {
+            card.style.transform = "perspective(600px) rotateY(0deg) rotateX(0deg) translateZ(0)";
+          });
+        });
+      }
+
+      /* ══════════════════════════════════════════
+         Magnetic Buttons
+         ══════════════════════════════════════════ */
+      function initMagneticButtons() {
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        document.querySelectorAll(".magnetic-btn").forEach((btn) => {
+          btn.addEventListener("mousemove", (e) => {
+            const r = btn.getBoundingClientRect();
+            const x = (e.clientX - r.left - r.width / 2) * 0.3;
+            const y = (e.clientY - r.top - r.height / 2) * 0.3;
+            btn.style.transform = `translate(${x}px, ${y}px)`;
+          });
+          btn.addEventListener("mouseleave", () => {
+            btn.style.transform = "translate(0, 0)";
+          });
+        });
+      }
+
+      /* ══════════════════════════════════════════
+         Lazy Image Skeleton
+         ══════════════════════════════════════════ */
+      function initLazyImages() {
+        if (!("IntersectionObserver" in window)) return;
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              const wrap = entry.target;
+              const img = wrap.querySelector("img");
+              if (img && !img.classList.contains("loaded")) {
+                img.addEventListener("load", () => {
+                  img.classList.add("loaded");
+                  wrap.classList.add("loaded");
+                }, { once: true });
+                if (img.complete) {
+                  img.classList.add("loaded");
+                  wrap.classList.add("loaded");
+                }
+              }
+              observer.unobserve(wrap);
+            }
+          });
+        }, { rootMargin: "200px" });
+        document.querySelectorAll(".img-skeleton").forEach((el) => observer.observe(el));
+      }
+
+      initParallax();
+      initMouseFollower();
+      initCardTilt();
+      initMagneticButtons();
+      initLazyImages();
     </script>
   </body>
 </html>

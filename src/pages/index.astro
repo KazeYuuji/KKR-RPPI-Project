@@ -9,13 +9,14 @@ import ChatBot from "../components/ChatBot.astro";
 <PublicLayout title="KKR RPPI | Kebangunan Rohani dalam Yesus Kristus" description="KKR RPPI mempersatukan pelajar, alumni, dan masyarakat dalam kebangunan rohani Yesus Kristus.">
   <div class="space-y-16 sm:space-y-24 pb-24">
     <!-- Hero -->
-    <section id="home" class="relative min-h-[90vh] flex items-center overflow-hidden">
+    <section id="home" class="relative min-h-[90vh] flex items-center overflow-hidden parallax-slow">
       <div class="absolute inset-0 bg-gradient-to-br from-kkr-dark/85 via-kkr-purple/40 to-kkr-maroon/20"></div>
       <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(243,159,90,0.18),transparent_25%),radial-gradient(circle_at_bottom_right,_rgba(232,188,185,0.16),transparent_22%)]"></div>
       <div class="absolute left-0 top-0 h-full w-full bg-[linear-gradient(180deg,rgba(29,26,57,0.18),rgba(255,255,255,0))]"></div>
       <div class="absolute top-20 left-10 w-64 h-64 rounded-full bg-kkr-gold/20 blur-3xl hero-blob"></div>
       <div class="absolute bottom-24 right-10 w-80 h-80 rounded-full bg-kkr-red/20 blur-3xl hero-blob" style="animation-delay: -4s"></div>
       <div class="absolute top-40 right-1/3 w-48 h-48 rounded-full bg-kkr-purple/20 blur-3xl hero-blob" style="animation-delay: -2s"></div>
+      <div class="absolute bottom-32 left-1/4 w-32 h-32 rounded-full bg-kkr-gold/10 blur-2xl animate-float-slow"></div>
 
       <div class="relative mx-auto max-w-7xl px-4 sm:px-6 w-full">
         <div class="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
@@ -31,11 +32,11 @@ import ChatBot from "../components/ChatBot.astro";
               <p id="hero-verse-ref" class="text-sm uppercase tracking-[0.24em] text-kkr-gold animate-fade-in-up" style="animation-delay: 700ms">Amsal 3:5</p>
             </div>
             <div class="flex flex-wrap gap-4 animate-fade-in-up" style="animation-delay: 800ms">
-              <a href="/registration" class="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-kkr-maroon to-kkr-red px-7 py-4 text-sm font-semibold text-white shadow-xl shadow-kkr-maroon/30 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl active:scale-[0.97] btn-ripple">
+              <a href="/registration" class="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-kkr-maroon to-kkr-red px-7 py-4 text-sm font-semibold text-white shadow-xl shadow-kkr-maroon/30 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl active:scale-[0.97] btn-ripple magnetic-btn">
                 Daftar Sekarang
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
               </a>
-              <a href="#about" class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-7 py-4 text-sm font-semibold text-white transition-all duration-300 hover:bg-white/20 hover:text-white hover:-translate-y-1 active:scale-[0.97]">
+              <a href="#about" class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-7 py-4 text-sm font-semibold text-white transition-all duration-300 hover:bg-white/20 hover:text-white hover:-translate-y-1 active:scale-[0.97] magnetic-btn">
                 Info Acara
               </a>
             </div>
@@ -57,11 +58,11 @@ import ChatBot from "../components/ChatBot.astro";
                   <p id="hero-venue" class="text-sm text-kkr-light/70">Memuat...</p>
                 </div>
                 <div class="grid gap-4 sm:grid-cols-2">
-                  <div class="rounded-[2rem] bg-kkr-dark/90 p-5 border border-white/10">
+                  <div class="rounded-[2rem] bg-kkr-dark/90 p-5 border border-white/10 animate-float-slow">
                     <p class="text-xs uppercase tracking-[0.22em] text-kkr-gold/90">Pukul</p>
                     <p id="hero-time" class="mt-2 text-2xl font-semibold text-white">Memuat...</p>
                   </div>
-                  <div class="rounded-[2rem] bg-kkr-purple/90 p-5 border border-white/10">
+                  <div class="rounded-[2rem] bg-kkr-purple/90 p-5 border border-white/10 animate-float-medium" style="animation-delay: -1.5s">
                     <p class="text-xs uppercase tracking-[0.22em] text-kkr-light">Tempat</p>
                     <p id="hero-place" class="mt-2 text-2xl font-semibold text-white">Memuat...</p>
                   </div>
@@ -76,8 +77,10 @@ import ChatBot from "../components/ChatBot.astro";
     </section>
 
     <!-- Tentang Acara -->
-    <ScrollReveal>
-      <section id="about" class="scroll-mt-20 mx-auto max-w-7xl px-6">
+    <ScrollReveal direction="scale" spring>
+      <section id="about" class="scroll-mt-20 mx-auto max-w-7xl px-6 parallax-medium relative">
+        <div class="absolute top-10 right-10 text-6xl opacity-5 animate-float-slow select-none pointer-events-none">✝️</div>
+        <div class="absolute bottom-10 left-10 text-4xl opacity-5 animate-float-medium select-none pointer-events-none">🕊️</div>
         <div class="grid gap-10 lg:grid-cols-[1fr_0.8fr] items-start">
           <div class="glass-card space-y-6 rounded-[2.5rem] p-8 sm:p-10">
             <div class="flex items-center gap-3">
@@ -113,7 +116,7 @@ import ChatBot from "../components/ChatBot.astro";
 
     <!-- Pembicara (dinamis dari DB) -->
     <ScrollReveal>
-      <section id="speakers" class="scroll-mt-20 mx-auto max-w-7xl px-6">
+      <section id="speakers" class="scroll-mt-20 mx-auto max-w-7xl px-6 parallax-medium">
         <div class="text-center max-w-2xl mx-auto space-y-4 mb-12">
           <div class="flex items-center justify-center gap-3">
             <span class="inline-block w-8 h-px bg-kkr-red"></span>
@@ -179,7 +182,7 @@ import ChatBot from "../components/ChatBot.astro";
         </div>
 
         <div class="text-center mt-10">
-          <a href="#contact" class="inline-flex items-center gap-2 rounded-full bg-kkr-red px-8 py-4 text-sm font-semibold text-white transition hover:bg-kkr-maroon">
+          <a href="#contact" class="inline-flex items-center gap-2 rounded-full bg-kkr-red px-8 py-4 text-sm font-semibold text-white transition-all duration-300 hover:bg-kkr-maroon magnetic-btn">
             Tertarik jadi Sponsor? Hubungi Kami
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
           </a>
@@ -188,11 +191,13 @@ import ChatBot from "../components/ChatBot.astro";
     </ScrollReveal>
 
     <!-- Countdown -->
-    <Countdown />
+    <div class="parallax-slow">
+      <Countdown />
+    </div>
 
     <!-- Lokasi -->
     <ScrollReveal>
-      <section id="location" class="scroll-mt-20 mx-auto max-w-7xl px-6">
+      <section id="location" class="scroll-mt-20 mx-auto max-w-7xl px-6 parallax-medium">
         <div class="text-center max-w-2xl mx-auto space-y-3 mb-8">
           <div class="flex items-center justify-center gap-3">
             <span class="inline-block w-6 h-px bg-kkr-red"></span>
@@ -265,10 +270,11 @@ import ChatBot from "../components/ChatBot.astro";
 
     <!-- CTA -->
     <ScrollReveal>
-      <section id="contact" class="mx-auto max-w-7xl px-6">
+      <section id="contact" class="mx-auto max-w-7xl px-6 parallax-fast">
         <div class="rounded-[2.5rem] bg-gradient-to-br from-kkr-dark via-kkr-purple to-kkr-maroon p-8 sm:p-14 text-white shadow-2xl shadow-kkr-dark/30 relative overflow-hidden">
           <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(251,207,232,.08),_transparent_50%)]"></div>
           <div class="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,_rgba(219,234,254,.05),_transparent_50%)]"></div>
+          <div class="absolute top-6 right-10 text-5xl opacity-10 animate-float-slow select-none pointer-events-none">🙌</div>
           <div class="relative grid gap-8 lg:grid-cols-[1.3fr_0.9fr] lg:items-center">
             <div>
               <div class="flex items-center gap-3">
@@ -279,7 +285,7 @@ import ChatBot from "../components/ChatBot.astro";
               <p id="cta-desc" class="mt-4 max-w-xl text-white/70 leading-relaxed">Isi formulir pendaftaran, pilih tiket, dan amankan tempatmu dalam KKR RPPI yang penuh sukacita dan berkat.</p>
             </div>
             <div class="space-y-4">
-              <a href="/registration" class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-kkr-gold to-kkr-gold px-8 py-4 text-sm font-semibold text-kkr-dark shadow-lg shadow-kkr-gold/30 transition hover:shadow-xl hover:shadow-kkr-gold/40 hover:-translate-y-0.5">
+              <a href="/registration" class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-kkr-gold to-kkr-gold px-8 py-4 text-sm font-semibold text-kkr-dark shadow-lg shadow-kkr-gold/30 transition-all duration-300 hover:shadow-xl hover:shadow-kkr-gold/40 hover:-translate-y-0.5 magnetic-btn">
                 Daftar Sekarang
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
               </a>
@@ -326,6 +332,11 @@ import ChatBot from "../components/ChatBot.astro";
     }
     .glass-card {
       transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .tilt-card {
+      transition: transform 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      will-change: transform;
+      transform-style: preserve-3d;
     }
   </style>
 
@@ -416,7 +427,7 @@ import ChatBot from "../components/ChatBot.astro";
           return;
         }
         const makeCard = (baseClass) => s => `
-          <div class="${baseClass}">
+          <div class="${baseClass} tilt-card">
             ${s.photo_url
               ? `<img src="${s.photo_url}" class="w-28 h-28 rounded-full object-cover mx-auto shadow-lg shadow-kkr-light/50 border-2 border-white" />`
               : `<div class="w-28 h-28 rounded-full bg-gradient-to-br from-kkr-light/80 to-white mx-auto flex items-center justify-center text-5xl shadow-lg shadow-kkr-light/50">✝️</div>`
@@ -465,7 +476,7 @@ import ChatBot from "../components/ChatBot.astro";
           return;
         }
         const makeCard = (baseClass) => s => `
-          <div class="${baseClass}">
+          <div class="${baseClass} tilt-card">
             ${s.photo_url
               ? `<img src="${s.photo_url}" class="w-20 h-20 rounded-full object-cover mx-auto shadow-md shadow-kkr-light/40 border-2 border-white" />`
               : `<div class="w-20 h-20 rounded-full bg-gradient-to-br from-kkr-light/80 to-white mx-auto flex items-center justify-center text-2xl shadow-md shadow-kkr-light/40">🕯️</div>`
@@ -516,7 +527,7 @@ import ChatBot from "../components/ChatBot.astro";
           return;
         }
         const card = (s) =>
-          `<div class="sponsor-card flex items-center gap-4 rounded-2xl glass-card px-6 py-5 shrink-0 min-w-[260px] cursor-pointer transition-all duration-300 hover:shadow-2xl hover:-translate-y-1" data-id="${s.id}">
+          `<div class="sponsor-card flex items-center gap-4 rounded-2xl glass-card px-6 py-5 shrink-0 min-w-[260px] cursor-pointer transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 tilt-card" data-id="${s.id}">
             ${s.logo_url ? `<img src="${s.logo_url}" class="w-12 h-12 rounded-xl object-cover shrink-0" />` : `<div class="w-12 h-12 rounded-xl bg-gradient-to-br from-kkr-light to-white border border-kkr-light/50 flex items-center justify-center text-xl shrink-0">🏢</div>`}
             <div class="min-w-0">
               <p class="font-semibold text-kkr-dark truncate">${s.name}</p>
