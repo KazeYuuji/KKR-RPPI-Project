@@ -180,18 +180,6 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
       </form>
     </div>
 
-    <!-- Ticket Manager -->
-    <div class="glass-card p-6 sm:p-8">
-      <div class="flex items-center gap-3 mb-1">
-        <span class="text-xl">🎟️</span>
-        <h2 class="text-xl font-semibold text-kkr-dark">Manajemen Tiket</h2>
-      </div>
-      <p class="text-sm text-kkr-maroon mt-1">Tambah, ubah, atau hapus tiket. Harga: GRATIS (event free).</p>
-      <div class="mt-6 space-y-4" id="ticket-list"></div>
-      <button id="add-ticket-btn" class="mt-4 w-full rounded-xl border-2 border-dashed border-kkr-light/80 px-4 py-3 text-sm font-semibold text-kkr-maroon/80 transition hover:border-kkr-red hover:text-kkr-red">+ Tambah Tiket Baru</button>
-      <div id="ticket-toast" class="mt-3"></div>
-    </div>
-
     <!-- Security -->
     <div class="glass-card p-6 sm:p-8">
       <h2 class="text-xl font-semibold text-kkr-dark">Keamanan</h2>
@@ -262,67 +250,6 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
         setVal("about-blockquote", s.aboutBlockquote || "");
       } catch {}
     }
-
-    async function loadTickets() {
-      try {
-        const res = await fetch("/api/tickets");
-        const d = await res.json();
-        const list = d.tickets || [];
-        const container = document.getElementById("ticket-list");
-        container.innerHTML = list.map(t => `
-          <div class="glass-card rounded-xl p-4 ticket-item" data-id="${t.id}">
-            <div class="grid gap-3 sm:grid-cols-[1fr_0.8fr_auto] items-end">
-              <label class="text-xs text-kkr-maroon">Nama Tiket
-                <input name="tname-${t.id}" type="text" value="${t.name}" class="mt-1 w-full rounded-lg border border-kkr-light/80 bg-white px-3 py-2 text-sm outline-none focus:border-kkr-red focus:ring-2 focus:ring-kkr-maroon/20" />
-              </label>
-              <label class="text-xs text-kkr-maroon">Jumlah Tersedia
-                <input name="tremaining-${t.id}" type="number" min="0" value="${t.remaining}" class="mt-1 w-full rounded-lg border border-kkr-light/80 bg-white px-3 py-2 text-sm outline-none focus:border-kkr-red focus:ring-2 focus:ring-kkr-maroon/20" />
-              </label>
-              <button data-delete="${t.id}" class="shrink-0 rounded-lg bg-red-100 px-3 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-200">Hapus</button>
-            </div>
-          </div>
-        `).join("") + `<button id="save-all-tickets" class="mt-3 w-full rounded-xl bg-kkr-dark px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-kkr-purple">Simpan Semua Tiket</button>`;
-      } catch {}
-    }
-
-    document.addEventListener("click", (e) => {
-      const delBtn = e.target.closest("[data-delete]");
-      if (delBtn) {
-        const id = delBtn.getAttribute("data-delete");
-        if (!confirm("Hapus tiket ini?")) return;
-        fetch("/api/tickets", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "delete", id }) })
-          .then(r => r.ok ? (loadTickets(), toast("Tiket dihapus")) : toast("Gagal hapus", "error"))
-          .catch(() => toast("Gagal hapus", "error"));
-      }
-    });
-
-    document.addEventListener("click", (e) => {
-      if (e.target.id === "save-all-tickets") {
-        const items = document.querySelectorAll(".ticket-item");
-        const tickets = [];
-        items.forEach(el => {
-          const id = el.dataset.id;
-          tickets.push({
-            id,
-            name: el.querySelector(`[name="tname-${id}"]`).value,
-            remaining: Number(el.querySelector(`[name="tremaining-${id}"]`).value) || 0,
-          });
-        });
-        fetch("/api/tickets", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(tickets) })
-          .then(r => r.ok ? (toast("Tiket tersimpan"), loadTickets()) : toast("Gagal simpan", "error"))
-          .catch(() => toast("Gagal simpan", "error"));
-      }
-    });
-
-    document.getElementById("add-ticket-btn")?.addEventListener("click", async () => {
-      const name = prompt("Nama tiket baru:");
-      if (!name || !name.trim()) return;
-      try {
-        const res = await fetch("/api/tickets", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "create", name: name.trim(), remaining: 100 }) });
-        if (res.ok) { toast("Tiket ditambahkan"); loadTickets(); }
-        else toast("Gagal tambah tiket", "error");
-      } catch { toast("Gagal tambah tiket", "error"); }
-    });
 
     document.getElementById("location-form")?.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -471,6 +398,6 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
       btn.disabled = false; btn.textContent = "Simpan Teks";
     });
 
-    document.addEventListener("DOMContentLoaded", () => { loadSettings(); loadTickets(); });
+    document.addEventListener("DOMContentLoaded", loadSettings);
   </script>
 </AdminLayout>
