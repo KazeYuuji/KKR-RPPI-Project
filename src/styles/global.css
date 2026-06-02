@@ -29,6 +29,27 @@ body {
   background-position: center;
   background-repeat: no-repeat;
   background-attachment: fixed;
+  background-blend-mode: overlay;
+  color: var(--color-kkr-light);
+  text-rendering: optimizeLegibility;
+}
+
+.section-panel {
+  background: rgba(255,255,255,0.94);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 24px 80px rgba(15, 23, 42, 0.12);
+}
+
+.hero-text-shadow {
+  text-shadow: 0 24px 60px rgba(0, 0, 0, 0.24);
+}
+
+.hero-copy {
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.text-soft {
+  color: rgba(255, 255, 255, 0.75);
 }
 
 button, input, textarea, select {
