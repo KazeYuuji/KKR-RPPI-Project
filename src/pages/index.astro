@@ -418,10 +418,14 @@ import ChatBot from "../components/ChatBot.astro";
               </div>
             </div>`;
         } else {
-          const base = "rounded-[2.5rem] bg-white border border-kkr-light/50 p-6 sm:p-8 shadow-xl shadow-kkr-light/30 text-center hover:shadow-2xl hover:shadow-kkr-light/40 hover:-translate-y-1 transition-all duration-300 w-full max-w-md flex flex-col";
+          const base = "rounded-[2.5rem] bg-white border border-kkr-light/50 p-6 sm:p-8 shadow-xl shadow-kkr-light/30 text-center hover:shadow-2xl hover:shadow-kkr-light/40 hover:-translate-y-1 transition-all duration-300 w-full flex flex-col";
           const html = list.map(makeCard(base)).join("");
-          const cols = list.length === 1 ? "flex justify-center" : "grid gap-6 sm:grid-cols-2 mx-auto";
-          container.innerHTML = `<div class="${cols}" style="${list.length === 2 ? 'max-width: 42rem;' : ''}">${html}</div>`;
+          if (list.length === 1) {
+            container.innerHTML = `<div class="flex justify-center">${html}</div>`;
+          } else {
+            const gridCols = list.length === 2 ? "sm:grid-cols-2 max-w-2xl" : "sm:grid-cols-3 max-w-4xl";
+            container.innerHTML = `<div class="grid gap-6 ${gridCols} mx-auto">${html}</div>`;
+          }
         }
       } catch {
         document.getElementById("speaker-grid").innerHTML = `<div class="text-center py-12 text-red-500"><p>Gagal memuat pembicara.</p></div>`;
@@ -463,10 +467,14 @@ import ChatBot from "../components/ChatBot.astro";
               </div>
             </div>`;
         } else {
-          const base = "rounded-2xl bg-white border border-kkr-light/50 p-4 sm:p-5 shadow-md text-center hover:shadow-lg hover:shadow-kkr-light/40 hover:-translate-y-0.5 transition-all duration-300 w-full max-w-[260px] flex flex-col";
+          const base = "rounded-2xl bg-white border border-kkr-light/50 p-4 sm:p-5 shadow-md text-center hover:shadow-lg hover:shadow-kkr-light/40 hover:-translate-y-0.5 transition-all duration-300 w-full flex flex-col";
           const html = list.map(makeCard(base)).join("");
-          const cols = list.length === 1 ? "flex justify-center" : "grid gap-4 sm:grid-cols-2 mx-auto";
-          container.innerHTML = `<div class="${cols}" style="${list.length === 2 ? 'max-width: 32rem;' : ''}">${html}</div>`;
+          if (list.length === 1) {
+            container.innerHTML = `<div class="flex justify-center max-w-[260px] mx-auto">${html}</div>`;
+          } else {
+            const gridCols = list.length === 2 ? "sm:grid-cols-2 max-w-xl" : "sm:grid-cols-3 max-w-3xl";
+            container.innerHTML = `<div class="grid gap-4 ${gridCols} mx-auto">${html}</div>`;
+          }
         }
       } catch {
         document.getElementById("altar-grid").innerHTML = `<div class="text-center py-12 text-red-500"><p>Gagal memuat pelayan altar.</p></div>`;
@@ -493,8 +501,16 @@ import ChatBot from "../components/ChatBot.astro";
             </div>
           </div>`;
         const html = list.map(card).join("");
-        document.querySelector('[data-copy="1"]').innerHTML = html;
-        document.querySelector('[data-copy="2"]').innerHTML = html;
+        if (list.length <= 3) {
+          const container = document.getElementById("sponsor-grid");
+          container.innerHTML = '';
+          container.style.maskImage = 'none';
+          const gridCols = list.length === 1 ? "flex justify-center" : (list.length === 2 ? "grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-xl mx-auto" : "grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto");
+          container.innerHTML = `<div class="${gridCols}">${html}</div>`;
+        } else {
+          document.querySelector('[data-copy="1"]').innerHTML = html;
+          document.querySelector('[data-copy="2"]').innerHTML = html;
+        }
       } catch {
         document.getElementById("sponsor-grid").innerHTML = `<div class="text-center py-12 text-red-500"><p>Gagal memuat data sponsor.</p></div>`;
       }
