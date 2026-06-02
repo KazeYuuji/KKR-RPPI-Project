@@ -20,12 +20,12 @@ const regClose = "2025-12-29T23:59:59";
           <div class="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
             <p class="text-kkr-light text-sm font-semibold uppercase tracking-wider">Segera Ditutup</p>
             <p class="text-kkr-gold text-lg font-semibold mt-1">29 Desember 2025</p>
-            <p class="text-sm text-kkr-maroon/60 mt-2">Batas Pendaftaran Tiket</p>
+            <p class="text-sm text-kkr-light mt-2">Batas Pendaftaran Tiket</p>
             <div id="reg-countdown" class="grid grid-cols-4 gap-3 mt-5">
               {["Hari", "Jam", "Menit", "Detik"].map((label) => (
                 <div class="bg-white/10 rounded-xl p-3 backdrop-blur-sm">
                   <p class="text-2xl sm:text-3xl font-bold tabular-nums" data-reg={label.toLowerCase()}>00</p>
-                  <p class="text-xs text-kkr-maroon/60 mt-1 uppercase tracking-wider">{label}</p>
+                  <p class="text-xs text-kkr-light/80 mt-1 uppercase tracking-wider">{label}</p>
                 </div>
               ))}
             </div>
@@ -34,12 +34,12 @@ const regClose = "2025-12-29T23:59:59";
           <div class="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
             <p class="text-kkr-light text-sm font-semibold uppercase tracking-wider">⛪ Hari H</p>
             <p class="text-kkr-gold text-lg font-semibold mt-1">10 Januari 2026</p>
-            <p class="text-sm text-kkr-maroon/60 mt-2">Menuju Puncak Acara</p>
+            <p class="text-sm text-kkr-light mt-2">Menuju Puncak Acara</p>
             <div id="event-countdown" class="grid grid-cols-4 gap-3 mt-5">
               {["Hari", "Jam", "Menit", "Detik"].map((label) => (
                 <div class="bg-white/10 rounded-xl p-3 backdrop-blur-sm">
                   <p class="text-2xl sm:text-3xl font-bold tabular-nums" data-event={label.toLowerCase()}>00</p>
-                  <p class="text-xs text-kkr-maroon/60 mt-1 uppercase tracking-wider">{label}</p>
+                  <p class="text-xs text-kkr-light/80 mt-1 uppercase tracking-wider">{label}</p>
                 </div>
               ))}
             </div>
