@@ -80,6 +80,10 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
             <span class="text-kkr-maroon">Pembicara Aktif</span>
             <span class="font-semibold text-kkr-dark tabular-nums" id="metric-speakers">—</span>
           </div>
+          <div class="flex justify-between">
+            <span class="text-kkr-maroon">Pelayan Altar</span>
+            <span class="font-semibold text-kkr-dark tabular-nums" id="metric-altar">—</span>
+          </div>
         </div>
       </div>
     </div>
@@ -215,6 +219,11 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
           const spkRes = await fetch("/api/speakers");
           const spkData = await spkRes.json();
           document.getElementById("metric-speakers").textContent = (spkData.speakers || []).filter(s => s.is_active).length;
+        } catch {}
+        try {
+          const alRes = await fetch("/api/altar-servers");
+          const alData = await alRes.json();
+          document.getElementById("metric-altar").textContent = (alData.altarServers || []).filter(s => s.is_active).length;
         } catch {}
       } catch {}
     }

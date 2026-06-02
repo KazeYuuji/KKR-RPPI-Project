@@ -1,0 +1,192 @@
+---
+import AdminLayout from "../../layouts/AdminLayout.astro";
+---
+
+<AdminLayout title="Kelola Pelayan Altar">
+  <div class="space-y-8 animate-fade-in">
+    <!-- Header -->
+    <div class="rounded-2xl border border-kkr-light/50 bg-white p-6 sm:p-8 shadow-sm">
+      <div>
+        <div class="flex items-center gap-2 mb-1">
+          <span class="w-1.5 h-1.5 rounded-full bg-kkr-red"></span>
+          <span class="text-xs font-semibold uppercase tracking-wider text-kkr-maroon/60">Pelayan Altar</span>
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-semibold text-kkr-dark">Manajemen Pelayan Altar</h2>
+        <p class="mt-1 text-sm text-kkr-maroon/80">Tambah, edit, atau hapus pelayan altar yang tampil di halaman publik.</p>
+      </div>
+    </div>
+
+    <div class="grid gap-6 lg:grid-cols-[1fr_1.8fr] min-w-0">
+      <!-- Form -->
+      <div class="rounded-2xl border border-kkr-light/50 bg-white p-5 sm:p-6 shadow-sm h-fit lg:sticky lg:top-24">
+        <h3 class="text-base font-semibold text-kkr-dark" id="form-title">Tambah Pelayan Altar</h3>
+        <p class="text-xs text-kkr-maroon/80 mt-0.5" id="form-subtitle">Lengkapi data pelayan altar baru.</p>
+        <form id="altar-form" class="mt-5 space-y-4">
+          <input type="hidden" id="as-id" />
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-kkr-purple mb-1.5 uppercase tracking-wider">Nama *</label>
+              <input id="as-name" required class="w-full rounded-xl border border-kkr-light/50 bg-white px-4 py-2.5 text-sm text-kkr-dark outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20 placeholder:text-kkr-maroon/60" placeholder="Nama pelayan altar" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-kkr-purple mb-1.5 uppercase tracking-wider">Title</label>
+              <input id="as-title" class="w-full rounded-xl border border-kkr-light/50 bg-white px-4 py-2.5 text-sm text-kkr-dark outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20 placeholder:text-kkr-maroon/60" placeholder="Koordinator / Anggota" />
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-kkr-purple mb-1.5 uppercase tracking-wider">Organisasi</label>
+            <input id="as-org" class="w-full rounded-xl border border-kkr-light/50 bg-white px-4 py-2.5 text-sm text-kkr-dark outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20 placeholder:text-kkr-maroon/60" placeholder="Gereja / Sekolah" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-kkr-purple mb-1.5 uppercase tracking-wider">Deskripsi</label>
+            <textarea id="as-desc" rows="3" class="w-full rounded-xl border border-kkr-light/50 bg-white px-4 py-2.5 text-sm text-kkr-dark outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20 placeholder:text-kkr-maroon/60" placeholder="Deskripsi singkat"></textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-kkr-purple mb-1.5 uppercase tracking-wider">Tags (pisahkan koma)</label>
+            <input id="as-tags" class="w-full rounded-xl border border-kkr-light/50 bg-white px-4 py-2.5 text-sm text-kkr-dark outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20 placeholder:text-kkr-maroon/60" placeholder="Pelayanan, Ibadah, Rohani" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-kkr-purple mb-1.5 uppercase tracking-wider">Foto</label>
+            <div class="flex items-center gap-2">
+              <input id="as-photo" class="flex-1 min-w-0 rounded-xl border border-kkr-light/50 bg-white px-4 py-2.5 text-sm text-kkr-dark outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20 placeholder:text-kkr-maroon/60" placeholder="URL foto" />
+              <button type="button" id="upload-photo-btn" class="rounded-xl bg-kkr-light/40 hover:bg-kkr-light/60 px-4 py-2.5 text-sm font-semibold text-kkr-maroon transition-colors shrink-0">Upload</button>
+            </div>
+            <input type="file" id="photo-file-input" accept="image/*" class="hidden" />
+            <div id="photo-preview" class="mt-2 hidden">
+              <img id="photo-preview-img" class="w-20 h-20 rounded-xl object-cover border border-kkr-light/50 shadow-sm" />
+            </div>
+          </div>
+          <div class="flex gap-2 pt-1">
+            <button type="submit" class="flex-1 rounded-xl bg-gradient-to-r from-kkr-maroon to-kkr-red px-4 py-2.5 text-sm font-semibold text-white shadow-sm shadow-kkr-light/50 transition hover:shadow-md active:scale-[0.98]">Simpan</button>
+            <button type="button" id="cancel-edit" class="hidden rounded-xl border border-kkr-light/50 bg-white px-4 py-2.5 text-sm font-semibold text-kkr-maroon hover:bg-white transition-colors">Batal</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- List -->
+      <div id="altar-list" class="space-y-3 min-w-0">
+        <div class="rounded-2xl border border-kkr-light/50 bg-white p-8 text-center text-kkr-maroon/60">
+          <div class="inline-block w-6 h-6 border-2 border-kkr-maroon border-t-transparent rounded-full animate-spin"></div>
+          <p class="mt-2 text-sm">Memuat pelayan altar...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-container" class="fixed top-4 right-4 z-[100] flex flex-col gap-2 pointer-events-none"></div>
+
+  <script>
+    function toast(msg, type = "success") {
+      const c = document.getElementById("toast-container");
+      const el = document.createElement("div");
+      el.className = `pointer-events-auto toast-enter rounded-xl px-5 py-3 text-sm font-medium shadow-lg ${type === "success" ? "bg-emerald-600 text-white shadow-emerald-300/30" : "bg-red-600 text-white shadow-red-300/30"}`;
+      el.textContent = msg;
+      c.appendChild(el);
+      setTimeout(() => { el.className = el.className.replace("toast-enter", "toast-exit"); setTimeout(() => el.remove(), 300); }, 3000);
+    }
+
+    async function uploadFile(file) {
+      const fd = new FormData(); fd.append("file", file);
+      const res = await fetch("/api/upload", { method: "POST", body: fd });
+      const d = await res.json();
+      return d.url || null;
+    }
+
+    async function loadAltarServers() {
+      try {
+        const res = await fetch("/api/altar-servers");
+        const d = await res.json();
+        const list = d.altarServers || [];
+        const container = document.getElementById("altar-list");
+        if (!list.length) {
+          container.innerHTML = `<div class="rounded-2xl border border-kkr-light/50 bg-white p-8 sm:p-12 text-center"><div class="text-3xl mb-3">🕯️</div><p class="text-kkr-maroon/80 font-medium">Belum ada pelayan altar</p><p class="text-sm text-kkr-maroon/60 mt-1">Tambah pelayan altar pertama melalui form di samping.</p></div>`;
+          return;
+        }
+        container.innerHTML = list.map((s) => `
+          <div class="rounded-2xl border border-kkr-light/50 bg-white p-4 sm:p-5 shadow-sm transition-all duration-200 hover:shadow-md" data-id="${s.id}">
+            <div class="flex items-start gap-3 sm:gap-4">
+              ${s.photo_url ? `<img src="${s.photo_url}" class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl object-cover border border-kkr-light/50 shadow-sm shrink-0" />` : `<div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-kkr-light/80 to-white border border-kkr-light/50 flex items-center justify-center text-2xl shrink-0 shadow-sm">🕯️</div>`}
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <h4 class="font-semibold text-kkr-dark truncate">${s.name}</h4>
+                  <span class="inline-flex items-center gap-1 text-[10px] font-medium ${s.is_active ? 'text-emerald-600' : 'text-kkr-maroon/60'}"><span class="w-1 h-1 rounded-full ${s.is_active ? 'bg-emerald-500' : 'bg-slate-300'}"></span>${s.is_active ? 'Aktif' : 'Nonaktif'}</span>
+                </div>
+                ${s.title || s.organization ? `<p class="text-xs text-kkr-maroon/80 mt-0.5 truncate">${[s.title, s.organization].filter(Boolean).join(" · ")}</p>` : ""}
+                ${s.description ? `<p class="mt-1.5 text-sm text-kkr-maroon line-clamp-2">${s.description}</p>` : ""}
+                ${s.tags ? `<div class="flex flex-wrap gap-1 mt-2">${s.tags.split(",").map(t => `<span class="text-[10px] bg-kkr-light text-kkr-red px-2 py-0.5 rounded-full font-medium">${t.trim()}</span>`).join("")}</div>` : ""}
+              </div>
+              <div class="flex items-start gap-1 shrink-0 pt-1">
+                <button data-action="edit" data-id="${s.id}" class="rounded-lg bg-white border border-kkr-light/50 px-3 py-1.5 text-xs font-semibold text-kkr-maroon hover:bg-white hover:border-kkr-light/80 transition-colors shadow-sm">Edit</button>
+                <button data-action="delete" data-id="${s.id}" class="rounded-lg bg-white border border-kkr-light/50 px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50 hover:border-red-200 transition-colors shadow-sm">Hapus</button>
+              </div>
+            </div>
+          </div>
+        `).join("");
+      } catch {
+        document.getElementById("altar-list").innerHTML = `<div class="rounded-2xl border border-red-200 bg-red-50 p-6 text-center text-red-600"><p>Gagal memuat data pelayan altar.</p></div>`;
+      }
+    }
+
+    function fillForm(s) {
+      document.getElementById("as-id").value = s.id;
+      document.getElementById("as-name").value = s.name;
+      document.getElementById("as-title").value = s.title || "";
+      document.getElementById("as-org").value = s.organization || "";
+      document.getElementById("as-desc").value = s.description || "";
+      document.getElementById("as-tags").value = s.tags || "";
+      document.getElementById("as-photo").value = s.photo_url || "";
+      document.getElementById("form-title").textContent = "Edit Pelayan Altar";
+      document.getElementById("form-subtitle").textContent = "Perbarui data pelayan altar.";
+      document.getElementById("cancel-edit").classList.remove("hidden");
+      if (s.photo_url) { document.getElementById("photo-preview").classList.remove("hidden"); document.getElementById("photo-preview-img").src = s.photo_url; }
+      else { document.getElementById("photo-preview").classList.add("hidden"); }
+      document.getElementById("altar-form").scrollIntoView({ behavior: "smooth" });
+    }
+
+    document.getElementById("altar-form")?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const id = document.getElementById("as-id").value;
+      const payload = { name: document.getElementById("as-name").value.trim(), title: document.getElementById("as-title").value.trim(), organization: document.getElementById("as-org").value.trim(), description: document.getElementById("as-desc").value.trim(), photo_url: document.getElementById("as-photo").value.trim(), tags: document.getElementById("as-tags").value.trim() };
+      try {
+        const url = id ? `/api/altar-servers/${id}` : "/api/altar-servers";
+        const method = id ? "PUT" : "POST";
+        const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+        if (res.ok) {
+          toast(id ? "Pelayan altar diperbarui" : "Pelayan altar ditambahkan");
+          document.getElementById("altar-form").reset(); document.getElementById("as-id").value = "";
+          document.getElementById("form-title").textContent = "Tambah Pelayan Altar"; document.getElementById("form-subtitle").textContent = "Lengkapi data pelayan altar baru.";
+          document.getElementById("cancel-edit").classList.add("hidden"); document.getElementById("photo-preview").classList.add("hidden");
+          loadAltarServers();
+        } else { toast("Gagal menyimpan", "error"); }
+      } catch { toast("Gagal menyimpan", "error"); }
+    });
+
+    document.getElementById("cancel-edit")?.addEventListener("click", () => {
+      document.getElementById("altar-form").reset(); document.getElementById("as-id").value = "";
+      document.getElementById("form-title").textContent = "Tambah Pelayan Altar"; document.getElementById("form-subtitle").textContent = "Lengkapi data pelayan altar baru.";
+      document.getElementById("cancel-edit").classList.add("hidden"); document.getElementById("photo-preview").classList.add("hidden");
+    });
+
+    document.getElementById("altar-list")?.addEventListener("click", async (e) => {
+      const btn = e.target.closest("button[data-action]");
+      if (!btn) return;
+      const id = btn.dataset.id;
+      if (btn.dataset.action === "delete") {
+        if (!confirm("Hapus pelayan altar ini?")) return;
+        try { const res = await fetch(`/api/altar-servers/${id}`, { method: "DELETE" }); if (res.ok) { toast("Pelayan altar dihapus"); loadAltarServers(); } } catch { toast("Gagal menghapus", "error"); }
+      }
+      if (btn.dataset.action === "edit") {
+        try { const res = await fetch(`/api/altar-servers/${id}`); const d = await res.json(); if (d.altarServer) fillForm(d.altarServer); } catch { toast("Gagal memuat data", "error"); }
+      }
+    });
+
+    document.getElementById("upload-photo-btn")?.addEventListener("click", () => document.getElementById("photo-file-input").click());
+    document.getElementById("photo-file-input")?.addEventListener("change", async (e) => {
+      const file = e.target.files?.[0]; if (!file) return;
+      try { const url = await uploadFile(file); if (url) { document.getElementById("as-photo").value = url; document.getElementById("photo-preview").classList.remove("hidden"); document.getElementById("photo-preview-img").src = url; toast("Foto berhasil diupload"); } } catch { toast("Gagal upload foto", "error"); }
+      e.target.value = "";
+    });
+
+    document.addEventListener("DOMContentLoaded", loadAltarServers);
+  </script>
+</AdminLayout>

@@ -51,6 +51,20 @@ export async function initSchema() {
     );
   `);
   await db.execute(`
+    CREATE TABLE IF NOT EXISTS altar_servers (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      title TEXT DEFAULT '',
+      organization TEXT DEFAULT '',
+      description TEXT DEFAULT '',
+      photo_url TEXT DEFAULT '',
+      tags TEXT DEFAULT '',
+      is_active INTEGER DEFAULT 1,
+      created_at TEXT DEFAULT (datetime('now')),
+      updated_at TEXT DEFAULT (datetime('now'))
+    );
+  `);
+  await db.execute(`
     CREATE TABLE IF NOT EXISTS registrants (
       id TEXT PRIMARY KEY,
       name TEXT NOT NULL,
