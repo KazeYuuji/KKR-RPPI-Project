@@ -145,8 +145,6 @@ const canonical = new URL(Astro.url.pathname, siteUrl).href;
           </div>
           <div class="flex items-center gap-4 text-xs text-white/60" id="footer-contact">
             <span>Memuat...</span>
-            <span class="text-white/20 hidden sm:inline">|</span>
-            <a href="/registration" class="hover:text-kkr-gold transition-colors">Daftar</a>
           </div>
         </div>
         <div class="mx-auto max-w-7xl mt-3 pt-3 border-t border-white/5 flex flex-wrap items-center justify-center gap-x-6 gap-y-1 text-xs text-white/40">
@@ -213,7 +211,6 @@ const canonical = new URL(Astro.url.pathname, siteUrl).href;
           if (phone) {
             html += `<span class="text-white/20">|</span><a href="tel:${phone.replace(/[^0-9+]/g, "")}" class="hover:text-kkr-gold transition-colors">Telp</a>`;
           }
-          html += `<span class="text-white/20 hidden sm:inline">|</span><a href="/registration" class="hover:text-kkr-gold transition-colors">Daftar</a>`;
           el.innerHTML = html;
         } catch {}
       }
