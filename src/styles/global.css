@@ -26,16 +26,18 @@ body {
 
 body:not(.admin) {
   background:
-    radial-gradient(ellipse at 50% 0%, rgba(243,159,90,0.07) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 100%, rgba(174,68,90,0.08) 0%, transparent 40%),
+    radial-gradient(ellipse at 50% 0%, rgba(243,159,90,0.12) 0%, transparent 40%),
     linear-gradient(180deg,
-      #1D1A39 0%,
-      #2F1F4A 10%,
-      #451952 25%,
-      #662549 48%,
-      #54284A 70%,
-      #2F1F4A 85%,
-      #1D1A39 100%
+      #f0a35e 0%,
+      #e89a6d 8%,
+      #da8f7d 18%,
+      #c07d8a 30%,
+      #a45791 42%,
+      #8a4b8d 54%,
+      #6f3e82 65%,
+      #543570 76%,
+      #3a2e5d 86%,
+      #1d1a39 100%
     );
   color: var(--color-kkr-light);
 }
@@ -64,12 +66,13 @@ body:not(.admin) {
   background: linear-gradient(
     180deg,
     rgba(29,26,57,0) 0%,
-    rgba(29,26,57,0.08) 15%,
-    rgba(45,31,74,0.15) 30%,
-    rgba(69,25,82,0.3) 50%,
-    rgba(102,37,73,0.5) 70%,
-    rgba(102,37,73,0.7) 85%,
-    #451952 100%
+    rgba(45,31,74,0.05) 20%,
+    rgba(90,45,95,0.12) 35%,
+    rgba(130,55,100,0.25) 50%,
+    rgba(164,87,145,0.4) 65%,
+    rgba(192,125,138,0.55) 80%,
+    rgba(224,154,128,0.7) 90%,
+    #f0a35e 100%
   );
 }
 
