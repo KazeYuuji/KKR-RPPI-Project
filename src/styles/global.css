@@ -204,6 +204,24 @@ button, input, textarea, select {
   animation: toast-out 0.3s ease-in both;
 }
 
+.faq-item:has(.faq-toggle[aria-expanded="true"]) {
+  border-color: rgba(174, 68, 90, 0.3);
+}
+
+.faq-item:has(.faq-toggle[aria-expanded="true"]) .faq-chevron {
+  transform: rotate(180deg);
+}
+
+.scroll-mt-20 {
+  scroll-margin-top: 100px;
+}
+
+@media (max-width: 768px) {
+  .scroll-mt-20 {
+    scroll-margin-top: 80px;
+  }
+}
+
 @media (max-width: 768px) {
   :root {
     --sidebar-width: 0px;

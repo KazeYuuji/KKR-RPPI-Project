@@ -8,6 +8,7 @@
     "preview": "astro preview"
   },
   "dependencies": {
+    "@astrojs/sitemap": "^3.7.3",
     "@astrojs/vercel": "^10.0.7",
     "@libsql/client": "^0.17.3",
     "astro": "^6.3.8",

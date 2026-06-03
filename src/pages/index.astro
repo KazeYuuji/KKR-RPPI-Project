@@ -124,7 +124,7 @@ import ChatBot from "../components/ChatBot.astro";
         </div>
 
         <div id="speaker-grid" class="w-full">
-          <div class="col-span-full text-center py-12 text-kkr-maroon/60">
+          <div class="col-span-full text-center py-12 text-kkr-maroon/60" id="speaker-skeleton">
             <div class="inline-block w-8 h-8 border-2 border-kkr-maroon border-t-transparent rounded-full animate-spin"></div>
             <p class="mt-3 text-sm">Memuat pembicara...</p>
           </div>
@@ -147,7 +147,7 @@ import ChatBot from "../components/ChatBot.astro";
         </div>
 
         <div id="altar-grid" class="w-full">
-          <div class="text-center py-12 text-kkr-maroon/60">
+          <div class="text-center py-12 text-kkr-maroon/60" id="altar-skeleton">
             <div class="inline-block w-8 h-8 border-2 border-kkr-maroon border-t-transparent rounded-full animate-spin"></div>
             <p class="mt-3 text-sm">Memuat pelayan altar...</p>
           </div>
@@ -171,7 +171,11 @@ import ChatBot from "../components/ChatBot.astro";
 
         <!-- Sponsor Marquee -->
         <div id="sponsor-grid" class="overflow-hidden" style="mask-image: linear-gradient(to right, transparent 0, black 40px, black calc(100% - 40px), transparent 100%);">
-          <div class="sponsor-track flex gap-6" style="width: max-content; animation: scroll-left 30s linear infinite;">
+          <div class="text-center py-12 text-kkr-maroon/60" id="sponsor-skeleton">
+            <div class="inline-block w-8 h-8 border-2 border-kkr-maroon border-t-transparent rounded-full animate-spin"></div>
+            <p class="mt-3 text-sm">Memuat sponsor...</p>
+          </div>
+          <div class="sponsor-track flex gap-6 hidden" style="width: max-content; animation: scroll-left 30s linear infinite;">
             <div class="flex gap-6 items-stretch" data-copy="1"></div>
             <div class="flex gap-6 items-stretch" data-copy="2" aria-hidden="true"></div>
           </div>
@@ -262,6 +266,100 @@ import ChatBot from "../components/ChatBot.astro";
       </section>
     </ScrollReveal>
 
+    <!-- FAQ -->
+    <ScrollReveal>
+      <section id="faq" class="scroll-mt-20 mx-auto max-w-7xl px-6">
+        <div class="text-center max-w-2xl mx-auto space-y-4 mb-12">
+          <div class="flex items-center justify-center gap-3">
+            <span class="inline-block w-8 h-px bg-kkr-red"></span>
+            <span class="text-sm font-semibold uppercase tracking-[0.25em] text-kkr-red">Tanya Jawab</span>
+            <span class="inline-block w-8 h-px bg-kkr-red"></span>
+          </div>
+          <h2 class="text-3xl sm:text-4xl font-semibold text-white">Pertanyaan Umum</h2>
+          <p class="text-kkr-light/80">Temukan jawaban untuk pertanyaan yang sering diajukan tentang KKR RPPI.</p>
+          <div class="w-12 h-0.5 bg-gradient-to-r from-kkr-red to-kkr-gold mx-auto rounded-full"></div>
+        </div>
+
+        <div class="max-w-3xl mx-auto space-y-3">
+          {[
+            { q: "Apa itu KKR RPPI?", a: "KKR RPPI adalah kebaktian kebangunan rohani yang mempersatukan siswa, alumni, guru, dan masyarakat dari berbagai sekolah di Kediri untuk mengalami kebangunan rohani dalam Yesus Kristus." },
+            { q: "Kapan dan di mana acara dilaksanakan?", a: "Acara akan dilaksanakan pada Sabtu, 10 Januari 2026 di SMK PGRI 1 Kediri, Jl. Himalaya No.06, Kediri. Mulai pukul 08.00 - 12.30 WIB." },
+            { q: "Bagaimana cara mendaftar?", a: "Kunjungi halaman <a href='/registration' class='text-kkr-red underline hover:no-underline'>pendaftaran</a>, isi data diri, pilih tiket gratis, dan dapatkan tiketmu langsung! Setelah itu tim kami akan memverifikasi pendaftaran Anda." },
+            { q: "Berapa harga tiketnya?", a: "Gratis! Semua tiket tersedia tanpa biaya. Event ini diselenggarakan secara gratis untuk seluruh peserta." },
+            { q: "Apa yang perlu disiapkan?", a: "Cukup siapkan data diri (nama, email, WhatsApp), pilih tiket yang tersedia, dan kamu akan mendapatkan tiket digital secara instan." },
+            { q: "Bagaimana cara menghubungi panitia?", a: "Anda dapat menghubungi kami via WhatsApp di <a href='https://wa.me/6285800753804' target='_blank' class='text-kkr-red underline hover:no-underline'>+62 858-0075-3804</a> atau email ke <a href='mailto:kkrrppi@gmail.com' class='text-kkr-red underline hover:no-underline'>kkrrppi@gmail.com</a>." },
+          ].map((faq, i) => (
+            <div class="faq-item rounded-2xl glass-card overflow-hidden transition-all duration-300">
+              <button class="faq-toggle w-full flex items-center justify-between px-6 py-5 text-left" aria-expanded="false">
+                <span class="text-sm font-semibold text-kkr-dark pr-4">{faq.q}</span>
+                <svg class="faq-chevron w-5 h-5 text-kkr-red shrink-0 transition-transform duration-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+              <div class="faq-answer max-h-0 overflow-hidden transition-all duration-300">
+                <div class="px-6 pb-5 text-sm text-kkr-maroon leading-relaxed" set:html={faq.a}></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    </ScrollReveal>
+
+    <!-- Social Media -->
+    <ScrollReveal>
+      <section id="social" class="scroll-mt-20 mx-auto max-w-7xl px-6">
+        <div class="rounded-[2.5rem] glass-card-dark p-8 sm:p-12 text-center relative overflow-hidden">
+          <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(243,159,90,0.08),_transparent_50%)]"></div>
+          <div class="relative">
+            <div class="flex items-center justify-center gap-3 mb-4">
+              <span class="inline-block w-8 h-px bg-kkr-red"></span>
+              <span class="text-sm font-semibold uppercase tracking-[0.25em] text-kkr-red">Ikuti Kami</span>
+              <span class="inline-block w-8 h-px bg-kkr-red"></span>
+            </div>
+            <h2 class="text-3xl sm:text-4xl font-semibold text-white">Terhubung dengan Kami</h2>
+            <p class="mt-3 text-kkr-light/80 max-w-xl mx-auto">Ikuti media sosial kami untuk mendapatkan informasi terbaru tentang KKR RPPI dan acara rohani lainnya.</p>
+            <div class="flex flex-wrap justify-center gap-4 mt-8">
+              <a href="https://www.instagram.com/kkrrppi" target="_blank" class="inline-flex items-center gap-3 rounded-xl bg-gradient-to-br from-pink-500 to-purple-600 px-6 py-3.5 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:shadow-xl">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                Instagram
+              </a>
+              <a href="https://www.facebook.com/kkrrppi" target="_blank" class="inline-flex items-center gap-3 rounded-xl bg-blue-600 px-6 py-3.5 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:shadow-xl">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                Facebook
+              </a>
+              <a href="https://www.youtube.com/@kkrrppi" target="_blank" class="inline-flex items-center gap-3 rounded-xl bg-red-600 px-6 py-3.5 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:shadow-xl">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.94 2C5.12 20 12 20 12 20s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"/></svg>
+                YouTube
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </ScrollReveal>
+
+    <!-- Event Info / Share -->
+    <ScrollReveal>
+      <section class="mx-auto max-w-7xl px-6">
+        <div class="rounded-[2.5rem] glass-card p-8 sm:p-10 text-center">
+          <div class="flex items-center justify-center gap-3 mb-4">
+            <span class="inline-block w-8 h-px bg-kkr-red"></span>
+            <span class="text-sm font-semibold uppercase tracking-[0.25em] text-kkr-red">Bagikan</span>
+            <span class="inline-block w-8 h-px bg-kkr-red"></span>
+          </div>
+          <h2 class="text-2xl sm:text-3xl font-semibold text-kkr-dark">Bagikan ke Teman-Temanmu!</h2>
+          <p class="mt-3 text-kkr-maroon max-w-lg mx-auto">Ajak keluarga, teman, dan sahabat untuk ikut merasakan kebangunan rohani bersama KKR RPPI.</p>
+          <div class="flex flex-wrap justify-center gap-3 mt-6">
+            <button id="share-wa" class="inline-flex items-center gap-2 rounded-xl bg-green-500 px-6 py-3 text-sm font-semibold text-white transition hover:bg-green-600 hover:-translate-y-0.5">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.94 2C5.12 20 12 20 12 20s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"/></svg>
+              Bagikan WhatsApp
+            </button>
+            <button id="share-copy" class="inline-flex items-center gap-2 rounded-xl border border-kkr-light/80 px-6 py-3 text-sm font-semibold text-kkr-purple transition hover:bg-white hover:border-kkr-red">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              Salin Tautan
+            </button>
+          </div>
+        </div>
+      </section>
+    </ScrollReveal>
+
     <!-- CTA -->
     <ScrollReveal>
       <section id="contact" class="mx-auto max-w-7xl px-6">
@@ -318,6 +416,11 @@ import ChatBot from "../components/ChatBot.astro";
   <ChatBot />
 
   <script>
+    function escapeHtml(str) {
+      if (!str) return "";
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    }
+
     function deriveEmbedUrl(link, venue) {
       if (!link) return `https://www.google.com/maps?q=${encodeURIComponent(venue || "Lokasi Acara")}&output=embed`;
       if (link.includes("output=embed")) return link;
@@ -399,6 +502,7 @@ import ChatBot from "../components/ChatBot.astro";
         const d = await res.json();
         const container = document.getElementById("speaker-grid");
         const list = (d.speakers || []).filter(s => s.is_active);
+        document.getElementById("speaker-skeleton")?.classList.add("hidden");
         if (!list.length) {
           container.innerHTML = `<div class="text-center py-12 text-kkr-maroon/60"><p class="text-sm">Belum ada pembicara.</p></div>`;
           return;
@@ -406,16 +510,16 @@ import ChatBot from "../components/ChatBot.astro";
         const makeCard = (baseClass) => s => `
           <div class="${baseClass}">
             ${s.photo_url
-              ? `<img src="${s.photo_url}" class="w-28 h-28 rounded-full object-cover mx-auto shadow-lg shadow-kkr-light/50 border-2 border-white" />`
+              ? `<img src="${escapeHtml(s.photo_url)}" class="w-28 h-28 rounded-full object-cover mx-auto shadow-lg shadow-kkr-light/50 border-2 border-white" alt="${escapeHtml(s.name)}" />`
               : `<div class="w-28 h-28 rounded-full bg-gradient-to-br from-kkr-light/80 to-white mx-auto flex items-center justify-center shadow-lg shadow-kkr-light/50"><svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-kkr-red/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>`
             }
             <div class="mt-5 space-y-1">
-              ${s.title ? `<span class="inline-block text-xs font-semibold uppercase tracking-wider text-kkr-red bg-kkr-light px-3 py-1 rounded-full">${s.title}</span>` : ""}
-              <h3 class="text-2xl font-semibold text-kkr-dark mt-2">${s.name}</h3>
-              ${s.organization ? `<p class="text-kkr-maroon/80 text-sm">${s.organization}</p>` : ""}
+              ${s.title ? `<span class="inline-block text-xs font-semibold uppercase tracking-wider text-kkr-red bg-kkr-light px-3 py-1 rounded-full">${escapeHtml(s.title)}</span>` : ""}
+              <h3 class="text-2xl font-semibold text-kkr-dark mt-2">${escapeHtml(s.name)}</h3>
+              ${s.organization ? `<p class="text-kkr-maroon/80 text-sm">${escapeHtml(s.organization)}</p>` : ""}
             </div>
-            ${s.description ? `<div class="mt-4"><p class="text-sm text-kkr-maroon leading-relaxed text-center max-w-xs mx-auto break-words">${s.description}</p></div>` : '<div class="flex-1"></div>'}
-            ${s.tags ? `<div class="flex flex-wrap justify-center gap-2 mt-5">${s.tags.split(",").map(t => `<span class="text-xs bg-kkr-light text-kkr-red px-3 py-1 rounded-full font-medium">${t.trim()}</span>`).join("")}</div>` : ""}
+            ${s.description ? `<div class="mt-4"><p class="text-sm text-kkr-maroon leading-relaxed text-center max-w-xs mx-auto break-words">${escapeHtml(s.description)}</p></div>` : '<div class="flex-1"></div>'}
+            ${s.tags ? `<div class="flex flex-wrap justify-center gap-2 mt-5">${s.tags.split(",").map(t => `<span class="text-xs bg-kkr-light text-kkr-red px-3 py-1 rounded-full font-medium">${escapeHtml(t.trim())}</span>`).join("")}</div>` : ""}
           </div>`;
         if (list.length > 3) {
           const base = "rounded-[2.5rem] glass-card p-5 sm:p-8 text-center hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 shrink-0 w-[280px] sm:w-[320px] flex flex-col";
@@ -448,6 +552,7 @@ import ChatBot from "../components/ChatBot.astro";
         const d = await res.json();
         const container = document.getElementById("altar-grid");
         const list = (d.altarServers || []).filter(s => s.is_active);
+        document.getElementById("altar-skeleton")?.classList.add("hidden");
         if (!list.length) {
           container.innerHTML = `<div class="text-center py-12 text-kkr-maroon/60"><p class="text-sm">Belum ada pelayan altar.</p></div>`;
           return;
@@ -455,16 +560,16 @@ import ChatBot from "../components/ChatBot.astro";
         const makeCard = (baseClass) => s => `
           <div class="${baseClass}">
             ${s.photo_url
-              ? `<img src="${s.photo_url}" class="w-20 h-20 rounded-full object-cover mx-auto shadow-md shadow-kkr-light/40 border-2 border-white" />`
+              ? `<img src="${escapeHtml(s.photo_url)}" class="w-20 h-20 rounded-full object-cover mx-auto shadow-md shadow-kkr-light/40 border-2 border-white" alt="${escapeHtml(s.name)}" />`
               : `<div class="w-20 h-20 rounded-full bg-gradient-to-br from-kkr-light/80 to-white mx-auto flex items-center justify-center shadow-md shadow-kkr-light/40"><svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-kkr-red/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>`
             }
             <div class="mt-3 space-y-0.5">
-              ${s.title ? `<span class="inline-block text-[10px] font-semibold uppercase tracking-wider text-kkr-red bg-kkr-light px-2 py-0.5 rounded-full">${s.title}</span>` : ""}
-              <h3 class="text-base font-semibold text-kkr-dark mt-1">${s.name}</h3>
-              ${s.organization ? `<p class="text-kkr-maroon/70 text-xs">${s.organization}</p>` : ""}
+              ${s.title ? `<span class="inline-block text-[10px] font-semibold uppercase tracking-wider text-kkr-red bg-kkr-light px-2 py-0.5 rounded-full">${escapeHtml(s.title)}</span>` : ""}
+              <h3 class="text-base font-semibold text-kkr-dark mt-1">${escapeHtml(s.name)}</h3>
+              ${s.organization ? `<p class="text-kkr-maroon/70 text-xs">${escapeHtml(s.organization)}</p>` : ""}
             </div>
-            ${s.description ? `<div class="mt-2"><p class="text-xs text-kkr-maroon leading-relaxed text-center max-w-[200px] mx-auto break-words">${s.description}</p></div>` : '<div class="flex-1"></div>'}
-            ${s.tags ? `<div class="flex flex-wrap justify-center gap-1.5 mt-3">${s.tags.split(",").map(t => `<span class="text-[10px] bg-kkr-light text-kkr-red px-2 py-0.5 rounded-full font-medium">${t.trim()}</span>`).join("")}</div>` : ""}
+            ${s.description ? `<div class="mt-2"><p class="text-xs text-kkr-maroon leading-relaxed text-center max-w-[200px] mx-auto break-words">${escapeHtml(s.description)}</p></div>` : '<div class="flex-1"></div>'}
+            ${s.tags ? `<div class="flex flex-wrap justify-center gap-1.5 mt-3">${s.tags.split(",").map(t => `<span class="text-[10px] bg-kkr-light text-kkr-red px-2 py-0.5 rounded-full font-medium">${escapeHtml(t.trim())}</span>`).join("")}</div>` : ""}
           </div>`;
         if (list.length > 3) {
           const base = "rounded-2xl glass-card p-4 sm:p-5 text-center hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 shrink-0 w-[200px] sm:w-[220px] flex flex-col";
@@ -503,11 +608,13 @@ import ChatBot from "../components/ChatBot.astro";
           document.getElementById("sponsor-grid").innerHTML = `<div class="text-center py-12 text-kkr-maroon/60"><p class="text-sm">Belum ada sponsor. Jadilah yang pertama!</p></div>`;
           return;
         }
+        document.getElementById("sponsor-skeleton")?.classList.add("hidden");
+        document.querySelector(".sponsor-track")?.classList.remove("hidden");
         const card = (s) =>
           `<div class="sponsor-card flex items-center gap-4 rounded-2xl glass-card px-6 py-5 shrink-0 min-w-[260px] cursor-pointer transition-all duration-300 hover:shadow-2xl hover:-translate-y-1" data-id="${s.id}">
-            ${s.logo_url ? `<img src="${s.logo_url}" class="w-12 h-12 rounded-xl object-cover shrink-0" />` : `<div class="w-12 h-12 rounded-xl bg-gradient-to-br from-kkr-light to-white border border-kkr-light/50 flex items-center justify-center shrink-0"><svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-kkr-red/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>`}
+            ${s.logo_url ? `<img src="${escapeHtml(s.logo_url)}" class="w-12 h-12 rounded-xl object-cover shrink-0" alt="${escapeHtml(s.name)}" />` : `<div class="w-12 h-12 rounded-xl bg-gradient-to-br from-kkr-light to-white border border-kkr-light/50 flex items-center justify-center shrink-0"><svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-kkr-red/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>`}
             <div class="min-w-0">
-              <p class="font-semibold text-kkr-dark truncate">${s.name}</p>
+              <p class="font-semibold text-kkr-dark truncate">${escapeHtml(s.name)}</p>
             </div>
           </div>`;
         const html = list.map(card).join("");
@@ -577,5 +684,37 @@ import ChatBot from "../components/ChatBot.astro";
     });
 
     document.addEventListener("DOMContentLoaded", () => { loadSettings(); loadSpeakers(); loadAltarServers(); loadSponsors(); });
+
+    // FAQ Accordion
+    document.querySelectorAll(".faq-toggle").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const expanded = btn.getAttribute("aria-expanded") === "true";
+        btn.setAttribute("aria-expanded", !expanded);
+        const answer = btn.nextElementSibling;
+        const chevron = btn.querySelector(".faq-chevron");
+        if (expanded) {
+          answer.style.maxHeight = "0";
+        } else {
+          answer.style.maxHeight = answer.scrollHeight + "px";
+        }
+      });
+    });
+
+    // Share buttons
+    document.getElementById("share-wa")?.addEventListener("click", () => {
+      const url = encodeURIComponent(window.location.href);
+      const text = encodeURIComponent("IKUTI KKR RPPI 2026 - Kebaktian Kebangunan Rohani! Daftar sekarang gratis!");
+      window.open(`https://wa.me/?text=${text}%20${url}`, "_blank");
+    });
+
+    document.getElementById("share-copy")?.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        const btn = document.getElementById("share-copy");
+        const original = btn.innerHTML;
+        btn.innerHTML = `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Tersalin!`;
+        setTimeout(() => btn.innerHTML = original, 2000);
+      } catch {}
+    });
   </script>
 </PublicLayout>

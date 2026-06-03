@@ -4,9 +4,16 @@ import "../styles/global.css";
 export interface Props {
   title: string;
   description?: string;
+  image?: string;
 }
 
-const { title, description = "KKR RPPI - Kebaktian kebangunan rohani yang mempersatukan pelajar, alumni, dan masyarakat di Kediri." } = Astro.props;
+const { title, description = "KKR RPPI - Kebaktian kebangunan rohani yang mempersatukan pelajar, alumni, dan masyarakat di Kediri.", image = "/logo.png" } = Astro.props;
+
+const siteUrl = "https://kkrrppi.vercel.app";
+const pageTitle = title;
+const pageDesc = description;
+const pageImage = new URL(image, siteUrl).href;
+const canonical = new URL(Astro.url.pathname, siteUrl).href;
 ---
 
 <!doctype html>
@@ -14,8 +21,73 @@ const { title, description = "KKR RPPI - Kebaktian kebangunan rohani yang memper
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content={description} />
-    <title>{title}</title>
+    <meta name="description" content={pageDesc} />
+    <meta name="robots" content="index, follow" />
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+
+    <!-- Canonical -->
+    <link rel="canonical" href={canonical} />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/logo-header.png" />
+    <link rel="apple-touch-icon" href="/logo-header.png" />
+
+    <!-- Preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+
+    <!-- Preload hero image -->
+    <link rel="preload" as="image" href="/images/concert-bg.jpeg" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDesc} />
+    <meta property="og:image" content={pageImage} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:site_name" content="KKR RPPI" />
+    <meta property="og:locale" content="id_ID" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDesc} />
+    <meta name="twitter:image" content={pageImage} />
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+      {JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Event",
+        "name": "KKR RPPI 2026",
+        "description": pageDesc,
+        "image": pageImage,
+        "url": siteUrl,
+        "startDate": "2026-01-10T08:00:00+07:00",
+        "endDate": "2026-01-10T12:30:00+07:00",
+        "eventStatus": "https://schema.org/EventScheduled",
+        "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+        "location": {
+          "@type": "Place",
+          "name": "SMK PGRI 1 Kediri",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "Jl. Himalaya No.06",
+            "addressLocality": "Kediri",
+            "addressCountry": "ID"
+          }
+        },
+        "organizer": {
+          "@type": "Organization",
+          "name": "KKR RPPI",
+          "email": "kkrrppi@gmail.com"
+        }
+      })}
+    </script>
+
+    <title>{pageTitle}</title>
   </head>
   <body>
     <div class="min-h-screen">
@@ -77,8 +149,18 @@ const { title, description = "KKR RPPI - Kebaktian kebangunan rohani yang memper
             <a href="/registration" class="hover:text-kkr-gold transition-colors">Daftar</a>
           </div>
         </div>
+        <div class="mx-auto max-w-7xl mt-3 pt-3 border-t border-white/5 flex flex-wrap items-center justify-center gap-x-6 gap-y-1 text-xs text-white/40">
+          <a href="/privacy" class="hover:text-kkr-gold transition-colors">Kebijakan Privasi</a>
+          <a href="/terms" class="hover:text-kkr-gold transition-colors">Syarat & Ketentuan</a>
+          <span>&copy; 2026 KKR RPPI. Hak cipta dilindungi.</span>
+        </div>
       </footer>
     </div>
+
+    <!-- Back to Top -->
+    <button id="back-to-top" class="fixed bottom-6 left-6 z-50 w-12 h-12 rounded-full bg-gradient-to-r from-kkr-red to-kkr-gold text-white shadow-lg shadow-kkr-maroon/30 flex items-center justify-center opacity-0 translate-y-4 transition-all duration-300 hover:scale-105 active:scale-95" aria-label="Kembali ke atas">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+    </button>
 
     <script>
       const menuBtn = document.getElementById("mobile-menu-btn");
@@ -97,6 +179,26 @@ const { title, description = "KKR RPPI - Kebaktian kebangunan rohani yang memper
         });
       });
 
+      const backToTop = document.getElementById("back-to-top");
+      if (backToTop) {
+        let ticking = false;
+        window.addEventListener("scroll", () => {
+          if (!ticking) {
+            requestAnimationFrame(() => {
+              backToTop.classList.toggle("opacity-0", window.scrollY < 400);
+              backToTop.classList.toggle("translate-y-4", window.scrollY < 400);
+              backToTop.classList.toggle("opacity-100", window.scrollY >= 400);
+              backToTop.classList.toggle("translate-y-0", window.scrollY >= 400);
+              ticking = false;
+            });
+            ticking = true;
+          }
+        });
+        backToTop.addEventListener("click", () => {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+      }
+
       async function loadContact() {
         try {
           const res = await fetch("/api/settings");
@@ -106,14 +208,13 @@ const { title, description = "KKR RPPI - Kebaktian kebangunan rohani yang memper
           const email = s.contactEmail || "kkrrppi@gmail.com";
           const phone = s.contactPhone || "";
           const wa = s.contactWa || "6285800753804";
-          el.innerHTML = `
-            <a href="mailto:${email}" class="hover:text-kkr-gold transition-colors">Email</a>
-            <span class="text-white/20">|</span>
-            <a href="https://wa.me/${wa}" target="_blank" class="hover:text-kkr-gold transition-colors">WhatsApp</a>
-            ${phone ? `<span class="text-white/20">|</span><a href="tel:${phone}" class="hover:text-kkr-gold transition-colors">Telp</a>` : ""}
-            <span class="text-white/20 hidden sm:inline">|</span>
-            <a href="/registration" class="hover:text-kkr-gold transition-colors">Daftar</a>
-          `;
+          let html = `<a href="mailto:${encodeURIComponent(email)}" class="hover:text-kkr-gold transition-colors">Email</a>`;
+          html += `<span class="text-white/20">|</span><a href="https://wa.me/${wa.replace(/[^0-9]/g, "")}" target="_blank" class="hover:text-kkr-gold transition-colors">WhatsApp</a>`;
+          if (phone) {
+            html += `<span class="text-white/20">|</span><a href="tel:${phone.replace(/[^0-9+]/g, "")}" class="hover:text-kkr-gold transition-colors">Telp</a>`;
+          }
+          html += `<span class="text-white/20 hidden sm:inline">|</span><a href="/registration" class="hover:text-kkr-gold transition-colors">Daftar</a>`;
+          el.innerHTML = html;
         } catch {}
       }
       loadContact();

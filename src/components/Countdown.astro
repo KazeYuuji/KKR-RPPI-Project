@@ -19,8 +19,8 @@ const regClose = "2025-12-29T23:59:59";
         <div class="grid gap-6 sm:grid-cols-2">
           <div class="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
             <p class="text-kkr-light text-sm font-semibold uppercase tracking-wider">Segera Ditutup</p>
-            <p class="text-kkr-gold text-lg font-semibold mt-1">29 Desember 2025</p>
-            <p class="text-sm text-kkr-light mt-2">Batas Pendaftaran Tiket</p>
+            <p class="text-kkr-gold text-lg font-semibold mt-1" id="reg-deadline-label">29 Desember 2025</p>
+            <p class="text-sm text-kkr-light mt-2" id="reg-deadline-sub">Batas Pendaftaran Tiket</p>
             <div id="reg-countdown" class="grid grid-cols-4 gap-3 mt-5">
               {["Hari", "Jam", "Menit", "Detik"].map((label) => (
                 <div class="bg-white/10 rounded-xl p-3 backdrop-blur-sm">
@@ -33,7 +33,7 @@ const regClose = "2025-12-29T23:59:59";
 
           <div class="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
             <p class="text-kkr-light text-sm font-semibold uppercase tracking-wider">Hari H</p>
-            <p class="text-kkr-gold text-lg font-semibold mt-1">10 Januari 2026</p>
+            <p class="text-kkr-gold text-lg font-semibold mt-1" id="event-date-label">10 Januari 2026</p>
             <p class="text-sm text-kkr-light mt-2">Menuju Puncak Acara</p>
             <div id="event-countdown" class="grid grid-cols-4 gap-3 mt-5">
               {["Hari", "Jam", "Menit", "Detik"].map((label) => (
@@ -68,14 +68,10 @@ const regClose = "2025-12-29T23:59:59";
         if (!dl.endsWith("Z") && !/[+-]\d{2}:\d{2}$/.test(dl)) dl += "+07:00";
         eventDate = new Date(dl).getTime();
       }
-      if (s.locDate) {
-        const el = document.querySelector("#countdown .text-kkr-gold.text-lg.font-semibold.mt-1");
-        if (el) el.textContent = s.locDate;
-      }
-      if (s.regDeadline) {
-        const els = document.querySelectorAll("#countdown .text-kkr-gold.text-lg.font-semibold.mt-1");
-        if (els.length > 1) els[0].textContent = s.regDeadline;
-      }
+      const regLabel = document.getElementById("reg-deadline-label");
+      const eventLabel = document.getElementById("event-date-label");
+      if (s.regDeadline && regLabel) regLabel.textContent = s.regDeadline;
+      if (s.locDate && eventLabel) eventLabel.textContent = s.locDate;
     }).catch(() => {});
 
     function updateCountdown(target, prefix) {
