@@ -23,9 +23,9 @@ import ChatBot from "../components/ChatBot.astro";
           <div class="space-y-8 text-white relative z-10 animate-fade-in">
             <p class="text-sm uppercase tracking-[0.3em] text-kkr-light animate-fade-in-up" style="animation-delay: 100ms">Ibadah Kebaktian Kebangunan Rohani</p>
             <h1 id="hero-heading" class="hero-text-shadow text-5xl sm:text-6xl md:text-7xl xl:text-[6rem] font-black leading-[0.9] tracking-[-0.04em]">
-              <span id="hero-line1" class="inline-block animate-fade-in-up-spring" style="animation-delay: 200ms">TRUST</span><br />
-              <span id="hero-line2" class="inline-block animate-fade-in-up-spring" style="animation-delay: 350ms">IN</span><br />
-              <span id="hero-line3" class="inline-block animate-fade-in-up-spring" style="animation-delay: 500ms">GOD</span>
+              <span id="hero-line1" class="inline-block gradient-gold" data-split>TRUST</span><br />
+              <span id="hero-line2" class="inline-block" data-split>IN</span><br />
+              <span id="hero-line3" class="inline-block" data-split>GOD</span>
             </h1>
             <div class="max-w-xl space-y-4">
               <p id="hero-verse" class="hero-copy text-lg sm:text-xl leading-9 max-w-3xl animate-fade-in-up" style="animation-delay: 600ms">Percayalah kepada TUHAN dengan segenap hatimu dan janganlah bersandar kepada pengertianmu sendiri.</p>
@@ -43,7 +43,7 @@ import ChatBot from "../components/ChatBot.astro";
           </div>
 
           <div class="relative z-10 animate-fade-in-up-spring" style="animation-delay: 400ms">
-            <div class="rounded-[2.5rem] border border-white/20 bg-white/10 p-8 shadow-2xl shadow-black/25 backdrop-blur-xl">
+            <div class="rounded-[2.5rem] border border-white/20 bg-white/10 p-8 shadow-2xl shadow-black/25 backdrop-blur-xl glass-card-border">
               <div class="space-y-8">
                 <div class="flex items-center justify-between gap-4">
                   <span class="inline-flex items-center gap-2 rounded-full bg-kkr-gold/15 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-kkr-gold">Terbuka untuk umum</span>
@@ -78,11 +78,11 @@ import ChatBot from "../components/ChatBot.astro";
 
     <!-- Tentang Acara -->
     <ScrollReveal direction="scale" spring>
-      <section id="about" class="scroll-mt-20 mx-auto max-w-7xl px-6 parallax-medium relative">
+      <section id="about" class="scroll-mt-20 mx-auto max-w-7xl px-6 parallax-medium relative section-wave">
         <div class="absolute top-10 right-10 text-6xl opacity-5 animate-float-slow select-none pointer-events-none">✝️</div>
         <div class="absolute bottom-10 left-10 text-4xl opacity-5 animate-float-medium select-none pointer-events-none">🕊️</div>
         <div class="grid gap-10 lg:grid-cols-[1fr_0.8fr] items-start">
-          <div class="glass-card space-y-6 rounded-[2.5rem] p-8 sm:p-10">
+          <div class="glass-card space-y-6 rounded-[2.5rem] p-8 sm:p-10 glass-card-border">
             <div class="flex items-center gap-3">
               <span class="inline-block w-8 h-px bg-kkr-red"></span>
               <span class="text-sm font-semibold uppercase tracking-[0.25em] text-kkr-red">Tentang Acara</span>
@@ -104,10 +104,24 @@ import ChatBot from "../components/ChatBot.astro";
               <h3 id="about-card1-title" class="mt-4 text-xl font-semibold">Pujian & Penyembahan</h3>
               <p id="about-card1-desc" class="mt-2 text-sm text-white/70 leading-relaxed">Nikmati pujian dan penyembahan yang membawa hati kita lebih dekat kepada Tuhan, mengalami kebangunan rohani dalam Yesus Kristus.</p>
             </div>
-            <div class="rounded-2xl glass-card p-6 sm:p-8 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-kkr-red/30">
+            <div class="rounded-2xl glass-card p-6 sm:p-8 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-kkr-red/30 glass-card-border">
               <span class="text-3xl">🤝</span>
               <h3 id="about-card2-title" class="mt-4 text-xl font-semibold text-kkr-dark">Persekutuan Lintas Sekolah</h3>
               <p id="about-card2-desc" class="mt-2 text-sm text-kkr-maroon leading-relaxed">Acara ini mempertemukan siswa-siswi dari berbagai sekolah di Kediri dan sekitarnya untuk membangun persaudaraan dan memperkuat ikatan iman dalam Tuhan Yesus.</p>
+            </div>
+            <div class="grid grid-cols-3 gap-3">
+              <div class="rounded-xl glass-card p-4 text-center glass-card-border">
+                <p class="text-2xl font-bold gradient-gold count-up" data-count-to="500" data-count-suffix="+" data-count-duration="2500">0</p>
+                <p class="text-xs text-kkr-maroon/70 mt-1">Peserta</p>
+              </div>
+              <div class="rounded-xl glass-card p-4 text-center glass-card-border">
+                <p class="text-2xl font-bold gradient-gold count-up" data-count-to="25" data-count-suffix="+" data-count-duration="2000">0</p>
+                <p class="text-xs text-kkr-maroon/70 mt-1">Sekolah</p>
+              </div>
+              <div class="rounded-xl glass-card p-4 text-center glass-card-border">
+                <p class="text-2xl font-bold gradient-gold count-up" data-count-to="15" data-count-suffix="+" data-count-duration="2000">0</p>
+                <p class="text-xs text-kkr-maroon/70 mt-1">Pembicara</p>
+              </div>
             </div>
           </div>
         </div>
@@ -197,7 +211,7 @@ import ChatBot from "../components/ChatBot.astro";
 
     <!-- Lokasi -->
     <ScrollReveal>
-      <section id="location" class="scroll-mt-20 mx-auto max-w-7xl px-6 parallax-medium">
+      <section id="location" class="scroll-mt-20 mx-auto max-w-7xl px-6 parallax-medium section-wave">
         <div class="text-center max-w-2xl mx-auto space-y-3 mb-8">
           <div class="flex items-center justify-center gap-3">
             <span class="inline-block w-6 h-px bg-kkr-red"></span>
@@ -208,7 +222,7 @@ import ChatBot from "../components/ChatBot.astro";
         </div>
 
         <div class="grid gap-6 lg:grid-cols-2 items-stretch">
-          <div class="rounded-[2.5rem] glass-card p-5 sm:p-6">
+          <div class="rounded-[2.5rem] glass-card p-5 sm:p-6 glass-card-border">
             <div class="flex items-center gap-2 mb-3">
               <span class="text-xl">📍</span>
               <span class="text-xs font-semibold uppercase tracking-[0.2em] text-kkr-red">Temui Kami di Sini</span>
@@ -261,7 +275,7 @@ import ChatBot from "../components/ChatBot.astro";
             </div>
           </div>
 
-          <div class="overflow-hidden rounded-[2.5rem] glass-card h-full">
+          <div class="overflow-hidden rounded-[2.5rem] glass-card h-full glass-card-border">
             <iframe id="loc-maps-iframe" class="h-full w-full" src="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
           </div>
         </div>
@@ -270,7 +284,7 @@ import ChatBot from "../components/ChatBot.astro";
 
     <!-- CTA -->
     <ScrollReveal>
-      <section id="contact" class="mx-auto max-w-7xl px-6 parallax-fast">
+      <section id="contact" class="mx-auto max-w-7xl px-6 parallax-fast section-wave">
         <div class="rounded-[2.5rem] bg-gradient-to-br from-kkr-dark via-kkr-purple to-kkr-maroon p-8 sm:p-14 text-white shadow-2xl shadow-kkr-dark/30 relative overflow-hidden">
           <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(251,207,232,.08),_transparent_50%)]"></div>
           <div class="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,_rgba(219,234,254,.05),_transparent_50%)]"></div>
@@ -441,7 +455,7 @@ import ChatBot from "../components/ChatBot.astro";
             ${s.tags ? `<div class="flex flex-wrap justify-center gap-2 mt-5">${s.tags.split(",").map(t => `<span class="text-xs bg-kkr-light text-kkr-red px-3 py-1 rounded-full font-medium">${t.trim()}</span>`).join("")}</div>` : ""}
           </div>`;
         if (list.length > 3) {
-          const base = "rounded-[2.5rem] glass-card p-5 sm:p-8 text-center hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 shrink-0 w-[280px] sm:w-[320px] flex flex-col";
+          const base = "rounded-[2.5rem] glass-card p-5 sm:p-8 text-center hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 shrink-0 w-[280px] sm:w-[320px] flex flex-col glass-card-border";
           const html = list.map(makeCard(base)).join("");
           container.innerHTML = `
             <div class="speaker-marquee" style="mask-image: linear-gradient(to right, transparent 0, black 40px, black calc(100% - 40px), transparent 100%); overflow-y: visible;">
@@ -451,7 +465,7 @@ import ChatBot from "../components/ChatBot.astro";
               </div>
             </div>`;
         } else {
-          const base = "rounded-[2.5rem] glass-card p-6 sm:p-8 text-center hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 w-full flex flex-col";
+          const base = "rounded-[2.5rem] glass-card p-6 sm:p-8 text-center hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 w-full flex flex-col glass-card-border";
           const html = list.map(makeCard(base)).join("");
           if (list.length === 1) {
             container.innerHTML = `<div class="flex justify-center">${html}</div>`;
@@ -490,7 +504,7 @@ import ChatBot from "../components/ChatBot.astro";
             ${s.tags ? `<div class="flex flex-wrap justify-center gap-1.5 mt-3">${s.tags.split(",").map(t => `<span class="text-[10px] bg-kkr-light text-kkr-red px-2 py-0.5 rounded-full font-medium">${t.trim()}</span>`).join("")}</div>` : ""}
           </div>`;
         if (list.length > 3) {
-          const base = "rounded-2xl glass-card p-4 sm:p-5 text-center hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 shrink-0 w-[200px] sm:w-[220px] flex flex-col";
+          const base = "rounded-2xl glass-card p-4 sm:p-5 text-center hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 shrink-0 w-[200px] sm:w-[220px] flex flex-col glass-card-border";
           const html = list.map(makeCard(base)).join("");
           container.innerHTML = `
             <div class="altar-marquee" style="mask-image: linear-gradient(to right, transparent 0, black 40px, black calc(100% - 40px), transparent 100%); overflow-y: visible;">
@@ -500,7 +514,7 @@ import ChatBot from "../components/ChatBot.astro";
               </div>
             </div>`;
         } else {
-          const base = "rounded-2xl glass-card p-4 sm:p-5 text-center hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 w-full flex flex-col";
+          const base = "rounded-2xl glass-card p-4 sm:p-5 text-center hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 w-full flex flex-col glass-card-border";
           const html = list.map(makeCard(base)).join("");
           if (list.length === 1) {
             container.innerHTML = `<div class="flex justify-center max-w-[260px] mx-auto">${html}</div>`;
@@ -527,7 +541,7 @@ import ChatBot from "../components/ChatBot.astro";
           return;
         }
         const card = (s) =>
-          `<div class="sponsor-card flex items-center gap-4 rounded-2xl glass-card px-6 py-5 shrink-0 min-w-[260px] cursor-pointer transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 tilt-card" data-id="${s.id}">
+          `<div class="sponsor-card flex items-center gap-4 rounded-2xl glass-card px-6 py-5 shrink-0 min-w-[260px] cursor-pointer transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 tilt-card glass-card-border" data-id="${s.id}">
             ${s.logo_url ? `<img src="${s.logo_url}" class="w-12 h-12 rounded-xl object-cover shrink-0" />` : `<div class="w-12 h-12 rounded-xl bg-gradient-to-br from-kkr-light to-white border border-kkr-light/50 flex items-center justify-center text-xl shrink-0">🏢</div>`}
             <div class="min-w-0">
               <p class="font-semibold text-kkr-dark truncate">${s.name}</p>

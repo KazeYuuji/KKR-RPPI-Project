@@ -464,6 +464,167 @@ button, input, textarea, select {
   opacity: 1;
 }
 
+/* ─── Reading Progress Bar ─── */
+#progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #AE445A, #F39F5A, #AE445A);
+  background-size: 200% 100%;
+  z-index: 99999;
+  transform-origin: left;
+  transform: scaleX(0);
+  transition: transform 0.1s linear;
+  animation: shimmer 2s linear infinite;
+}
+
+/* ─── Custom Cursor ─── */
+#cursor-ring {
+  position: fixed;
+  pointer-events: none;
+  z-index: 99998;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(243, 159, 90, 0.5);
+  transform: translate(-50%, -50%);
+  transition: width 0.2s var(--ease-smooth), height 0.2s var(--ease-smooth), border-color 0.2s var(--ease-smooth), background 0.2s var(--ease-smooth);
+  will-change: left, top, transform;
+  mix-blend-mode: difference;
+}
+#cursor-dot {
+  position: fixed;
+  pointer-events: none;
+  z-index: 99999;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #F39F5A;
+  transform: translate(-50%, -50%);
+  will-change: left, top;
+  transition: width 0.15s, height 0.15s, background 0.15s;
+}
+#cursor-ring.hovering {
+  width: 56px;
+  height: 56px;
+  border-color: rgba(243, 159, 90, 0.8);
+  background: rgba(243, 159, 90, 0.08);
+}
+#cursor-dot.hovering {
+  width: 8px;
+  height: 8px;
+  background: #AE445A;
+}
+
+/* ─── Gradient Text ─── */
+.gradient-gold {
+  background: linear-gradient(135deg, #F39F5A 0%, #E8BCB9 25%, #F39F5A 50%, #AE445A 75%, #F39F5A 100%);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradient-shift-text 5s var(--ease-smooth) infinite;
+}
+
+@keyframes gradient-shift-text {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ─── Animated Border Glow ─── */
+.glass-card-border {
+  position: relative;
+  isolation: isolate;
+}
+.glass-card-border::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  z-index: -1;
+  background: conic-gradient(from var(--angle, 0deg), transparent 40%, rgba(243,159,90,0.5) 50%, transparent 60%);
+  animation: border-spin 4s linear infinite;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  padding: 2px;
+}
+@property --angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+@keyframes border-spin {
+  to { --angle: 360deg; }
+}
+
+/* ─── Click Ripple ─── */
+.ripple-effect {
+  position: relative;
+  overflow: hidden;
+}
+.ripple-effect .ripple-el {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(243, 159, 90, 0.4);
+  transform: scale(0);
+  animation: ripple-anim 0.6s ease-out forwards;
+  pointer-events: none;
+}
+@keyframes ripple-anim {
+  to { transform: scale(4); opacity: 0; }
+}
+
+/* ─── Text Split Reveal ─── */
+.char-reveal {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(40px) rotateX(60deg);
+  animation: char-reveal 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+@keyframes char-reveal {
+  to { opacity: 1; transform: translateY(0) rotateX(0deg); }
+}
+
+/* ─── Section Wave Divider ─── */
+.section-wave {
+  position: relative;
+}
+.section-wave::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 60px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 60'%3E%3Cpath d='M0,30 C200,0 400,60 600,30 C800,0 1000,60 1200,30 L1200,60 L0,60 Z' fill='rgba(232,188,185,0.08)'/%3E%3C/svg%3E") repeat-x bottom;
+  background-size: 1200px 60px;
+  animation: wave-move 8s linear infinite;
+  pointer-events: none;
+}
+@keyframes wave-move {
+  0% { background-position-x: 0; }
+  100% { background-position-x: 1200px; }
+}
+
+/* ─── Counter Number ─── */
+.count-up {
+  display: inline-block;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─── Page Entrance ─── */
+.page-enter {
+  animation: page-enter 0.8s var(--ease-smooth) both;
+}
+@keyframes page-enter {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after {
@@ -473,9 +634,15 @@ button, input, textarea, select {
   }
   .reveal { opacity: 1 !important; transform: none !important; }
   #mouse-follower { display: none !important; }
+  #cursor-ring, #cursor-dot { display: none !important; }
   .tilt-card { transform: none !important; }
   .magnetic-btn { transform: none !important; }
-  .parallax-slow { transform: none !important; }
+  .parallax-slow, .parallax-medium, .parallax-fast { transform: none !important; }
+  .glass-card-border::before { display: none !important; }
+  .gradient-gold { -webkit-text-fill-color: #F39F5A !important; }
+  .char-reveal { opacity: 1 !important; transform: none !important; }
+  #progress-bar { display: none !important; }
+  .section-wave::after { display: none !important; }
 }
 
 @media (max-width: 768px) {

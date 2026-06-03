@@ -57,7 +57,7 @@ const { title, description = "KKR RPPI - Kebaktian kebangunan rohani yang memper
         </div>
       </header>
 
-      <main id="main-content" class="animate-fade-in">
+      <main id="main-content" class="page-enter">
         <slot />
       </main>
 
@@ -80,6 +80,13 @@ const { title, description = "KKR RPPI - Kebaktian kebangunan rohani yang memper
       </footer>
     </div>
 
+    <!-- Progress Bar -->
+    <div id="progress-bar"></div>
+
+    <!-- Custom Cursor -->
+    <div id="cursor-ring"></div>
+    <div id="cursor-dot"></div>
+
     <!-- Mouse Follower -->
     <div id="mouse-follower" style="opacity: 0;"></div>
 
@@ -89,6 +96,8 @@ const { title, description = "KKR RPPI - Kebaktian kebangunan rohani yang memper
       const headerLogo = document.getElementById("header-logo");
       const menuBtn = document.getElementById("mobile-menu-btn");
       const mobileMenu = document.getElementById("mobile-menu");
+
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
       let lastScroll = 0;
       window.addEventListener("scroll", () => {
@@ -164,11 +173,84 @@ const { title, description = "KKR RPPI - Kebaktian kebangunan rohani yang memper
       loadContact();
 
       /* ══════════════════════════════════════════
+         Progress Bar
+         ══════════════════════════════════════════ */
+      function initProgressBar() {
+        if (reduceMotion) return;
+        const bar = document.getElementById("progress-bar");
+        if (!bar) return;
+        window.addEventListener("scroll", () => {
+          const h = document.documentElement.scrollHeight - window.innerHeight;
+          const pct = window.scrollY / h;
+          bar.style.transform = `scaleX(${Math.min(pct, 1)})`;
+        }, { passive: true });
+      }
+
+      /* ══════════════════════════════════════════
+         Custom Cursor
+         ══════════════════════════════════════════ */
+      function initCustomCursor() {
+        if (reduceMotion) return;
+        const ring = document.getElementById("cursor-ring");
+        const dot = document.getElementById("cursor-dot");
+        if (!ring || !dot) return;
+
+        document.body.style.cursor = "none";
+
+        let mx = -100, my = -100;
+        let rx = -100, ry = -100;
+        let dx = -100, dy = -100;
+
+        function tick() {
+          rx += (mx - rx) * 0.12;
+          ry += (my - ry) * 0.12;
+          dx += (mx - dx) * 0.25;
+          dy += (my - dy) * 0.25;
+          ring.style.left = rx + "px";
+          ring.style.top = ry + "px";
+          dot.style.left = dx + "px";
+          dot.style.top = dy + "px";
+          raf = requestAnimationFrame(tick);
+        }
+        let raf = requestAnimationFrame(tick);
+
+        document.addEventListener("mousemove", (e) => { mx = e.clientX; my = e.clientY; }, { passive: true });
+        document.addEventListener("mouseleave", () => { mx = -200; my = -200; }, { passive: true });
+        document.addEventListener("touchstart", () => { ring.style.display = "none"; dot.style.display = "none"; document.body.style.cursor = ""; }, { passive: true });
+
+        // Hover effect for interactive elements
+        document.querySelectorAll("a, button, .tilt-card, .magnetic-btn, .sponsor-card").forEach((el) => {
+          el.addEventListener("mouseenter", () => { ring.classList.add("hovering"); dot.classList.add("hovering"); });
+          el.addEventListener("mouseleave", () => { ring.classList.remove("hovering"); dot.classList.remove("hovering"); });
+        });
+      }
+
+      /* ══════════════════════════════════════════
+         Click Ripple Global
+         ══════════════════════════════════════════ */
+      function initClickRipple() {
+        if (reduceMotion) return;
+        document.addEventListener("click", (e) => {
+          const el = document.createElement("span");
+          el.className = "ripple-el";
+          const size = 60;
+          el.style.width = el.style.height = size + "px";
+          el.style.left = (e.clientX - size / 2) + "px";
+          el.style.top = (e.clientY - size / 2) + "px";
+          el.style.position = "fixed";
+          el.style.pointerEvents = "none";
+          el.style.zIndex = "99999";
+          document.body.appendChild(el);
+          el.addEventListener("animationend", () => el.remove());
+        }, { passive: true });
+      }
+
+      /* ══════════════════════════════════════════
          ScrollTrigger Parallax
          ══════════════════════════════════════════ */
       function initParallax() {
         const els = document.querySelectorAll(".parallax-slow, .parallax-medium, .parallax-fast");
-        if (!els.length || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        if (!els.length || reduceMotion) return;
         const speeds = { slow: 0.15, medium: 0.3, fast: 0.5 };
         const rects = new Map();
         function update() {
@@ -176,7 +258,8 @@ const { title, description = "KKR RPPI - Kebaktian kebangunan rohani yang memper
           els.forEach((el) => {
             if (!rects.has(el)) rects.set(el, el.getBoundingClientRect().top + sy);
             const base = rects.get(el);
-            const offset = (sy - base + window.innerHeight / 2) * (speeds[el.classList.contains("parallax-slow") ? "slow" : el.classList.contains("parallax-medium") ? "medium" : "fast"] || 0.15);
+            const key = el.classList.contains("parallax-slow") ? "slow" : el.classList.contains("parallax-medium") ? "medium" : "fast";
+            const offset = (sy - base + window.innerHeight / 2) * (speeds[key] || 0.15);
             el.style.transform = `translateY(${Math.round(offset)}px)`;
           });
           raf = requestAnimationFrame(update);
@@ -190,7 +273,7 @@ const { title, description = "KKR RPPI - Kebaktian kebangunan rohani yang memper
          ══════════════════════════════════════════ */
       function initMouseFollower() {
         const el = document.getElementById("mouse-follower");
-        if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        if (!el || reduceMotion) return;
         el.style.opacity = "1";
         let mx = -200, my = -200;
         let cx = -200, cy = -200;
@@ -202,27 +285,22 @@ const { title, description = "KKR RPPI - Kebaktian kebangunan rohani yang memper
           raf2 = requestAnimationFrame(tick);
         }
         let raf2 = requestAnimationFrame(tick);
-        document.addEventListener("mousemove", (e) => {
-          mx = e.clientX;
-          my = e.clientY;
-        }, { passive: true });
-        document.addEventListener("mouseleave", () => {
-          mx = -200; my = -200;
-        }, { passive: true });
+        document.addEventListener("mousemove", (e) => { mx = e.clientX; my = e.clientY; }, { passive: true });
+        document.addEventListener("mouseleave", () => { mx = -200; my = -200; }, { passive: true });
         document.addEventListener("touchstart", () => { el.style.opacity = "0"; }, { passive: true });
       }
 
       /* ══════════════════════════════════════════
-         Card Tilt 3D on Hover
+         Card Tilt 3D
          ══════════════════════════════════════════ */
       function initCardTilt() {
-        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        if (reduceMotion) return;
         document.querySelectorAll(".tilt-card").forEach((card) => {
           card.addEventListener("mousemove", (e) => {
             const r = card.getBoundingClientRect();
             const x = (e.clientX - r.left) / r.width - 0.5;
             const y = (e.clientY - r.top) / r.height - 0.5;
-            card.style.transform = `perspective(600px) rotateY(${x * 8}deg) rotateX(${-y * 8}deg) translateZ(10px)`;
+            card.style.transform = `perspective(600px) rotateY(${x * 10}deg) rotateX(${-y * 10}deg) translateZ(20px)`;
           });
           card.addEventListener("mouseleave", () => {
             card.style.transform = "perspective(600px) rotateY(0deg) rotateX(0deg) translateZ(0)";
@@ -234,7 +312,7 @@ const { title, description = "KKR RPPI - Kebaktian kebangunan rohani yang memper
          Magnetic Buttons
          ══════════════════════════════════════════ */
       function initMagneticButtons() {
-        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        if (reduceMotion) return;
         document.querySelectorAll(".magnetic-btn").forEach((btn) => {
           btn.addEventListener("mousemove", (e) => {
             const r = btn.getBoundingClientRect();
@@ -242,10 +320,60 @@ const { title, description = "KKR RPPI - Kebaktian kebangunan rohani yang memper
             const y = (e.clientY - r.top - r.height / 2) * 0.3;
             btn.style.transform = `translate(${x}px, ${y}px)`;
           });
-          btn.addEventListener("mouseleave", () => {
-            btn.style.transform = "translate(0, 0)";
+          btn.addEventListener("mouseleave", () => { btn.style.transform = "translate(0, 0)"; });
+        });
+      }
+
+      /* ══════════════════════════════════════════
+         Text Split Reveal (Hero Heading)
+         ══════════════════════════════════════════ */
+      function initTextSplit() {
+        if (reduceMotion) return;
+        const headings = document.querySelectorAll("[data-split]");
+        headings.forEach((h) => {
+          const text = h.textContent;
+          if (!text) return;
+          h.innerHTML = "";
+          h.style.opacity = "1";
+          Array.from(text).forEach((char, i) => {
+            if (char === " ") { h.innerHTML += " "; return; }
+            const span = document.createElement("span");
+            span.className = "char-reveal";
+            span.style.animationDelay = (i * 40) + "ms";
+            span.textContent = char;
+            h.appendChild(span);
           });
         });
+      }
+
+      /* ══════════════════════════════════════════
+         Counter Animation
+         ══════════════════════════════════════════ */
+      function initCounters() {
+        const els = document.querySelectorAll("[data-count-to]");
+        if (!els.length) return;
+        if ("IntersectionObserver" in window) {
+          const obs = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                const el = entry.target;
+                const target = parseInt(el.dataset.countTo) || 0;
+                const duration = parseInt(el.dataset.countDuration) || 2000;
+                const suffix = el.dataset.countSuffix || "";
+                const start = performance.now();
+                function step(now) {
+                  const pct = Math.min((now - start) / duration, 1);
+                  const eased = 1 - Math.pow(1 - pct, 3);
+                  el.textContent = Math.floor(eased * target).toLocaleString() + suffix;
+                  if (pct < 1) requestAnimationFrame(step);
+                }
+                requestAnimationFrame(step);
+                obs.unobserve(el);
+              }
+            });
+          }, { threshold: 0.5 });
+          els.forEach((el) => obs.observe(el));
+        }
       }
 
       /* ══════════════════════════════════════════
@@ -259,14 +387,8 @@ const { title, description = "KKR RPPI - Kebaktian kebangunan rohani yang memper
               const wrap = entry.target;
               const img = wrap.querySelector("img");
               if (img && !img.classList.contains("loaded")) {
-                img.addEventListener("load", () => {
-                  img.classList.add("loaded");
-                  wrap.classList.add("loaded");
-                }, { once: true });
-                if (img.complete) {
-                  img.classList.add("loaded");
-                  wrap.classList.add("loaded");
-                }
+                img.addEventListener("load", () => { img.classList.add("loaded"); wrap.classList.add("loaded"); }, { once: true });
+                if (img.complete) { img.classList.add("loaded"); wrap.classList.add("loaded"); }
               }
               observer.unobserve(wrap);
             }
@@ -275,10 +397,15 @@ const { title, description = "KKR RPPI - Kebaktian kebangunan rohani yang memper
         document.querySelectorAll(".img-skeleton").forEach((el) => observer.observe(el));
       }
 
+      initProgressBar();
+      initCustomCursor();
+      initClickRipple();
       initParallax();
       initMouseFollower();
       initCardTilt();
       initMagneticButtons();
+      initTextSplit();
+      initCounters();
       initLazyImages();
     </script>
   </body>
