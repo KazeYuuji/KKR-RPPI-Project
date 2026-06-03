@@ -103,6 +103,10 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
             <input id="hero-heading3" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="GOD" />
           </div>
         </div>
+        <div>
+          <label class="block text-sm font-medium text-kkr-purple mb-1">Label Subtitle Hero</label>
+          <input id="hero-subtitle-label" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Ibadah Kebaktian Kebangunan Rohani" />
+        </div>
         <div class="grid gap-4 sm:grid-cols-2">
           <div>
             <label class="block text-sm font-medium text-kkr-purple mb-1">Judul Hero (baris 1)</label>
@@ -148,6 +152,13 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
         <div>
           <label class="block text-sm font-medium text-kkr-purple mb-1">Deskripsi CTA</label>
           <textarea id="cta-desc" rows="2" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Isi formulir pendaftaran, pilih tiket, dan amankan tempatmu dalam KKR RPPI yang penuh sukacita dan berkat."></textarea>
+        </div>
+        <div class="border-t border-kkr-light/30 pt-4">
+          <p class="text-xs font-semibold uppercase tracking-wider text-kkr-purple mb-3">Kartu Info Acara (di samping About)</p>
+          <div>
+            <label class="block text-sm font-medium text-kkr-purple mb-1">Label Badge Kartu</label>
+            <input id="event-card-badge" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Terbuka untuk umum" />
+          </div>
         </div>
         <div class="border-t border-kkr-light/30 pt-4">
           <p class="text-xs font-semibold uppercase tracking-wider text-kkr-purple mb-3">Kartu Samping About</p>
@@ -247,7 +258,10 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
         setVal("about-card1-desc", s.aboutCard1Desc || "");
         setVal("about-card2-title", s.aboutCard2Title || "");
         setVal("about-card2-desc", s.aboutCard2Desc || "");
+        setVal("about-card2-desc", s.aboutCard2Desc || "");
         setVal("about-blockquote", s.aboutBlockquote || "");
+        setVal("event-card-badge", s.eventCardBadge || "");
+        setVal("hero-subtitle-label", s.heroSubtitleLabel || "");
       } catch {}
     }
 
@@ -391,6 +405,8 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
           aboutCard2Title: document.getElementById("about-card2-title").value.trim(),
           aboutCard2Desc: document.getElementById("about-card2-desc").value.trim(),
           aboutBlockquote: document.getElementById("about-blockquote").value.trim(),
+          eventCardBadge: document.getElementById("event-card-badge").value.trim(),
+          heroSubtitleLabel: document.getElementById("hero-subtitle-label").value.trim(),
         })});
         if (res.ok) toast("Teks berhasil disimpan!");
         else throw new Error();

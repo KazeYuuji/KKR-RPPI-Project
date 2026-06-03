@@ -38,8 +38,9 @@ const canonical = new URL(Astro.url.pathname, siteUrl).href;
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
 
-    <!-- Preload hero image -->
-    <link rel="preload" as="image" href="/images/concert-bg.jpeg" />
+    <!-- Preload hero assets -->
+    <link rel="preload" as="image" href="/logo.png" />
+    <link rel="preload" as="fetch" href="/api/settings" crossorigin />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
@@ -57,7 +58,7 @@ const canonical = new URL(Astro.url.pathname, siteUrl).href;
     <meta name="twitter:image" content={pageImage} />
 
     <!-- JSON-LD Structured Data -->
-    <script type="application/ld+json">
+    <script type="application/ld+json" id="ld-json">
       {JSON.stringify({
         "@context": "https://schema.org",
         "@type": "Event",
@@ -86,6 +87,7 @@ const canonical = new URL(Astro.url.pathname, siteUrl).href;
         }
       })}
     </script>
+    <script>fetch("/api/settings").then(r=>r.json()).then(d=>{const s=d.settings||{};const el=document.getElementById("ld-json");if(!el)return;try{const ld=JSON.parse(el.textContent);if(s.locVenue)ld.location.name=s.locVenue;if(s.contactEmail)ld.organizer.email=s.contactEmail;if(s.eventDateISO)ld.startDate=s.eventDateISO;if(s.eventDateISO&&s.eventTimeEnd){const endH=parseInt(s.eventTimeEnd);ld.endDate=s.eventDateISO.replace(/\d{2}:\d{2}/,s.eventTimeEnd)}el.textContent=JSON.stringify(ld)}catch{}}).catch(()=>{});</script>
 
     <title>{pageTitle}</title>
   </head>

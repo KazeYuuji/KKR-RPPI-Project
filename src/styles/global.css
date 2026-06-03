@@ -240,11 +240,27 @@ button, input, textarea, select {
   animation: toast-out 0.3s ease-in both;
 }
 
+.scroll-mt-20 {
+  scroll-margin-top: 80px;
+}
+
 @media (max-width: 768px) {
-  .scroll-mt-20 {
-    scroll-margin-top: 80px;
-  }
   :root {
     --sidebar-width: 0px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media (min-width: 769px) and (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
   }
 }

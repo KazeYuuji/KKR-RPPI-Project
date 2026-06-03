@@ -50,8 +50,8 @@ const regClose = "2025-12-29T23:59:59";
   </div>
 
   <script>
-    let regDate = new Date("2025-12-29T23:59:59").getTime();
-    let eventDate = new Date("2026-01-10T08:00:00").getTime();
+    let regDate = Date.now() + 86400000;
+    let eventDate = Date.now() + 86400000;
 
     fetch("/api/settings").then(r => r.json()).then(d => {
       const s = d.settings || {};

@@ -11,7 +11,7 @@ import ChatBot from "../components/ChatBot.astro";
     <!-- Hero -->
     <section id="home" class="relative min-h-[90vh] flex items-center overflow-hidden">
       <div class="absolute inset-0 z-0 overflow-hidden">
-        <video autoplay muted loop playsinline class="h-full w-full object-cover" src="/videos/hero-bg.mp4"></video>
+        <video autoplay muted loop playsinline preload="metadata" poster="/logo.png" class="h-full w-full object-cover" src="/videos/hero-bg.mp4"></video>
       </div>
       <div class="absolute inset-0 bg-gradient-to-br from-kkr-dark/85 via-kkr-purple/40 to-kkr-maroon/20"></div>
       <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(243,159,90,0.18),transparent_25%),radial-gradient(circle_at_bottom_right,_rgba(232,188,185,0.16),transparent_22%)]"></div>
@@ -21,7 +21,7 @@ import ChatBot from "../components/ChatBot.astro";
       <div class="relative mx-auto max-w-7xl px-4 sm:px-6 w-full">
         <div class="grid gap-12 lg:grid-cols-1 lg:items-center">
           <div class="space-y-8 text-white relative z-10 animate-fade-in">
-            <p class="text-sm uppercase tracking-[0.3em] text-kkr-light">Ibadah Kebaktian Kebangunan Rohani</p>
+            <p id="hero-subtitle-label" class="text-sm uppercase tracking-[0.3em] text-kkr-light">Ibadah Kebaktian Kebangunan Rohani</p>
             <h1 id="hero-heading" class="hero-text-shadow text-5xl sm:text-6xl md:text-7xl xl:text-[6rem] font-black leading-[0.9] tracking-[-0.04em]">
               <span id="hero-line1" class="text-white">TRUST</span><br />
               <span id="hero-line2" class="text-kkr-gold">IN</span><br />
@@ -31,6 +31,7 @@ import ChatBot from "../components/ChatBot.astro";
               <p id="hero-verse" class="hero-copy text-lg sm:text-xl leading-9 max-w-3xl">Percayalah kepada TUHAN dengan segenap hatimu dan janganlah bersandar kepada pengertianmu sendiri.</p>
               <p id="hero-verse-ref" class="text-sm uppercase tracking-[0.24em] text-kkr-gold">Amsal 3:5</p>
             </div>
+            <div id="hero-event-info" class="flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/80"></div>
             <div class="flex flex-wrap gap-4">
               <a href="/registration" class="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-kkr-maroon to-kkr-red px-7 py-4 text-sm font-semibold text-white shadow-xl shadow-kkr-maroon/30 transition hover:-translate-y-0.5 hover:shadow-2xl">
                 Daftar Sekarang
@@ -63,13 +64,25 @@ import ChatBot from "../components/ChatBot.astro";
               "Jika umat-Ku yang disebut dengan nama-Ku merendahkan diri, berdoa dan mencari wajah-Ku, maka Aku akan mendengar dari sorga."
               <br/><span id="about-blockquote-ref" class="text-sm not-italic text-kkr-maroon/60 font-medium">— 2 Tawarikh 7:14</span>
             </blockquote>
+            <div class="grid gap-4 sm:grid-cols-2 pt-2">
+              <div class="rounded-2xl bg-gradient-to-br from-kkr-dark via-kkr-purple to-kkr-maroon p-5 sm:p-6 text-white shadow-lg">
+                <span class="w-8 h-8 rounded-xl bg-white/15 flex items-center justify-center text-white shrink-0"><svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span>
+                <h3 id="about-card1-title" class="mt-3 text-lg font-semibold">Pujian & Penyembahan</h3>
+                <p id="about-card1-desc" class="mt-1.5 text-sm text-white/70 leading-relaxed">Nikmati pujian dan penyembahan yang membawa hati kita lebih dekat kepada Tuhan, mengalami kebangunan rohani dalam Yesus Kristus.</p>
+              </div>
+              <div class="rounded-2xl glass-card p-5 sm:p-6 transition hover:shadow-xl">
+                <span class="w-8 h-8 rounded-xl bg-kkr-light/40 flex items-center justify-center text-kkr-red shrink-0"><svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+                <h3 id="about-card2-title" class="mt-3 text-lg font-semibold text-kkr-dark">Persekutuan Lintas Sekolah</h3>
+                <p id="about-card2-desc" class="mt-1.5 text-sm text-kkr-maroon leading-relaxed">Acara ini mempertemukan siswa-siswi dari berbagai sekolah di Kediri dan sekitarnya untuk membangun persaudaraan dan memperkuat ikatan iman dalam Tuhan Yesus.</p>
+              </div>
+            </div>
           </div>
 
           <div class="space-y-4">
             <div class="rounded-[2.5rem] border border-white/20 bg-white/10 p-8 shadow-2xl shadow-black/25 backdrop-blur-xl">
               <div class="space-y-8">
                 <div class="flex items-center justify-between gap-4">
-                  <span class="inline-flex items-center gap-2 rounded-full bg-kkr-gold/15 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-kkr-gold">Terbuka untuk umum</span>
+                  <span id="event-card-badge" class="inline-flex items-center gap-2 rounded-full bg-kkr-gold/15 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-kkr-gold">Terbuka untuk umum</span>
                   <div class="flex items-center gap-3">
                     <img src="/logo.png" alt="KKR RPPI" class="h-20 w-20 rounded-3xl border border-kkr-gold/40 bg-white/90 p-2 object-contain shadow-lg shadow-kkr-gold/20" />
                     <span class="text-sm font-semibold text-kkr-light/90">KKR RPPI</span>
@@ -77,17 +90,17 @@ import ChatBot from "../components/ChatBot.astro";
                 </div>
                 <div class="space-y-3">
                   <p class="text-xs uppercase tracking-[0.24em] text-kkr-light/70">Pada</p>
-                  <h2 class="text-4xl font-semibold text-white">Rabu, 3 Juni 2026</h2>
-                  <p class="text-sm text-kkr-light/70">Kediri Technopark</p>
+                  <h2 id="event-card-date" class="text-4xl font-semibold text-white">Memuat...</h2>
+                  <p id="event-card-venue" class="text-sm text-kkr-light/70">Memuat...</p>
                 </div>
                 <div class="grid gap-4 sm:grid-cols-2">
                   <div class="rounded-[2rem] bg-kkr-dark/90 p-5 border border-white/10">
                     <p class="text-xs uppercase tracking-[0.22em] text-kkr-gold/90">Pukul</p>
-                    <p class="mt-2 text-2xl font-semibold text-white">22.00 - 12:00 WIB</p>
+                    <p id="event-card-time" class="mt-2 text-2xl font-semibold text-white">Memuat...</p>
                   </div>
                   <div class="rounded-[2rem] bg-kkr-purple/90 p-5 border border-white/10">
                     <p class="text-xs uppercase tracking-[0.22em] text-kkr-light">Tempat</p>
-                    <p class="mt-2 text-2xl font-semibold text-white">Kediri Technopark</p>
+                    <p id="event-card-place" class="mt-2 text-2xl font-semibold text-white">Memuat...</p>
                   </div>
                 </div>
               </div>
@@ -335,11 +348,17 @@ import ChatBot from "../components/ChatBot.astro";
         const email = s.contactEmail || "kkrrppi@gmail.com";
         const phone = s.contactPhone || "(0354) 682433";
         const wa = s.contactWa || "6285800753804";
-        if (s.heroTitle1 && safe("hero-title1")) safe("hero-title1").textContent = s.heroTitle1;
-        if (s.heroTitle2 && safe("hero-title2")) safe("hero-title2").textContent = s.heroTitle2;
+        const heroSubtitleLabel = s.heroSubtitleLabel || "Ibadah Kebaktian Kebangunan Rohani";
+
+        // Hero heading
         if (s.heroHeading1 && safe("hero-line1")) safe("hero-line1").textContent = s.heroHeading1;
         if (s.heroHeading2 && safe("hero-line2")) safe("hero-line2").textContent = s.heroHeading2;
         if (s.heroHeading3 && safe("hero-line3")) safe("hero-line3").textContent = s.heroHeading3;
+
+        // Hero subtitle label
+        if (safe("hero-subtitle-label")) safe("hero-subtitle-label").textContent = heroSubtitleLabel;
+
+        // Hero verse
         if (safe("hero-verse")) {
           const vt = s.heroVerseText || "Percayalah kepada TUHAN dengan segenap hatimu dan janganlah bersandar kepada pengertianmu sendiri.";
           const ref = s.heroVerseRef || "Amsal 3:5";
@@ -351,25 +370,47 @@ import ChatBot from "../components/ChatBot.astro";
           safe("hero-verse").textContent = parts[0].trim();
           if (parts[1] && safe("hero-verse-ref")) safe("hero-verse-ref").textContent = "— " + parts[1].trim();
         }
-        if (s.locDate && safe("hero-date")) safe("hero-date").textContent = s.locDate;
-        if (s.locTime && safe("hero-time")) safe("hero-time").textContent = s.locTime;
-        if (safe("hero-venue")) safe("hero-venue").textContent = venue;
-        if (safe("hero-place")) safe("hero-place").textContent = venue.split(",")[0] || venue;
+
+        // Hero event info bar
+        const infoBar = document.getElementById("hero-event-info");
+        if (infoBar) {
+          infoBar.innerHTML = [
+            `<span class="flex items-center gap-1.5"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> ${escapeHtml(date)}</span>`,
+            `<span class="flex items-center gap-1.5"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> ${escapeHtml(time)}</span>`,
+            `<span class="flex items-center gap-1.5"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> ${escapeHtml(venue)}</span>`
+          ].join("");
+        }
+
+        // Event info card (about section sidebar)
+        if (safe("event-card-date")) safe("event-card-date").textContent = date;
+        if (safe("event-card-venue")) safe("event-card-venue").textContent = venue;
+        if (safe("event-card-time")) safe("event-card-time").textContent = time;
+        if (safe("event-card-place")) safe("event-card-place").textContent = venue.split(",")[0] || venue;
+        if (s.eventCardBadge && safe("event-card-badge")) safe("event-card-badge").textContent = s.eventCardBadge;
+
+        // About text
         if (s.aboutTitle && safe("about-heading")) safe("about-heading").textContent = s.aboutTitle;
         if (s.aboutDesc1 && safe("about-desc1")) safe("about-desc1").textContent = s.aboutDesc1;
         if (s.aboutDesc2 && safe("about-desc2")) safe("about-desc2").textContent = s.aboutDesc2;
-        if (s.ctaTitle && safe("cta-title")) safe("cta-title").textContent = s.ctaTitle;
-        if (s.ctaDesc && safe("cta-desc")) safe("cta-desc").textContent = s.ctaDesc;
+
+        // About cards
         if (s.aboutCard1Title && safe("about-card1-title")) safe("about-card1-title").textContent = s.aboutCard1Title;
         if (s.aboutCard1Desc && safe("about-card1-desc")) safe("about-card1-desc").textContent = s.aboutCard1Desc;
         if (s.aboutCard2Title && safe("about-card2-title")) safe("about-card2-title").textContent = s.aboutCard2Title;
         if (s.aboutCard2Desc && safe("about-card2-desc")) safe("about-card2-desc").textContent = s.aboutCard2Desc;
+
+        // About blockquote
         if (s.aboutBlockquote && safe("about-blockquote")) {
           const bq = s.aboutBlockquote;
           const parts = bq.split("—");
           safe("about-blockquote").innerHTML = (parts[0] ? `"${parts[0].trim()}"` : "") + '<br/><span id="about-blockquote-ref" class="text-sm not-italic text-kkr-maroon/60 font-medium">— ' + (parts[1] ? parts[1].trim() : "") + "</span>";
         }
-        if (safe("hero-location")) safe("hero-location").textContent = venue;
+
+        // CTA
+        if (s.ctaTitle && safe("cta-title")) safe("cta-title").textContent = s.ctaTitle;
+        if (s.ctaDesc && safe("cta-desc")) safe("cta-desc").textContent = s.ctaDesc;
+
+        // Location section
         if (safe("loc-venue")) safe("loc-venue").textContent = venue;
         if (safe("loc-address")) safe("loc-address").textContent = "Lihat peta di bawah";
         if (safe("loc-date")) safe("loc-date").textContent = date;
@@ -379,6 +420,8 @@ import ChatBot from "../components/ChatBot.astro";
         if (safe("loc-wa")) { safe("loc-wa").href = "https://wa.me/" + wa; safe("loc-wa").textContent = "WhatsApp: +" + wa; }
         if (safe("loc-maps-btn")) safe("loc-maps-btn").href = mapsLink;
         if (safe("loc-maps-iframe")) safe("loc-maps-iframe").src = mapsSrc;
+
+        // CTA contact
         if (safe("cta-email")) safe("cta-email").textContent = email;
         if (safe("cta-phone")) safe("cta-phone").textContent = phone;
       } catch {}
