@@ -45,30 +45,14 @@ body:not(.admin) {
 #home {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(
-    180deg,
-    rgba(240,163,94,0.92) 0%,
-    rgba(184,103,120,0.88) 22%,
-    rgba(132,65,113,0.85) 42%,
-    rgba(80,40,93,0.88) 62%,
-    rgba(45,25,76,0.94) 78%,
-    rgba(29,26,57,0.98) 100%
-  );
-}
-
-#home::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: url('/images/concert-bg.jpeg') center/cover no-repeat;
-  opacity: 0.55;
-  filter: saturate(1.02) brightness(0.7);
-  z-index: 0;
-}
-
-.hero-content {
-  position: relative;
-  z-index: 1;
+  background-image:
+    linear-gradient(180deg, rgba(29,26,57,0.70) 0%, rgba(69,25,82,0.30) 45%, rgba(29,26,57,0.80) 100%),
+    url('/images/concert-bg.jpeg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: scroll;
+  background-blend-mode: overlay;
 }
 
 #home::after {
@@ -81,16 +65,18 @@ body:not(.admin) {
   pointer-events: none;
   background: linear-gradient(
     180deg,
-    rgba(240,163,94,0) 0%,
-    rgba(240,163,94,0.18) 20%,
-    rgba(164,87,145,0.28) 36%,
-    rgba(105,51,114,0.38) 52%,
-    rgba(69,25,82,0.52) 68%,
-    rgba(45,25,76,0.66) 80%,
-    rgba(29,26,57,0.84) 92%,
-    #1D1A39 100%
+    rgba(29,26,57,0) 0%,
+    rgba(40,28,65,0.02) 10%,
+    rgba(70,45,85,0.06) 20%,
+    rgba(100,60,100,0.12) 30%,
+    rgba(140,75,110,0.2) 40%,
+    rgba(160,95,120,0.3) 50%,
+    rgba(180,120,130,0.42) 60%,
+    rgba(200,140,135,0.54) 70%,
+    rgba(220,160,140,0.66) 80%,
+    rgba(232,175,145,0.8) 90%,
+    #f0a35e 100%
   );
-  z-index: 2;
 }
 
 body.admin {
