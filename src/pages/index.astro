@@ -16,7 +16,7 @@ import ChatBot from "../components/ChatBot.astro";
       <div class="absolute bottom-24 right-10 w-80 h-80 rounded-full bg-kkr-red/20 blur-3xl"></div>
 
       <div class="relative mx-auto max-w-7xl px-4 sm:px-6 w-full">
-        <div class="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+        <div class="grid gap-12 lg:grid-cols-1 lg:items-center">
           <div class="space-y-8 text-white relative z-10 animate-fade-in">
             <p class="text-sm uppercase tracking-[0.3em] text-kkr-light">Ibadah Kebaktian Kebangunan Rohani</p>
             <h1 id="hero-heading" class="hero-text-shadow text-5xl sm:text-6xl md:text-7xl xl:text-[6rem] font-black leading-[0.9] tracking-[-0.04em]">
@@ -37,37 +37,6 @@ import ChatBot from "../components/ChatBot.astro";
                 Info Acara
               </a>
             </div>
-          </div>
-
-          <div class="relative z-10 animate-fade-in-up">
-            <div class="rounded-[2.5rem] border border-white/20 bg-white/10 p-8 shadow-2xl shadow-black/25 backdrop-blur-xl">
-              <div class="space-y-8">
-                <div class="flex items-center justify-between gap-4">
-                  <span class="inline-flex items-center gap-2 rounded-full bg-kkr-gold/15 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-kkr-gold">Terbuka untuk umum</span>
-                  <div class="flex items-center gap-3">
-                    <img src="/logo.png" alt="KKR RPPI" class="h-28 w-28 rounded-2xl border border-kkr-gold/40 bg-white/90 p-2 object-contain shadow-lg shadow-kkr-gold/20" />
-                    <span class="text-sm font-semibold text-kkr-light/90">KKR RPPI</span>
-                  </div>
-                </div>
-                <div class="space-y-3">
-                  <p id="hero-day" class="text-xs uppercase tracking-[0.24em] text-kkr-light/70">Pada</p>
-                  <h2 id="hero-date" class="text-4xl font-semibold text-white">Memuat...</h2>
-                  <p id="hero-venue" class="text-sm text-kkr-light/70">Memuat...</p>
-                </div>
-                <div class="grid gap-4 sm:grid-cols-2">
-                  <div class="rounded-[2rem] bg-kkr-dark/90 p-5 border border-white/10">
-                    <p class="text-xs uppercase tracking-[0.22em] text-kkr-gold/90">Pukul</p>
-                    <p id="hero-time" class="mt-2 text-2xl font-semibold text-white">Memuat...</p>
-                  </div>
-                  <div class="rounded-[2rem] bg-kkr-purple/90 p-5 border border-white/10">
-                    <p class="text-xs uppercase tracking-[0.22em] text-kkr-light">Tempat</p>
-                    <p id="hero-place" class="mt-2 text-2xl font-semibold text-white">Memuat...</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="pointer-events-none absolute -right-16 top-10 h-40 w-40 rounded-full bg-kkr-gold/20 blur-3xl"></div>
-            <div class="pointer-events-none absolute -left-12 bottom-10 h-48 w-48 rounded-full bg-kkr-red/15 blur-3xl"></div>
           </div>
         </div>
       </div>
@@ -94,15 +63,31 @@ import ChatBot from "../components/ChatBot.astro";
           </div>
 
           <div class="space-y-4">
-            <div class="rounded-2xl bg-gradient-to-br from-kkr-dark via-kkr-purple to-kkr-maroon p-6 sm:p-8 text-white shadow-2xl shadow-kkr-dark/20">
-              <span class="w-9 h-9 rounded-xl bg-white/15 flex items-center justify-center text-white shrink-0"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span>
-              <h3 id="about-card1-title" class="mt-4 text-xl font-semibold">Pujian & Penyembahan</h3>
-              <p id="about-card1-desc" class="mt-2 text-sm text-white/70 leading-relaxed">Nikmati pujian dan penyembahan yang membawa hati kita lebih dekat kepada Tuhan, mengalami kebangunan rohani dalam Yesus Kristus.</p>
-            </div>
-            <div class="rounded-2xl glass-card p-6 sm:p-8 transition hover:shadow-xl hover:border-white/50">
-              <span class="w-9 h-9 rounded-xl bg-kkr-light/40 flex items-center justify-center text-kkr-red shrink-0"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
-              <h3 id="about-card2-title" class="mt-4 text-xl font-semibold text-kkr-dark">Persekutuan Lintas Sekolah</h3>
-              <p id="about-card2-desc" class="mt-2 text-sm text-kkr-maroon leading-relaxed">Acara ini mempertemukan siswa-siswi dari berbagai sekolah di Kediri dan sekitarnya untuk membangun persaudaraan dan memperkuat ikatan iman dalam Tuhan Yesus.</p>
+            <div class="rounded-[2.5rem] border border-white/20 bg-white/10 p-8 shadow-2xl shadow-black/25 backdrop-blur-xl">
+              <div class="space-y-8">
+                <div class="flex items-center justify-between gap-4">
+                  <span class="inline-flex items-center gap-2 rounded-full bg-kkr-gold/15 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-kkr-gold">Terbuka untuk umum</span>
+                  <div class="flex items-center gap-3">
+                    <img src="/logo.png" alt="KKR RPPI" class="h-20 w-20 rounded-3xl border border-kkr-gold/40 bg-white/90 p-2 object-contain shadow-lg shadow-kkr-gold/20" />
+                    <span class="text-sm font-semibold text-kkr-light/90">KKR RPPI</span>
+                  </div>
+                </div>
+                <div class="space-y-3">
+                  <p class="text-xs uppercase tracking-[0.24em] text-kkr-light/70">Pada</p>
+                  <h2 class="text-4xl font-semibold text-white">Rabu, 3 Juni 2026</h2>
+                  <p class="text-sm text-kkr-light/70">Kediri Technopark</p>
+                </div>
+                <div class="grid gap-4 sm:grid-cols-2">
+                  <div class="rounded-[2rem] bg-kkr-dark/90 p-5 border border-white/10">
+                    <p class="text-xs uppercase tracking-[0.22em] text-kkr-gold/90">Pukul</p>
+                    <p class="mt-2 text-2xl font-semibold text-white">22.00 - 12:00 WIB</p>
+                  </div>
+                  <div class="rounded-[2rem] bg-kkr-purple/90 p-5 border border-white/10">
+                    <p class="text-xs uppercase tracking-[0.22em] text-kkr-light">Tempat</p>
+                    <p class="mt-2 text-2xl font-semibold text-white">Kediri Technopark</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
