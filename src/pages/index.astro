@@ -21,7 +21,7 @@ import ChatBot from "../components/ChatBot.astro";
       <div class="relative mx-auto max-w-7xl px-4 sm:px-6 w-full">
         <div class="grid gap-12 lg:grid-cols-1 lg:items-center">
           <div class="space-y-8 text-white relative z-10 animate-fade-in">
-            <p id="hero-subtitle-label" class="text-sm uppercase tracking-[0.3em] text-kkr-light">Ibadah Kebaktian Kebangunan Rohani</p>
+            <p id="hero-subtitle-label" class="section-text text-sm uppercase tracking-[0.3em]">Ibadah Kebaktian Kebangunan Rohani</p>
             <h1 id="hero-heading" class="hero-text-shadow text-5xl sm:text-6xl md:text-7xl xl:text-[6rem] font-black leading-[0.9] tracking-[-0.04em]">
               <span id="hero-line1" class="text-white">TRUST</span><br />
               <span id="hero-line2" class="text-kkr-gold">IN</span><br />
@@ -62,7 +62,7 @@ import ChatBot from "../components/ChatBot.astro";
             </div>
             <blockquote id="about-blockquote" class="border-l-4 border-kkr-red pl-6 py-3 italic text-kkr-dark/80">
               "Jika umat-Ku yang disebut dengan nama-Ku merendahkan diri, berdoa dan mencari wajah-Ku, maka Aku akan mendengar dari sorga."
-              <br/><span id="about-blockquote-ref" class="text-sm not-italic text-kkr-maroon/60 font-medium">— 2 Tawarikh 7:14</span>
+              <br/><span id="about-blockquote-ref" class="text-sm not-italic text-kkr-dark/60 font-medium">— 2 Tawarikh 7:14</span>
             </blockquote>
             <div class="grid gap-4 sm:grid-cols-2 pt-2">
               <div class="rounded-2xl bg-gradient-to-br from-kkr-dark via-kkr-purple to-kkr-maroon p-5 sm:p-6 text-white shadow-lg">
@@ -73,7 +73,7 @@ import ChatBot from "../components/ChatBot.astro";
               <div class="rounded-2xl glass-card p-5 sm:p-6 transition hover:shadow-xl">
                 <span class="w-8 h-8 rounded-xl bg-kkr-light/40 flex items-center justify-center text-kkr-red shrink-0"><svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
                 <h3 id="about-card2-title" class="mt-3 text-lg font-semibold text-kkr-dark">Persekutuan Lintas Sekolah</h3>
-                <p id="about-card2-desc" class="mt-1.5 text-sm text-kkr-maroon leading-relaxed">Acara ini mempertemukan siswa-siswi dari berbagai sekolah di Kediri dan sekitarnya untuk membangun persaudaraan dan memperkuat ikatan iman dalam Tuhan Yesus.</p>
+                <p id="about-card2-desc" class="mt-1.5 text-sm text-kkr-dark/80 leading-relaxed">Acara ini mempertemukan siswa-siswi dari berbagai sekolah di Kediri dan sekitarnya untuk membangun persaudaraan dan memperkuat ikatan iman dalam Tuhan Yesus.</p>
               </div>
             </div>
           </div>
@@ -124,7 +124,7 @@ import ChatBot from "../components/ChatBot.astro";
         </div>
 
         <div id="speaker-grid" class="w-full">
-          <div class="col-span-full text-center py-12 text-kkr-maroon/60" id="speaker-skeleton">
+          <div class="col-span-full text-center py-12 text-white/50" id="speaker-skeleton">
             <div class="inline-block w-8 h-8 border-2 border-kkr-maroon border-t-transparent rounded-full animate-spin"></div>
             <p class="mt-3 text-sm">Memuat pembicara...</p>
           </div>
@@ -142,12 +142,12 @@ import ChatBot from "../components/ChatBot.astro";
             <span class="inline-block w-8 h-px bg-kkr-red"></span>
           </div>
           <h2 class="text-3xl sm:text-4xl font-semibold text-white">Pelayan Altar KKR RPPI</h2>
-          <p class="text-kkr-light/80">Para pelayan altar yang melayani dalam kebangunan rohani</p>
+          <p class="section-text-muted max-w-xl mx-auto">Para pelayan altar yang melayani dalam kebangunan rohani</p>
           <div class="w-12 h-0.5 bg-gradient-to-r from-kkr-red to-kkr-gold mx-auto rounded-full"></div>
         </div>
 
         <div id="altar-grid" class="w-full">
-          <div class="text-center py-12 text-kkr-maroon/60" id="altar-skeleton">
+          <div class="text-center py-12 text-white/50" id="altar-skeleton">
             <div class="inline-block w-8 h-8 border-2 border-kkr-maroon border-t-transparent rounded-full animate-spin"></div>
             <p class="mt-3 text-sm">Memuat pelayan altar...</p>
           </div>
@@ -165,13 +165,13 @@ import ChatBot from "../components/ChatBot.astro";
             <span class="inline-block w-8 h-px bg-kkr-red"></span>
           </div>
           <h2 class="text-3xl sm:text-4xl font-semibold text-white">Didukung oleh</h2>
-          <p class="text-kkr-light/80">Para sponsor dan mitra yang mendukung terselenggaranya KKR RPPI 2026</p>
+          <p class="section-text-muted max-w-xl mx-auto">Para sponsor dan mitra yang mendukung terselenggaranya KKR RPPI 2026</p>
           <div class="w-12 h-0.5 bg-gradient-to-r from-kkr-red to-kkr-gold mx-auto rounded-full"></div>
         </div>
 
         <!-- Sponsor Marquee -->
         <div id="sponsor-grid" class="overflow-hidden" style="mask-image: linear-gradient(to right, transparent 0, black 40px, black calc(100% - 40px), transparent 100%);">
-          <div class="text-center py-12 text-kkr-maroon/60" id="sponsor-skeleton">
+          <div class="text-center py-12 text-white/50" id="sponsor-skeleton">
             <div class="inline-block w-8 h-8 border-2 border-kkr-maroon border-t-transparent rounded-full animate-spin"></div>
             <p class="mt-3 text-sm">Memuat sponsor...</p>
           </div>
@@ -217,28 +217,28 @@ import ChatBot from "../components/ChatBot.astro";
                 <span class="w-6 h-6 rounded-lg bg-kkr-light/30 flex items-center justify-center text-kkr-red shrink-0 mt-0.5"><svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
                 <div>
                   <p class="text-[10px] font-semibold uppercase tracking-wider text-kkr-purple">Alamat</p>
-                  <p id="loc-address" class="text-xs text-kkr-maroon">Memuat...</p>
+                  <p id="loc-address" class="text-xs text-kkr-dark/80">Memuat...</p>
                 </div>
               </div>
               <div class="flex items-start gap-2">
                 <span class="w-6 h-6 rounded-lg bg-kkr-light/30 flex items-center justify-center text-kkr-red shrink-0 mt-0.5"><svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
                 <div>
                   <p class="text-[10px] font-semibold uppercase tracking-wider text-kkr-purple">Tanggal</p>
-                  <p id="loc-date" class="text-xs text-kkr-maroon">Memuat...</p>
+                  <p id="loc-date" class="text-xs text-kkr-dark/80">Memuat...</p>
                 </div>
               </div>
               <div class="flex items-start gap-2">
                 <span class="w-6 h-6 rounded-lg bg-kkr-light/30 flex items-center justify-center text-kkr-red shrink-0 mt-0.5"><svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>
                 <div>
                   <p class="text-[10px] font-semibold uppercase tracking-wider text-kkr-purple">Waktu</p>
-                  <p id="loc-time" class="text-xs text-kkr-maroon">Memuat...</p>
+                  <p id="loc-time" class="text-xs text-kkr-dark/80">Memuat...</p>
                 </div>
               </div>
               <div class="flex items-start gap-2">
                 <span class="w-6 h-6 rounded-lg bg-kkr-light/30 flex items-center justify-center text-kkr-red shrink-0 mt-0.5"><svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/></svg></span>
                 <div>
                   <p class="text-[10px] font-semibold uppercase tracking-wider text-kkr-purple">Batas Daftar</p>
-                  <p id="reg-deadline" class="text-xs text-kkr-maroon">Memuat...</p>
+                  <p id="reg-deadline" class="text-xs text-kkr-dark/80">Memuat...</p>
                 </div>
               </div>
             </div>
@@ -246,7 +246,7 @@ import ChatBot from "../components/ChatBot.astro";
               <span class="w-6 h-6 rounded-lg bg-kkr-light/30 flex items-center justify-center text-kkr-red shrink-0"><svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>
               <div>
                 <p class="text-[10px] font-semibold uppercase tracking-wider text-kkr-purple">Kontak</p>
-                <p id="loc-phone" class="text-xs text-kkr-maroon">Memuat...</p>
+                <p id="loc-phone" class="text-xs text-kkr-dark/80">Memuat...</p>
                 <a id="loc-wa" href="#" target="_blank" class="text-xs text-kkr-red hover:text-kkr-red font-medium">Memuat...</a>
               </div>
             </div>
@@ -275,7 +275,7 @@ import ChatBot from "../components/ChatBot.astro";
             <div>
               <div class="flex items-center gap-3">
                 <span class="inline-block w-8 h-px bg-kkr-red"></span>
-                <span class="text-sm font-semibold uppercase tracking-[0.3em] text-kkr-light">Siap Bergabung?</span>
+                <span class="text-sm font-semibold uppercase tracking-[0.3em] text-white/80">Siap Bergabung?</span>
               </div>
               <h2 id="cta-title" class="mt-4 text-3xl sm:text-4xl font-semibold">Daftar sekarang, dan ikuti KKR dalam kasih Kristus.</h2>
               <p id="cta-desc" class="mt-4 max-w-xl text-white/70 leading-relaxed">Isi formulir pendaftaran, pilih tiket, dan amankan tempatmu dalam KKR RPPI yang penuh sukacita dan berkat.</p>
@@ -403,7 +403,7 @@ import ChatBot from "../components/ChatBot.astro";
         if (s.aboutBlockquote && safe("about-blockquote")) {
           const bq = s.aboutBlockquote;
           const parts = bq.split("—");
-          safe("about-blockquote").innerHTML = (parts[0] ? `"${parts[0].trim()}"` : "") + '<br/><span id="about-blockquote-ref" class="text-sm not-italic text-kkr-maroon/60 font-medium">— ' + (parts[1] ? parts[1].trim() : "") + "</span>";
+          safe("about-blockquote").innerHTML = (parts[0] ? `"${parts[0].trim()}"` : "") + '<br/><span id="about-blockquote-ref" class="text-sm not-italic text-kkr-dark/60 font-medium">— ' + (parts[1] ? parts[1].trim() : "") + "</span>";
         }
 
         // CTA
@@ -435,7 +435,7 @@ import ChatBot from "../components/ChatBot.astro";
         const list = (d.speakers || []).filter(s => s.is_active);
         document.getElementById("speaker-skeleton")?.classList.add("hidden");
         if (!list.length) {
-          container.innerHTML = `<div class="text-center py-12 text-kkr-maroon/60"><p class="text-sm">Belum ada pembicara.</p></div>`;
+          container.innerHTML = `<div class="text-center py-12 text-white/50"><p class="text-sm">Belum ada pembicara.</p></div>`;
           return;
         }
         const makeCard = (baseClass) => s => `
@@ -447,9 +447,9 @@ import ChatBot from "../components/ChatBot.astro";
             <div class="mt-5 space-y-1">
               ${s.title ? `<span class="inline-block text-xs font-semibold uppercase tracking-wider text-kkr-red bg-kkr-light px-3 py-1 rounded-full">${escapeHtml(s.title)}</span>` : ""}
               <h3 class="text-2xl font-semibold text-kkr-dark mt-2">${escapeHtml(s.name)}</h3>
-              ${s.organization ? `<p class="text-kkr-maroon/80 text-sm">${escapeHtml(s.organization)}</p>` : ""}
+              ${s.organization ? `<p class="text-kkr-dark/70 text-sm">${escapeHtml(s.organization)}</p>` : ""}
             </div>
-            ${s.description ? `<div class="mt-4"><p class="text-sm text-kkr-maroon leading-relaxed text-center max-w-xs mx-auto break-words">${escapeHtml(s.description)}</p></div>` : '<div class="flex-1"></div>'}
+            ${s.description ? `<div class="mt-4"><p class="text-sm text-kkr-dark/80 leading-relaxed text-center max-w-xs mx-auto break-words">${escapeHtml(s.description)}</p></div>` : '<div class="flex-1"></div>'}
             ${s.tags ? `<div class="flex flex-wrap justify-center gap-2 mt-5">${s.tags.split(",").map(t => `<span class="text-xs bg-kkr-light text-kkr-red px-3 py-1 rounded-full font-medium">${escapeHtml(t.trim())}</span>`).join("")}</div>` : ""}
           </div>`;
         if (list.length > 3) {
@@ -485,7 +485,7 @@ import ChatBot from "../components/ChatBot.astro";
         const list = (d.altarServers || []).filter(s => s.is_active);
         document.getElementById("altar-skeleton")?.classList.add("hidden");
         if (!list.length) {
-          container.innerHTML = `<div class="text-center py-12 text-kkr-maroon/60"><p class="text-sm">Belum ada pelayan altar.</p></div>`;
+          container.innerHTML = `<div class="text-center py-12 text-white/50"><p class="text-sm">Belum ada pelayan altar.</p></div>`;
           return;
         }
         const makeCard = (baseClass) => s => `
@@ -497,9 +497,9 @@ import ChatBot from "../components/ChatBot.astro";
             <div class="mt-3 space-y-0.5">
               ${s.title ? `<span class="inline-block text-[10px] font-semibold uppercase tracking-wider text-kkr-red bg-kkr-light px-2 py-0.5 rounded-full">${escapeHtml(s.title)}</span>` : ""}
               <h3 class="text-base font-semibold text-kkr-dark mt-1">${escapeHtml(s.name)}</h3>
-              ${s.organization ? `<p class="text-kkr-maroon/70 text-xs">${escapeHtml(s.organization)}</p>` : ""}
+              ${s.organization ? `<p class="text-kkr-dark/70 text-xs">${escapeHtml(s.organization)}</p>` : ""}
             </div>
-            ${s.description ? `<div class="mt-2"><p class="text-xs text-kkr-maroon leading-relaxed text-center max-w-[200px] mx-auto break-words">${escapeHtml(s.description)}</p></div>` : '<div class="flex-1"></div>'}
+            ${s.description ? `<div class="mt-2"><p class="text-xs text-kkr-dark/80 leading-relaxed text-center max-w-[200px] mx-auto break-words">${escapeHtml(s.description)}</p></div>` : '<div class="flex-1"></div>'}
             ${s.tags ? `<div class="flex flex-wrap justify-center gap-1.5 mt-3">${s.tags.split(",").map(t => `<span class="text-[10px] bg-kkr-light text-kkr-red px-2 py-0.5 rounded-full font-medium">${escapeHtml(t.trim())}</span>`).join("")}</div>` : ""}
           </div>`;
         if (list.length > 3) {
@@ -536,7 +536,7 @@ import ChatBot from "../components/ChatBot.astro";
         allSponsors = data.sponsors || [];
         const list = allSponsors;
         if (!list.length) {
-          document.getElementById("sponsor-grid").innerHTML = `<div class="text-center py-12 text-kkr-maroon/60"><p class="text-sm">Belum ada sponsor. Jadilah yang pertama!</p></div>`;
+          document.getElementById("sponsor-grid").innerHTML = `<div class="text-center py-12 text-white/50"><p class="text-sm">Belum ada sponsor. Jadilah yang pertama!</p></div>`;
           return;
         }
         document.getElementById("sponsor-skeleton")?.classList.add("hidden");

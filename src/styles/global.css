@@ -39,7 +39,7 @@ body:not(.admin) {
       #3a2e5d 86%,
       #1d1a39 100%
     );
-  color: var(--color-kkr-light);
+  color: rgba(255, 255, 255, 0.92);
 }
 
 #home {
@@ -85,7 +85,7 @@ body.admin {
 }
 
 .glass-card {
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.94);
   backdrop-filter: blur(20px);
   box-shadow: 0 24px 80px rgba(0, 0, 0, 0.25);
   border: 1px solid rgba(255, 255, 255, 0.40);
@@ -104,11 +104,11 @@ body.admin {
 }
 
 .text-pale {
-  color: rgba(232, 188, 185, 0.95);
+  color: rgba(255, 255, 255, 0.92);
 }
 
 .text-muted {
-  color: rgba(232, 188, 185, 0.82);
+  color: rgba(255, 255, 255, 0.75);
 }
 
 .hero-text-shadow {
@@ -117,6 +117,16 @@ body.admin {
 
 .hero-copy {
   color: rgba(255, 255, 255, 0.92);
+}
+
+.section-text {
+  color: rgba(255, 255, 255, 0.85);
+  text-shadow: 0 1px 8px rgba(29, 26, 57, 0.25);
+}
+
+.section-text-muted {
+  color: rgba(255, 255, 255, 0.70);
+  text-shadow: 0 1px 6px rgba(29, 26, 57, 0.20);
 }
 
 button, input, textarea, select {

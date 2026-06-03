@@ -78,7 +78,7 @@ import RegistrationForm from "../components/RegistrationForm.astro";
           const habis = t.remaining <= 0;
           return `<div class="flex items-center justify-between rounded-xl ${habis ? "bg-red-50 border border-red-200" : "bg-white/90 border border-white/30"} px-4 py-3 text-sm">
             <span class="font-medium ${habis ? "text-red-700" : "text-kkr-dark"}">${t.name}</span>
-            <span class="${habis ? "text-red-600 font-semibold" : "text-kkr-dark/60"}">${habis ? "Habis" : "Sisa " + t.remaining}</span>
+            <span class="${habis ? "text-red-600 font-semibold" : "text-kkr-dark/70"}">${habis ? "Habis" : "Sisa " + t.remaining}</span>
           </div>`;
         }).join("");
       } catch {}
