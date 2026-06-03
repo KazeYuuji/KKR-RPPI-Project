@@ -2,53 +2,12 @@
 export interface Props {
   class?: string;
   delay?: number;
-  direction?: "up" | "down" | "left" | "right" | "scale" | "scale-up" | "blur" | "rotate" | "none";
-  duration?: number;
-  distance?: number;
-  spring?: boolean;
 }
 
-const {
-  class: className,
-  delay = 0,
-  direction = "up",
-  duration = 0.7,
-  distance = 30,
-  spring = false,
-} = Astro.props;
-
-const ease = spring
-  ? "cubic-bezier(0.34, 1.56, 0.64, 1)"
-  : "cubic-bezier(0.22, 1, 0.36, 1)";
-
-const x = direction === "left" ? distance : direction === "right" ? -distance : 0;
-const y = direction === "up" ? distance : direction === "down" ? -distance : 0;
-const s = direction === "scale" || direction === "scale-up" ? 0.92 : 1;
-const r = direction === "rotate" ? "rotateX(8deg)" : "rotateX(0deg)";
-const b = direction === "blur" ? "blur(8px)" : "blur(0px)";
-const scaleY = direction === "scale-up" ? "0.94" : "1";
-
-const transforms = `translateX(${x}px) translateY(${y}px) scale(${s}) scaleY(${scaleY}) ${r}`;
-
-const customClass = direction === "scale" || direction === "scale-up"
-  ? "reveal-custom reveal-scale"
-  : direction === "blur"
-    ? "reveal-custom reveal-blur"
-    : "reveal";
+const { class: className, delay = 0 } = Astro.props;
 ---
 
-<div
-  class={`${customClass} ${className}`}
-  style={`
-    transition-delay: ${delay}ms;
-    transition-duration: ${duration}s;
-    --reveal-x: ${x}px;
-    --reveal-y: ${y}px;
-    --reveal-scale: ${s};
-    --reveal-rotate: ${r};
-    --reveal-blur: ${b};
-  `}
->
+<div class="reveal {className}" style={`transition-delay: ${delay}ms`}>
   <slot />
 </div>
 
@@ -58,56 +17,26 @@ const customClass = direction === "scale" || direction === "scale-up"
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            const el = entry.target;
-            const delay = parseInt(el.style.getPropertyValue("transition-delay")) || 0;
-            const stagger = el.dataset.stagger;
-            if (stagger) {
-              const children = el.children;
-              const childDelay = parseInt(el.dataset.staggerDelay || "100");
-              Array.from(children).forEach((child, i) => {
-                (child as HTMLElement).style.transitionDelay = `${delay + i * childDelay}ms`;
-                child.classList.add("revealed");
-              });
-            }
-            el.classList.add("revealed");
-            observer.unobserve(el);
+            entry.target.classList.add("revealed");
+            observer.unobserve(entry.target);
           }
         });
       },
-      { threshold: 0.05, rootMargin: "0px 0px -40px 0px" },
+      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
     );
-    document.querySelectorAll(".reveal, .reveal-custom").forEach((el) => observer.observe(el));
+    document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
   } else {
-    document.querySelectorAll(".reveal, .reveal-custom").forEach((el) => {
-      if (el.dataset.stagger) {
-        Array.from(el.children).forEach((child) => child.classList.add("revealed"));
-      }
-      el.classList.add("revealed");
-    });
+    document.querySelectorAll(".reveal").forEach((el) => el.classList.add("revealed"));
   }
 </script>
 
 <style>
   .reveal {
     opacity: 0;
-    transform: translate(var(--reveal-x, 0px), var(--reveal-y, 30px)) scale(var(--reveal-scale, 1));
-    transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
-                transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
-    will-change: transform, opacity;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
   }
   .reveal.revealed {
-    opacity: 1;
-    transform: translate(0, 0) scale(1);
-  }
-  .reveal[data-stagger] > * {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
-                transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-    will-change: transform, opacity;
-  }
-  .reveal[data-stagger].revealed > *,
-  .reveal[data-stagger] > *.revealed {
     opacity: 1;
     transform: translateY(0);
   }

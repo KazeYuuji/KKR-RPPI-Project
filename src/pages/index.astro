@@ -9,41 +9,39 @@ import ChatBot from "../components/ChatBot.astro";
 <PublicLayout title="KKR RPPI | Kebangunan Rohani dalam Yesus Kristus" description="KKR RPPI mempersatukan pelajar, alumni, dan masyarakat dalam kebangunan rohani Yesus Kristus.">
   <div class="space-y-16 sm:space-y-24 pb-24">
     <!-- Hero -->
-    <section id="home" class="relative min-h-[90vh] flex items-center overflow-hidden parallax-slow">
+    <section id="home" class="relative min-h-[90vh] flex items-center overflow-hidden">
       <div class="absolute inset-0 bg-gradient-to-br from-kkr-dark/85 via-kkr-purple/40 to-kkr-maroon/20"></div>
       <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(243,159,90,0.18),transparent_25%),radial-gradient(circle_at_bottom_right,_rgba(232,188,185,0.16),transparent_22%)]"></div>
       <div class="absolute left-0 top-0 h-full w-full bg-[linear-gradient(180deg,rgba(29,26,57,0.18),rgba(255,255,255,0))]"></div>
-      <div class="absolute top-20 left-10 w-64 h-64 rounded-full bg-kkr-gold/20 blur-3xl hero-blob"></div>
-      <div class="absolute bottom-24 right-10 w-80 h-80 rounded-full bg-kkr-red/20 blur-3xl hero-blob" style="animation-delay: -4s"></div>
-      <div class="absolute top-40 right-1/3 w-48 h-48 rounded-full bg-kkr-purple/20 blur-3xl hero-blob" style="animation-delay: -2s"></div>
-      <div class="absolute bottom-32 left-1/4 w-32 h-32 rounded-full bg-kkr-gold/10 blur-2xl animate-float-slow"></div>
+      <div class="absolute top-20 left-10 w-64 h-64 rounded-full bg-kkr-gold/20 blur-3xl"></div>
+      <div class="absolute bottom-24 right-10 w-80 h-80 rounded-full bg-kkr-red/20 blur-3xl"></div>
 
       <div class="relative mx-auto max-w-7xl px-4 sm:px-6 w-full">
         <div class="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
           <div class="space-y-8 text-white relative z-10 animate-fade-in">
-            <p class="text-sm uppercase tracking-[0.3em] text-kkr-light animate-fade-in-up" style="animation-delay: 100ms">Ibadah Kebaktian Kebangunan Rohani</p>
+            <p class="text-sm uppercase tracking-[0.3em] text-kkr-light">Ibadah Kebaktian Kebangunan Rohani</p>
             <h1 id="hero-heading" class="hero-text-shadow text-5xl sm:text-6xl md:text-7xl xl:text-[6rem] font-black leading-[0.9] tracking-[-0.04em]">
-              <span id="hero-line1" class="inline-block gradient-gold" data-split>TRUST</span><br />
-              <span id="hero-line2" class="inline-block" data-split>IN</span><br />
-              <span id="hero-line3" class="inline-block" data-split>GOD</span>
+              <span id="hero-line1">TRUST</span><br />
+              <span id="hero-line2">IN</span><br />
+              <span id="hero-line3">GOD</span>
             </h1>
             <div class="max-w-xl space-y-4">
-              <p id="hero-verse" class="hero-copy text-lg sm:text-xl leading-9 max-w-3xl animate-fade-in-up" style="animation-delay: 600ms">Percayalah kepada TUHAN dengan segenap hatimu dan janganlah bersandar kepada pengertianmu sendiri.</p>
-              <p id="hero-verse-ref" class="text-sm uppercase tracking-[0.24em] text-kkr-gold animate-fade-in-up" style="animation-delay: 700ms">Amsal 3:5</p>
+              <p class="hero-copy text-lg sm:text-xl leading-9 max-w-3xl">Percayalah kepada TUHAN dengan segenap hatimu dan janganlah bersandar kepada pengertianmu sendiri.</p>
+              <p class="text-sm uppercase tracking-[0.24em] text-kkr-gold">Amsal 3:5</p>
             </div>
-            <div class="flex flex-wrap gap-4 animate-fade-in-up" style="animation-delay: 800ms">
-              <a href="/registration" class="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-kkr-maroon to-kkr-red px-7 py-4 text-sm font-semibold text-white shadow-xl shadow-kkr-maroon/30 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl active:scale-[0.97] btn-ripple magnetic-btn">
+            <div class="flex flex-wrap gap-4">
+              <a href="/registration" class="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-kkr-maroon to-kkr-red px-7 py-4 text-sm font-semibold text-white shadow-xl shadow-kkr-maroon/30 transition hover:-translate-y-0.5 hover:shadow-2xl">
                 Daftar Sekarang
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
               </a>
-              <a href="#about" class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-7 py-4 text-sm font-semibold text-white transition-all duration-300 hover:bg-white/20 hover:text-white hover:-translate-y-1 active:scale-[0.97] magnetic-btn">
+              <a href="#about" class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-7 py-4 text-sm font-semibold text-white transition hover:bg-white/20 hover:text-white">
                 Info Acara
               </a>
             </div>
           </div>
 
-          <div class="relative z-10 animate-fade-in-up-spring" style="animation-delay: 400ms">
-            <div class="rounded-[2.5rem] border border-white/20 bg-white/10 p-8 shadow-2xl shadow-black/25 backdrop-blur-xl glass-card-border">
+          <div class="relative z-10 animate-fade-in-up">
+            <div class="rounded-[2.5rem] border border-white/20 bg-white/10 p-8 shadow-2xl shadow-black/25 backdrop-blur-xl">
               <div class="space-y-8">
                 <div class="flex items-center justify-between gap-4">
                   <span class="inline-flex items-center gap-2 rounded-full bg-kkr-gold/15 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-kkr-gold">Terbuka untuk umum</span>
@@ -58,11 +56,11 @@ import ChatBot from "../components/ChatBot.astro";
                   <p id="hero-venue" class="text-sm text-kkr-light/70">Memuat...</p>
                 </div>
                 <div class="grid gap-4 sm:grid-cols-2">
-                  <div class="rounded-[2rem] bg-kkr-dark/90 p-5 border border-white/10 animate-float-slow">
+                  <div class="rounded-[2rem] bg-kkr-dark/90 p-5 border border-white/10">
                     <p class="text-xs uppercase tracking-[0.22em] text-kkr-gold/90">Pukul</p>
                     <p id="hero-time" class="mt-2 text-2xl font-semibold text-white">Memuat...</p>
                   </div>
-                  <div class="rounded-[2rem] bg-kkr-purple/90 p-5 border border-white/10 animate-float-medium" style="animation-delay: -1.5s">
+                  <div class="rounded-[2rem] bg-kkr-purple/90 p-5 border border-white/10">
                     <p class="text-xs uppercase tracking-[0.22em] text-kkr-light">Tempat</p>
                     <p id="hero-place" class="mt-2 text-2xl font-semibold text-white">Memuat...</p>
                   </div>
@@ -77,12 +75,10 @@ import ChatBot from "../components/ChatBot.astro";
     </section>
 
     <!-- Tentang Acara -->
-    <ScrollReveal direction="scale" spring>
-      <section id="about" class="scroll-mt-20 mx-auto max-w-7xl px-6 parallax-medium relative section-wave">
-        <div class="absolute top-10 right-10 text-6xl opacity-5 animate-float-slow select-none pointer-events-none">✝️</div>
-        <div class="absolute bottom-10 left-10 text-4xl opacity-5 animate-float-medium select-none pointer-events-none">🕊️</div>
+    <ScrollReveal>
+      <section id="about" class="scroll-mt-20 mx-auto max-w-7xl px-6">
         <div class="grid gap-10 lg:grid-cols-[1fr_0.8fr] items-start">
-          <div class="glass-card space-y-6 rounded-[2.5rem] p-8 sm:p-10 glass-card-border">
+          <div class="glass-card space-y-6 rounded-[2.5rem] p-8 sm:p-10">
             <div class="flex items-center gap-3">
               <span class="inline-block w-8 h-px bg-kkr-red"></span>
               <span class="text-sm font-semibold uppercase tracking-[0.25em] text-kkr-red">Tentang Acara</span>
@@ -99,29 +95,15 @@ import ChatBot from "../components/ChatBot.astro";
           </div>
 
           <div class="space-y-4">
-            <div class="rounded-2xl bg-gradient-to-br from-kkr-dark via-kkr-purple to-kkr-maroon p-6 sm:p-8 text-white shadow-2xl shadow-kkr-dark/20 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 hover:shadow-kkr-dark/40">
+            <div class="rounded-2xl bg-gradient-to-br from-kkr-dark via-kkr-purple to-kkr-maroon p-6 sm:p-8 text-white shadow-2xl shadow-kkr-dark/20">
               <span class="text-3xl">🎶</span>
               <h3 id="about-card1-title" class="mt-4 text-xl font-semibold">Pujian & Penyembahan</h3>
               <p id="about-card1-desc" class="mt-2 text-sm text-white/70 leading-relaxed">Nikmati pujian dan penyembahan yang membawa hati kita lebih dekat kepada Tuhan, mengalami kebangunan rohani dalam Yesus Kristus.</p>
             </div>
-            <div class="rounded-2xl glass-card p-6 sm:p-8 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-kkr-red/30 glass-card-border">
+            <div class="rounded-2xl glass-card p-6 sm:p-8 transition hover:shadow-xl hover:border-white/50">
               <span class="text-3xl">🤝</span>
               <h3 id="about-card2-title" class="mt-4 text-xl font-semibold text-kkr-dark">Persekutuan Lintas Sekolah</h3>
               <p id="about-card2-desc" class="mt-2 text-sm text-kkr-maroon leading-relaxed">Acara ini mempertemukan siswa-siswi dari berbagai sekolah di Kediri dan sekitarnya untuk membangun persaudaraan dan memperkuat ikatan iman dalam Tuhan Yesus.</p>
-            </div>
-            <div class="grid grid-cols-3 gap-3">
-              <div class="rounded-xl glass-card p-4 text-center glass-card-border">
-                <p class="text-2xl font-bold gradient-gold count-up" data-count-to="500" data-count-suffix="+" data-count-duration="2500">0</p>
-                <p class="text-xs text-kkr-maroon/70 mt-1">Peserta</p>
-              </div>
-              <div class="rounded-xl glass-card p-4 text-center glass-card-border">
-                <p class="text-2xl font-bold gradient-gold count-up" data-count-to="25" data-count-suffix="+" data-count-duration="2000">0</p>
-                <p class="text-xs text-kkr-maroon/70 mt-1">Sekolah</p>
-              </div>
-              <div class="rounded-xl glass-card p-4 text-center glass-card-border">
-                <p class="text-2xl font-bold gradient-gold count-up" data-count-to="15" data-count-suffix="+" data-count-duration="2000">0</p>
-                <p class="text-xs text-kkr-maroon/70 mt-1">Pembicara</p>
-              </div>
             </div>
           </div>
         </div>
@@ -130,7 +112,7 @@ import ChatBot from "../components/ChatBot.astro";
 
     <!-- Pembicara (dinamis dari DB) -->
     <ScrollReveal>
-      <section id="speakers" class="scroll-mt-20 mx-auto max-w-7xl px-6 parallax-medium">
+      <section id="speakers" class="scroll-mt-20 mx-auto max-w-7xl px-6">
         <div class="text-center max-w-2xl mx-auto space-y-4 mb-12">
           <div class="flex items-center justify-center gap-3">
             <span class="inline-block w-8 h-px bg-kkr-red"></span>
@@ -188,7 +170,7 @@ import ChatBot from "../components/ChatBot.astro";
         </div>
 
         <!-- Sponsor Marquee -->
-        <div id="sponsor-grid" class="sponsor-marquee" style="mask-image: linear-gradient(to right, transparent 0, black 40px, black calc(100% - 40px), transparent 100%); overflow-y: visible;">
+        <div id="sponsor-grid" class="overflow-hidden" style="mask-image: linear-gradient(to right, transparent 0, black 40px, black calc(100% - 40px), transparent 100%);">
           <div class="sponsor-track flex gap-6" style="width: max-content; animation: scroll-left 30s linear infinite;">
             <div class="flex gap-6 items-stretch" data-copy="1"></div>
             <div class="flex gap-6 items-stretch" data-copy="2" aria-hidden="true"></div>
@@ -196,7 +178,7 @@ import ChatBot from "../components/ChatBot.astro";
         </div>
 
         <div class="text-center mt-10">
-          <a href="#contact" class="inline-flex items-center gap-2 rounded-full bg-kkr-red px-8 py-4 text-sm font-semibold text-white transition-all duration-300 hover:bg-kkr-maroon magnetic-btn">
+          <a href="#contact" class="inline-flex items-center gap-2 rounded-full bg-kkr-red px-8 py-4 text-sm font-semibold text-white transition hover:bg-kkr-maroon">
             Tertarik jadi Sponsor? Hubungi Kami
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
           </a>
@@ -205,13 +187,11 @@ import ChatBot from "../components/ChatBot.astro";
     </ScrollReveal>
 
     <!-- Countdown -->
-    <div class="parallax-slow">
-      <Countdown />
-    </div>
+    <Countdown />
 
     <!-- Lokasi -->
     <ScrollReveal>
-      <section id="location" class="scroll-mt-20 mx-auto max-w-7xl px-6 parallax-medium section-wave">
+      <section id="location" class="scroll-mt-20 mx-auto max-w-7xl px-6">
         <div class="text-center max-w-2xl mx-auto space-y-3 mb-8">
           <div class="flex items-center justify-center gap-3">
             <span class="inline-block w-6 h-px bg-kkr-red"></span>
@@ -222,7 +202,7 @@ import ChatBot from "../components/ChatBot.astro";
         </div>
 
         <div class="grid gap-6 lg:grid-cols-2 items-stretch">
-          <div class="rounded-[2.5rem] glass-card p-5 sm:p-6 glass-card-border">
+          <div class="rounded-[2.5rem] glass-card p-5 sm:p-6">
             <div class="flex items-center gap-2 mb-3">
               <span class="text-xl">📍</span>
               <span class="text-xs font-semibold uppercase tracking-[0.2em] text-kkr-red">Temui Kami di Sini</span>
@@ -275,7 +255,7 @@ import ChatBot from "../components/ChatBot.astro";
             </div>
           </div>
 
-          <div class="overflow-hidden rounded-[2.5rem] glass-card h-full glass-card-border">
+          <div class="overflow-hidden rounded-[2.5rem] glass-card h-full">
             <iframe id="loc-maps-iframe" class="h-full w-full" src="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
           </div>
         </div>
@@ -284,11 +264,10 @@ import ChatBot from "../components/ChatBot.astro";
 
     <!-- CTA -->
     <ScrollReveal>
-      <section id="contact" class="mx-auto max-w-7xl px-6 parallax-fast section-wave">
+      <section id="contact" class="mx-auto max-w-7xl px-6">
         <div class="rounded-[2.5rem] bg-gradient-to-br from-kkr-dark via-kkr-purple to-kkr-maroon p-8 sm:p-14 text-white shadow-2xl shadow-kkr-dark/30 relative overflow-hidden">
           <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(251,207,232,.08),_transparent_50%)]"></div>
           <div class="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,_rgba(219,234,254,.05),_transparent_50%)]"></div>
-          <div class="absolute top-6 right-10 text-5xl opacity-10 animate-float-slow select-none pointer-events-none">🙌</div>
           <div class="relative grid gap-8 lg:grid-cols-[1.3fr_0.9fr] lg:items-center">
             <div>
               <div class="flex items-center gap-3">
@@ -299,7 +278,7 @@ import ChatBot from "../components/ChatBot.astro";
               <p id="cta-desc" class="mt-4 max-w-xl text-white/70 leading-relaxed">Isi formulir pendaftaran, pilih tiket, dan amankan tempatmu dalam KKR RPPI yang penuh sukacita dan berkat.</p>
             </div>
             <div class="space-y-4">
-              <a href="/registration" class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-kkr-gold to-kkr-gold px-8 py-4 text-sm font-semibold text-kkr-dark shadow-lg shadow-kkr-gold/30 transition-all duration-300 hover:shadow-xl hover:shadow-kkr-gold/40 hover:-translate-y-0.5 magnetic-btn">
+              <a href="/registration" class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-kkr-gold to-kkr-gold px-8 py-4 text-sm font-semibold text-kkr-dark shadow-lg shadow-kkr-gold/30 transition hover:shadow-xl hover:shadow-kkr-gold/40 hover:-translate-y-0.5">
                 Daftar Sekarang
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
               </a>
@@ -316,8 +295,8 @@ import ChatBot from "../components/ChatBot.astro";
   </div>
 
   <!-- Sponsor Detail Modal -->
-  <div id="sponsor-modal" class="hidden fixed inset-0 z-[70] items-center justify-center bg-black/40 backdrop-blur-md p-4 transition-all duration-300" style="opacity: 0;">
-    <div class="relative w-full max-w-lg rounded-[2rem] glass-card animate-scale-in-bounce">
+  <div id="sponsor-modal" class="hidden fixed inset-0 z-[70] items-center justify-center bg-black/40 backdrop-blur-md p-4">
+    <div class="relative w-full max-w-lg rounded-[2rem] glass-card animate-scale-in">
       <button id="sp-modal-close" class="absolute right-5 top-5 z-10 rounded-full bg-white/20 px-3 py-2 text-sm text-white/80 transition hover:bg-white/30">Tutup</button>
       <div class="p-8 text-center">
         <div class="relative inline-flex items-center justify-center mb-2">
@@ -337,22 +316,6 @@ import ChatBot from "../components/ChatBot.astro";
 
   <!-- Floating Components -->
   <ChatBot />
-
-  <style>
-    .sponsor-marquee:hover .sponsor-track,
-    .speaker-marquee:hover .speaker-track,
-    .altar-marquee:hover .altar-track {
-      animation-play-state: paused !important;
-    }
-    .glass-card {
-      transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-    .tilt-card {
-      transition: transform 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      will-change: transform;
-      transform-style: preserve-3d;
-    }
-  </style>
 
   <script>
     function deriveEmbedUrl(link, venue) {
@@ -386,7 +349,6 @@ import ChatBot from "../components/ChatBot.astro";
         if (s.heroHeading1 && safe("hero-line1")) safe("hero-line1").textContent = s.heroHeading1;
         if (s.heroHeading2 && safe("hero-line2")) safe("hero-line2").textContent = s.heroHeading2;
         if (s.heroHeading3 && safe("hero-line3")) safe("hero-line3").textContent = s.heroHeading3;
-        if (typeof initTextSplit !== "undefined") initTextSplit();
         if (safe("hero-verse")) {
           const vt = s.heroVerseText || "Percayalah kepada TUHAN dengan segenap hatimu dan janganlah bersandar kepada pengertianmu sendiri.";
           const ref = s.heroVerseRef || "Amsal 3:5";
@@ -442,7 +404,7 @@ import ChatBot from "../components/ChatBot.astro";
           return;
         }
         const makeCard = (baseClass) => s => `
-          <div class="${baseClass} tilt-card">
+          <div class="${baseClass}">
             ${s.photo_url
               ? `<img src="${s.photo_url}" class="w-28 h-28 rounded-full object-cover mx-auto shadow-lg shadow-kkr-light/50 border-2 border-white" />`
               : `<div class="w-28 h-28 rounded-full bg-gradient-to-br from-kkr-light/80 to-white mx-auto flex items-center justify-center text-5xl shadow-lg shadow-kkr-light/50">✝️</div>`
@@ -456,17 +418,17 @@ import ChatBot from "../components/ChatBot.astro";
             ${s.tags ? `<div class="flex flex-wrap justify-center gap-2 mt-5">${s.tags.split(",").map(t => `<span class="text-xs bg-kkr-light text-kkr-red px-3 py-1 rounded-full font-medium">${t.trim()}</span>`).join("")}</div>` : ""}
           </div>`;
         if (list.length > 3) {
-          const base = "rounded-[2.5rem] glass-card p-5 sm:p-8 text-center hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 shrink-0 w-[280px] sm:w-[320px] flex flex-col glass-card-border";
+          const base = "rounded-[2.5rem] glass-card p-5 sm:p-8 text-center hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 shrink-0 w-[280px] sm:w-[320px] flex flex-col";
           const html = list.map(makeCard(base)).join("");
           container.innerHTML = `
-            <div class="speaker-marquee" style="mask-image: linear-gradient(to right, transparent 0, black 40px, black calc(100% - 40px), transparent 100%); overflow-y: visible;">
-              <div class="speaker-track flex gap-4 sm:gap-6" style="width: max-content; animation: scroll-left 30s linear infinite;">
+            <div class="overflow-hidden" style="mask-image: linear-gradient(to right, transparent 0, black 40px, black calc(100% - 40px), transparent 100%);">
+              <div class="flex gap-4 sm:gap-6" style="width: max-content; animation: scroll-left 30s linear infinite;">
                 <div class="flex gap-4 sm:gap-6">${html}</div>
                 <div class="flex gap-4 sm:gap-6" aria-hidden="true">${html}</div>
               </div>
             </div>`;
         } else {
-          const base = "rounded-[2.5rem] glass-card p-6 sm:p-8 text-center hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 w-full flex flex-col glass-card-border";
+          const base = "rounded-[2.5rem] glass-card p-6 sm:p-8 text-center hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 w-full flex flex-col";
           const html = list.map(makeCard(base)).join("");
           if (list.length === 1) {
             container.innerHTML = `<div class="flex justify-center">${html}</div>`;
@@ -491,7 +453,7 @@ import ChatBot from "../components/ChatBot.astro";
           return;
         }
         const makeCard = (baseClass) => s => `
-          <div class="${baseClass} tilt-card">
+          <div class="${baseClass}">
             ${s.photo_url
               ? `<img src="${s.photo_url}" class="w-20 h-20 rounded-full object-cover mx-auto shadow-md shadow-kkr-light/40 border-2 border-white" />`
               : `<div class="w-20 h-20 rounded-full bg-gradient-to-br from-kkr-light/80 to-white mx-auto flex items-center justify-center text-2xl shadow-md shadow-kkr-light/40">🕯️</div>`
@@ -505,17 +467,17 @@ import ChatBot from "../components/ChatBot.astro";
             ${s.tags ? `<div class="flex flex-wrap justify-center gap-1.5 mt-3">${s.tags.split(",").map(t => `<span class="text-[10px] bg-kkr-light text-kkr-red px-2 py-0.5 rounded-full font-medium">${t.trim()}</span>`).join("")}</div>` : ""}
           </div>`;
         if (list.length > 3) {
-          const base = "rounded-2xl glass-card p-4 sm:p-5 text-center hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 shrink-0 w-[200px] sm:w-[220px] flex flex-col glass-card-border";
+          const base = "rounded-2xl glass-card p-4 sm:p-5 text-center hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 shrink-0 w-[200px] sm:w-[220px] flex flex-col";
           const html = list.map(makeCard(base)).join("");
           container.innerHTML = `
-            <div class="altar-marquee" style="mask-image: linear-gradient(to right, transparent 0, black 40px, black calc(100% - 40px), transparent 100%); overflow-y: visible;">
-              <div class="altar-track flex gap-3 sm:gap-4" style="width: max-content; animation: scroll-left 30s linear infinite;">
+            <div class="overflow-hidden" style="mask-image: linear-gradient(to right, transparent 0, black 40px, black calc(100% - 40px), transparent 100%);">
+              <div class="flex gap-3 sm:gap-4" style="width: max-content; animation: scroll-left 30s linear infinite;">
                 <div class="flex gap-3 sm:gap-4">${html}</div>
                 <div class="flex gap-3 sm:gap-4" aria-hidden="true">${html}</div>
               </div>
             </div>`;
         } else {
-          const base = "rounded-2xl glass-card p-4 sm:p-5 text-center hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 w-full flex flex-col glass-card-border";
+          const base = "rounded-2xl glass-card p-4 sm:p-5 text-center hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 w-full flex flex-col";
           const html = list.map(makeCard(base)).join("");
           if (list.length === 1) {
             container.innerHTML = `<div class="flex justify-center max-w-[260px] mx-auto">${html}</div>`;
@@ -542,7 +504,7 @@ import ChatBot from "../components/ChatBot.astro";
           return;
         }
         const card = (s) =>
-          `<div class="sponsor-card flex items-center gap-4 rounded-2xl glass-card px-6 py-5 shrink-0 min-w-[260px] cursor-pointer transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 tilt-card glass-card-border" data-id="${s.id}">
+          `<div class="sponsor-card flex items-center gap-4 rounded-2xl glass-card px-6 py-5 shrink-0 min-w-[260px] cursor-pointer transition-all duration-300 hover:shadow-2xl hover:-translate-y-1" data-id="${s.id}">
             ${s.logo_url ? `<img src="${s.logo_url}" class="w-12 h-12 rounded-xl object-cover shrink-0" />` : `<div class="w-12 h-12 rounded-xl bg-gradient-to-br from-kkr-light to-white border border-kkr-light/50 flex items-center justify-center text-xl shrink-0">🏢</div>`}
             <div class="min-w-0">
               <p class="font-semibold text-kkr-dark truncate">${s.name}</p>
@@ -598,28 +560,19 @@ import ChatBot from "../components/ChatBot.astro";
       }
       modal.classList.remove("hidden");
       modal.classList.add("flex");
-      // trigger reflow for backdrop transition
-      void modal.offsetWidth;
-      modal.style.opacity = "1";
     });
 
     document.getElementById("sp-modal-close")?.addEventListener("click", () => {
       const modal = document.getElementById("sponsor-modal");
-      modal.style.opacity = "0";
-      setTimeout(() => {
-        modal.classList.add("hidden");
-        modal.classList.remove("flex");
-      }, 250);
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
     });
 
     document.getElementById("sponsor-modal")?.addEventListener("click", (e) => {
       if (e.target === e.currentTarget) {
         const modal = document.getElementById("sponsor-modal");
-        modal.style.opacity = "0";
-        setTimeout(() => {
-          modal.classList.add("hidden");
-          modal.classList.remove("flex");
-        }, 250);
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
       }
     });
 

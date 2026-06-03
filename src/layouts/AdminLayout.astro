@@ -22,7 +22,7 @@ const currentPath = Astro.url.pathname;
     <Sidebar currentPath={currentPath} isOpen={false} />
     <Header title={title} />
 
-    <main id="main-content" class="lg:ml-[260px] pt-20 px-4 sm:px-8 pb-12 min-h-screen transition-all duration-300 animate-fade-in">
+    <main id="main-content" class="lg:ml-[260px] pt-20 px-4 sm:px-8 pb-12 min-h-screen transition-all duration-300">
       <div class="mx-auto max-w-7xl">
         <slot />
       </div>
