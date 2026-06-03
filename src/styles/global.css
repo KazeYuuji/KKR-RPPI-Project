@@ -59,9 +59,16 @@ body:not(.admin) {
   left: 0;
   right: 0;
   bottom: 0;
-  height: 400px;
+  height: 500px;
   pointer-events: none;
-  background: linear-gradient(180deg, rgba(29,26,57,0) 0%, #1D1A39 100%);
+  background: linear-gradient(
+    180deg,
+    rgba(29,26,57,0) 0%,
+    rgba(29,26,57,0.3) 30%,
+    rgba(45,31,74,0.6) 60%,
+    rgba(69,25,82,0.8) 85%,
+    #451952 100%
+  );
 }
 
 body.admin {
