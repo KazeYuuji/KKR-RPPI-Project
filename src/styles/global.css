@@ -25,15 +25,18 @@ body {
 }
 
 body:not(.admin) {
-  background: linear-gradient(180deg,
-    #1D1A39 0%,
-    #2A2045 12%,
-    #451952 30%,
-    #662549 50%,
-    #451952 72%,
-    #2A2045 88%,
-    #1D1A39 100%
-  );
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(243,159,90,0.07) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 100%, rgba(174,68,90,0.08) 0%, transparent 40%),
+    linear-gradient(180deg,
+      #1D1A39 0%,
+      #2F1F4A 10%,
+      #451952 25%,
+      #662549 48%,
+      #54284A 70%,
+      #2F1F4A 85%,
+      #1D1A39 100%
+    );
   color: var(--color-kkr-light);
 }
 
@@ -41,7 +44,7 @@ body:not(.admin) {
   position: relative;
   overflow: hidden;
   background-image:
-    linear-gradient(180deg, rgba(29,26,57,0.65) 0%, rgba(69,25,82,0.35) 50%, rgba(29,26,57,0.85) 100%),
+    linear-gradient(180deg, rgba(29,26,57,0.70) 0%, rgba(69,25,82,0.30) 45%, rgba(29,26,57,0.80) 100%),
     url('/images/concert-bg.jpeg');
   background-size: cover;
   background-position: center;
@@ -56,7 +59,7 @@ body:not(.admin) {
   left: 0;
   right: 0;
   bottom: 0;
-  height: 320px;
+  height: 400px;
   pointer-events: none;
   background: linear-gradient(180deg, rgba(29,26,57,0) 0%, #1D1A39 100%);
 }
