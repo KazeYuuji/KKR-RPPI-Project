@@ -206,16 +206,8 @@ button, input, textarea, select {
 
 @media (max-width: 768px) {
   .scroll-mt-20 {
-  scroll-margin-top: 100px;
-}
-
-@media (max-width: 768px) {
-  .scroll-mt-20 {
     scroll-margin-top: 80px;
   }
-}
-
-@media (max-width: 768px) {
   :root {
     --sidebar-width: 0px;
   }
