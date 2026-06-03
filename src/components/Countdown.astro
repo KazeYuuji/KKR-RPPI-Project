@@ -11,16 +11,16 @@ const regClose = "2025-12-29T23:59:59";
 
       <div class="relative text-center space-y-10">
         <div class="space-y-2">
-          <p class="text-sm uppercase tracking-[0.3em] text-kkr-light font-semibold">Waktu Terus Berjalan</p>
-          <h2 class="text-3xl sm:text-4xl font-semibold">Jangan Lewatkan!</h2>
+          <p id="countdown-subtitle" class="text-sm uppercase tracking-[0.3em] text-kkr-light font-semibold">Waktu Terus Berjalan</p>
+          <h2 id="countdown-heading" class="text-3xl sm:text-4xl font-semibold">Jangan Lewatkan!</h2>
           <div class="w-8 h-0.5 bg-kkr-red/50 mx-auto rounded-full"></div>
         </div>
 
         <div class="grid gap-6 sm:grid-cols-2">
           <div class="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
-            <p class="text-kkr-light text-sm font-semibold uppercase tracking-wider">Segera Ditutup</p>
+            <p id="countdown-reg-label" class="text-kkr-light text-sm font-semibold uppercase tracking-wider">Segera Ditutup</p>
             <p class="text-kkr-gold text-lg font-semibold mt-1" id="reg-deadline-label">29 Desember 2025</p>
-            <p class="text-sm text-kkr-light mt-2" id="reg-deadline-sub">Batas Pendaftaran Tiket</p>
+            <p id="countdown-reg-desc" class="text-sm text-kkr-light mt-2">Batas Pendaftaran Tiket</p>
             <div id="reg-countdown" class="grid grid-cols-4 gap-3 mt-5">
               {["Hari", "Jam", "Menit", "Detik"].map((label) => (
                 <div class="bg-white/10 rounded-xl p-3 backdrop-blur-sm">
@@ -32,9 +32,9 @@ const regClose = "2025-12-29T23:59:59";
           </div>
 
           <div class="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
-            <p class="text-kkr-light text-sm font-semibold uppercase tracking-wider">Hari H</p>
+            <p id="countdown-event-label" class="text-kkr-light text-sm font-semibold uppercase tracking-wider">Hari H</p>
             <p class="text-kkr-gold text-lg font-semibold mt-1" id="event-date-label">10 Januari 2026</p>
-            <p class="text-sm text-kkr-light mt-2">Menuju Puncak Acara</p>
+            <p id="countdown-event-desc" class="text-sm text-kkr-light mt-2">Menuju Puncak Acara</p>
             <div id="event-countdown" class="grid grid-cols-4 gap-3 mt-5">
               {["Hari", "Jam", "Menit", "Detik"].map((label) => (
                 <div class="bg-white/10 rounded-xl p-3 backdrop-blur-sm">
@@ -69,6 +69,12 @@ const regClose = "2025-12-29T23:59:59";
       const eventLabel = document.getElementById("event-date-label");
       if (s.regDeadline && regLabel) regLabel.textContent = s.regDeadline;
       if (s.locDate && eventLabel) eventLabel.textContent = s.locDate;
+      if (s.countdownSubtitle && document.getElementById("countdown-subtitle")) document.getElementById("countdown-subtitle").textContent = s.countdownSubtitle;
+      if (s.countdownHeading && document.getElementById("countdown-heading")) document.getElementById("countdown-heading").textContent = s.countdownHeading;
+      if (s.countdownRegLabel && document.getElementById("countdown-reg-label")) document.getElementById("countdown-reg-label").textContent = s.countdownRegLabel;
+      if (s.countdownRegDesc && document.getElementById("countdown-reg-desc")) document.getElementById("countdown-reg-desc").textContent = s.countdownRegDesc;
+      if (s.countdownEventLabel && document.getElementById("countdown-event-label")) document.getElementById("countdown-event-label").textContent = s.countdownEventLabel;
+      if (s.countdownEventDesc && document.getElementById("countdown-event-desc")) document.getElementById("countdown-event-desc").textContent = s.countdownEventDesc;
     }).catch(() => {});
 
     function updateCountdown(target, prefix) {

@@ -34,11 +34,11 @@ import ChatBot from "../components/ChatBot.astro";
             <div id="hero-event-info" class="flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/80 justify-center"></div>
             <div class="flex flex-wrap gap-4 justify-center">
               <a href="/registration" class="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-kkr-maroon to-kkr-red px-7 py-4 text-sm font-semibold text-white shadow-xl shadow-kkr-maroon/30 transition hover:-translate-y-0.5 hover:shadow-2xl">
-                Daftar Sekarang
+                <span id="btn-hero-primary">Daftar Sekarang</span>
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
               </a>
               <a href="#about" class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-7 py-4 text-sm font-semibold text-white transition hover:bg-white/20 hover:text-white">
-                Info Acara
+                <span id="btn-hero-secondary">Info Acara</span>
               </a>
             </div>
           </div>
@@ -105,10 +105,10 @@ import ChatBot from "../components/ChatBot.astro";
         <div class="text-center max-w-2xl mx-auto space-y-4 mb-12">
           <div class="flex items-center justify-center gap-3">
             <span class="inline-block w-8 h-px bg-kkr-red"></span>
-            <span class="text-sm font-semibold uppercase tracking-[0.25em] text-kkr-red">Pembicara</span>
+            <span id="section-label-speakers" class="text-sm font-semibold uppercase tracking-[0.25em] text-kkr-red">Pembicara</span>
             <span class="inline-block w-8 h-px bg-kkr-red"></span>
           </div>
-          <h2 class="text-3xl sm:text-4xl font-semibold text-white">Bersama Pembicara Rohani</h2>
+          <h2 id="section-heading-speakers" class="text-3xl sm:text-4xl font-semibold text-white">Bersama Pembicara Rohani</h2>
           <div class="w-12 h-0.5 bg-gradient-to-r from-kkr-red to-kkr-gold mx-auto rounded-full"></div>
         </div>
 
@@ -127,11 +127,11 @@ import ChatBot from "../components/ChatBot.astro";
         <div class="text-center max-w-2xl mx-auto space-y-4 mb-12">
           <div class="flex items-center justify-center gap-3">
             <span class="inline-block w-8 h-px bg-kkr-red"></span>
-            <span class="text-sm font-semibold uppercase tracking-[0.25em] text-kkr-red">Pelayan Altar</span>
+            <span id="section-label-altar" class="text-sm font-semibold uppercase tracking-[0.25em] text-kkr-red">Pelayan Altar</span>
             <span class="inline-block w-8 h-px bg-kkr-red"></span>
           </div>
-          <h2 class="text-3xl sm:text-4xl font-semibold text-white">Pelayan Altar KKR RPPI</h2>
-          <p class="section-text-muted max-w-xl mx-auto">Para pelayan altar yang melayani dalam kebangunan rohani</p>
+          <h2 id="section-heading-altar" class="text-3xl sm:text-4xl font-semibold text-white">Pelayan Altar KKR RPPI</h2>
+          <p id="section-desc-altar" class="section-text-muted max-w-xl mx-auto">Para pelayan altar yang melayani dalam kebangunan rohani</p>
           <div class="w-12 h-0.5 bg-gradient-to-r from-kkr-red to-kkr-gold mx-auto rounded-full"></div>
         </div>
 
@@ -150,11 +150,11 @@ import ChatBot from "../components/ChatBot.astro";
         <div class="text-center max-w-2xl mx-auto space-y-4 mb-12">
           <div class="flex items-center justify-center gap-3">
             <span class="inline-block w-8 h-px bg-kkr-red"></span>
-            <span class="text-sm font-semibold uppercase tracking-[0.25em] text-kkr-red">Sponsor & Mitra</span>
+            <span id="section-label-sponsors" class="text-sm font-semibold uppercase tracking-[0.25em] text-kkr-red">Sponsor & Mitra</span>
             <span class="inline-block w-8 h-px bg-kkr-red"></span>
           </div>
-          <h2 class="text-3xl sm:text-4xl font-semibold text-white">Didukung oleh</h2>
-          <p class="section-text-muted max-w-xl mx-auto">Para sponsor dan mitra yang mendukung terselenggaranya KKR RPPI 2026</p>
+          <h2 id="section-heading-sponsors" class="text-3xl sm:text-4xl font-semibold text-white">Didukung oleh</h2>
+          <p id="section-desc-sponsors" class="section-text-muted max-w-xl mx-auto">Para sponsor dan mitra yang mendukung terselenggaranya KKR RPPI 2026</p>
           <div class="w-12 h-0.5 bg-gradient-to-r from-kkr-red to-kkr-gold mx-auto rounded-full"></div>
         </div>
 
@@ -172,7 +172,7 @@ import ChatBot from "../components/ChatBot.astro";
 
         <div class="text-center mt-10">
           <a href="#contact" class="inline-flex items-center gap-2 rounded-full bg-kkr-red px-8 py-4 text-sm font-semibold text-white transition hover:bg-kkr-maroon">
-            Tertarik jadi Sponsor? Hubungi Kami
+            <span id="btn-sponsor-contact">Tertarik jadi Sponsor? Hubungi Kami</span>
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
           </a>
         </div>
@@ -188,7 +188,7 @@ import ChatBot from "../components/ChatBot.astro";
         <div class="text-center max-w-2xl mx-auto space-y-4 mb-12">
           <div class="flex items-center justify-center gap-3">
             <span class="inline-block w-8 h-px bg-kkr-red"></span>
-            <span class="text-sm font-semibold uppercase tracking-[0.25em] text-kkr-red">Lokasi & Waktu</span>
+            <span id="section-label-location" class="text-sm font-semibold uppercase tracking-[0.25em] text-kkr-red">Lokasi & Waktu</span>
             <span class="inline-block w-8 h-px bg-kkr-red"></span>
           </div>
           <div class="w-12 h-0.5 bg-gradient-to-r from-kkr-red to-kkr-gold mx-auto rounded-full"></div>
@@ -264,7 +264,7 @@ import ChatBot from "../components/ChatBot.astro";
             <div>
               <div class="flex items-center gap-3">
                 <span class="inline-block w-8 h-px bg-kkr-red"></span>
-                <span class="text-sm font-semibold uppercase tracking-[0.3em] text-white/80">Siap Bergabung?</span>
+                <span id="section-label-cta" class="text-sm font-semibold uppercase tracking-[0.3em] text-white/80">Siap Bergabung?</span>
               </div>
               <h2 id="cta-title" class="mt-4 text-3xl sm:text-4xl font-semibold">Daftar sekarang, dan ikuti KKR dalam kasih Kristus.</h2>
               <p id="cta-desc" class="mt-4 max-w-xl text-white/70 leading-relaxed">Isi formulir pendaftaran, pilih tiket, dan amankan tempatmu dalam KKR RPPI yang penuh sukacita dan berkat.</p>
@@ -398,6 +398,23 @@ import ChatBot from "../components/ChatBot.astro";
         // CTA
         if (s.ctaTitle && safe("cta-title")) safe("cta-title").textContent = s.ctaTitle;
         if (s.ctaDesc && safe("cta-desc")) safe("cta-desc").textContent = s.ctaDesc;
+
+        // Section labels and headings
+        if (s.sectionLabelSpeakers && safe("section-label-speakers")) safe("section-label-speakers").textContent = s.sectionLabelSpeakers;
+        if (s.sectionHeadingSpeakers && safe("section-heading-speakers")) safe("section-heading-speakers").textContent = s.sectionHeadingSpeakers;
+        if (s.sectionLabelAltar && safe("section-label-altar")) safe("section-label-altar").textContent = s.sectionLabelAltar;
+        if (s.sectionHeadingAltar && safe("section-heading-altar")) safe("section-heading-altar").textContent = s.sectionHeadingAltar;
+        if (s.sectionDescAltar && safe("section-desc-altar")) safe("section-desc-altar").textContent = s.sectionDescAltar;
+        if (s.sectionLabelSponsors && safe("section-label-sponsors")) safe("section-label-sponsors").textContent = s.sectionLabelSponsors;
+        if (s.sectionHeadingSponsors && safe("section-heading-sponsors")) safe("section-heading-sponsors").textContent = s.sectionHeadingSponsors;
+        if (s.sectionDescSponsors && safe("section-desc-sponsors")) safe("section-desc-sponsors").textContent = s.sectionDescSponsors;
+        if (s.sectionLabelLocation && safe("section-label-location")) safe("section-label-location").textContent = s.sectionLabelLocation;
+        if (s.sectionLabelCta && safe("section-label-cta")) safe("section-label-cta").textContent = s.sectionLabelCta;
+
+        // Button texts
+        if (s.btnHeroPrimary && safe("btn-hero-primary")) safe("btn-hero-primary").textContent = s.btnHeroPrimary;
+        if (s.btnHeroSecondary && safe("btn-hero-secondary")) safe("btn-hero-secondary").textContent = s.btnHeroSecondary;
+        if (s.btnSponsorContact && safe("btn-sponsor-contact")) safe("btn-sponsor-contact").textContent = s.btnSponsorContact;
 
         // Location section
         if (safe("loc-venue")) safe("loc-venue").textContent = venue;

@@ -25,6 +25,137 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
       </form>
     </div>
 
+    <!-- Landing Page Sections -->
+    <div class="glass-card p-6 sm:p-8">
+      <div class="flex items-center gap-3 mb-1">
+        <span class="w-8 h-8 rounded-xl bg-kkr-light/40 flex items-center justify-center text-kkr-red shrink-0"><svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></span>
+        <h2 class="text-xl font-semibold text-kkr-dark">Teks Setiap Section</h2>
+      </div>
+      <p class="text-sm text-kkr-maroon mt-1">Sesuaikan label, judul, dan deskripsi setiap section di halaman utama.</p>
+      <form id="sections-form" class="mt-6 space-y-6">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-wider text-kkr-purple mb-3">Section Pembicara</p>
+          <div class="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label class="block text-sm font-medium text-kkr-purple mb-1">Label</label>
+              <input id="section-label-speakers" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Pembicara" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-kkr-purple mb-1">Judul</label>
+              <input id="section-heading-speakers" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Bersama Pembicara Rohani" />
+            </div>
+          </div>
+        </div>
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-wider text-kkr-purple mb-3">Section Pelayan Altar</p>
+          <div class="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label class="block text-sm font-medium text-kkr-purple mb-1">Label</label>
+              <input id="section-label-altar" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Pelayan Altar" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-kkr-purple mb-1">Judul</label>
+              <input id="section-heading-altar" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Pelayan Altar KKR RPPI" />
+            </div>
+          </div>
+          <div class="mt-4">
+            <label class="block text-sm font-medium text-kkr-purple mb-1">Deskripsi</label>
+            <textarea id="section-desc-altar" rows="2" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Para pelayan altar yang melayani dalam kebangunan rohani"></textarea>
+          </div>
+        </div>
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-wider text-kkr-purple mb-3">Section Sponsor</p>
+          <div class="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label class="block text-sm font-medium text-kkr-purple mb-1">Label</label>
+              <input id="section-label-sponsors" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Sponsor & Mitra" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-kkr-purple mb-1">Judul</label>
+              <input id="section-heading-sponsors" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Didukung oleh" />
+            </div>
+          </div>
+          <div class="mt-4">
+            <label class="block text-sm font-medium text-kkr-purple mb-1">Deskripsi</label>
+            <textarea id="section-desc-sponsors" rows="2" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Para sponsor dan mitra yang mendukung terselenggaranya KKR RPPI 2026"></textarea>
+          </div>
+        </div>
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-wider text-kkr-purple mb-3">Section Lainnya</p>
+          <div class="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label class="block text-sm font-medium text-kkr-purple mb-1">Label Lokasi</label>
+              <input id="section-label-location" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Lokasi & Waktu" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-kkr-purple mb-1">Label CTA</label>
+              <input id="section-label-cta" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Siap Bergabung?" />
+            </div>
+          </div>
+        </div>
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-wider text-kkr-purple mb-3">Teks Tombol</p>
+          <div class="grid gap-4 sm:grid-cols-3">
+            <div>
+              <label class="block text-sm font-medium text-kkr-purple mb-1">Tombol Hero (Utama)</label>
+              <input id="btn-hero-primary" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Daftar Sekarang" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-kkr-purple mb-1">Tombol Hero (Kedua)</label>
+              <input id="btn-hero-secondary" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Info Acara" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-kkr-purple mb-1">Tombol Sponsor</label>
+              <input id="btn-sponsor-contact" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Tertarik jadi Sponsor? Hubungi Kami" />
+            </div>
+          </div>
+        </div>
+        <button type="submit" class="rounded-xl bg-kkr-red px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-kkr-maroon">Simpan Semua Teks Section</button>
+      </form>
+    </div>
+
+    <!-- Countdown Text -->
+    <div class="glass-card p-6 sm:p-8">
+      <div class="flex items-center gap-3 mb-1">
+        <span class="w-8 h-8 rounded-xl bg-kkr-light/40 flex items-center justify-center text-kkr-red shrink-0"><svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>
+        <h2 class="text-xl font-semibold text-kkr-dark">Teks Countdown</h2>
+      </div>
+      <p class="text-sm text-kkr-maroon mt-1">Sesuaikan teks yang muncul di bagian countdown.</p>
+      <form id="countdown-form" class="mt-6 space-y-4">
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label class="block text-sm font-medium text-kkr-purple mb-1">Subtitle Countdown</label>
+            <input id="countdown-subtitle" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Waktu Terus Berjalan" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-kkr-purple mb-1">Judul Countdown</label>
+            <input id="countdown-heading" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Jangan Lewatkan!" />
+          </div>
+        </div>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label class="block text-sm font-medium text-kkr-purple mb-1">Label Pendaftaran</label>
+            <input id="countdown-reg-label" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Segera Ditutup" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-kkr-purple mb-1">Deskripsi Pendaftaran</label>
+            <input id="countdown-reg-desc" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Batas Pendaftaran Tiket" />
+          </div>
+        </div>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label class="block text-sm font-medium text-kkr-purple mb-1">Label Acara</label>
+            <input id="countdown-event-label" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Hari H" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-kkr-purple mb-1">Deskripsi Acara</label>
+            <input id="countdown-event-desc" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Menuju Puncak Acara" />
+          </div>
+        </div>
+        <button type="submit" class="rounded-xl bg-kkr-red px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-kkr-maroon">Simpan Teks Countdown</button>
+      </form>
+    </div>
+
     <!-- Event Schedule -->
     <div class="glass-card p-6 sm:p-8">
       <div class="flex items-center gap-3 mb-1">
@@ -262,8 +393,76 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
         setVal("about-blockquote", s.aboutBlockquote || "");
         setVal("event-card-badge", s.eventCardBadge || "");
         setVal("hero-subtitle-label", s.heroSubtitleLabel || "");
+
+        // Section texts
+        setVal("section-label-speakers", s.sectionLabelSpeakers || "");
+        setVal("section-heading-speakers", s.sectionHeadingSpeakers || "");
+        setVal("section-label-altar", s.sectionLabelAltar || "");
+        setVal("section-heading-altar", s.sectionHeadingAltar || "");
+        setVal("section-desc-altar", s.sectionDescAltar || "");
+        setVal("section-label-sponsors", s.sectionLabelSponsors || "");
+        setVal("section-heading-sponsors", s.sectionHeadingSponsors || "");
+        setVal("section-desc-sponsors", s.sectionDescSponsors || "");
+        setVal("section-label-location", s.sectionLabelLocation || "");
+        setVal("section-label-cta", s.sectionLabelCta || "");
+        setVal("btn-hero-primary", s.btnHeroPrimary || "");
+        setVal("btn-hero-secondary", s.btnHeroSecondary || "");
+        setVal("btn-sponsor-contact", s.btnSponsorContact || "");
+
+        // Countdown texts
+        setVal("countdown-subtitle", s.countdownSubtitle || "");
+        setVal("countdown-heading", s.countdownHeading || "");
+        setVal("countdown-reg-label", s.countdownRegLabel || "");
+        setVal("countdown-reg-desc", s.countdownRegDesc || "");
+        setVal("countdown-event-label", s.countdownEventLabel || "");
+        setVal("countdown-event-desc", s.countdownEventDesc || "");
       } catch {}
     }
+
+    document.getElementById("sections-form")?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const btn = e.target.querySelector("button[type=submit]");
+      btn.disabled = true; btn.textContent = "Menyimpan...";
+      try {
+        const res = await fetch("/api/settings", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({
+          sectionLabelSpeakers: document.getElementById("section-label-speakers").value.trim(),
+          sectionHeadingSpeakers: document.getElementById("section-heading-speakers").value.trim(),
+          sectionLabelAltar: document.getElementById("section-label-altar").value.trim(),
+          sectionHeadingAltar: document.getElementById("section-heading-altar").value.trim(),
+          sectionDescAltar: document.getElementById("section-desc-altar").value.trim(),
+          sectionLabelSponsors: document.getElementById("section-label-sponsors").value.trim(),
+          sectionHeadingSponsors: document.getElementById("section-heading-sponsors").value.trim(),
+          sectionDescSponsors: document.getElementById("section-desc-sponsors").value.trim(),
+          sectionLabelLocation: document.getElementById("section-label-location").value.trim(),
+          sectionLabelCta: document.getElementById("section-label-cta").value.trim(),
+          btnHeroPrimary: document.getElementById("btn-hero-primary").value.trim(),
+          btnHeroSecondary: document.getElementById("btn-hero-secondary").value.trim(),
+          btnSponsorContact: document.getElementById("btn-sponsor-contact").value.trim(),
+        })});
+        if (res.ok) toast("Teks section berhasil disimpan!");
+        else throw new Error();
+      } catch { toast("Gagal menyimpan teks section", "error"); }
+      btn.disabled = false; btn.textContent = "Simpan Semua Teks Section";
+    });
+
+    document.getElementById("countdown-form")?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const btn = e.target.querySelector("button[type=submit]");
+      btn.disabled = true; btn.textContent = "Menyimpan...";
+      try {
+        const res = await fetch("/api/settings", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({
+          countdownSubtitle: document.getElementById("countdown-subtitle").value.trim(),
+          countdownHeading: document.getElementById("countdown-heading").value.trim(),
+          countdownRegLabel: document.getElementById("countdown-reg-label").value.trim(),
+          countdownRegDesc: document.getElementById("countdown-reg-desc").value.trim(),
+          countdownEventLabel: document.getElementById("countdown-event-label").value.trim(),
+          countdownEventDesc: document.getElementById("countdown-event-desc").value.trim(),
+        })});
+        if (res.ok) toast("Teks countdown berhasil disimpan!");
+        else throw new Error();
+      } catch { toast("Gagal menyimpan teks countdown", "error"); }
+      btn.disabled = false; btn.textContent = "Simpan Teks Countdown";
+    });
 
     document.getElementById("location-form")?.addEventListener("submit", async (e) => {
       e.preventDefault();
