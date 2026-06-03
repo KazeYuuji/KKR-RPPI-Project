@@ -386,6 +386,7 @@ import ChatBot from "../components/ChatBot.astro";
         if (s.heroHeading1 && safe("hero-line1")) safe("hero-line1").textContent = s.heroHeading1;
         if (s.heroHeading2 && safe("hero-line2")) safe("hero-line2").textContent = s.heroHeading2;
         if (s.heroHeading3 && safe("hero-line3")) safe("hero-line3").textContent = s.heroHeading3;
+        if (typeof initTextSplit !== "undefined") initTextSplit();
         if (safe("hero-verse")) {
           const vt = s.heroVerseText || "Percayalah kepada TUHAN dengan segenap hatimu dan janganlah bersandar kepada pengertianmu sendiri.";
           const ref = s.heroVerseRef || "Amsal 3:5";

@@ -487,29 +487,31 @@ button, input, textarea, select {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  border: 1.5px solid rgba(243, 159, 90, 0.5);
+  border: 2px solid #F39F5A;
   transform: translate(-50%, -50%);
   transition: width 0.2s var(--ease-smooth), height 0.2s var(--ease-smooth), border-color 0.2s var(--ease-smooth), background 0.2s var(--ease-smooth);
   will-change: left, top, transform;
-  mix-blend-mode: difference;
+  box-shadow: 0 0 12px rgba(243, 159, 90, 0.3), inset 0 0 12px rgba(243, 159, 90, 0.1);
 }
 #cursor-dot {
   position: fixed;
   pointer-events: none;
   z-index: 99999;
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  background: #F39F5A;
+  background: #AE445A;
   transform: translate(-50%, -50%);
   will-change: left, top;
   transition: width 0.15s, height 0.15s, background 0.15s;
+  box-shadow: 0 0 8px rgba(174, 68, 90, 0.6);
 }
 #cursor-ring.hovering {
   width: 56px;
   height: 56px;
-  border-color: rgba(243, 159, 90, 0.8);
-  background: rgba(243, 159, 90, 0.08);
+  border-color: #AE445A;
+  background: rgba(174, 68, 90, 0.12);
+  box-shadow: 0 0 20px rgba(174, 68, 90, 0.4), inset 0 0 20px rgba(174, 68, 90, 0.1);
 }
 #cursor-dot.hovering {
   width: 8px;
