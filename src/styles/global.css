@@ -25,15 +25,18 @@ body {
 }
 
 body:not(.admin) {
-  background: linear-gradient(180deg, #1d1a39 0%, #451952 40%, #662549 100%);
+  background: linear-gradient(180deg, rgba(29,26,57,.92) 0%, rgba(69,25,82,.70) 30%, rgba(102,37,73,.65) 60%, rgba(29,26,57,.92) 100%),
+              url('/images/concert-bg.jpeg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-blend-mode: overlay;
   color: var(--color-kkr-light);
 }
 
 #home {
-  background-image: url('/images/concert-bg.jpeg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  background: none;
 }
 
 body.admin {
