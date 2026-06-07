@@ -330,7 +330,7 @@ import ChatBot from "../components/ChatBot.astro";
         const res = await fetch("/api/settings");
         const d = await res.json();
         const s = d.settings || {};
-        const venue = s.locVenue || "SMK PGRI 1 Kediri";
+        const venue = s.locVenue || "Kediri";
         const date = s.locDate || "Sabtu, 10 Januari 2026";
         const time = s.locTime || "08:00 - 12:30 WIB";
         const regDeadline = s.regDeadline || "29 Desember 2025";

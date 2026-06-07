@@ -21,7 +21,7 @@ export const GET: APIRoute = async ({ params }) => {
   const settings: Record<string, string> = {};
   for (const s of settingsList) if (s.key) settings[s.key] = s.value;
 
-  const venue = settings.locVenue || "SMK PGRI 1 Kediri";
+  const venue = settings.locVenue || "Kediri";
   const date = settings.locDate || "Sabtu, 10 Januari 2026";
   const time = settings.locTime || "08:00 - 12:30 WIB";
   const address = "Jl. Himalaya No.06, Kediri";
