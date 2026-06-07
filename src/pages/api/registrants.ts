@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
 import { getDb } from "../../lib/db";
+import { saveJSONToMinIO } from "../../lib/minio";
 
 export const GET: APIRoute = async () => {
   const db = getDb();
@@ -86,6 +87,7 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     const r = await db.execute("SELECT * FROM registrants WHERE id = ?", [id]);
+    saveJSONToMinIO(r.rows[0], `backups/registrants/${id}.json`).catch(e => console.error("MinIO backup error:", e));
     return new Response(JSON.stringify({ registrant: r.rows[0] }), {
       status: 200, headers: { "Content-Type": "application/json" },
     });

@@ -1,23 +1,35 @@
 import type { APIRoute } from "astro";
-import fs from "node:fs";
-import path from "node:path";
+import { downloadFromMinIO } from "../../../lib/minio";
 
-const UPLOADS_DIR = path.join(process.env.VERCEL ? "/tmp" : process.cwd(), "data", "uploads");
+const MIME_TYPES: Record<string, string> = {
+  ".png": "image/png",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".gif": "image/gif",
+  ".webp": "image/webp",
+  ".svg": "image/svg+xml",
+  ".json": "application/json",
+};
 
 export const GET: APIRoute = async ({ params }) => {
   const filePath = params.path as string;
   if (!filePath || filePath.includes("..")) {
     return new Response("Not found", { status: 404 });
   }
-  const fullPath = path.join(UPLOADS_DIR, filePath);
-  if (!fs.existsSync(fullPath)) {
+  try {
+    const ext = filePath.includes(".") ? filePath.substring(filePath.lastIndexOf(".")).toLowerCase() : "";
+    const result = await downloadFromMinIO(`uploads/${filePath}`);
+    if (!result) {
+      return new Response("Not found", { status: 404 });
+    }
+    return new Response(result.buffer, {
+      status: 200,
+      headers: {
+        "Content-Type": result.contentType,
+        "Cache-Control": "public, max-age=31536000",
+      },
+    });
+  } catch {
     return new Response("Not found", { status: 404 });
   }
-  const ext = path.extname(filePath).toLowerCase();
-  const mime: Record<string, string> = { ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".gif": "image/gif", ".webp": "image/webp", ".svg": "image/svg+xml" };
-  const buffer = fs.readFileSync(fullPath);
-  return new Response(buffer, {
-    status: 200,
-    headers: { "Content-Type": mime[ext] || "application/octet-stream", "Cache-Control": "public, max-age=31536000" },
-  });
 };
