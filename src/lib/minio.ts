@@ -37,7 +37,8 @@ export async function uploadToMinIO(
   const formData = new FormData();
   const blob = new Blob([buffer], { type: contentType });
   formData.append("0", blob, filename);
-  const url = `${MINIO_ENDPOINT}/api/v1/buckets/${MINIO_BUCKET}/objects/upload?prefix=${encodeURIComponent(prefix)}`;
+  const prefixB64 = toBase64(prefix);
+  const url = `${MINIO_ENDPOINT}/api/v1/buckets/${MINIO_BUCKET}/objects/upload?prefix=${encodeURIComponent(prefixB64)}`;
   const res = await fetch(url, {
     method: "POST",
     headers: { Cookie: `token=${token}` },
@@ -84,7 +85,8 @@ export async function saveJSONToMinIO(
   const formData = new FormData();
   const blob = new Blob([json], { type: "application/json" });
   formData.append("0", blob, filename);
-  const url = `${MINIO_ENDPOINT}/api/v1/buckets/${MINIO_BUCKET}/objects/upload?prefix=${encodeURIComponent(prefix)}`;
+  const prefixB64 = toBase64(prefix);
+  const url = `${MINIO_ENDPOINT}/api/v1/buckets/${MINIO_BUCKET}/objects/upload?prefix=${encodeURIComponent(prefixB64)}`;
   const res = await fetch(url, {
     method: "POST",
     headers: { Cookie: `token=${token}` },
