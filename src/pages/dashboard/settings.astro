@@ -403,7 +403,6 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
         setVal("about-card1-desc", s.aboutCard1Desc || "");
         setVal("about-card2-title", s.aboutCard2Title || "");
         setVal("about-card2-desc", s.aboutCard2Desc || "");
-        setVal("about-card2-desc", s.aboutCard2Desc || "");
         setVal("about-blockquote", s.aboutBlockquote || "");
         setVal("event-card-badge", s.eventCardBadge || "");
         setVal("hero-subtitle-label", s.heroSubtitleLabel || "");
@@ -433,7 +432,8 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
         setVal("countdown-reg-desc", s.countdownRegDesc || "");
         setVal("countdown-event-label", s.countdownEventLabel || "");
         setVal("countdown-event-desc", s.countdownEventDesc || "");
-      } catch {}
+        updatePreview();
+      } catch (err) { console.error("loadSettings error:", err); }
     }
 
     document.getElementById("sections-form")?.addEventListener("submit", async (e) => {

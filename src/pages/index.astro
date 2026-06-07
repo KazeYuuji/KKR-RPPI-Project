@@ -351,15 +351,10 @@ import ChatBot from "../components/ChatBot.astro";
 
         // Hero verse
         if (safe("hero-verse")) {
-          const vt = s.heroVerseText || "Percayalah kepada TUHAN dengan segenap hatimu dan janganlah bersandar kepada pengertianmu sendiri.";
-          const ref = s.heroVerseRef || "Amsal 3:5";
+          const vt = s.heroVerseText || (s.heroSubtitle ? s.heroSubtitle.split("—")[0].trim() : null) || "Percayalah kepada TUHAN dengan segenap hatimu dan janganlah bersandar kepada pengertianmu sendiri.";
+          const ref = s.heroVerseRef || (s.heroSubtitle && s.heroSubtitle.includes("—") ? s.heroSubtitle.split("—")[1].trim() : null) || "Amsal 3:5";
           safe("hero-verse").textContent = vt;
           if (safe("hero-verse-ref")) safe("hero-verse-ref").textContent = "— " + ref;
-        }
-        if (s.heroSubtitle && safe("hero-subtitle")) {
-          const parts = s.heroSubtitle.split("—");
-          safe("hero-verse").textContent = parts[0].trim();
-          if (parts[1] && safe("hero-verse-ref")) safe("hero-verse-ref").textContent = "— " + parts[1].trim();
         }
 
         // Hero event info bar

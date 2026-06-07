@@ -29,7 +29,8 @@ export const POST: APIRoute = async ({ request }) => {
     return new Response(JSON.stringify({ sponsor: sponsor.rows[0] }), {
       status: 201, headers: { "Content-Type": "application/json" },
     });
-  } catch {
+  } catch (err) {
+    console.error("POST sponsor error:", err);
     return new Response(JSON.stringify({ error: "Gagal menambah sponsor" }), {
       status: 500, headers: { "Content-Type": "application/json" },
     });

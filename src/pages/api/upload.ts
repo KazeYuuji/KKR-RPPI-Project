@@ -19,7 +19,8 @@ export const POST: APIRoute = async ({ request }) => {
     return new Response(JSON.stringify({ url: `/api/uploads/${filename}` }), {
       status: 200, headers: { "Content-Type": "application/json" },
     });
-  } catch {
+  } catch (err) {
+    console.error("POST upload error:", err);
     return new Response(JSON.stringify({ error: "Gagal upload" }), { status: 500, headers: { "Content-Type": "application/json" } });
   }
 };

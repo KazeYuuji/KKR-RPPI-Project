@@ -17,7 +17,8 @@ export const GET: APIRoute = async ({ params }) => {
     return new Response(JSON.stringify({ sponsor }), {
       status: 200, headers: { "Content-Type": "application/json" },
     });
-  } catch {
+  } catch (err) {
+    console.error("GET sponsor error:", err);
     return new Response(JSON.stringify({ error: "Gagal memuat sponsor" }), {
       status: 500, headers: { "Content-Type": "application/json" },
     });
@@ -51,7 +52,8 @@ export const PUT: APIRoute = async ({ params, request }) => {
     return new Response(JSON.stringify({ sponsor: sponsor.rows[0] }), {
       status: 200, headers: { "Content-Type": "application/json" },
     });
-  } catch {
+  } catch (err) {
+    console.error("PUT sponsor error:", err);
     return new Response(JSON.stringify({ error: "Gagal memperbarui sponsor" }), {
       status: 500, headers: { "Content-Type": "application/json" },
     });

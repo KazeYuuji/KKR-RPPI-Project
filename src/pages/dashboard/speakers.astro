@@ -42,7 +42,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
             <textarea id="sp-desc" rows="3" class="w-full rounded-xl border border-kkr-light/50 bg-white px-4 py-2.5 text-sm text-kkr-dark outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20 placeholder:text-kkr-maroon/60" placeholder="Deskripsi singkat"></textarea>
           </div>
           <div>
-            <label class="block text-xs font-semibold text-kkr-purple mb-1.5 uppercase tracking-wider">Kisah / Testimoni</label>
+            <label class="block text-xs font-semibold text-kkr-purple mb-1.5 uppercase tracking-wider">Story Pembicara</label>
             <textarea id="sp-story" rows="5" class="w-full rounded-xl border border-kkr-light/50 bg-white px-4 py-2.5 text-sm text-kkr-dark outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20 placeholder:text-kkr-maroon/60" placeholder="Cerita atau kesaksian dari pembicara..."></textarea>
           </div>
           <div>
@@ -80,6 +80,12 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
   <div id="toast-container" class="fixed top-4 right-4 z-[100] flex flex-col gap-2 pointer-events-none"></div>
 
   <script>
+    function escapeHtml(str) {
+      const div = document.createElement("div");
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
     function toast(msg, type = "success") {
       const c = document.getElementById("toast-container");
       const el = document.createElement("div");
@@ -107,21 +113,21 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
           return;
         }
         container.innerHTML = list.map((s) => `
-          <div class="glass-card p-4 sm:p-5 transition-all duration-200 hover:shadow-md" data-id="${s.id}">
+          <div class="glass-card p-4 sm:p-5 transition-all duration-200 hover:shadow-md" data-id="${escapeHtml(String(s.id))}">
             <div class="flex items-start gap-3 sm:gap-4">
-              ${s.photo_url ? `<img src="${s.photo_url}" class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl object-cover border border-kkr-light/50 shadow-sm shrink-0" />` : `<div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-blue-50 to-kkr-light border border-kkr-light/50 flex items-center justify-center shrink-0 shadow-sm"><svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-kkr-red/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>`}
+              ${s.photo_url ? `<img src="${escapeHtml(s.photo_url)}" class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl object-cover border border-kkr-light/50 shadow-sm shrink-0" />` : `<div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-blue-50 to-kkr-light border border-kkr-light/50 flex items-center justify-center shrink-0 shadow-sm"><svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-kkr-red/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>`}
               <div class="flex-1 min-w-0">
                 <div class="flex items-center gap-2 flex-wrap">
-                  <h4 class="font-semibold text-kkr-dark truncate">${s.name}</h4>
+                  <h4 class="font-semibold text-kkr-dark truncate">${escapeHtml(s.name)}</h4>
                   <span class="inline-flex items-center gap-1 text-[10px] font-medium ${s.is_active ? 'text-emerald-600' : 'text-kkr-maroon/60'}"><span class="w-1 h-1 rounded-full ${s.is_active ? 'bg-emerald-500' : 'bg-slate-300'}"></span>${s.is_active ? 'Aktif' : 'Nonaktif'}</span>
                 </div>
-                ${s.title || s.organization ? `<p class="text-xs text-kkr-maroon/80 mt-0.5 truncate">${[s.title, s.organization].filter(Boolean).join(" · ")}</p>` : ""}
-                ${s.description ? `<p class="mt-1.5 text-sm text-kkr-maroon line-clamp-2">${s.description}</p>` : ""}
-                ${s.tags ? `<div class="flex flex-wrap gap-1 mt-2">${s.tags.split(",").map(t => `<span class="text-[10px] bg-kkr-light text-kkr-red px-2 py-0.5 rounded-full font-medium">${t.trim()}</span>`).join("")}</div>` : ""}
+                ${s.title || s.organization ? `<p class="text-xs text-kkr-maroon/80 mt-0.5 truncate">${escapeHtml([s.title, s.organization].filter(Boolean).join(" · "))}</p>` : ""}
+                ${s.description ? `<p class="mt-1.5 text-sm text-kkr-maroon line-clamp-2">${escapeHtml(s.description)}</p>` : ""}
+                ${s.tags ? `<div class="flex flex-wrap gap-1 mt-2">${s.tags.split(",").map(t => `<span class="text-[10px] bg-kkr-light text-kkr-red px-2 py-0.5 rounded-full font-medium">${escapeHtml(t.trim())}</span>`).join("")}</div>` : ""}
               </div>
               <div class="flex items-start gap-1 shrink-0 pt-1">
-                <button data-action="edit" data-id="${s.id}" class="rounded-lg bg-white border border-kkr-light/50 px-3 py-1.5 text-xs font-semibold text-kkr-maroon hover:bg-white hover:border-kkr-light/80 transition-colors shadow-sm">Edit</button>
-                <button data-action="delete" data-id="${s.id}" class="rounded-lg bg-white border border-kkr-light/50 px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50 hover:border-red-200 transition-colors shadow-sm">Hapus</button>
+                <button data-action="edit" data-id="${escapeHtml(String(s.id))}" class="rounded-lg bg-white border border-kkr-light/50 px-3 py-1.5 text-xs font-semibold text-kkr-maroon hover:bg-white hover:border-kkr-light/80 transition-colors shadow-sm">Edit</button>
+                <button data-action="delete" data-id="${escapeHtml(String(s.id))}" class="rounded-lg bg-white border border-kkr-light/50 px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50 hover:border-red-200 transition-colors shadow-sm">Hapus</button>
               </div>
             </div>
           </div>
@@ -185,7 +191,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
       }
     });
 
-    document.getElementById("upload-photo-btn")?.addEventListener("click", () => document.getElementById("photo-file-input").click());
+    document.getElementById("upload-photo-btn")?.addEventListener("click", () => document.getElementById("photo-file-input")?.click());
     document.getElementById("photo-file-input")?.addEventListener("change", async (e) => {
       const file = e.target.files?.[0]; if (!file) return;
       try { const url = await uploadFile(file); if (url) { document.getElementById("sp-photo").value = url; document.getElementById("photo-preview").classList.remove("hidden"); document.getElementById("photo-preview-img").src = url; toast("Foto berhasil diupload"); } } catch { toast("Gagal upload foto", "error"); }

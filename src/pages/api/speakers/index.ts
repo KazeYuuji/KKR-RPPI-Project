@@ -29,7 +29,8 @@ export const POST: APIRoute = async ({ request }) => {
     return new Response(JSON.stringify({ speaker: speaker.rows[0] }), {
       status: 201, headers: { "Content-Type": "application/json" },
     });
-  } catch {
+  } catch (err) {
+    console.error("POST speaker error:", err);
     return new Response(JSON.stringify({ error: "Gagal menambah pembicara" }), {
       status: 500, headers: { "Content-Type": "application/json" },
     });

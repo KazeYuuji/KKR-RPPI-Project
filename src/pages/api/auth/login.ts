@@ -21,10 +21,11 @@ export const POST: APIRoute = async ({ request }) => {
 
     const token = signToken(admin);
     const headers = new Headers({ "Content-Type": "application/json" });
-    headers.append("Set-Cookie", `token=${token}; HttpOnly; Path=/; SameSite=Lax; Max-Age=86400`);
+    headers.append("Set-Cookie", `token=${token}; HttpOnly; Secure; Path=/; SameSite=Lax; Max-Age=86400`);
 
     return new Response(JSON.stringify({ success: true, admin }), { status: 200, headers });
-  } catch {
+  } catch (err) {
+    console.error("POST login error:", err);
     return new Response(JSON.stringify({ error: "Internal server error" }), {
       status: 500, headers: { "Content-Type": "application/json" },
     });

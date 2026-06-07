@@ -31,7 +31,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
       const clone = context.request.clone();
       const body = await clone.json();
       if (!body.action) return next();
-    } catch {}
+    } catch (err) {
+      console.error("Middleware parse registrants body error:", err);
+    }
     // If it has an action field (checkin), fall through to auth check
   }
 

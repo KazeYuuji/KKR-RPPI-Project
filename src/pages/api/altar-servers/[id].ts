@@ -17,7 +17,8 @@ export const GET: APIRoute = async ({ params }) => {
     return new Response(JSON.stringify({ altarServer: altar }), {
       status: 200, headers: { "Content-Type": "application/json" },
     });
-  } catch {
+  } catch (err) {
+    console.error("GET altar-server error:", err);
     return new Response(JSON.stringify({ error: "Gagal memuat pelayan altar" }), {
       status: 500, headers: { "Content-Type": "application/json" },
     });
@@ -53,7 +54,8 @@ export const PUT: APIRoute = async ({ params, request }) => {
     return new Response(JSON.stringify({ altarServer: altar.rows[0] }), {
       status: 200, headers: { "Content-Type": "application/json" },
     });
-  } catch {
+  } catch (err) {
+    console.error("PUT altar-server error:", err);
     return new Response(JSON.stringify({ error: "Gagal memperbarui pelayan altar" }), {
       status: 500, headers: { "Content-Type": "application/json" },
     });

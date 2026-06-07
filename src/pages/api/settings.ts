@@ -25,7 +25,8 @@ export const POST: APIRoute = async ({ request }) => {
     return new Response(JSON.stringify({ success: true }), {
       status: 200, headers: { "Content-Type": "application/json" },
     });
-  } catch {
+  } catch (err) {
+    console.error("POST settings error:", err);
     return new Response(JSON.stringify({ error: "Gagal menyimpan pengaturan" }), {
       status: 500, headers: { "Content-Type": "application/json" },
     });

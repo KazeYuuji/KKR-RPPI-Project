@@ -17,7 +17,8 @@ export const GET: APIRoute = async ({ params }) => {
     return new Response(JSON.stringify({ speaker }), {
       status: 200, headers: { "Content-Type": "application/json" },
     });
-  } catch {
+  } catch (err) {
+    console.error("GET speaker error:", err);
     return new Response(JSON.stringify({ error: "Gagal memuat pembicara" }), {
       status: 500, headers: { "Content-Type": "application/json" },
     });
@@ -54,7 +55,8 @@ export const PUT: APIRoute = async ({ params, request }) => {
     return new Response(JSON.stringify({ speaker: speaker.rows[0] }), {
       status: 200, headers: { "Content-Type": "application/json" },
     });
-  } catch {
+  } catch (err) {
+    console.error("PUT speaker error:", err);
     return new Response(JSON.stringify({ error: "Gagal memperbarui pembicara" }), {
       status: 500, headers: { "Content-Type": "application/json" },
     });
@@ -64,14 +66,21 @@ export const PUT: APIRoute = async ({ params, request }) => {
 export const DELETE: APIRoute = async ({ params }) => {
   const db = getDb();
   const { id } = params;
-  const existingResult = await db.execute("SELECT * FROM speakers WHERE id = ?", [id]);
-  if (!existingResult.rows[0]) {
-    return new Response(JSON.stringify({ error: "Pembicara tidak ditemukan" }), {
-      status: 404, headers: { "Content-Type": "application/json" },
+  try {
+    const existingResult = await db.execute("SELECT * FROM speakers WHERE id = ?", [id]);
+    if (!existingResult.rows[0]) {
+      return new Response(JSON.stringify({ error: "Pembicara tidak ditemukan" }), {
+        status: 404, headers: { "Content-Type": "application/json" },
+      });
+    }
+    await db.execute("DELETE FROM speakers WHERE id = ?", [id]);
+    return new Response(JSON.stringify({ success: true }), {
+      status: 200, headers: { "Content-Type": "application/json" },
+    });
+  } catch (err) {
+    console.error("DELETE speaker error:", err);
+    return new Response(JSON.stringify({ error: "Gagal menghapus pembicara" }), {
+      status: 500, headers: { "Content-Type": "application/json" },
     });
   }
-  await db.execute("DELETE FROM speakers WHERE id = ?", [id]);
-  return new Response(JSON.stringify({ success: true }), {
-    status: 200, headers: { "Content-Type": "application/json" },
-  });
 };

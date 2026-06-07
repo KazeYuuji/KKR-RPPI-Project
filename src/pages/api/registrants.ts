@@ -89,7 +89,8 @@ export const POST: APIRoute = async ({ request }) => {
     return new Response(JSON.stringify({ registrant: r.rows[0] }), {
       status: 200, headers: { "Content-Type": "application/json" },
     });
-  } catch {
+  } catch (err) {
+    console.error("POST registrants error:", err);
     return new Response(JSON.stringify({ error: "Gagal memproses pendaftar" }), {
       status: 500, headers: { "Content-Type": "application/json" },
     });

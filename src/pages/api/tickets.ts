@@ -39,7 +39,8 @@ export const POST: APIRoute = async ({ request }) => {
     return new Response(JSON.stringify({ tickets: updated.rows }), {
       status: 200, headers: { "Content-Type": "application/json" },
     });
-  } catch {
+  } catch (err) {
+    console.error("POST tickets error:", err);
     return new Response(JSON.stringify({ error: "Gagal menyimpan tiket" }), {
       status: 500, headers: { "Content-Type": "application/json" },
     });
