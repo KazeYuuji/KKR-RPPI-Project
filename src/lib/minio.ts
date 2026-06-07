@@ -1,54 +1,22 @@
-const MINIO_ENDPOINT = process.env.MINIO_ENDPOINT || "http://cdn.kediritechnopark.com:9001";
+import { S3Client, PutObjectCommand, GetObjectCommand, ListObjectsV2Command } from "@aws-sdk/client-s3";
+
+const MINIO_ENDPOINT = process.env.MINIO_ENDPOINT || "http://cdn.kediritechnopark.com:9002";
 const MINIO_ACCESS_KEY = process.env.MINIO_ACCESS_KEY || "kediritechnopark";
 const MINIO_SECRET_KEY = process.env.MINIO_SECRET_KEY || "G0beyond!";
 const MINIO_BUCKET = process.env.MINIO_BUCKET || "kkr-rppi";
 
-let cachedToken: string | null = null;
-let tokenExpiry = 0;
+let s3Client: S3Client | null = null;
 
-async function login(): Promise<string> {
-  if (cachedToken && Date.now() < tokenExpiry) return cachedToken;
-  const res = await fetch(`${MINIO_ENDPOINT}/api/v1/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ accessKey: MINIO_ACCESS_KEY, secretKey: MINIO_SECRET_KEY }),
-  });
-  if (!res.ok) throw new Error("MinIO login failed");
-  const cookie = res.headers.get("set-cookie") || "";
-  const match = cookie.match(/token=([^;]+)/);
-  if (!match) throw new Error("MinIO token not found in response");
-  cachedToken = match[1];
-  tokenExpiry = Date.now() + 3600000;
-  return cachedToken!;
-}
-
-function toBase64(str: string): string {
-  return Buffer.from(str, "utf-8").toString("base64");
-}
-
-export async function uploadToMinIO(
-  buffer: Buffer,
-  filename: string,
-  contentType: string,
-  prefix = "uploads/"
-): Promise<string> {
-  const token = await login();
-  const key = `${prefix}${filename}`;
-  const formData = new FormData();
-  const blob = new Blob([buffer], { type: contentType });
-  formData.append("0", blob, filename);
-  const prefixB64 = toBase64(prefix);
-  const url = `${MINIO_ENDPOINT}/api/v1/buckets/${MINIO_BUCKET}/objects/upload?prefix=${encodeURIComponent(prefixB64)}`;
-  const res = await fetch(url, {
-    method: "POST",
-    headers: { Cookie: `token=${token}` },
-    body: formData,
-  });
-  if (!res.ok) {
-    const err = await res.text();
-    throw new Error(`MinIO upload failed: ${err}`);
+function getS3(): S3Client {
+  if (!s3Client) {
+    s3Client = new S3Client({
+      endpoint: MINIO_ENDPOINT,
+      credentials: { accessKeyId: MINIO_ACCESS_KEY, secretAccessKey: MINIO_SECRET_KEY },
+      region: "us-east-1",
+      forcePathStyle: true,
+    });
   }
-  return key;
+  return s3Client;
 }
 
 export async function uploadBuffer(
@@ -57,43 +25,53 @@ export async function uploadBuffer(
   contentType: string,
   prefix = "uploads/"
 ): Promise<string> {
-  return uploadToMinIO(buffer, filename, contentType, prefix);
+  const key = `${prefix}${filename}`;
+  await getS3().send(new PutObjectCommand({
+    Bucket: MINIO_BUCKET,
+    Key: key,
+    Body: buffer,
+    ContentType: contentType,
+  }));
+  return key;
 }
 
 export async function downloadFromMinIO(key: string): Promise<{ buffer: Buffer; contentType: string } | null> {
-  const token = await login();
-  const prefix = toBase64(key);
-  const url = `${MINIO_ENDPOINT}/api/v1/buckets/${MINIO_BUCKET}/objects/download?prefix=${encodeURIComponent(prefix)}`;
-  const res = await fetch(url, {
-    headers: { Cookie: `token=${token}` },
-  });
-  if (res.status === 404) return null;
-  if (!res.ok) return null;
-  const buffer = Buffer.from(await res.arrayBuffer());
-  const contentType = res.headers.get("content-type") || "application/octet-stream";
-  return { buffer, contentType };
+  try {
+    const resp = await getS3().send(new GetObjectCommand({ Bucket: MINIO_BUCKET, Key: key }));
+    const buffer = Buffer.from(await resp.Body!.transformToByteArray());
+    const contentType = resp.ContentType || "application/octet-stream";
+    return { buffer, contentType };
+  } catch {
+    return null;
+  }
 }
 
-export async function saveJSONToMinIO(
-  data: unknown,
-  key: string
-): Promise<void> {
-  const json = JSON.stringify(data, null, 2);
-  const token = await login();
-  const prefix = key.substring(0, key.lastIndexOf("/") + 1);
-  const filename = key.substring(key.lastIndexOf("/") + 1);
-  const formData = new FormData();
-  const blob = new Blob([json], { type: "application/json" });
-  formData.append("0", blob, filename);
-  const prefixB64 = toBase64(prefix);
-  const url = `${MINIO_ENDPOINT}/api/v1/buckets/${MINIO_BUCKET}/objects/upload?prefix=${encodeURIComponent(prefixB64)}`;
-  const res = await fetch(url, {
-    method: "POST",
-    headers: { Cookie: `token=${token}` },
-    body: formData,
-  });
-  if (!res.ok) {
-    const err = await res.text();
-    throw new Error(`MinIO saveJSON failed: ${err}`);
+export async function readJSONFromMinIO<T = unknown>(key: string): Promise<T | null> {
+  try {
+    const resp = await getS3().send(new GetObjectCommand({ Bucket: MINIO_BUCKET, Key: key }));
+    const text = await resp.Body!.transformToString();
+    return JSON.parse(text) as T;
+  } catch {
+    return null;
   }
+}
+
+export async function listMinIOObjects(prefix: string): Promise<string[]> {
+  try {
+    const resp = await getS3().send(new ListObjectsV2Command({ Bucket: MINIO_BUCKET, Prefix: prefix }));
+    return (resp.Contents || []).map(o => o.Key!).filter(Boolean);
+  } catch {
+    return [];
+  }
+}
+
+export async function saveJSONToMinIO(data: unknown, key: string): Promise<void> {
+  const json = JSON.stringify(data);
+  const prefix = key.substring(0, key.lastIndexOf("/") + 1);
+  await getS3().send(new PutObjectCommand({
+    Bucket: MINIO_BUCKET,
+    Key: key,
+    Body: json,
+    ContentType: "application/json",
+  }));
 }
