@@ -112,7 +112,7 @@ import ChatBot from "../components/ChatBot.astro";
           <div class="w-12 h-0.5 bg-gradient-to-r from-kkr-red to-kkr-gold mx-auto rounded-full"></div>
         </div>
 
-        <span id="section-label-story" class="hidden">Kisah / Testimoni</span>
+        <span id="section-label-story" class="hidden">Story Pembicara</span>
 
         <div id="speaker-grid" class="w-full">
           <div class="col-span-full text-center py-12 text-white/50" id="speaker-skeleton">
@@ -451,7 +451,7 @@ import ChatBot from "../components/ChatBot.astro";
         }
 
         let currentIndex = 0;
-        const storyLabel = (document.getElementById("section-label-story")?.textContent) || "Kisah / Testimoni";
+        const storyLabel = (document.getElementById("section-label-story")?.textContent) || "Story Pembicara";
         const btnPrev = container.dataset.btnPrev || "Sebelumnya";
         const btnNext = container.dataset.btnNext || "Selanjutnya";
 
