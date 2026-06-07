@@ -52,7 +52,7 @@ export const GET: APIRoute = async ({ params }) => {
     { label: "ID TIKET", value: registrant.id },
     { label: "NAMA", value: registrant.name },
     { label: "JENIS TIKET", value: ticketName },
-    { label: "PARTISIPAN", value: registrant.participant_type === "Student" ? "Pelajar" : registrant.participant_type === "Alumni" ? "Alumni" : "Umum" },
+    { label: "PARTISIPAN", value: registrant.participant_type === "Student" ? "Pelajar" : "Umum" },
     { label: "TANGGAL", value: date },
     { label: "WAKTU", value: time },
     { label: "LOKASI", value: venue },

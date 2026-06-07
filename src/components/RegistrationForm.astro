@@ -43,7 +43,6 @@ export interface TicketType {
           {[
             { value: "Student", label: "Pelajar" },
             { value: "General", label: "Umum" },
-            { value: "Alumni", label: "Alumni" },
           ].map((option) => (
             <label class="cursor-pointer rounded-xl border border-kkr-light/80 bg-white px-4 py-3 text-center text-sm font-semibold text-kkr-purple transition has-checked:border-kkr-red has-checked:bg-kkr-light has-checked:text-kkr-red hover:border-kkr-maroon">
               <input type="radio" name="status" value={option.value} class="sr-only" checked={option.value === "Student"} data-status={option.value} />
@@ -262,7 +261,7 @@ export interface TicketType {
       const selected = document.querySelector('input[name="status"]:checked');
       const schoolField = document.getElementById("school-field");
       const schoolInput = schoolField?.querySelector('input[name="school"]');
-      if (selected && (selected.value === "General" || selected.value === "Alumni")) {
+      if (selected && selected.value === "General") {
         schoolField.classList.add("hidden");
         schoolInput.removeAttribute("required");
       } else {
