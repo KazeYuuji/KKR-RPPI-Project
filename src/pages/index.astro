@@ -454,11 +454,11 @@ import ChatBot from "../components/ChatBot.astro";
           const s = list[index];
           const total = list.length;
           container.innerHTML = `
-            <div class="grid gap-6 items-start">
+            <div class="grid gap-6 lg:grid-cols-[1fr_1.8fr] items-start">
               <div class="glass-card rounded-2xl p-5 sm:p-6 text-center">
                 ${s.photo_url
-                  ? `<img src="${escapeHtml(s.photo_url)}" class="w-full max-w-[240px] mx-auto aspect-square rounded-xl object-cover shadow-md" alt="${escapeHtml(s.name)}" />`
-                  : `<div class="w-full max-w-[240px] mx-auto aspect-square rounded-xl bg-gradient-to-br from-kkr-light/80 to-white flex items-center justify-center shadow-md"><svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-kkr-red/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>`
+                  ? `<img src="${escapeHtml(s.photo_url)}" class="w-full max-w-[180px] mx-auto aspect-square rounded-xl object-cover shadow-md" alt="${escapeHtml(s.name)}" />`
+                  : `<div class="w-full max-w-[180px] mx-auto aspect-square rounded-xl bg-gradient-to-br from-kkr-light/80 to-white flex items-center justify-center shadow-md"><svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-kkr-red/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>`
                 }
                 <div class="mt-4 space-y-1">
                   ${s.title ? `<span class="inline-block text-[10px] font-semibold uppercase tracking-wider text-kkr-red bg-kkr-light px-2.5 py-0.5 rounded-full">${escapeHtml(s.title)}</span>` : ""}
