@@ -5,12 +5,16 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "backup:minio": "node scripts/backup-to-minio.js",
+    "move:minio": "node scripts/move-to-minio.js"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",
     "@astrojs/vercel": "^10.0.7",
     "@libsql/client": "^0.17.3",
+    "@aws-sdk/client-s3": "^3.462.0",
+    "dotenv": "^16.1.4",
     "astro": "^6.3.8",
     "bcryptjs": "^3.0.3",
     "jsonwebtoken": "^9.0.3",
