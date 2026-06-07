@@ -35,7 +35,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
       <form id="sections-form" class="mt-6 space-y-6">
         <div>
           <p class="text-xs font-semibold uppercase tracking-wider text-kkr-purple mb-3">Section Pembicara</p>
-          <div class="grid gap-4 sm:grid-cols-2">
+          <div class="grid gap-4 sm:grid-cols-3">
             <div>
               <label class="block text-sm font-medium text-kkr-purple mb-1">Label</label>
               <input id="section-label-speakers" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Pembicara" />
@@ -43,6 +43,20 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
             <div>
               <label class="block text-sm font-medium text-kkr-purple mb-1">Judul</label>
               <input id="section-heading-speakers" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Bersama Pembicara Rohani" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-kkr-purple mb-1">Label Kisah</label>
+              <input id="section-label-story" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Kisah / Testimoni" />
+            </div>
+          </div>
+          <div class="grid gap-4 sm:grid-cols-2 mt-4">
+            <div>
+              <label class="block text-sm font-medium text-kkr-purple mb-1">Tombol Sebelumnya</label>
+              <input id="btn-speaker-prev" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Sebelumnya" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-kkr-purple mb-1">Tombol Selanjutnya</label>
+              <input id="btn-speaker-next" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Selanjutnya" />
             </div>
           </div>
         </div>
@@ -397,6 +411,9 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
         // Section texts
         setVal("section-label-speakers", s.sectionLabelSpeakers || "");
         setVal("section-heading-speakers", s.sectionHeadingSpeakers || "");
+        setVal("section-label-story", s.sectionLabelStory || "");
+        setVal("btn-speaker-prev", s.btnSpeakerPrev || "");
+        setVal("btn-speaker-next", s.btnSpeakerNext || "");
         setVal("section-label-altar", s.sectionLabelAltar || "");
         setVal("section-heading-altar", s.sectionHeadingAltar || "");
         setVal("section-desc-altar", s.sectionDescAltar || "");
@@ -427,6 +444,9 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
         const res = await fetch("/api/settings", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({
           sectionLabelSpeakers: document.getElementById("section-label-speakers").value.trim(),
           sectionHeadingSpeakers: document.getElementById("section-heading-speakers").value.trim(),
+          sectionLabelStory: document.getElementById("section-label-story").value.trim(),
+          btnSpeakerPrev: document.getElementById("btn-speaker-prev").value.trim(),
+          btnSpeakerNext: document.getElementById("btn-speaker-next").value.trim(),
           sectionLabelAltar: document.getElementById("section-label-altar").value.trim(),
           sectionHeadingAltar: document.getElementById("section-heading-altar").value.trim(),
           sectionDescAltar: document.getElementById("section-desc-altar").value.trim(),

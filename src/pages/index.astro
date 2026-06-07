@@ -112,6 +112,8 @@ import ChatBot from "../components/ChatBot.astro";
           <div class="w-12 h-0.5 bg-gradient-to-r from-kkr-red to-kkr-gold mx-auto rounded-full"></div>
         </div>
 
+        <span id="section-label-story" class="hidden">Kisah / Testimoni</span>
+
         <div id="speaker-grid" class="w-full">
           <div class="col-span-full text-center py-12 text-white/50" id="speaker-skeleton">
             <div class="inline-block w-8 h-8 border-2 border-kkr-maroon border-t-transparent rounded-full animate-spin"></div>
@@ -402,6 +404,9 @@ import ChatBot from "../components/ChatBot.astro";
         // Section labels and headings
         if (s.sectionLabelSpeakers && safe("section-label-speakers")) safe("section-label-speakers").textContent = s.sectionLabelSpeakers;
         if (s.sectionHeadingSpeakers && safe("section-heading-speakers")) safe("section-heading-speakers").textContent = s.sectionHeadingSpeakers;
+        if (s.sectionLabelStory && safe("section-label-story")) safe("section-label-story").textContent = s.sectionLabelStory;
+        if (s.btnSpeakerPrev && safe("speaker-grid")) safe("speaker-grid").dataset.btnPrev = s.btnSpeakerPrev;
+        if (s.btnSpeakerNext && safe("speaker-grid")) safe("speaker-grid").dataset.btnNext = s.btnSpeakerNext;
         if (s.sectionLabelAltar && safe("section-label-altar")) safe("section-label-altar").textContent = s.sectionLabelAltar;
         if (s.sectionHeadingAltar && safe("section-heading-altar")) safe("section-heading-altar").textContent = s.sectionHeadingAltar;
         if (s.sectionDescAltar && safe("section-desc-altar")) safe("section-desc-altar").textContent = s.sectionDescAltar;
@@ -444,40 +449,50 @@ import ChatBot from "../components/ChatBot.astro";
           container.innerHTML = `<div class="text-center py-12 text-white/50"><p class="text-sm">Belum ada pembicara.</p></div>`;
           return;
         }
-        const makeCard = (baseClass) => s => `
-          <div class="${baseClass}">
-            ${s.photo_url
-              ? `<img src="${escapeHtml(s.photo_url)}" class="w-28 h-28 rounded-full object-cover mx-auto shadow-lg shadow-kkr-light/50 border-2 border-white" alt="${escapeHtml(s.name)}" />`
-              : `<div class="w-28 h-28 rounded-full bg-gradient-to-br from-kkr-light/80 to-white mx-auto flex items-center justify-center shadow-lg shadow-kkr-light/50"><svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-kkr-red/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>`
-            }
-            <div class="mt-5 space-y-1">
-              ${s.title ? `<span class="inline-block text-xs font-semibold uppercase tracking-wider text-kkr-red bg-kkr-light px-3 py-1 rounded-full">${escapeHtml(s.title)}</span>` : ""}
-              <h3 class="text-2xl font-semibold text-kkr-dark mt-2">${escapeHtml(s.name)}</h3>
-              ${s.organization ? `<p class="text-kkr-dark/70 text-sm">${escapeHtml(s.organization)}</p>` : ""}
-            </div>
-            ${s.description ? `<div class="mt-4"><p class="text-sm text-kkr-dark/80 leading-relaxed text-center max-w-xs mx-auto break-words">${escapeHtml(s.description)}</p></div>` : '<div class="flex-1"></div>'}
-            ${s.tags ? `<div class="flex flex-wrap justify-center gap-2 mt-5">${s.tags.split(",").map(t => `<span class="text-xs bg-kkr-light text-kkr-red px-3 py-1 rounded-full font-medium">${escapeHtml(t.trim())}</span>`).join("")}</div>` : ""}
-          </div>`;
-        if (list.length > 3) {
-          const base = "rounded-[2.5rem] glass-card p-5 sm:p-8 text-center hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 shrink-0 w-[280px] sm:w-[320px] flex flex-col";
-          const html = list.map(makeCard(base)).join("");
+
+        let currentIndex = 0;
+        const storyLabel = (document.getElementById("section-label-story")?.textContent) || "Kisah / Testimoni";
+        const btnPrev = container.dataset.btnPrev || "Sebelumnya";
+        const btnNext = container.dataset.btnNext || "Selanjutnya";
+
+        function renderSpeaker(index) {
+          const s = list[index];
+          const total = list.length;
           container.innerHTML = `
-            <div class="overflow-hidden" style="mask-image: linear-gradient(to right, transparent 0, black 40px, black calc(100% - 40px), transparent 100%);">
-              <div class="flex gap-4 sm:gap-6" style="width: max-content; animation: scroll-left 30s linear infinite;">
-                <div class="flex gap-4 sm:gap-6">${html}</div>
-                <div class="flex gap-4 sm:gap-6" aria-hidden="true">${html}</div>
+            <div class="grid gap-8 lg:grid-cols-2 items-start">
+              <div class="glass-card rounded-[2.5rem] p-8 sm:p-10 text-center">
+                ${s.photo_url
+                  ? `<img src="${escapeHtml(s.photo_url)}" class="w-32 h-32 rounded-full object-cover mx-auto shadow-lg shadow-kkr-light/50 border-2 border-white" alt="${escapeHtml(s.name)}" />`
+                  : `<div class="w-32 h-32 rounded-full bg-gradient-to-br from-kkr-light/80 to-white mx-auto flex items-center justify-center shadow-lg shadow-kkr-light/50"><svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-kkr-red/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>`
+                }
+                <div class="mt-5 space-y-1">
+                  ${s.title ? `<span class="inline-block text-xs font-semibold uppercase tracking-wider text-kkr-red bg-kkr-light px-3 py-1 rounded-full">${escapeHtml(s.title)}</span>` : ""}
+                  <h3 class="text-2xl font-semibold text-kkr-dark mt-2">${escapeHtml(s.name)}</h3>
+                  ${s.organization ? `<p class="text-kkr-dark/70 text-sm">${escapeHtml(s.organization)}</p>` : ""}
+                </div>
+                ${s.tags ? `<div class="flex flex-wrap justify-center gap-2 mt-5">${s.tags.split(",").map(t => `<span class="text-xs bg-kkr-light text-kkr-red px-3 py-1 rounded-full font-medium">${escapeHtml(t.trim())}</span>`).join("")}</div>` : ""}
+                ${s.description ? `<div class="mt-4"><p class="text-sm text-kkr-dark/80 leading-relaxed text-center max-w-md mx-auto break-words">${escapeHtml(s.description)}</p></div>` : ""}
               </div>
-            </div>`;
-        } else {
-          const base = "rounded-[2.5rem] glass-card p-6 sm:p-8 text-center hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 w-full flex flex-col";
-          const html = list.map(makeCard(base)).join("");
-          if (list.length === 1) {
-            container.innerHTML = `<div class="flex justify-center">${html}</div>`;
-          } else {
-            const gridCols = list.length === 2 ? "sm:grid-cols-2 max-w-2xl" : "sm:grid-cols-3 max-w-4xl";
-            container.innerHTML = `<div class="grid gap-6 ${gridCols} mx-auto">${html}</div>`;
-          }
+              <div class="glass-card rounded-[2.5rem] p-8 sm:p-10">
+                <p class="text-xs font-semibold uppercase tracking-[0.25em] text-kkr-red mb-4">${escapeHtml(storyLabel)}</p>
+                ${s.story ? `<div class="text-kkr-dark/90 leading-8 text-sm whitespace-pre-line">${escapeHtml(s.story)}</div>` : `<p class="text-kkr-dark/50 text-sm italic">Belum ada kisah.</p>`}
+              </div>
+            </div>
+            <div class="flex items-center justify-center gap-4 mt-8">
+              <button id="sp-prev" class="rounded-full bg-white/10 hover:bg-white/20 px-6 py-2.5 text-sm font-semibold text-white transition" ${index === 0 ? 'disabled style="opacity:0.4;cursor:not-allowed"' : ''}>${escapeHtml(btnPrev)}</button>
+              <span class="text-sm text-white/50 font-medium tabular-nums">${index + 1} / ${total}</span>
+              <button id="sp-next" class="rounded-full bg-white/10 hover:bg-white/20 px-6 py-2.5 text-sm font-semibold text-white transition" ${index === total - 1 ? 'disabled style="opacity:0.4;cursor:not-allowed"' : ''}>${escapeHtml(btnNext)}</button>
+            </div>
+          `;
+          document.getElementById("sp-prev")?.addEventListener("click", () => {
+            if (currentIndex > 0) { currentIndex--; renderSpeaker(currentIndex); }
+          });
+          document.getElementById("sp-next")?.addEventListener("click", () => {
+            if (currentIndex < total - 1) { currentIndex++; renderSpeaker(currentIndex); }
+          });
         }
+
+        renderSpeaker(0);
       } catch {
         document.getElementById("speaker-grid").innerHTML = `<div class="text-center py-12 text-red-500"><p>Gagal memuat pembicara.</p></div>`;
       }

@@ -15,15 +15,15 @@ export const POST: APIRoute = async ({ request }) => {
   const db = getDb();
   try {
     const body = await request.json();
-    const { name, title, organization, description, photo_url, tags } = body;
+    const { name, title, organization, description, photo_url, tags, story } = body;
     if (!name) {
       return new Response(JSON.stringify({ error: "Nama pembicara wajib diisi" }), {
         status: 400, headers: { "Content-Type": "application/json" },
       });
     }
     const result = await db.execute(
-      "INSERT INTO speakers (name, title, organization, description, photo_url, tags) VALUES (?, ?, ?, ?, ?, ?)",
-      [name, title || "", organization || "", description || "", photo_url || "", tags || ""]
+      "INSERT INTO speakers (name, title, organization, description, photo_url, tags, story) VALUES (?, ?, ?, ?, ?, ?, ?)",
+      [name, title || "", organization || "", description || "", photo_url || "", tags || "", story || ""]
     );
     const speaker = await db.execute("SELECT * FROM speakers WHERE id = ?", [result.lastInsertRowid]);
     return new Response(JSON.stringify({ speaker: speaker.rows[0] }), {

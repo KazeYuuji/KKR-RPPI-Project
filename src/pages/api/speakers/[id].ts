@@ -37,7 +37,7 @@ export const PUT: APIRoute = async ({ params, request }) => {
       });
     }
     await db.execute(
-      "UPDATE speakers SET name = ?, title = ?, organization = ?, description = ?, photo_url = ?, tags = ?, is_active = ?, updated_at = datetime('now') WHERE id = ?",
+      "UPDATE speakers SET name = ?, title = ?, organization = ?, description = ?, photo_url = ?, tags = ?, story = ?, is_active = ?, updated_at = datetime('now') WHERE id = ?",
       [
         body.name || existing.name,
         body.title ?? existing.title,
@@ -45,6 +45,7 @@ export const PUT: APIRoute = async ({ params, request }) => {
         body.description ?? existing.description,
         body.photo_url ?? existing.photo_url,
         body.tags ?? existing.tags,
+        body.story ?? existing.story,
         body.is_active !== undefined ? (body.is_active ? 1 : 0) : existing.is_active,
         id
       ]

@@ -182,6 +182,12 @@ async function runMigrations(db: ReturnType<typeof createClient>) {
   } catch {
     // no tier column
   }
+  // Add story column to speakers
+  try {
+    await db.execute("SELECT story FROM speakers LIMIT 1");
+  } catch {
+    await db.execute("ALTER TABLE speakers ADD COLUMN story TEXT DEFAULT ''");
+  }
 }
 
 export async function getRow(sql: string, params?: any[]) {
