@@ -1,100 +1,85 @@
 import type { APIRoute } from "astro";
-import { getDb } from "../../lib/db";
-import { saveJSONToMinIO } from "../../lib/minio";
+import { minioListAll, minioGet, minioSet } from "../../lib/minio-db";
+
+const REG_PREFIX = "registrants/";
 
 export const GET: APIRoute = async () => {
-  const db = getDb();
-  const result = await db.execute("SELECT * FROM registrants ORDER BY created_at DESC");
-  return new Response(JSON.stringify({ registrants: result.rows }), {
-    status: 200, headers: { "Content-Type": "application/json" },
-  });
+  try {
+    const registrants = await minioListAll<Record<string, any>>(REG_PREFIX);
+    registrants.sort((a, b) => {
+      const da = a.created_at || "";
+      const db = b.created_at || "";
+      return da > db ? -1 : da < db ? 1 : 0;
+    });
+    return new Response(JSON.stringify({ registrants }), {
+      status: 200, headers: { "Content-Type": "application/json" },
+    });
+  } catch (err) {
+    console.error("GET registrants error:", err);
+    return new Response(JSON.stringify({ error: "Gagal mengambil data pendaftar" }), {
+      status: 500, headers: { "Content-Type": "application/json" },
+    });
+  }
 };
 
 export const POST: APIRoute = async ({ request }) => {
-  const db = getDb();
   try {
     const body = await request.json();
     const { id, name, school, email, whatsapp, participant_type, ticket, checked_in, action } = body;
     if (!id) {
-      return new Response(JSON.stringify({ error: "ID wajib diisi" }), {
-        status: 400, headers: { "Content-Type": "application/json" },
-      });
+      return new Response(JSON.stringify({ error: "ID wajib diisi" }), { status: 400, headers: { "Content-Type": "application/json" } });
     }
 
-    const existingResult = await db.execute("SELECT * FROM registrants WHERE id = ?", [id]);
-    const existing = existingResult.rows[0] as Record<string, any> | undefined;
+    const existing = await minioGet<Record<string, any>>(`${REG_PREFIX}${id}.json`);
 
     if (action === "checkin") {
       if (existing?.checked_in) {
-        return new Response(JSON.stringify({ error: "Tiket ini sudah check-in sebelumnya dan tidak dapat digunakan lagi" }), {
-          status: 400, headers: { "Content-Type": "application/json" },
-        });
+        return new Response(JSON.stringify({ error: "Tiket ini sudah check-in sebelumnya dan tidak dapat digunakan lagi" }), { status: 400, headers: { "Content-Type": "application/json" } });
       }
-      await db.execute("UPDATE registrants SET checked_in = 1 WHERE id = ?", [id]);
-      const r = await db.execute("SELECT * FROM registrants WHERE id = ?", [id]);
-      return new Response(JSON.stringify({ registrant: r.rows[0] }), { status: 200, headers: { "Content-Type": "application/json" } });
+      const updated = { ...(existing || {}), checked_in: 1, id };
+      await minioSet(`${REG_PREFIX}${id}.json`, updated);
+      return new Response(JSON.stringify({ registrant: updated }), { status: 200, headers: { "Content-Type": "application/json" } });
     }
 
     if (!name) {
-      return new Response(JSON.stringify({ error: "Nama wajib diisi" }), {
-        status: 400, headers: { "Content-Type": "application/json" },
-      });
+      return new Response(JSON.stringify({ error: "Nama wajib diisi" }), { status: 400, headers: { "Content-Type": "application/json" } });
     }
 
-    // Check registration deadline
     if (!existing) {
-      const deadlineResult = await db.execute("SELECT value FROM settings WHERE key = 'regDeadlineISO'");
-      const deadlineRow = deadlineResult.rows[0] as Record<string, any> | undefined;
-      if (deadlineRow?.value) {
-        let deadlineStr = deadlineRow.value;
-        // Naive ISO format (no Z or offset) — assume WIB (UTC+7)
-        if (!deadlineStr.endsWith('Z') && !/[+-]\d{2}:\d{2}$/.test(deadlineStr)) {
-          deadlineStr += '+07:00';
-        }
-        const deadline = new Date(deadlineStr).getTime();
-        if (Date.now() > deadline) {
-          return new Response(JSON.stringify({ error: "Maaf, batas waktu pendaftaran telah berakhir" }), {
-            status: 400, headers: { "Content-Type": "application/json" },
-          });
+      const settings = await minioListAll<Record<string, any>>("settings/");
+      const deadlineSetting = settings.find(s => s.key === "regDeadlineISO");
+      if (deadlineSetting?.value) {
+        let deadlineStr = deadlineSetting.value;
+        if (!deadlineStr.endsWith('Z') && !/[+-]\d{2}:\d{2}$/.test(deadlineStr)) deadlineStr += '+07:00';
+        if (Date.now() > new Date(deadlineStr).getTime()) {
+          return new Response(JSON.stringify({ error: "Maaf, batas waktu pendaftaran telah berakhir" }), { status: 400, headers: { "Content-Type": "application/json" } });
         }
       }
+
+      const ticketType = ticket || "general";
+      const ticketData = await minioGet<Record<string, any>>(`tickets/${ticketType}.json`);
+      if (!ticketData) {
+        return new Response(JSON.stringify({ error: "Jenis tiket tidak ditemukan" }), { status: 400, headers: { "Content-Type": "application/json" } });
+      }
+      if ((ticketData.remaining || 0) <= 0) {
+        return new Response(JSON.stringify({ error: "Maaf, tiket sudah habis!" }), { status: 400, headers: { "Content-Type": "application/json" } });
+      }
+      // decrement ticket
+      await minioSet(`tickets/${ticketType}.json`, { ...ticketData, remaining: (ticketData.remaining || 0) - 1 });
     }
 
-    const ticketType = ticket || "general";
-    if (!existing) {
-      const ticketResult = await db.execute("SELECT remaining FROM tickets WHERE id = ?", [ticketType]);
-      const ticketRow = ticketResult.rows[0] as Record<string, any> | undefined;
-      if (!ticketRow) {
-        return new Response(JSON.stringify({ error: "Jenis tiket tidak ditemukan" }), {
-          status: 400, headers: { "Content-Type": "application/json" },
-        });
-      }
-      if (ticketRow.remaining <= 0) {
-        return new Response(JSON.stringify({ error: "Maaf, tiket sudah habis!" }), {
-          status: 400, headers: { "Content-Type": "application/json" },
-        });
-      }
-      await db.execute(
-        "INSERT INTO registrants (id, name, school, email, whatsapp, participant_type, ticket, checked_in) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-        [id, name, school || "", email || "", whatsapp || "", participant_type || "Student", ticketType, checked_in ? 1 : 0]
-      );
-      await db.execute("UPDATE tickets SET remaining = remaining - 1 WHERE id = ? AND remaining > 0", [ticketType]);
-    } else {
-      await db.execute(
-        "UPDATE registrants SET name = ?, school = ?, email = ?, whatsapp = ?, participant_type = ?, ticket = ?, checked_in = ? WHERE id = ?",
-        [name, school || "", email || "", whatsapp || "", participant_type || "Student", ticketType, checked_in ? 1 : 0, id]
-      );
-    }
+    const registrantData = {
+      id, name, school: school || "", email: email || "", whatsapp: whatsapp || "",
+      participant_type: participant_type || "Student", ticket: ticket || "general",
+      checked_in: checked_in ? 1 : 0,
+      created_at: existing?.created_at || new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
 
-    const r = await db.execute("SELECT * FROM registrants WHERE id = ?", [id]);
-    saveJSONToMinIO(r.rows[0], `backups/registrants/${id}.json`).catch(e => console.error("MinIO backup error:", e));
-    return new Response(JSON.stringify({ registrant: r.rows[0] }), {
-      status: 200, headers: { "Content-Type": "application/json" },
-    });
+    await minioSet(`${REG_PREFIX}${id}.json`, registrantData);
+    return new Response(JSON.stringify({ registrant: registrantData }), { status: 200, headers: { "Content-Type": "application/json" } });
   } catch (err) {
     console.error("POST registrants error:", err);
-    return new Response(JSON.stringify({ error: "Gagal memproses pendaftar" }), {
-      status: 500, headers: { "Content-Type": "application/json" },
-    });
+    return new Response(JSON.stringify({ error: "Gagal memproses pendaftar" }), { status: 500, headers: { "Content-Type": "application/json" } });
   }
 };

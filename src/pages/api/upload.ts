@@ -1,5 +1,5 @@
 import type { APIRoute } from "astro";
-import { uploadBuffer } from "../../lib/minio";
+import { uploadBuffer } from "../../lib/minio-db";
 
 export const POST: APIRoute = async ({ request }) => {
   try {

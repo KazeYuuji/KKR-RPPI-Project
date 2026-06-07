@@ -1,38 +1,28 @@
 import type { APIRoute } from "astro";
-import { getDb } from "../../../lib/db";
+import { minioListAll, minioSet, minioGet, minioDelete, newId } from "../../../lib/minio-db";
 
 export const prerender = false;
 
 export const GET: APIRoute = async () => {
-  const db = getDb();
-  const result = await db.execute("SELECT * FROM sponsors ORDER BY is_active DESC, created_at DESC");
-  return new Response(JSON.stringify({ sponsors: result.rows }), {
-    status: 200, headers: { "Content-Type": "application/json" },
-  });
+  const items = await minioListAll<Record<string, any>>("sponsors/");
+  items.sort((a, b) => (b.is_active ? 1 : 0) - (a.is_active ? 1 : 0) || (b.created_at || "").localeCompare(a.created_at || ""));
+  return new Response(JSON.stringify({ sponsors: items }), { status: 200, headers: { "Content-Type": "application/json" } });
 };
 
 export const POST: APIRoute = async ({ request }) => {
-  const db = getDb();
   try {
     const body = await request.json();
     const { name, website, description, logo_url } = body;
     if (!name) {
-      return new Response(JSON.stringify({ error: "Nama sponsor wajib diisi" }), {
-        status: 400, headers: { "Content-Type": "application/json" },
-      });
+      return new Response(JSON.stringify({ error: "Nama sponsor wajib diisi" }), { status: 400, headers: { "Content-Type": "application/json" } });
     }
-    const result = await db.execute(
-      "INSERT INTO sponsors (name, website, description, logo_url) VALUES (?, ?, ?, ?)",
-      [name, website || "", description || "", logo_url || ""]
-    );
-    const sponsor = await db.execute("SELECT * FROM sponsors WHERE id = ?", [result.lastInsertRowid]);
-    return new Response(JSON.stringify({ sponsor: sponsor.rows[0] }), {
-      status: 201, headers: { "Content-Type": "application/json" },
-    });
+    const id = newId();
+    const now = new Date().toISOString();
+    const sponsor = { id, name, website: website || "", description: description || "", logo_url: logo_url || "", is_active: 1, created_at: now, updated_at: now };
+    await minioSet(`sponsors/${id}.json`, sponsor);
+    return new Response(JSON.stringify({ sponsor }), { status: 201, headers: { "Content-Type": "application/json" } });
   } catch (err) {
     console.error("POST sponsor error:", err);
-    return new Response(JSON.stringify({ error: "Gagal menambah sponsor" }), {
-      status: 500, headers: { "Content-Type": "application/json" },
-    });
+    return new Response(JSON.stringify({ error: "Gagal menambah sponsor" }), { status: 500, headers: { "Content-Type": "application/json" } });
   }
 };

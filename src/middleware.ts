@@ -1,22 +1,10 @@
 import { defineMiddleware } from "astro/middleware";
 import { getAdminFromRequest } from "./lib/auth";
-import { initSchema } from "./lib/db";
 
 const protectedPaths = ["/dashboard", "/api/stats", "/api/upload"];
 const apiPrefix = "/api";
 
-let schemaInitialized = false;
-
 export const onRequest = defineMiddleware(async (context, next) => {
-  if (!schemaInitialized) {
-    try {
-      await initSchema();
-      schemaInitialized = true;
-    } catch (e) {
-      console.error("Schema init failed:", e);
-    }
-  }
-
   const url = context.url.pathname;
   const method = context.request.method;
 
@@ -34,7 +22,6 @@ export const onRequest = defineMiddleware(async (context, next) => {
     } catch (err) {
       console.error("Middleware parse registrants body error:", err);
     }
-    // If it has an action field (checkin), fall through to auth check
   }
 
   const isProtected = protectedPaths.some((p) => url.startsWith(p)) ||

@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-import { getRow, getDb } from "./db";
+import { minioGet } from "./minio-db";
 
 const JWT_SECRET = process.env.JWT_SECRET || "kkr-rppi-secret-2026";
 const JWT_EXPIRES = "24h";
@@ -32,7 +32,7 @@ export function verifyToken(token: string): AdminPayload | null {
 }
 
 export async function authenticateAdmin(username: string, password: string): Promise<AdminPayload | null> {
-  const admin = await getRow("SELECT * FROM admins WHERE username = ?", [username]);
+  const admin = await minioGet<Record<string, any>>(`admins/${username}.json`);
   if (!admin || !verifyPassword(password, admin.password)) return null;
   return { id: admin.id, username: admin.username, email: admin.email };
 }
