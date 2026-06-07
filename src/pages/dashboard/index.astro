@@ -170,6 +170,8 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
   <div id="toast-container" class="fixed top-4 right-4 z-[100] flex flex-col gap-2 pointer-events-none"></div>
 
   <script>
+    import { Html5Qrcode } from "html5-qrcode";
+
     let qrScannerInstance = null;
     let qrScanning = false;
 
@@ -188,36 +190,36 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
     }
 
     async function startQrScanner() {
-      const { Html5Qrcode } = await import("html5-qrcode");
       const readerEl = document.getElementById("qr-reader");
       const btn = document.getElementById("scan-qr-btn");
       readerEl.classList.remove("hidden");
+      readerEl.style.minHeight = "300px";
       btn.textContent = "Memulai kamera...";
       btn.disabled = true;
 
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
-        stream.getTracks().forEach(t => t.stop());
-      } catch {
-        toast("Izinkan akses kamera di browser Anda", "error");
-        btn.textContent = "Scan";
-        btn.disabled = false;
-        return;
+        qrScannerInstance = new Html5Qrcode("qr-reader");
+        await qrScannerInstance.start(
+          { facingMode: "environment" },
+          { fps: 10, qrbox: { width: 250, height: 250 } },
+          (decodedText) => {
+            document.getElementById("checkin-id").value = decodedText;
+            document.getElementById("checkin-form").requestSubmit();
+            stopQrScanner();
+          },
+          () => {}
+        );
+        qrScanning = true;
+        btn.textContent = "Tutup";
+      } catch (err) {
+        if (err.name === "NotAllowedError") {
+          toast("Izinkan akses kamera di pengaturan browser", "error");
+        } else {
+          toast("Kamera tidak tersedia: " + (err.message || "unknown"), "error");
+        }
+        readerEl.classList.add("hidden");
+        readerEl.style.minHeight = "";
       }
-
-      qrScannerInstance = new Html5Qrcode("qr-reader");
-      await qrScannerInstance.start(
-        { facingMode: "environment" },
-        { fps: 10, qrbox: { width: 250, height: 250 } },
-        (decodedText) => {
-          document.getElementById("checkin-id").value = decodedText;
-          document.getElementById("checkin-form").requestSubmit();
-          stopQrScanner();
-        },
-        () => {}
-      );
-      qrScanning = true;
-      btn.textContent = "Tutup";
       btn.disabled = false;
     }
 
@@ -231,6 +233,7 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
       }
       qrScanning = false;
       readerEl.classList.add("hidden");
+      readerEl.style.minHeight = "";
       btn.textContent = "Scan";
       btn.disabled = false;
     }
