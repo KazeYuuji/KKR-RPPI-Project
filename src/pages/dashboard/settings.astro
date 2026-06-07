@@ -336,26 +336,33 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
       </form>
     </div>
 
-    <!-- Security -->
+    <!-- Admin Account -->
     <div class="glass-card p-6 sm:p-8">
-      <h2 class="text-xl font-semibold text-kkr-dark">Keamanan</h2>
-      <p class="text-sm text-kkr-maroon mt-1">Status keamanan akun admin.</p>
-      <div class="mt-6 space-y-5">
-        <div class="flex items-center justify-between py-3">
-          <div>
-            <p class="text-sm font-medium text-kkr-dark">Logout Otomatis</p>
-            <p class="text-xs text-kkr-maroon/80">Sesi akan berakhir setelah 24 jam tidak aktif</p>
-          </div>
-          <span class="text-xs bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-full font-medium">Aktif</span>
-        </div>
-        <div class="flex items-center justify-between py-3 border-t border-kkr-light/30">
-          <div>
-            <p class="text-sm font-medium text-kkr-dark">Password Default</p>
-            <p class="text-xs text-kkr-maroon/80">Ganti password default untuk keamanan lebih baik</p>
-          </div>
-          <span class="text-xs bg-kkr-gold/30 text-kkr-maroon px-2.5 py-1 rounded-full font-medium">admin123</span>
-        </div>
+      <div class="flex items-center gap-3 mb-1">
+        <span class="w-8 h-8 rounded-xl bg-kkr-light/40 flex items-center justify-center text-kkr-red shrink-0"><svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+        <h2 class="text-xl font-semibold text-kkr-dark">Akun Admin</h2>
       </div>
+      <p class="text-sm text-kkr-maroon mt-1">Ubah username dan/atau password akun admin. Sesi akan diperbarui otomatis.</p>
+      <form id="admin-account-form" class="mt-6 space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-kkr-purple mb-1">Username Saat Ini</label>
+          <p class="text-sm font-semibold text-kkr-dark py-2.5 px-1" id="admin-current-username">Memuat...</p>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-kkr-purple mb-1">Username Baru</label>
+          <input id="admin-username" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Kosongkan jika tidak diubah" autocomplete="username" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-kkr-purple mb-1">Password Baru</label>
+          <input id="admin-password" type="password" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Minimal 8 karakter. Kosongkan jika tidak diubah" autocomplete="new-password" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-kkr-purple mb-1">Password Saat Ini <span class="text-red-500">*</span></label>
+          <input id="admin-current-password" type="password" required class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Masukkan password saat ini untuk konfirmasi" autocomplete="current-password" />
+        </div>
+        <div id="admin-account-error" class="text-sm text-red-600 hidden"></div>
+        <button type="submit" class="rounded-xl bg-kkr-red px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-kkr-maroon disabled:opacity-50 disabled:cursor-not-allowed">Simpan Perubahan</button>
+      </form>
     </div>
   </div>
 
@@ -633,6 +640,70 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
       btn.disabled = false; btn.textContent = "Simpan Teks";
     });
 
-    document.addEventListener("DOMContentLoaded", loadSettings);
+    document.getElementById("admin-account-form")?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const errorEl = document.getElementById("admin-account-error");
+      const btn = e.target.querySelector("button[type=submit]");
+      errorEl.classList.add("hidden");
+      btn.disabled = true; btn.textContent = "Menyimpan...";
+
+      const current_password = document.getElementById("admin-current-password").value;
+      const new_username = document.getElementById("admin-username").value.trim();
+      const new_password = document.getElementById("admin-password").value;
+
+      if (!current_password) {
+        errorEl.textContent = "Password saat ini wajib diisi";
+        errorEl.classList.remove("hidden");
+        btn.disabled = false; btn.textContent = "Simpan Perubahan";
+        return;
+      }
+
+      if (new_password && new_password.length < 8) {
+        errorEl.textContent = "Password baru minimal 8 karakter";
+        errorEl.classList.remove("hidden");
+        btn.disabled = false; btn.textContent = "Simpan Perubahan";
+        return;
+      }
+
+      if (!new_username && !new_password) {
+        errorEl.textContent = "Isi username baru dan/atau password baru";
+        errorEl.classList.remove("hidden");
+        btn.disabled = false; btn.textContent = "Simpan Perubahan";
+        return;
+      }
+
+      try {
+        const res = await fetch("/api/auth/change-credentials", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ current_password, new_username: new_username || undefined, new_password: new_password || undefined }),
+        });
+        const data = await res.json();
+        if (res.ok) {
+          toast(data.message || "Berhasil disimpan!");
+          document.getElementById("admin-current-password").value = "";
+          document.getElementById("admin-password").value = "";
+        } else {
+          errorEl.textContent = data.error || "Gagal menyimpan";
+          errorEl.classList.remove("hidden");
+        }
+      } catch {
+        errorEl.textContent = "Terjadi kesalahan jaringan";
+        errorEl.classList.remove("hidden");
+      }
+      btn.disabled = false; btn.textContent = "Simpan Perubahan";
+    });
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      loadSettings();
+      try {
+        const res = await fetch("/api/auth/me");
+        if (res.ok) {
+          const data = await res.json();
+          const el = document.getElementById("admin-current-username");
+          if (el) el.textContent = data.admin?.username || "-";
+        }
+      } catch {}
+    });
   </script>
 </AdminLayout>

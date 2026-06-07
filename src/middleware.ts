@@ -46,5 +46,12 @@ export const onRequest = defineMiddleware(async (context, next) => {
     context.locals.admin = admin;
   }
 
-  return next();
+  const response = await next();
+
+  // Security headers
+  response.headers.set("X-Content-Type-Options", "nosniff");
+  response.headers.set("X-Frame-Options", "DENY");
+  response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+
+  return response;
 });
