@@ -85,6 +85,11 @@ export interface TicketType {
           <p id="ticket-name" class="mt-2 text-lg font-semibold text-kkr-dark">-</p>
         </div>
       </div>
+      <div class="mt-4 flex justify-center">
+        <div class="rounded-2xl bg-white p-3 shadow-sm border border-kkr-light/50">
+          <canvas id="qr-code-canvas" width="160" height="160" class="block"></canvas>
+        </div>
+      </div>
       <div class="mt-4 rounded-xl bg-blue-50 border border-blue-200 p-4 text-left text-sm text-blue-800">
         <p class="font-semibold mb-1">Langkah selanjutnya:</p>
         <ol class="list-decimal pl-4 space-y-1 text-blue-700">
@@ -107,6 +112,8 @@ export interface TicketType {
   </div>
 
   <script>
+    import QRCode from "qrcode";
+
     const form = document.getElementById("registration-form");
     const select = document.getElementById("ticket-select");
     const btn = document.getElementById("submit-btn");
@@ -116,6 +123,7 @@ export interface TicketType {
     const nameEl = document.getElementById("ticket-name");
     const stockEl = document.getElementById("ticket-stock");
     const pdfBtn = document.getElementById("pdf-download-btn");
+    const qrCanvas = document.getElementById("qr-code-canvas");
 
     function escapeHtml(str) {
       if (str == null) return "";
@@ -224,6 +232,7 @@ export interface TicketType {
           const opt = select.selectedOptions[0];
           nameEl.textContent = opt ? opt.textContent?.trim().replace(/\s*\(.*\)/, "") || ticketType : ticketType;
           pdfBtn.href = "/api/ticket-pdf/" + id;
+          QRCode.toCanvas(qrCanvas, id, { width: 160, margin: 2, color: { dark: "#1a1a1f", light: "#ffffff" } });
           modal.classList.remove("pointer-events-none", "opacity-0");
           form.reset();
           toggleSchoolField();

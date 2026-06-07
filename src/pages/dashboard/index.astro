@@ -146,13 +146,20 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
             </span>
             <h3 class="text-base font-semibold text-kkr-dark">Check-in Cepat</h3>
           </div>
-          <p class="text-sm text-kkr-maroon/80 mt-0.5">Verifikasi peserta via ID tiket.</p>
+          <p class="text-sm text-kkr-maroon/80 mt-0.5">Scan QR tiket atau masukkan ID manual.</p>
           <form id="checkin-form" class="mt-4 space-y-3">
             <div class="relative">
               <input id="checkin-id" type="text" placeholder="Masukkan ID tiket..." class="w-full rounded-xl border border-kkr-light/50 bg-white pl-4 pr-10 py-3 text-sm text-kkr-dark outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" />
               <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 absolute right-3.5 top-1/2 -translate-y-1/2 text-kkr-maroon/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             </div>
-            <button class="w-full rounded-xl bg-kkr-dark px-4 py-3 text-sm font-semibold text-white transition hover:bg-kkr-purple active:scale-[0.98]">Cari & Check-in</button>
+            <div class="flex gap-2">
+              <button class="flex-1 rounded-xl bg-kkr-dark px-4 py-3 text-sm font-semibold text-white transition hover:bg-kkr-purple active:scale-[0.98]">Cari & Check-in</button>
+              <button type="button" id="scan-qr-btn" class="rounded-xl bg-emerald-100 px-4 py-3 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-200 active:scale-[0.98] shrink-0 flex items-center gap-1.5">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><rect x="7" y="7" width="10" height="10" rx="2"/></svg>
+                Scan
+              </button>
+            </div>
+            <div id="qr-reader" class="hidden rounded-xl overflow-hidden border border-kkr-light/50"></div>
             <div id="checkin-result" class="rounded-xl p-3 text-sm hidden"></div>
           </form>
         </div>
@@ -163,6 +170,10 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
   <div id="toast-container" class="fixed top-4 right-4 z-[100] flex flex-col gap-2 pointer-events-none"></div>
 
   <script>
+    import { Html5QrcodeScanner } from "html5-qrcode";
+
+    let qrScanner = null;
+
     function escapeHtml(str) {
       if (str == null) return "";
       return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
@@ -320,6 +331,24 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
         resultEl.textContent = "Terjadi kesalahan";
       }
       resultEl.classList.remove("hidden");
+    });
+
+    document.getElementById("scan-qr-btn")?.addEventListener("click", async () => {
+      const readerEl = document.getElementById("qr-reader");
+      if (qrScanner) {
+        await qrScanner.clear();
+        qrScanner = null;
+        readerEl.classList.add("hidden");
+        document.getElementById("scan-qr-btn").textContent = "Scan";
+        return;
+      }
+      readerEl.classList.remove("hidden");
+      document.getElementById("scan-qr-btn").textContent = "Tutup";
+      qrScanner = new Html5QrcodeScanner("qr-reader", { fps: 10, qrbox: { width: 200, height: 200 } }, false);
+      qrScanner.render((decodedText) => {
+        document.getElementById("checkin-id").value = decodedText;
+        document.getElementById("checkin-form").requestSubmit();
+      }, () => {});
     });
 
     document.addEventListener("DOMContentLoaded", () => { loadStats(); loadRegistrants(); loadTickets(); });
