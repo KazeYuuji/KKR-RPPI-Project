@@ -16,6 +16,7 @@ export const POST: APIRoute = async ({ request }) => {
   try {
     const body = await request.json();
     for (const [key, value] of Object.entries(body)) {
+      if (!/^[a-zA-Z0-9_-]+$/.test(key)) continue;
       await minioSet(`settings/${key}.json`, { key, value: String(value) });
     }
     return new Response(JSON.stringify({ success: true }), {

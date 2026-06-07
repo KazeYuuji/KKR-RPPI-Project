@@ -299,7 +299,7 @@ import ChatBot from "../components/ChatBot.astro";
         <p id="sp-modal-desc" class="text-kkr-dark/80 leading-7 text-sm break-words"></p>
       </div>
       <div id="sp-modal-web-wrap" class="hidden px-8 pb-8 pt-4 text-center border-t border-white/20">
-        <a id="sp-modal-web" href="#" target="_blank" class="hidden inline-flex items-center gap-1.5 rounded-xl bg-kkr-red px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-kkr-maroon">Kunjungi Website <span>↗</span></a>
+        <a id="sp-modal-web" href="#" target="_blank" rel="noopener noreferrer" class="hidden inline-flex items-center gap-1.5 rounded-xl bg-kkr-red px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-kkr-maroon">Kunjungi Website <span>↗</span></a>
       </div>
     </div>
   </div>
@@ -389,7 +389,7 @@ import ChatBot from "../components/ChatBot.astro";
         if (s.aboutBlockquote && safe("about-blockquote")) {
           const bq = s.aboutBlockquote;
           const parts = bq.split("—");
-          safe("about-blockquote").innerHTML = (parts[0] ? `"${parts[0].trim()}"` : "") + '<br/><span id="about-blockquote-ref" class="text-sm not-italic text-kkr-dark/60 font-medium">— ' + (parts[1] ? parts[1].trim() : "") + "</span>";
+          safe("about-blockquote").innerHTML = (parts[0] ? `"${escapeHtml(parts[0].trim())}"` : "") + '<br/><span id="about-blockquote-ref" class="text-sm not-italic text-kkr-dark/60 font-medium">— ' + (parts[1] ? escapeHtml(parts[1].trim()) : "") + "</span>";
         }
 
         // CTA
@@ -590,7 +590,7 @@ import ChatBot from "../components/ChatBot.astro";
       const logoEl = document.getElementById("sp-modal-logo");
       if (sponsor.logo_url) {
         logoEl.src = sponsor.logo_url;
-        logoEl.alt = sponsor.name + " logo";
+        logoEl.alt = escapeHtml(sponsor.name) + " logo";
         logoEl.classList.remove("hidden");
       } else {
         logoEl.classList.add("hidden");
@@ -607,7 +607,7 @@ import ChatBot from "../components/ChatBot.astro";
       const webWrap = document.getElementById("sp-modal-web-wrap");
       const webLink = document.getElementById("sp-modal-web");
       if (sponsor.website) {
-        webLink.href = sponsor.website;
+        try { webLink.href = new URL(sponsor.website).href; } catch { webLink.href = "#"; }
         webWrap.classList.remove("hidden");
       } else {
         webWrap.classList.add("hidden");

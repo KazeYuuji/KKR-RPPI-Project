@@ -4,6 +4,11 @@ import { sanitizeString, sanitizeEmail, sanitizePhone } from "../../lib/security
 
 const REG_PREFIX = "registrants/";
 
+function sanitizeTicketId(val: unknown): string {
+  if (typeof val !== "string") return "general";
+  return val.replace(/[^a-zA-Z0-9_-]/g, "").slice(0, 50) || "general";
+}
+
 export const GET: APIRoute = async () => {
   try {
     const registrants = await minioListAll<Record<string, any>>(REG_PREFIX);
@@ -57,7 +62,7 @@ export const POST: APIRoute = async ({ request }) => {
         }
       }
 
-      const ticketType = ticket || "general";
+      const ticketType = sanitizeTicketId(ticket);
       const ticketData = await minioGet<Record<string, any>>(`tickets/${ticketType}.json`);
       if (!ticketData) {
         return new Response(JSON.stringify({ error: "Jenis tiket tidak ditemukan" }), { status: 400, headers: { "Content-Type": "application/json" } });
@@ -65,8 +70,6 @@ export const POST: APIRoute = async ({ request }) => {
       if ((ticketData.remaining || 0) <= 0) {
         return new Response(JSON.stringify({ error: "Maaf, tiket sudah habis!" }), { status: 400, headers: { "Content-Type": "application/json" } });
       }
-      // decrement ticket
-      await minioSet(`tickets/${ticketType}.json`, { ...ticketData, remaining: (ticketData.remaining || 0) - 1 });
     }
 
     const registrantData = {
@@ -75,13 +78,21 @@ export const POST: APIRoute = async ({ request }) => {
       email: sanitizeEmail(email),
       whatsapp: sanitizePhone(whatsapp),
       participant_type: sanitizeString(participant_type, 50) || "Student",
-      ticket: sanitizeString(ticket, 50) || "general",
+      ticket: sanitizeTicketId(ticket),
       checked_in: checked_in ? 1 : 0,
       created_at: existing?.created_at || new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
 
     await minioSet(`${REG_PREFIX}${id}.json`, registrantData);
+
+    if (!existing) {
+      const ticketType = sanitizeTicketId(ticket);
+      const ticketData = await minioGet<Record<string, any>>(`tickets/${ticketType}.json`);
+      if (ticketData && (ticketData.remaining || 0) > 0) {
+        await minioSet(`tickets/${ticketType}.json`, { ...ticketData, remaining: (ticketData.remaining || 0) - 1 });
+      }
+    }
     return new Response(JSON.stringify({ registrant: registrantData }), { status: 200, headers: { "Content-Type": "application/json" } });
   } catch (err) {
     console.error("POST registrants error:", err);

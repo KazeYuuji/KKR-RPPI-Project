@@ -27,7 +27,7 @@ export const PUT: APIRoute = async ({ params, request }) => {
     }
     const updated = {
       ...existing,
-      name: body.name || existing.name,
+      name: body.name ?? existing.name,
       website: body.website ?? existing.website,
       description: body.description ?? existing.description,
       logo_url: body.logo_url ?? existing.logo_url,

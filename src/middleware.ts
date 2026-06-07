@@ -21,8 +21,8 @@ export const onRequest = defineMiddleware(async (context, next) => {
     }
   }
 
-  // ---- Body size limit ----
-  if (["POST", "PUT", "PATCH"].includes(method)) {
+  // ---- Body size limit (exclude file uploads) ----
+  if (["POST", "PUT", "PATCH"].includes(method) && !url.startsWith("/api/upload")) {
     const contentLength = parseInt(context.request.headers.get("content-length") || "0", 10);
     if (contentLength > MAX_BODY_SIZE) {
       return new Response(JSON.stringify({ error: "Request body too large" }), {
@@ -97,7 +97,6 @@ export const onRequest = defineMiddleware(async (context, next) => {
   // ---- Security headers ----
   response.headers.set("X-Content-Type-Options", "nosniff");
   response.headers.set("X-Frame-Options", "DENY");
-  response.headers.set("X-XSS-Protection", "1; mode=block");
   response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
   response.headers.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
   response.headers.set("Permissions-Policy", "geolocation=(), microphone=(), camera=()");
