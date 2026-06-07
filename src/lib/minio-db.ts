@@ -1,9 +1,13 @@
 import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand, ListObjectsV2Command } from "@aws-sdk/client-s3";
 
 const MINIO_ENDPOINT = process.env.MINIO_ENDPOINT || "http://cdn.kediritechnopark.com:9002";
-const MINIO_ACCESS_KEY = process.env.MINIO_ACCESS_KEY || "kediritechnopark";
-const MINIO_SECRET_KEY = process.env.MINIO_SECRET_KEY || "G0beyond!";
 const MINIO_BUCKET = process.env.MINIO_BUCKET || "kkr-rppi";
+
+const MINIO_ACCESS_KEY = process.env.MINIO_ACCESS_KEY;
+const MINIO_SECRET_KEY = process.env.MINIO_SECRET_KEY;
+if (!MINIO_ACCESS_KEY || !MINIO_SECRET_KEY) {
+  throw new Error("MINIO_ACCESS_KEY and MINIO_SECRET_KEY environment variables are required");
+}
 
 let s3: S3Client;
 
