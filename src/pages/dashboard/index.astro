@@ -159,7 +159,13 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
                 Scan
               </button>
             </div>
-            <div id="qr-reader" class="hidden rounded-xl overflow-hidden border border-kkr-light/50"></div>
+            <div id="qr-reader" class="hidden rounded-xl overflow-hidden border border-kkr-light/50 relative bg-black">
+              <video id="qr-video" class="w-full h-full object-cover" playsinline autoplay muted></video>
+              <canvas id="qr-canvas" class="hidden"></canvas>
+              <div id="qr-overlay" class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div class="w-48 h-48 border-2 border-white/60 rounded-xl"></div>
+              </div>
+            </div>
             <div id="checkin-result" class="rounded-xl p-3 text-sm hidden"></div>
           </form>
         </div>
@@ -170,10 +176,12 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
   <div id="toast-container" class="fixed top-4 right-4 z-[100] flex flex-col gap-2 pointer-events-none"></div>
 
   <script>
-    import { Html5Qrcode } from "html5-qrcode";
+    import jsQR from "jsqr";
 
-    let qrScannerInstance = null;
+    let mediaStream = null;
+    let animFrameId = null;
     let qrScanning = false;
+    let scanPaused = false;
 
     function escapeHtml(str) {
       if (str == null) return "";
@@ -189,51 +197,99 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
       setTimeout(() => { el.style.opacity = "0"; el.style.transform = "translateX(100%)"; setTimeout(() => el.remove(), 300); }, 3000);
     }
 
+    function decodeFrame(video, canvas) {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const code = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: "dontInvert" });
+      if (code && code.data) {
+        document.getElementById("checkin-id").value = code.data;
+        document.getElementById("checkin-form").requestSubmit();
+        stopQrScanner();
+        return true;
+      }
+      return false;
+    }
+
+    async function decodeWithBarcodeDetector(video, canvas) {
+      if (!window.BarcodeDetector) return false;
+      try {
+        const detector = new BarcodeDetector({ formats: ["qr_code"] });
+        const barcodes = await detector.detect(video);
+        if (barcodes.length > 0 && barcodes[0].rawValue) {
+          document.getElementById("checkin-id").value = barcodes[0].rawValue;
+          document.getElementById("checkin-form").requestSubmit();
+          stopQrScanner();
+          return true;
+        }
+      } catch {}
+      return false;
+    }
+
+    function scanLoop(video, canvas) {
+      if (!qrScanning || scanPaused) return;
+      (async () => {
+        const detected = await decodeWithBarcodeDetector(video, canvas);
+        if (!detected && !scanPaused) {
+          decodeFrame(video, canvas);
+        }
+      })();
+      animFrameId = requestAnimationFrame(() => scanLoop(video, canvas));
+    }
+
     async function startQrScanner() {
       const readerEl = document.getElementById("qr-reader");
+      const video = document.getElementById("qr-video");
+      const canvas = document.getElementById("qr-canvas");
       const btn = document.getElementById("scan-qr-btn");
+
       readerEl.classList.remove("hidden");
-      readerEl.style.minHeight = "300px";
+      readerEl.style.height = "320px";
       btn.textContent = "Memulai kamera...";
       btn.disabled = true;
 
       try {
-        qrScannerInstance = new Html5Qrcode("qr-reader");
-        await qrScannerInstance.start(
-          { facingMode: "environment" },
-          { fps: 10, qrbox: { width: 250, height: 250 } },
-          (decodedText) => {
-            document.getElementById("checkin-id").value = decodedText;
-            document.getElementById("checkin-form").requestSubmit();
-            stopQrScanner();
-          },
-          () => {}
-        );
+        mediaStream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: "environment", width: { ideal: 640 }, height: { ideal: 480 } }
+        });
+        video.srcObject = mediaStream;
+        await video.play();
+
         qrScanning = true;
+        scanPaused = false;
+        scanLoop(video, canvas);
         btn.textContent = "Tutup";
       } catch (err) {
-        if (err.name === "NotAllowedError") {
+        if (err.name === "NotAllowedError" || err.name === "PermissionDeniedError") {
           toast("Izinkan akses kamera di pengaturan browser", "error");
+        } else if (err.name === "NotFoundError") {
+          toast("Kamera tidak ditemukan di perangkat ini", "error");
         } else {
-          toast("Kamera tidak tersedia: " + (err.message || "unknown"), "error");
+          toast("Gagal mengakses kamera: " + (err.message || "unknown"), "error");
         }
         readerEl.classList.add("hidden");
-        readerEl.style.minHeight = "";
+        readerEl.style.height = "";
       }
       btn.disabled = false;
     }
 
     async function stopQrScanner() {
       const readerEl = document.getElementById("qr-reader");
+      const video = document.getElementById("qr-video");
       const btn = document.getElementById("scan-qr-btn");
-      if (qrScannerInstance) {
-        try { await qrScannerInstance.stop(); } catch {}
-        try { await qrScannerInstance.clear(); } catch {}
-        qrScannerInstance = null;
-      }
+
       qrScanning = false;
+      scanPaused = true;
+      if (animFrameId) { cancelAnimationFrame(animFrameId); animFrameId = null; }
+      if (mediaStream) {
+        mediaStream.getTracks().forEach(t => t.stop());
+        mediaStream = null;
+      }
+      video.srcObject = null;
       readerEl.classList.add("hidden");
-      readerEl.style.minHeight = "";
+      readerEl.style.height = "";
       btn.textContent = "Scan";
       btn.disabled = false;
     }
