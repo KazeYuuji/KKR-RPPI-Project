@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
 import { minioListAll, minioGet, minioSet } from "../../lib/minio-db";
+import { sanitizeString, sanitizeEmail, sanitizePhone } from "../../lib/security";
 
 const REG_PREFIX = "registrants/";
 
@@ -69,8 +70,12 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     const registrantData = {
-      id, name, school: school || "", email: email || "", whatsapp: whatsapp || "",
-      participant_type: participant_type || "Student", ticket: ticket || "general",
+      id, name: sanitizeString(name, 200),
+      school: sanitizeString(school, 200),
+      email: sanitizeEmail(email),
+      whatsapp: sanitizePhone(whatsapp),
+      participant_type: sanitizeString(participant_type, 50) || "Student",
+      ticket: sanitizeString(ticket, 50) || "general",
       checked_in: checked_in ? 1 : 0,
       created_at: existing?.created_at || new Date().toISOString(),
       updated_at: new Date().toISOString(),
