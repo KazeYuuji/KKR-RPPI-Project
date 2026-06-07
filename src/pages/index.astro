@@ -458,8 +458,8 @@ import ChatBot from "../components/ChatBot.astro";
               <div class="grid gap-6 sm:grid-cols-[1fr_1.5fr]">
                 <div class="flex flex-col items-center sm:items-start text-center sm:text-left">
                   ${s.photo_url
-                    ? `<img src="${escapeHtml(s.photo_url)}" class="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl object-cover shadow-lg ring-2 ring-white/20" alt="${escapeHtml(s.name)}" />`
-                    : `<div class="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-gradient-to-br from-kkr-light/80 to-white flex items-center justify-center shadow-lg ring-2 ring-white/20"><svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-kkr-red/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>`
+                    ? `<img src="${escapeHtml(s.photo_url)}" class="w-32 h-32 sm:w-40 sm:h-40 rounded-2xl object-cover shadow-lg ring-2 ring-white/20" alt="${escapeHtml(s.name)}" />`
+                    : `<div class="w-32 h-32 sm:w-40 sm:h-40 rounded-2xl bg-gradient-to-br from-kkr-light/80 to-white flex items-center justify-center shadow-lg ring-2 ring-white/20"><svg xmlns="http://www.w3.org/2000/svg" class="w-14 h-14 text-kkr-red/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>`
                   }
                   ${s.title ? `<span class="inline-block text-[10px] font-semibold uppercase tracking-wider text-kkr-red bg-kkr-light/80 px-2.5 py-0.5 rounded-full mt-4">${escapeHtml(s.title)}</span>` : ""}
                   <h3 class="text-xl sm:text-2xl font-semibold text-kkr-dark mt-1.5">${escapeHtml(s.name)}</h3>
