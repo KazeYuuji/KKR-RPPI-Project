@@ -314,22 +314,38 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
       allowBtn.disabled = true;
       allowBtn.textContent = "Mengakses kamera...";
 
-      function onSuccess(stream) {
+      // getUserMedia dipanggil SINKRON dalam event handler (user gesture)
+      // Tidak pakai enumerateDevices — itu async dan memutus gesture chain
+      if (!navigator.mediaDevices) {
+        toast("Browser Anda tidak mendukung akses kamera", "error");
+        hideCameraModal();
+        btn.textContent = "Scan";
+        btn.disabled = false;
+        allowBtn.disabled = false;
+        return;
+      }
+
+      navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode: { ideal: "environment" },
+          width: { ideal: 640 },
+          height: { ideal: 480 }
+        }
+      }).then(function (stream) {
         hideCameraModal();
         readerEl.classList.remove("hidden");
         readerEl.style.height = "320px";
         video.srcObject = stream;
         mediaStream = stream;
-        video.play().then(() => {
+        video.play().then(function () {
           qrScanning = true;
           scanPaused = false;
           btn.textContent = "Tutup";
           btn.disabled = false;
           scanLoop(video, canvas);
-        }).catch(() => {});
-      }
-
-      function onError(err) {
+        }).catch(function () {});
+        allowBtn.disabled = false;
+      }).catch(function (err) {
         if (err.name === "NotAllowedError" || err.name === "PermissionDeniedError") {
           showPermissionBlocked();
         } else {
@@ -343,43 +359,7 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
           btn.disabled = false;
         }
         allowBtn.disabled = false;
-      }
-
-      // Cari kamera belakang jika ada, fallback ke kamera depan atau kamera apa pun
-      if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
-        navigator.mediaDevices.enumerateDevices().then(devices => {
-          const cams = devices.filter(d => d.kind === "videoinput");
-          const rear = cams.find(c => c.label.toLowerCase().includes("back") || c.label.toLowerCase().includes("belakang") || c.label.toLowerCase().includes("environment"));
-          if (rear) {
-            navigator.mediaDevices.getUserMedia({ video: { deviceId: { exact: rear.deviceId }, width: { ideal: 640 }, height: { ideal: 480 } } })
-              .then(onSuccess).catch(onError);
-          } else if (cams.length > 0) {
-            // Pakai facingMode: environment kalau ada, kalau enggak ya any
-            navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment", width: { ideal: 640 }, height: { ideal: 480 } } })
-              .then(onSuccess).catch(() => {
-                navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 640 }, height: { ideal: 480 } } })
-                  .then(onSuccess).catch(onError);
-              });
-          } else {
-            onError({ name: "NotFoundError", message: "No camera found" });
-          }
-        }).catch(() => {
-          navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 640 }, height: { ideal: 480 } } })
-            .then(onSuccess).catch(onError);
-        });
-      } else if (navigator.mediaDevices) {
-        navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment", width: { ideal: 640 }, height: { ideal: 480 } } })
-          .then(onSuccess).catch(() => {
-            navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 640 }, height: { ideal: 480 } } })
-              .then(onSuccess).catch(onError);
-          });
-      } else {
-        toast("Browser Anda tidak mendukung akses kamera", "error");
-        hideCameraModal();
-        btn.textContent = "Scan";
-        btn.disabled = false;
-        allowBtn.disabled = false;
-      }
+      });
     }
 
     async function stopQrScanner() {
