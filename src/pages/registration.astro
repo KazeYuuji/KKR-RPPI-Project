@@ -59,15 +59,9 @@ import RegistrationForm from "../components/RegistrationForm.astro";
 
     async function osmEmbedUrl(venue) {
       try {
-        var q = encodeURIComponent(venue || "Lokasi Acara");
-        var res = await fetch("https://nominatim.openstreetmap.org/search?q=" + q + "&format=json&limit=1", { headers: { "User-Agent": "KKR-RPPI/1.0" } });
+        var res = await fetch("/api/geocode?venue=" + encodeURIComponent(venue || "Lokasi Acara"));
         var data = await res.json();
-        if (data && data.length > 0) {
-          var lat = parseFloat(data[0].lat);
-          var lon = parseFloat(data[0].lon);
-          var pad = 0.02;
-          return "https://www.openstreetmap.org/export/embed.html?bbox=" + (lon - pad) + "," + (lat - pad) + "," + (lon + pad) + "," + (lat + pad) + "&layer=mapnik&marker=" + lat + "," + lon;
-        }
+        return data.url || "";
       } catch(e) {}
       return "";
     }
