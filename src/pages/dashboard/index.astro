@@ -187,17 +187,22 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
         <p class="mt-1.5 text-sm text-kkr-maroon/80" id="camera-modal-desc">Izinkan akses kamera untuk memindai QR code tiket.</p>
       </div>
       <div id="camera-modal-steps" class="hidden text-left rounded-xl bg-amber-50 border border-amber-200 p-3.5 text-sm text-kkr-maroon space-y-1.5">
-        <p class="font-semibold text-amber-800">Kamera terblokir. Ikuti langkah ini:</p>
-        <ol class="list-decimal pl-4 space-y-1 text-amber-700">
-          <li>Buka <b>Pengaturan</b> browser Anda</li>
-          <li>Cari <b>Izin Situs</b> atau <b>Pengaturan Situs</b></li>
-          <li>Temukan situs ini, atur <b>Kamera</b> ke <b>Izinkan</b></li>
-          <li>Kembali dan coba lagi</li>
-        </ol>
+        <p class="font-semibold text-amber-800">Kamera terblokir oleh browser:</p>
+        <ul class="space-y-1.5 text-amber-700">
+          <li class="flex items-start gap-2"><span class="text-amber-500 mt-0.5 shrink-0">1.</span><span>Tap tombol <b>"Buka Pengaturan"</b> di bawah</span></li>
+          <li class="flex items-start gap-2"><span class="text-amber-500 mt-0.5 shrink-0">2.</span><span>Cari <b>Izin Situs</b> → <b>Kamera</b> → <b>Izinkan</b></span></li>
+          <li class="flex items-start gap-2"><span class="text-amber-500 mt-0.5 shrink-0">3.</span><span>Kembali dan tap <b>"Coba Lagi"</b></span></li>
+        </ul>
       </div>
       <div class="flex flex-col gap-2">
         <button id="camera-modal-allow" class="w-full rounded-xl bg-gradient-to-r from-kkr-maroon to-kkr-red px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:shadow-md active:scale-[0.98]">
           Izinkan Kamera
+        </button>
+        <button id="camera-modal-settings" class="hidden w-full rounded-xl border border-kkr-light/50 px-4 py-3 text-sm font-semibold text-kkr-maroon transition hover:bg-kkr-light/30 active:scale-[0.98]">
+          Buka Pengaturan Browser
+        </button>
+        <button id="camera-modal-reload" class="hidden w-full rounded-xl bg-gray-100 px-4 py-2.5 text-sm font-medium text-kkr-maroon/70 transition hover:bg-gray-200 active:scale-[0.98]">
+          Muat Ulang Halaman
         </button>
         <button id="camera-modal-cancel" class="w-full rounded-xl px-4 py-2.5 text-sm font-medium text-kkr-maroon/70 transition hover:text-kkr-maroon active:scale-[0.98]">
           Batal
@@ -278,12 +283,17 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
       const desc = document.getElementById("camera-modal-desc");
       const steps = document.getElementById("camera-modal-steps");
       const allowBtn = document.getElementById("camera-modal-allow");
+      const settingsBtn = document.getElementById("camera-modal-settings");
+      const reloadBtn = document.getElementById("camera-modal-reload");
 
       modal.classList.remove("hidden");
       title.textContent = "Akses Kamera Diperlukan";
       desc.textContent = "Izinkan akses kamera untuk memindai QR code tiket.";
       steps.classList.add("hidden");
       allowBtn.textContent = "Izinkan Kamera";
+      allowBtn.classList.remove("hidden");
+      settingsBtn.classList.add("hidden");
+      reloadBtn.classList.add("hidden");
     }
 
     function showPermissionBlocked() {
@@ -292,15 +302,24 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
       const desc = document.getElementById("camera-modal-desc");
       const steps = document.getElementById("camera-modal-steps");
       const allowBtn = document.getElementById("camera-modal-allow");
+      const settingsBtn = document.getElementById("camera-modal-settings");
+      const reloadBtn = document.getElementById("camera-modal-reload");
 
       title.textContent = "Kamera Terblokir";
-      desc.textContent = "Akses kamera diblokir oleh browser. Ikuti langkah di bawah untuk mengizinkan.";
+      desc.textContent = "Akses kamera diblokir oleh browser.";
       steps.classList.remove("hidden");
       allowBtn.textContent = "Coba Lagi";
+      allowBtn.classList.remove("hidden");
+      settingsBtn.classList.remove("hidden");
+      reloadBtn.classList.remove("hidden");
     }
 
     function hideCameraModal() {
+      const settingsBtn = document.getElementById("camera-modal-settings");
+      const reloadBtn = document.getElementById("camera-modal-reload");
       document.getElementById("camera-modal").classList.add("hidden");
+      settingsBtn.classList.add("hidden");
+      reloadBtn.classList.add("hidden");
     }
 
     async function requestCamera() {
@@ -515,6 +534,20 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
     document.getElementById("camera-modal-cancel")?.addEventListener("click", () => {
       hideCameraModal();
       document.getElementById("scan-qr-btn").disabled = false;
+    });
+    document.getElementById("camera-modal-settings")?.addEventListener("click", () => {
+      const ua = navigator.userAgent.toLowerCase();
+      if (ua.includes("chrome") && !ua.includes("edge") && !ua.includes("opr")) {
+        const site = encodeURIComponent(window.location.origin);
+        window.open("chrome://settings/content/siteDetails?site=" + site, "_blank");
+      } else if (ua.includes("safari") && !ua.includes("chrome")) {
+        window.location.href = "app-settings:";
+      } else {
+        toast("Buka Pengaturan browser, cari Izin Situs → Kamera → Izinkan", "error");
+      }
+    });
+    document.getElementById("camera-modal-reload")?.addEventListener("click", () => {
+      window.location.reload();
     });
 
     document.addEventListener("DOMContentLoaded", () => { loadStats(); loadRegistrants(); loadTickets(); });
