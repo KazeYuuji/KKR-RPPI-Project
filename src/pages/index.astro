@@ -316,9 +316,11 @@ import ChatBot from "../components/ChatBot.astro";
       return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
     }
 
-    async function osmEmbedUrl(venue) {
+    async function osmEmbedUrl(venue, mapsLink) {
       try {
-        var res = await fetch("/api/geocode?venue=" + encodeURIComponent(venue || "Lokasi Acara"));
+        var params = "venue=" + encodeURIComponent(venue || "Lokasi Acara");
+        if (mapsLink) params += "&mapsLink=" + encodeURIComponent(mapsLink);
+        var res = await fetch("/api/geocode?" + params);
         var data = await res.json();
         return data.url || "";
       } catch(e) {}
@@ -436,7 +438,7 @@ import ChatBot from "../components/ChatBot.astro";
           if (s.locMaps) {
             safe("loc-maps-iframe").src = s.locMaps;
           } else {
-            osmEmbedUrl(venue).then(function(url) {
+            osmEmbedUrl(venue, mapsLink).then(function(url) {
               if (url && safe("loc-maps-iframe")) safe("loc-maps-iframe").src = url;
             });
           }

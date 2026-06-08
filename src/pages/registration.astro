@@ -57,9 +57,11 @@ import RegistrationForm from "../components/RegistrationForm.astro";
       return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
     }
 
-    async function osmEmbedUrl(venue) {
+    async function osmEmbedUrl(venue, mapsLink) {
       try {
-        var res = await fetch("/api/geocode?venue=" + encodeURIComponent(venue || "Lokasi Acara"));
+        var params = "venue=" + encodeURIComponent(venue || "Lokasi Acara");
+        if (mapsLink) params += "&mapsLink=" + encodeURIComponent(mapsLink);
+        var res = await fetch("/api/geocode?" + params);
         var data = await res.json();
         return data.url || "";
       } catch(e) {}
@@ -72,12 +74,13 @@ import RegistrationForm from "../components/RegistrationForm.astro";
         const d = await res.json();
         const s = d.settings || {};
         const venue = s.locVenue || "Kediri";
+        const mapsLink = s.locMapsLink || "";
         document.getElementById("reg-venue").textContent = venue;
         document.getElementById("reg-address").textContent = "Lihat peta di bawah";
         if (s.locMaps) {
           document.getElementById("reg-maps").src = s.locMaps;
         } else {
-          osmEmbedUrl(venue).then(function(url) {
+          osmEmbedUrl(venue, mapsLink).then(function(url) {
             if (url) document.getElementById("reg-maps").src = url;
           });
         }
