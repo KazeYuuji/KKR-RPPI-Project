@@ -316,15 +316,16 @@ import ChatBot from "../components/ChatBot.astro";
       return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
     }
 
-    async function osmEmbedUrl(venue, mapsLink) {
+    async function setEmbedMap(venue, mapsLink) {
       try {
         var params = "venue=" + encodeURIComponent(venue || "Lokasi Acara");
         if (mapsLink) params += "&mapsLink=" + encodeURIComponent(mapsLink);
         var res = await fetch("/api/geocode?" + params);
         var data = await res.json();
-        return data.url || "";
+        if (data && data.lat && data.lon && safe("loc-maps-iframe")) {
+          safe("loc-maps-iframe").src = "https://maps.google.com/maps?q=" + data.lat + "," + data.lon + "&z=15&output=embed";
+        }
       } catch(e) {}
-      return "";
     }
 
     function sanitizeUrl(url) {
@@ -438,9 +439,7 @@ import ChatBot from "../components/ChatBot.astro";
           if (s.locMaps) {
             safe("loc-maps-iframe").src = s.locMaps;
           } else {
-            osmEmbedUrl(venue, mapsLink).then(function(url) {
-              if (url && safe("loc-maps-iframe")) safe("loc-maps-iframe").src = url;
-            });
+            setEmbedMap(venue, mapsLink);
           }
         }
 
