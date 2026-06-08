@@ -116,7 +116,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
         container.innerHTML = list.map((s) => `
           <div class="glass-card p-4 sm:p-5 transition-all duration-200 hover:shadow-md" data-id="${escapeHtml(String(s.id))}">
             <div class="flex items-start gap-3 sm:gap-4">
-              ${s.photo_url ? `<img src="${escapeHtml(sanitizeUrl(s.photo_url))}" class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl object-cover border border-kkr-light/50 shadow-sm shrink-0" />` : `<div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-kkr-light/80 to-white border border-kkr-light/50 flex items-center justify-center shrink-0 shadow-sm"><svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-kkr-red/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>`}
+              ${s.photo_url ? `<img src="${escapeHtml(sanitizeUrl(s.photo_url))}" loading="lazy" decoding="async" class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl object-cover border border-kkr-light/50 shadow-sm shrink-0" />` : `<div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-kkr-light/80 to-white border border-kkr-light/50 flex items-center justify-center shrink-0 shadow-sm"><svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-kkr-red/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>`}
               <div class="flex-1 min-w-0">
                 <div class="flex items-center gap-2 flex-wrap">
                   <h4 class="font-semibold text-kkr-dark truncate">${escapeHtml(s.name)}</h4>
