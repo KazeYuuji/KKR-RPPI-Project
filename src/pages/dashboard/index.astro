@@ -186,8 +186,9 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
         <h3 class="text-lg font-semibold text-kkr-dark" id="camera-modal-title">Akses Kamera</h3>
         <p class="mt-1.5 text-sm text-kkr-maroon/80" id="camera-modal-desc">Izinkan akses kamera untuk memindai QR code tiket.</p>
       </div>
+      <div id="camera-modal-detail" class="hidden text-xs text-kkr-maroon/50 bg-kkr-light/20 rounded-lg p-2 break-words"></div>
       <div id="camera-modal-steps" class="hidden text-left rounded-xl bg-amber-50 border border-amber-200 p-3.5 text-sm text-kkr-maroon space-y-2">
-        <p class="font-semibold text-amber-800">Kamera terblokir. Ikuti langkah ini:</p>
+        <p class="font-semibold text-amber-800">Ikuti langkah ini:</p>
         <div class="space-y-1 text-amber-700">
           <p><span class="font-semibold">Chrome/Android:</span> Ketuk ikon gembok 🔒 di kiri atas → <b>Izin Situs</b> → <b>Kamera</b> → <b>Izinkan</b></p>
           <p><span class="font-semibold">Safari (iPhone):</span> <b>Pengaturan</b> → <b>Safari</b> → <b>Kamera</b> → <b>Izinkan</b></p>
@@ -271,6 +272,8 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
       animFrameId = requestAnimationFrame(() => scanLoop(video, canvas));
     }
 
+    let cameraRequestPending = false;
+
     function showCameraModal() {
       const modal = document.getElementById("camera-modal");
       const title = document.getElementById("camera-modal-title");
@@ -282,20 +285,25 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
       title.textContent = "Akses Kamera Diperlukan";
       desc.textContent = "Izinkan akses kamera untuk memindai QR code tiket.";
       steps.classList.add("hidden");
+      var detailEl = document.getElementById("camera-modal-detail");
+      if (detailEl) detailEl.classList.add("hidden");
       allowBtn.textContent = "Izinkan Kamera";
       allowBtn.disabled = false;
     }
 
-    function showPermissionBlocked() {
+    function showBlockedWithError(msgs) {
       const modal = document.getElementById("camera-modal");
       const title = document.getElementById("camera-modal-title");
       const desc = document.getElementById("camera-modal-desc");
       const steps = document.getElementById("camera-modal-steps");
       const allowBtn = document.getElementById("camera-modal-allow");
+      const errorEl = document.getElementById("camera-modal-detail");
 
-      title.textContent = "Kamera Terblokir";
-      desc.textContent = "Akses kamera diblokir. Ikuti panduan di bawah sesuai browser Anda.";
+      modal.classList.remove("hidden");
+      title.textContent = "Kamera Tidak Dapat Diakses";
+      desc.textContent = msgs.join(" ");
       steps.classList.remove("hidden");
+      if (errorEl) { errorEl.textContent = msgs.join(" | "); errorEl.classList.remove("hidden"); }
       allowBtn.textContent = "Coba Lagi";
       allowBtn.disabled = false;
     }
@@ -304,35 +312,20 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
       document.getElementById("camera-modal").classList.add("hidden");
     }
 
-    function requestCamera() {
-      const readerEl = document.getElementById("qr-reader");
-      const video = document.getElementById("qr-video");
-      const canvas = document.getElementById("qr-canvas");
-      const btn = document.getElementById("scan-qr-btn");
-      const allowBtn = document.getElementById("camera-modal-allow");
+    function startCamera(btn, readerEl, video, canvas) {
+      if (cameraRequestPending) return;
+      cameraRequestPending = true;
 
-      allowBtn.disabled = true;
-      allowBtn.textContent = "Mengakses kamera...";
-
-      // getUserMedia dipanggil SINKRON dalam event handler (user gesture)
-      // Tidak pakai enumerateDevices — itu async dan memutus gesture chain
       if (!navigator.mediaDevices) {
-        toast("Browser Anda tidak mendukung akses kamera", "error");
-        hideCameraModal();
+        showBlockedWithError(["Browser tidak mendukung akses kamera."]);
         btn.textContent = "Scan";
         btn.disabled = false;
-        allowBtn.disabled = false;
+        cameraRequestPending = false;
         return;
       }
 
-      navigator.mediaDevices.getUserMedia({
-        video: {
-          facingMode: { ideal: "environment" },
-          width: { ideal: 640 },
-          height: { ideal: 480 }
-        }
-      }).then(function (stream) {
-        hideCameraModal();
+      navigator.mediaDevices.getUserMedia({ video: true })
+      .then(function (stream) {
         readerEl.classList.remove("hidden");
         readerEl.style.height = "320px";
         video.srcObject = stream;
@@ -343,23 +336,46 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
           btn.textContent = "Tutup";
           btn.disabled = false;
           scanLoop(video, canvas);
-        }).catch(function () {});
-        allowBtn.disabled = false;
+          cameraRequestPending = false;
+        }).catch(function () { cameraRequestPending = false; });
       }).catch(function (err) {
-        if (err.name === "NotAllowedError" || err.name === "PermissionDeniedError") {
-          showPermissionBlocked();
+        var name = err.name || "";
+        var msgs = [];
+        if (name === "NotAllowedError" || name === "PermissionDeniedError") {
+          msgs.push("Akses kamera ditolak oleh browser.");
+          msgs.push("Klik 'Coba Lagi' setelah mengizinkan di pengaturan.");
+        } else if (name === "NotFoundError") {
+          msgs.push("Kamera tidak ditemukan.");
+        } else if (name === "NotReadableError") {
+          msgs.push("Kamera sedang digunakan aplikasi lain.");
         } else {
-          hideCameraModal();
-          if (err.name === "NotFoundError") {
-            toast("Kamera tidak ditemukan di perangkat ini", "error");
-          } else {
-            toast("Gagal mengakses kamera: " + (err.message || "unknown"), "error");
-          }
-          btn.textContent = "Scan";
-          btn.disabled = false;
+          msgs.push("Error: " + (err.message || name || "unknown"));
         }
-        allowBtn.disabled = false;
+        showBlockedWithError(msgs);
+        btn.textContent = "Scan";
+        btn.disabled = false;
+        cameraRequestPending = false;
       });
+    }
+
+    function tryCamera() {
+      const btn = document.getElementById("scan-qr-btn");
+      btn.disabled = true;
+      btn.textContent = "Mengakses kamera...";
+      startCamera(btn,
+        document.getElementById("qr-reader"),
+        document.getElementById("qr-video"),
+        document.getElementById("qr-canvas")
+      );
+    }
+
+    function requestCamera() {
+      startCamera(
+        document.getElementById("scan-qr-btn"),
+        document.getElementById("qr-reader"),
+        document.getElementById("qr-video"),
+        document.getElementById("qr-canvas")
+      );
     }
 
     async function stopQrScanner() {
@@ -526,7 +542,7 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
 
     document.getElementById("scan-qr-btn")?.addEventListener("click", () => {
       if (qrScanning) { stopQrScanner(); }
-      else { showCameraModal(); }
+      else { tryCamera(); }
     });
 
     document.getElementById("camera-modal-allow")?.addEventListener("click", requestCamera);
