@@ -28,6 +28,19 @@ function extractPlaceName(text: string): string | null {
   return null;
 }
 
+function cleanPlaceName(name: string): string {
+  name = name.replace(/\([^)]*\)/g, "").trim();
+  name = name.replace(/^[,\s]+|[,\s]+$/g, "");
+  const parts = name.split(",").map(p => p.trim()).filter(Boolean);
+  if (parts.length > 1) {
+    const first = parts[0];
+    const city = parts.find(p => /kota|kediri|jawa|timur|kabupaten/i.test(p));
+    if (city && first.length > 3) return first + ", " + city;
+    return first;
+  }
+  return parts[0] || name;
+}
+
 async function resolveMapUrl(link: string): Promise<string> {
   try {
     const res = await fetch(link, { method: "HEAD", redirect: "follow" });
@@ -50,6 +63,20 @@ async function geoFromNominatim(query: string): Promise<{ url: string; lat: numb
   return null;
 }
 
+function extractCity(text: string): string | null {
+  const known = ["Kediri", "Jakarta", "Surabaya", "Malang", "Bandung", "Semarang", "Yogyakarta", "Denpasar", "Medan", "Makassar", "Palembang"];
+  for (const c of known) {
+    if (text.toLowerCase().includes(c.toLowerCase())) return c;
+  }
+  return null;
+}
+
+const FALLBACKS = [
+  "Kediri",
+  "Kota Kediri, Jawa Timur",
+  "Kediri Jawa Timur",
+];
+
 export const GET: APIRoute = async ({ url }) => {
   const venue = url.searchParams.get("venue") || "";
   const mapsLink = url.searchParams.get("mapsLink") || "";
@@ -65,6 +92,7 @@ export const GET: APIRoute = async ({ url }) => {
 
   try {
     let result: { url: string; lat: number; lon: number } | null = null;
+    const queries: string[] = [];
 
     if (mapsLink) {
       const resolved = await resolveMapUrl(mapsLink);
@@ -73,12 +101,31 @@ export const GET: APIRoute = async ({ url }) => {
         result = { url: buildEmbedUrl(coords.lat, coords.lon), lat: coords.lat, lon: coords.lon };
       } else {
         const place = extractPlaceName(resolved);
-        if (place) result = await geoFromNominatim(place);
+        if (place) {
+          queries.push(cleanPlaceName(place));
+          const city = extractCity(place);
+          if (city) queries.push(city);
+        }
       }
     }
 
     if (!result && venue) {
-      result = await geoFromNominatim(venue);
+      queries.push(venue);
+      queries.push(venue + ", Kediri");
+    }
+
+    if (!result && venue) {
+      const city = extractCity(venue);
+      if (city) queries.push(city);
+    }
+
+    queries.push(...FALLBACKS);
+
+    for (const q of queries) {
+      if (q) {
+        result = await geoFromNominatim(q);
+        if (result) break;
+      }
     }
 
     if (result) {
