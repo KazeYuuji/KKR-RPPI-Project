@@ -40,9 +40,10 @@ import RegistrationForm from "../components/RegistrationForm.astro";
             <p id="reg-venue" class="mt-4 text-lg font-semibold text-kkr-dark">Memuat...</p>
             <p id="reg-address" class="mt-3 text-sm text-kkr-dark/70"></p>
             <div class="mt-6 overflow-hidden rounded-[1.5rem] border border-white/20 relative">
-              <div id="reg-maps" class="aspect-[16/9] min-h-[200px]" style="filter:grayscale(0.15) contrast(1.05)"></div>
+              <iframe id="reg-maps" class="aspect-[16/9] w-full" style="filter:grayscale(0.15) contrast(1.05)" loading="lazy" allowfullscreen referrerpolicy="no-referrer"></iframe>
               <div class="pointer-events-none absolute inset-0 rounded-[1.5rem] ring-1 ring-inset ring-black/5"></div>
             </div>
+            <a id="gmaps-link" href="#" target="_blank" rel="noopener" class="mt-3 inline-flex items-center gap-2 text-sm text-kkr-red hover:underline">Buka di Google Maps &rarr;</a>
           </div>
         </aside>
       </div>
@@ -55,49 +56,15 @@ import RegistrationForm from "../components/RegistrationForm.astro";
       return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
     }
 
-    var mapInstance = null;
-
-    function loadLeafletLib(callback) {
-      if (window.L) { callback(); return; }
-      var link = document.createElement("link");
-      link.rel = "stylesheet";
-      link.href = "https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css";
-      document.head.appendChild(link);
-      var script = document.createElement("script");
-      script.src = "https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js";
-      script.onload = function() {
-        delete L.Icon.Default.prototype._getIconUrl;
-        L.Icon.Default.mergeOptions({
-          iconRetinaUrl: "https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/images/marker-icon-2x.png",
-          iconUrl: "https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/images/marker-icon.png",
-          shadowUrl: "https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/images/marker-shadow.png",
-        });
-        callback();
-      };
-      document.head.appendChild(script);
-    }
-
-    function initMap(lat, lon, label) {
-      var container = document.getElementById("reg-maps");
-      if (!container) return;
-
-      loadLeafletLib(function() {
-        if (mapInstance) {
-          mapInstance.remove();
-          mapInstance = null;
-        }
-        mapInstance = L.map("reg-maps", {
-          center: [lat, lon],
-          zoom: 15,
-          zoomControl: true,
-          scrollWheelZoom: false,
-        });
-        L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-          maxZoom: 19,
-          attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a>',
-        }).addTo(mapInstance);
-        L.marker([lat, lon]).addTo(mapInstance).bindPopup(label || "Lokasi Acara");
-      });
+    function setGmaps(lat, lon, mapsLink) {
+      var iframe = document.getElementById("reg-maps");
+      var gmapLink = document.getElementById("gmaps-link");
+      if (iframe) {
+        iframe.src = "https://maps.google.com/maps?q=" + lat + "," + lon + "&z=15&output=embed";
+      }
+      if (gmapLink && mapsLink) {
+        gmapLink.href = mapsLink;
+      }
     }
 
     async function osmCoords(venue, mapsLink) {
@@ -122,7 +89,7 @@ import RegistrationForm from "../components/RegistrationForm.astro";
         document.getElementById("reg-address").textContent = "Lihat peta di bawah";
         osmCoords(venue, mapsLink).then(function(data) {
           if (data && data.lat && data.lon) {
-            initMap(data.lat, data.lon, venue);
+            setGmaps(data.lat, data.lon, mapsLink);
           }
         });
       } catch {}

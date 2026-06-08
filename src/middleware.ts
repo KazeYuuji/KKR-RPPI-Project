@@ -110,7 +110,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     "img-src 'self' data: blob: https://*.tile.openstreetmap.org https://www.openstreetmap.org https://openstreetmap.org https://cdn.jsdelivr.net",
     "font-src 'self'",
     "form-action 'self'",
-    "frame-src https://www.openstreetmap.org",
+    "frame-src https://www.openstreetmap.org https://maps.google.com https://www.google.com",
     "frame-ancestors 'none'",
     "base-uri 'self'",
     "connect-src 'self' https://nominatim.openstreetmap.org",
