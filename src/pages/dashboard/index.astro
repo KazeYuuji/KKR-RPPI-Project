@@ -212,7 +212,6 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
 
     let html5QrScanner = null;
     let qrScanning = false;
-    let cameraRequestPending = false;
 
     function escapeHtml(str) {
       if (str == null) return "";
@@ -266,15 +265,23 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
       document.getElementById("camera-modal").classList.add("hidden");
     }
 
-    function startCamera(btn, readerEl) {
-      if (cameraRequestPending) return;
-      cameraRequestPending = true;
+    async function requestCameraAccess() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: { ideal: "environment" } }
+        });
+        stream.getTracks().forEach(t => t.stop());
+        return true;
+      } catch {
+        return false;
+      }
+    }
 
+    async function startQrScanner(btn, readerEl) {
       if (!navigator.mediaDevices) {
         showBlockedWithError(["Browser tidak mendukung akses kamera."]);
         btn.textContent = "Scan";
         btn.disabled = false;
-        cameraRequestPending = false;
         return;
       }
 
@@ -282,18 +289,16 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
         showBlockedWithError(["Kamera hanya bisa diakses pada koneksi HTTPS."]);
         btn.textContent = "Scan";
         btn.disabled = false;
-        cameraRequestPending = false;
         return;
       }
 
       readerEl.classList.remove("hidden");
       readerEl.style.height = "320px";
       hideCameraModal();
-      btn.textContent = "Tutup";
-      btn.disabled = false;
 
       if (html5QrScanner) {
-        html5QrScanner.clear().catch(() => {}).finally(() => { html5QrScanner = null; });
+        await html5QrScanner.clear().catch(() => {});
+        html5QrScanner = null;
       }
 
       html5QrScanner = new Html5Qrcode("html5qr-reader");
@@ -304,22 +309,22 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
       };
       const constraints = { video: { facingMode: { ideal: "environment" } } };
 
-      html5QrScanner.start(
-        constraints,
-        config,
-        (decodedText) => {
-          document.getElementById("checkin-id").value = decodedText;
-          const form = document.getElementById("checkin-form");
-          if (form.requestSubmit) { form.requestSubmit(); } else { form.submit(); }
-          stopQrScanner();
-        },
-        () => {
-          // ignore repeated scan failures
-        }
-      ).then(() => {
+      try {
+        await html5QrScanner.start(
+          constraints, config,
+          (decodedText) => {
+            document.getElementById("checkin-id").value = decodedText;
+            const form = document.getElementById("checkin-form");
+            if (form.requestSubmit) form.requestSubmit();
+            else form.submit();
+            stopQrScanner();
+          },
+          () => {}
+        );
         qrScanning = true;
-        cameraRequestPending = false;
-      }).catch((err) => {
+        btn.textContent = "Tutup";
+        btn.disabled = false;
+      } catch (err) {
         const name = err?.name || "";
         const msgs = [];
         if (name === "NotAllowedError" || name === "PermissionDeniedError") {
@@ -335,19 +340,66 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
         showBlockedWithError(msgs);
         btn.textContent = "Scan";
         btn.disabled = false;
-        cameraRequestPending = false;
-      });
+      }
     }
 
-    function tryCamera() {
+    async function tryCamera() {
       const btn = document.getElementById("scan-qr-btn");
+      const readerEl = document.getElementById("qr-reader");
+
       btn.disabled = true;
       btn.textContent = "Mengakses kamera...";
-      startCamera(btn, document.getElementById("qr-reader"));
+
+      if (!navigator.mediaDevices) {
+        showBlockedWithError(["Browser tidak mendukung akses kamera."]);
+        btn.textContent = "Scan"; btn.disabled = false;
+        return;
+      }
+
+      if (!window.isSecureContext) {
+        showBlockedWithError(["Kamera hanya bisa diakses pada koneksi HTTPS."]);
+        btn.textContent = "Scan"; btn.disabled = false;
+        return;
+      }
+
+      // Get camera permission synchronously from user gesture
+      let stream;
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: { ideal: "environment" } }
+        });
+      } catch (err) {
+        const name = err.name || "";
+        const msgs = [];
+        if (name === "NotAllowedError" || name === "PermissionDeniedError") {
+          msgs.push("Akses kamera ditolak oleh browser.");
+          msgs.push("Klik 'Coba Lagi' setelah mengizinkan di pengaturan.");
+        } else {
+          msgs.push("Error: " + (err.message || name || "unknown"));
+        }
+        showBlockedWithError(msgs);
+        btn.textContent = "Scan"; btn.disabled = false;
+        return;
+      }
+
+      // Permission granted, stop temp stream, let Html5Qrcode take over
+      stream.getTracks().forEach(t => t.stop());
+      await startQrScanner(btn, readerEl);
     }
 
-    function requestCamera() {
-      startCamera(document.getElementById("scan-qr-btn"), document.getElementById("qr-reader"));
+    async function requestCamera() {
+      const btn = document.getElementById("scan-qr-btn");
+      const readerEl = document.getElementById("qr-reader");
+      btn.disabled = true;
+      btn.textContent = "Mengakses kamera...";
+
+      const granted = await requestCameraAccess();
+      if (!granted) {
+        showBlockedWithError(["Akses kamera tetap ditolak. Periksa pengaturan browser."]);
+        btn.textContent = "Scan"; btn.disabled = false;
+        return;
+      }
+      await startQrScanner(btn, readerEl);
     }
 
     async function stopQrScanner() {
@@ -364,7 +416,6 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
       readerEl.style.height = "";
       btn.textContent = "Scan";
       btn.disabled = false;
-      cameraRequestPending = false;
     }
 
     async function loadStats() {
