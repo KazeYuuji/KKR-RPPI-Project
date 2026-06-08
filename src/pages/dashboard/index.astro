@@ -160,8 +160,7 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
               </button>
             </div>
             <div id="qr-reader" class="hidden rounded-xl overflow-hidden border border-kkr-light/50 relative bg-black">
-              <video id="qr-video" class="w-full h-full object-cover" playsinline autoplay muted></video>
-              <canvas id="qr-canvas" class="hidden"></canvas>
+              <div id="html5qr-reader" class="w-full h-full"></div>
               <div id="qr-overlay" class="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <div class="w-48 h-48 border-2 border-white/60 rounded-xl"></div>
               </div>
@@ -209,12 +208,11 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
   <div id="toast-container" class="fixed top-4 right-4 z-[100] flex flex-col gap-2 pointer-events-none"></div>
 
   <script type="module">
-    import jsQR from "jsqr";
+    import { Html5Qrcode } from "html5-qrcode";
 
-    let mediaStream = null;
-    let animFrameId = null;
+    let html5QrScanner = null;
     let qrScanning = false;
-    let scanPaused = false;
+    let cameraRequestPending = false;
 
     function escapeHtml(str) {
       if (str == null) return "";
@@ -229,50 +227,6 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
       c.appendChild(el);
       setTimeout(() => { el.style.opacity = "0"; el.style.transform = "translateX(100%)"; setTimeout(() => el.remove(), 300); }, 3000);
     }
-
-    function decodeFrame(video, canvas) {
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      const ctx = canvas.getContext("2d");
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const code = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: "dontInvert" });
-      if (code && code.data) {
-        document.getElementById("checkin-id").value = code.data;
-        document.getElementById("checkin-form").requestSubmit();
-        stopQrScanner();
-        return true;
-      }
-      return false;
-    }
-
-    async function decodeWithBarcodeDetector(video, canvas) {
-      if (!window.BarcodeDetector) return false;
-      try {
-        const detector = new BarcodeDetector({ formats: ["qr_code"] });
-        const barcodes = await detector.detect(video);
-        if (barcodes.length > 0 && barcodes[0].rawValue) {
-          document.getElementById("checkin-id").value = barcodes[0].rawValue;
-          document.getElementById("checkin-form").requestSubmit();
-          stopQrScanner();
-          return true;
-        }
-      } catch {}
-      return false;
-    }
-
-    function scanLoop(video, canvas) {
-      if (!qrScanning || scanPaused) return;
-      (async () => {
-        const detected = await decodeWithBarcodeDetector(video, canvas);
-        if (!detected && !scanPaused) {
-          decodeFrame(video, canvas);
-        }
-      })();
-      animFrameId = requestAnimationFrame(() => scanLoop(video, canvas));
-    }
-
-    let cameraRequestPending = false;
 
     function showCameraModal() {
       const modal = document.getElementById("camera-modal");
@@ -312,7 +266,7 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
       document.getElementById("camera-modal").classList.add("hidden");
     }
 
-    function startCamera(btn, readerEl, video, canvas) {
+    function startCamera(btn, readerEl) {
       if (cameraRequestPending) return;
       cameraRequestPending = true;
 
@@ -332,30 +286,41 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
         return;
       }
 
-      navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: "environment" } } })
-      .then(function (stream) {
-        readerEl.classList.remove("hidden");
-        readerEl.style.height = "320px";
-        video.srcObject = stream;
-        mediaStream = stream;
-        video.play().then(function () {
-          hideCameraModal();
-          qrScanning = true;
-          scanPaused = false;
-          btn.textContent = "Tutup";
-          btn.disabled = false;
-          scanLoop(video, canvas);
-          cameraRequestPending = false;
-        }).catch(function (err) {
-          const errMsg = err?.message || "Gagal memulai pratinjau video.";
-          showBlockedWithError(["Tidak dapat memutar kamera.", errMsg]);
-          btn.textContent = "Scan";
-          btn.disabled = false;
-          cameraRequestPending = false;
-        });
-      }).catch(function (err) {
-        var name = err.name || "";
-        var msgs = [];
+      readerEl.classList.remove("hidden");
+      readerEl.style.height = "320px";
+      hideCameraModal();
+      btn.textContent = "Tutup";
+      btn.disabled = false;
+
+      if (html5QrScanner) {
+        html5QrScanner.clear().catch(() => {}).finally(() => { html5QrScanner = null; });
+      }
+
+      html5QrScanner = new Html5Qrcode("html5qr-reader");
+      const config = {
+        fps: 10,
+        qrbox: { width: 280, height: 280 },
+        experimentalFeatures: { useBarCodeDetectorIfSupported: true }
+      };
+      const constraints = { video: { facingMode: { ideal: "environment" } } };
+
+      html5QrScanner.start(
+        constraints,
+        config,
+        (decodedText) => {
+          document.getElementById("checkin-id").value = decodedText;
+          document.getElementById("checkin-form").requestSubmit();
+          stopQrScanner();
+        },
+        () => {
+          // ignore repeated scan failures
+        }
+      ).then(() => {
+        qrScanning = true;
+        cameraRequestPending = false;
+      }).catch((err) => {
+        const name = err?.name || "";
+        const msgs = [];
         if (name === "NotAllowedError" || name === "PermissionDeniedError") {
           msgs.push("Akses kamera ditolak oleh browser.");
           msgs.push("Klik 'Coba Lagi' setelah mengizinkan di pengaturan.");
@@ -377,39 +342,28 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
       const btn = document.getElementById("scan-qr-btn");
       btn.disabled = true;
       btn.textContent = "Mengakses kamera...";
-      startCamera(btn,
-        document.getElementById("qr-reader"),
-        document.getElementById("qr-video"),
-        document.getElementById("qr-canvas")
-      );
+      startCamera(btn, document.getElementById("qr-reader"));
     }
 
     function requestCamera() {
-      startCamera(
-        document.getElementById("scan-qr-btn"),
-        document.getElementById("qr-reader"),
-        document.getElementById("qr-video"),
-        document.getElementById("qr-canvas")
-      );
+      startCamera(document.getElementById("scan-qr-btn"), document.getElementById("qr-reader"));
     }
 
     async function stopQrScanner() {
       const readerEl = document.getElementById("qr-reader");
-      const video = document.getElementById("qr-video");
       const btn = document.getElementById("scan-qr-btn");
 
       qrScanning = false;
-      scanPaused = true;
-      if (animFrameId) { cancelAnimationFrame(animFrameId); animFrameId = null; }
-      if (mediaStream) {
-        mediaStream.getTracks().forEach(t => t.stop());
-        mediaStream = null;
+      if (html5QrScanner) {
+        await html5QrScanner.stop().catch(() => {});
+        await html5QrScanner.clear().catch(() => {});
+        html5QrScanner = null;
       }
-      video.srcObject = null;
       readerEl.classList.add("hidden");
       readerEl.style.height = "";
       btn.textContent = "Scan";
       btn.disabled = false;
+      cameraRequestPending = false;
     }
 
     async function loadStats() {

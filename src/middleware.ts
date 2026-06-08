@@ -99,7 +99,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   response.headers.set("X-Frame-Options", "DENY");
   response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
   response.headers.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
-  response.headers.set("Permissions-Policy", "geolocation=(), microphone=(), camera=()");
+  response.headers.set("Permissions-Policy", "geolocation=(), microphone=(), camera=(self)");
 
   // Content-Security-Policy
   const csp = [
