@@ -106,8 +106,8 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const csp = [
     "default-src 'self'",
     "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net",
-    "style-src 'self' 'unsafe-inline'",
-    "img-src 'self' data: blob: https://*.tile.openstreetmap.org https://www.openstreetmap.org https://openstreetmap.org",
+    "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net",
+    "img-src 'self' data: blob: https://*.tile.openstreetmap.org https://www.openstreetmap.org https://openstreetmap.org https://cdn.jsdelivr.net",
     "font-src 'self'",
     "form-action 'self'",
     "frame-src https://www.openstreetmap.org",

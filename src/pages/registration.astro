@@ -40,9 +40,7 @@ import RegistrationForm from "../components/RegistrationForm.astro";
             <p id="reg-venue" class="mt-4 text-lg font-semibold text-kkr-dark">Memuat...</p>
             <p id="reg-address" class="mt-3 text-sm text-kkr-dark/70"></p>
             <div class="mt-6 overflow-hidden rounded-[1.5rem] border border-white/20 relative">
-              <div class="aspect-[16/9]">
-                <iframe id="reg-maps" src="" class="absolute inset-0 h-full w-full" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" style="filter:grayscale(0.15) contrast(1.05)"></iframe>
-              </div>
+              <div id="reg-maps" class="aspect-[16/9] min-h-[200px]" style="filter:grayscale(0.15) contrast(1.05)"></div>
               <div class="pointer-events-none absolute inset-0 rounded-[1.5rem] ring-1 ring-inset ring-black/5"></div>
             </div>
           </div>
@@ -51,21 +49,66 @@ import RegistrationForm from "../components/RegistrationForm.astro";
     </div>
   </div>
 
-    <script>
+  <script>
     function escapeHtml(str) {
       if (str == null) return "";
       return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
     }
 
-    async function osmEmbedUrl(venue, mapsLink) {
+    var mapInstance = null;
+
+    function loadLeafletLib(callback) {
+      if (window.L) { callback(); return; }
+      var link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href = "https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css";
+      document.head.appendChild(link);
+      var script = document.createElement("script");
+      script.src = "https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js";
+      script.onload = function() {
+        delete L.Icon.Default.prototype._getIconUrl;
+        L.Icon.Default.mergeOptions({
+          iconRetinaUrl: "https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+          iconUrl: "https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/images/marker-icon.png",
+          shadowUrl: "https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/images/marker-shadow.png",
+        });
+        callback();
+      };
+      document.head.appendChild(script);
+    }
+
+    function initMap(lat, lon, label) {
+      var container = document.getElementById("reg-maps");
+      if (!container) return;
+
+      loadLeafletLib(function() {
+        if (mapInstance) {
+          mapInstance.remove();
+          mapInstance = null;
+        }
+        mapInstance = L.map("reg-maps", {
+          center: [lat, lon],
+          zoom: 15,
+          zoomControl: true,
+          scrollWheelZoom: false,
+        });
+        L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          maxZoom: 19,
+          attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a>',
+        }).addTo(mapInstance);
+        L.marker([lat, lon]).addTo(mapInstance).bindPopup(label || "Lokasi Acara");
+      });
+    }
+
+    async function osmCoords(venue, mapsLink) {
       try {
         var params = "venue=" + encodeURIComponent(venue || "Lokasi Acara");
         if (mapsLink) params += "&mapsLink=" + encodeURIComponent(mapsLink);
         var res = await fetch("/api/geocode?" + params);
         var data = await res.json();
-        return data.url || "";
+        return data;
       } catch(e) {}
-      return "";
+      return null;
     }
 
     async function loadSettings() {
@@ -77,13 +120,11 @@ import RegistrationForm from "../components/RegistrationForm.astro";
         const mapsLink = s.locMapsLink || "";
         document.getElementById("reg-venue").textContent = venue;
         document.getElementById("reg-address").textContent = "Lihat peta di bawah";
-        if (s.locMaps) {
-          document.getElementById("reg-maps").src = s.locMaps;
-        } else {
-          osmEmbedUrl(venue, mapsLink).then(function(url) {
-            if (url) document.getElementById("reg-maps").src = url;
-          });
-        }
+        osmCoords(venue, mapsLink).then(function(data) {
+          if (data && data.lat && data.lon) {
+            initMap(data.lat, data.lon, venue);
+          }
+        });
       } catch {}
     }
 
@@ -95,14 +136,14 @@ import RegistrationForm from "../components/RegistrationForm.astro";
         const info = document.getElementById("ticket-info");
         info.innerHTML = list.map(t => {
           const habis = t.remaining <= 0;
-          return `<div class="flex items-center justify-between rounded-xl ${habis ? "bg-red-50 border border-red-200" : "bg-white/90 border border-white/30"} px-4 py-3 text-sm">
-            <span class="font-medium ${habis ? "text-red-700" : "text-kkr-dark"}">${escapeHtml(t.name)}</span>
-            <span class="${habis ? "text-red-600 font-semibold" : "text-kkr-dark/70"}">${habis ? "Habis" : "Sisa " + t.remaining}</span>
-          </div>`;
+          return '<div class="flex items-center justify-between rounded-xl ' + (habis ? "bg-red-50 border border-red-200" : "bg-white/90 border border-white/30") + ' px-4 py-3 text-sm">' +
+            '<span class="font-medium ' + (habis ? "text-red-700" : "text-kkr-dark") + '">' + escapeHtml(t.name) + '</span>' +
+            '<span class="' + (habis ? "text-red-600 font-semibold" : "text-kkr-dark/70") + '">' + (habis ? "Habis" : "Sisa " + t.remaining) + '</span>' +
+          "</div>";
         }).join("");
       } catch {}
     }
 
-    document.addEventListener("DOMContentLoaded", () => { loadSettings(); loadTickets(); setInterval(loadTickets, 10000); });
+    document.addEventListener("DOMContentLoaded", function() { loadSettings(); loadTickets(); setInterval(loadTickets, 10000); });
   </script>
 </PublicLayout>

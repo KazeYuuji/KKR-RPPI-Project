@@ -1,6 +1,6 @@
 import type { APIRoute } from "astro";
 
-const cache = new Map<string, { url: string; ttl: number }>();
+const cache = new Map<string, { url: string; lat: number; lon: number; ttl: number }>();
 
 function buildEmbedUrl(lat: number, lon: number): string {
   const pad = 0.02;
@@ -35,7 +35,7 @@ async function resolveMapUrl(link: string): Promise<string> {
   } catch { return link; }
 }
 
-async function geoFromNominatim(query: string): Promise<string> {
+async function geoFromNominatim(query: string): Promise<{ url: string; lat: number; lon: number } | null> {
   const q = encodeURIComponent(query);
   const res = await fetch(
     `https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1`,
@@ -43,9 +43,11 @@ async function geoFromNominatim(query: string): Promise<string> {
   );
   const data = await res.json();
   if (data && data.length > 0) {
-    return buildEmbedUrl(parseFloat(data[0].lat), parseFloat(data[0].lon));
+    const lat = parseFloat(data[0].lat);
+    const lon = parseFloat(data[0].lon);
+    return { url: buildEmbedUrl(lat, lon), lat, lon };
   }
-  return "";
+  return null;
 }
 
 export const GET: APIRoute = async ({ url }) => {
@@ -56,52 +58,42 @@ export const GET: APIRoute = async ({ url }) => {
 
   const cached = cache.get(cacheKeyNorm);
   if (cached && cached.ttl > Date.now()) {
-    return new Response(JSON.stringify({ url: cached.url }), {
+    return new Response(JSON.stringify({ url: cached.url, lat: cached.lat, lon: cached.lon }), {
       status: 200, headers: { "Content-Type": "application/json" },
     });
   }
 
   try {
-    // 1) If mapsLink is provided, try to extract coords or place name from it
+    let result: { url: string; lat: number; lon: number } | null = null;
+
     if (mapsLink) {
       const resolved = await resolveMapUrl(mapsLink);
       const coords = extractCoords(resolved);
       if (coords) {
-        const embedUrl = buildEmbedUrl(coords.lat, coords.lon);
-        cache.set(cacheKeyNorm, { url: embedUrl, ttl: Date.now() + 86_400_000 });
-        return new Response(JSON.stringify({ url: embedUrl }), {
-          status: 200, headers: { "Content-Type": "application/json" },
-        });
-      }
-      const place = extractPlaceName(resolved);
-      if (place) {
-        const embedUrl = await geoFromNominatim(place);
-        if (embedUrl) {
-          cache.set(cacheKeyNorm, { url: embedUrl, ttl: Date.now() + 86_400_000 });
-          return new Response(JSON.stringify({ url: embedUrl }), {
-            status: 200, headers: { "Content-Type": "application/json" },
-          });
-        }
+        result = { url: buildEmbedUrl(coords.lat, coords.lon), lat: coords.lat, lon: coords.lon };
+      } else {
+        const place = extractPlaceName(resolved);
+        if (place) result = await geoFromNominatim(place);
       }
     }
 
-    // 2) Fall back to venue name geocoding
-    if (venue) {
-      const embedUrl = await geoFromNominatim(venue);
-      if (embedUrl) {
-        cache.set(cacheKeyNorm, { url: embedUrl, ttl: Date.now() + 86_400_000 });
-        return new Response(JSON.stringify({ url: embedUrl }), {
-          status: 200, headers: { "Content-Type": "application/json" },
-        });
-      }
+    if (!result && venue) {
+      result = await geoFromNominatim(venue);
     }
 
-    return new Response(JSON.stringify({ url: "" }), {
+    if (result) {
+      cache.set(cacheKeyNorm, { ...result, ttl: Date.now() + 86_400_000 });
+      return new Response(JSON.stringify(result), {
+        status: 200, headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    return new Response(JSON.stringify({ url: "", lat: 0, lon: 0 }), {
       status: 200, headers: { "Content-Type": "application/json" },
     });
   } catch (err) {
     console.error("Geocode error:", err);
-    return new Response(JSON.stringify({ url: "" }), {
+    return new Response(JSON.stringify({ url: "", lat: 0, lon: 0 }), {
       status: 200, headers: { "Content-Type": "application/json" },
     });
   }
