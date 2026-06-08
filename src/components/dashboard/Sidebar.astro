@@ -59,12 +59,12 @@ const icons: Record<string, string> = {
             "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 group",
             active
               ? "bg-gradient-to-r from-kkr-red to-kkr-maroon text-white font-semibold shadow-sm shadow-kkr-light/20"
-              : "text-kkr-light/85 hover:bg-white/10 hover:text-white",
+              : "text-kkr-light/70 hover:bg-white/10 hover:text-white",
           ]}
         >
           <span class:list={[
             "w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-150",
-            active ? "bg-kkr-red text-white shadow-sm shadow-kkr-light/50" : "text-kkr-maroon/80 group-hover:text-kkr-maroon",
+            active ? "bg-kkr-red text-white shadow-sm shadow-kkr-light/50" : "text-kkr-maroon/60 group-hover:text-kkr-maroon",
           ]} set:html={icons[link.icon]} />
           {link.label}
           {active && <span class="ml-auto w-1.5 h-1.5 rounded-full bg-kkr-red"></span>}
