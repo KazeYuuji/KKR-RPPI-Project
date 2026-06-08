@@ -24,7 +24,8 @@ export const GET: APIRoute = async ({ params }) => {
   const venue = settings.locVenue || "Kediri";
   const date = settings.locDate || "Sabtu, 10 Januari 2026";
   const time = settings.locTime || "08:00 - 12:30 WIB";
-  const address = "Jl. Himalaya No.06, Kediri";
+  const address = settings.locAddress || settings.locVenue || "Jl. Himalaya No.06, Kediri";
+  const eventYear = settings.eventYear || new Date().getFullYear().toString();
 
   const pdfDoc = await PDFDocument.create();
   const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
@@ -42,7 +43,7 @@ export const GET: APIRoute = async ({ params }) => {
   page.drawRectangle({ x: 0, y: height - 160, width, height: 160, color: dark });
   page.drawText("✝", { x: 30, y: height - 60, size: 32, color: accent });
   page.drawText("KKR RPPI", { x: 75, y: height - 50, size: 22, font, color: white });
-  page.drawText("2025/2026", { x: 75, y: height - 80, size: 14, font, color: rgb(0.9, 0.5, 0.5) });
+  page.drawText(eventYear, { x: 75, y: height - 80, size: 14, font, color: rgb(0.9, 0.5, 0.5) });
   page.drawText("TIKET MASUK", { x: 30, y: height - 120, size: 12, font: fontReg, color: rgb(0.7, 0.7, 0.7) });
   page.drawText("GRATIS", { x: width - 80, y: height - 120, size: 14, font, color: rgb(0.3, 0.85, 0.5) });
   page.drawRectangle({ x: 30, y: 430, width: width - 60, height: 1, color: rgb(0.85, 0.85, 0.88) });

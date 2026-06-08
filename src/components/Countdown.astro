@@ -49,21 +49,25 @@ const regClose = "2025-12-29T23:59:59";
     </div>
   </div>
 
-  <script>
-    let regDate = Date.now() + 86400000;
-    let eventDate = Date.now() + 86400000;
+  <script define:vars={{ eventDate, regClose }}>
+    let regTarget = new Date(regClose).getTime();
+    let eventTarget = new Date(eventDate).getTime();
+    if (isNaN(regTarget)) regTarget = Date.now() + 86400000;
+    if (isNaN(eventTarget)) eventTarget = Date.now() + 86400000;
 
     fetch("/api/settings").then(r => r.json()).then(d => {
       const s = d.settings || {};
       if (s.regDeadlineISO) {
         let dl = s.regDeadlineISO;
         if (!dl.endsWith("Z") && !/[+-]\d{2}:\d{2}$/.test(dl)) dl += "+07:00";
-        regDate = new Date(dl).getTime();
+        const t = new Date(dl).getTime();
+        if (!isNaN(t)) regTarget = t;
       }
       if (s.eventDateISO) {
         let dl = s.eventDateISO;
         if (!dl.endsWith("Z") && !/[+-]\d{2}:\d{2}$/.test(dl)) dl += "+07:00";
-        eventDate = new Date(dl).getTime();
+        const t = new Date(dl).getTime();
+        if (!isNaN(t)) eventTarget = t;
       }
       const regLabel = document.getElementById("reg-deadline-label");
       const eventLabel = document.getElementById("event-date-label");
@@ -77,28 +81,11 @@ const regClose = "2025-12-29T23:59:59";
       if (s.countdownEventDesc && document.getElementById("countdown-event-desc")) document.getElementById("countdown-event-desc").textContent = s.countdownEventDesc;
     }).catch(() => {});
 
-    function updateCountdown(target, prefix) {
-      const now = Date.now();
-      let diff = target - now;
-      if (diff < 0) diff = 0;
-      const days = Math.floor(diff / 86400000);
-      const hours = Math.floor((diff % 86400000) / 3600000);
-      const mins = Math.floor((diff % 3600000) / 60000);
-      const secs = Math.floor((diff % 60000) / 1000);
-      const els = document.querySelectorAll(`[data-${prefix}]`);
-      if (els.length >= 4) {
-        els[0].textContent = String(days).padStart(2, "0");
-        els[1].textContent = String(hours).padStart(2, "0");
-        els[2].textContent = String(mins).padStart(2, "0");
-        els[3].textContent = String(secs).padStart(2, "0");
-      }
-    }
-
     setInterval(() => {
-      updateCountdown(regDate, "reg");
-      updateCountdown(eventDate, "event");
+      updateCountdown(regTarget, "reg");
+      updateCountdown(eventTarget, "event");
     }, 1000);
-    updateCountdown(regDate, "reg");
-    updateCountdown(eventDate, "event");
+    updateCountdown(regTarget, "reg");
+    updateCountdown(eventTarget, "event");
   </script>
 </section>

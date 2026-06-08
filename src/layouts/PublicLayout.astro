@@ -82,7 +82,7 @@ const canonical = new URL(Astro.url.pathname, siteUrl).href;
         }
       })}
     </script>
-    <script>fetch("/api/settings").then(r=>r.json()).then(d=>{const s=d.settings||{};const el=document.getElementById("ld-json");if(!el)return;try{const ld=JSON.parse(el.textContent);if(s.locVenue)ld.location.name=s.locVenue;if(s.contactEmail)ld.organizer.email=s.contactEmail;if(s.eventDateISO)ld.startDate=s.eventDateISO;if(s.eventDateISO&&s.eventTimeEnd){const endH=parseInt(s.eventTimeEnd);ld.endDate=s.eventDateISO.replace(/\d{2}:\d{2}/,s.eventTimeEnd)}el.textContent=JSON.stringify(ld)}catch{}}).catch(()=>{});</script>
+    <script>fetch("/api/settings").then(r=>r.json()).then(d=>{const s=d.settings||{};const el=document.getElementById("ld-json");if(!el)return;try{const ld=JSON.parse(el.textContent);if(s.locVenue)ld.location.name=s.locVenue;if(s.locAddress)ld.location.address.streetAddress=s.locAddress;if(s.locVenue){const parts=s.locVenue.split(",");ld.location.address.addressLocality=(parts[parts.length-1]||s.locVenue).trim()}if(s.eventName)ld.name=s.eventName;if(s.contactEmail)ld.organizer.email=s.contactEmail;if(s.contactWa&&ld.organizer)ld.organizer.telephone="+"+s.contactWa.replace(/[^0-9]/g,"");if(s.eventDateISO)ld.startDate=s.eventDateISO;if(s.eventDateISO&&s.eventTimeEnd)ld.endDate=s.eventDateISO.replace(/\d{2}:\d{2}/,s.eventTimeEnd);el.textContent=JSON.stringify(ld)}catch{}}).catch(()=>{});</script>
 
     <title>{pageTitle}</title>
   </head>
@@ -138,7 +138,7 @@ const canonical = new URL(Astro.url.pathname, siteUrl).href;
               KKR <span class="text-kkr-gold">RPPI</span>
             </a>
             <span class="text-white/30 hidden sm:inline">|</span>
-            <span class="text-xs text-white/50 hidden sm:inline">Panitia KKR RPPI Kediri 2025/2026</span>
+            <span class="text-xs text-white/50 hidden sm:inline" id="footer-credit">Panitia KKR RPPI</span>
           </div>
           <div class="flex items-center gap-4 text-xs text-white/60" id="footer-contact">
             <span>Memuat...</span>
@@ -147,7 +147,7 @@ const canonical = new URL(Astro.url.pathname, siteUrl).href;
         <div class="mx-auto max-w-7xl mt-3 pt-3 border-t border-white/5 flex flex-wrap items-center justify-center gap-x-6 gap-y-1 text-xs text-white/50">
           <a href="/privacy" class="hover:text-kkr-gold transition-colors">Kebijakan Privasi</a>
           <a href="/terms" class="hover:text-kkr-gold transition-colors">Syarat & Ketentuan</a>
-          <span>&copy; 2026 KKR RPPI. Hak cipta dilindungi.</span>
+          <span id="footer-copy">&copy; 2026 KKR RPPI. Hak cipta dilindungi.</span>
         </div>
       </footer>
     </div>
@@ -194,15 +194,23 @@ const canonical = new URL(Astro.url.pathname, siteUrl).href;
         });
       }
 
+      function esc(s) { if (!s) return ""; return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+
       async function loadContact() {
         try {
           const res = await fetch("/api/settings");
           const d = await res.json();
           const s = d.settings || {};
           const el = document.getElementById("footer-contact");
+          const credit = document.getElementById("footer-credit");
           const email = s.contactEmail || "kkrrppi@gmail.com";
           const phone = s.contactPhone || "";
           const wa = s.contactWa || "6285800753804";
+          const venue = s.locVenue || "";
+          const evName = s.eventName || "KKR RPPI";
+          if (credit) credit.textContent = "Panitia " + esc(evName) + (venue ? " " + esc(venue.split(",")[0].trim()) : "");
+          const copyEl = document.getElementById("footer-copy");
+          if (copyEl) copyEl.textContent = "\u00a9 " + new Date().getFullYear() + " " + esc(evName) + ". Hak cipta dilindungi.";
           let html = `<a href="mailto:${encodeURI(email)}" class="hover:text-kkr-gold transition-colors">Email</a>`;
           html += `<span class="text-white/20">|</span><a href="https://wa.me/${wa.replace(/[^0-9]/g, "")}" target="_blank" class="hover:text-kkr-gold transition-colors">WhatsApp</a>`;
           if (phone) {

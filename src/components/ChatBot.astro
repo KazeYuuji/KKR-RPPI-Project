@@ -1,11 +1,11 @@
 ---
 const faqs = [
-  { q: "Apa itu KKR RPPI?", a: "KKR RPPI adalah kebaktian kebangunan rohani yang mempersatukan siswa, alumni, guru, dan masyarakat dari berbagai sekolah di Kediri untuk mengalami kebangunan rohani dalam Yesus Kristus." },
-  { q: "Kapan dan di mana acara dilaksanakan?", a: "Acara akan dilaksanakan pada Sabtu, 10 Januari 2026 di Kediri. Mulai pukul 08.00 - 12.30 WIB." },
+  { q: "Apa itu KKR RPPI?", a: "KKR RPPI adalah kebaktian kebangunan rohani yang mempersatukan siswa, alumni, guru, dan masyarakat untuk mengalami kebangunan rohani dalam Yesus Kristus." },
+  { q: "Kapan dan di mana acara dilaksanakan?", a: "Acara akan dilaksanakan pada @date di @venue. Mulai pukul @time." },
   { q: "Bagaimana cara mendaftar?", a: "Kunjungi halaman pendaftaran, isi data diri, pilih tiket gratis, dan dapatkan tiketmu langsung! Setelah itu tim kami akan memverifikasi pendaftaran Anda." },
   { q: "Berapa harga tiketnya?", a: "Gratis! Semua tiket tersedia tanpa biaya. Event ini diselenggarakan secara gratis untuk seluruh peserta. Daftar sekarang dan amankan tiketmu." },
   { q: "Apa yang perlu disiapkan?", a: "Cukup siapkan data diri (nama, email, WhatsApp), pilih tiket yang tersedia, dan kamu akan mendapatkan tiket digital secara instan." },
-  { q: "Bagaimana cara menghubungi panitia?", a: "Anda dapat menghubungi kami via WhatsApp di +62 858-0075-3804 atau email ke kkrrppi@gmail.com." },
+  { q: "Bagaimana cara menghubungi panitia?", a: "Anda dapat menghubungi kami via WhatsApp di @wa atau email ke @email." },
 ];
 ---
 
@@ -71,6 +71,18 @@ const faqs = [
     chatIcon.classList.remove("hidden");
     closeIcon.classList.add("hidden");
   });
+
+  fetch("/api/settings").then(r=>r.json()).then(d=>{
+    const s=d.settings||{};
+    const venue=s.locVenue||"GPI IMANUEL Kediri";
+    const date=s.locDate||"Sabtu, 10 Januari 2026";
+    const time=s.locTime||"08.00 - 12.30 WIB";
+    const wa=(s.contactWa||"6285800753804").replace(/^0+/,"+62 ").replace(/(\d{4})(\d{4})(\d{4})/,"$1-$2-$3");
+    const email=s.contactEmail||"kkrrppi@gmail.com";
+    faqs.forEach(f=>{
+      f.a=f.a.replace("@date",date).replace("@venue",venue).replace("@time",time).replace("@wa",wa).replace("@email",email);
+    });
+  }).catch(()=>{});
 
   body.addEventListener("click", (e) => {
     const btn = e.target.closest("[data-question]");

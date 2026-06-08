@@ -94,7 +94,7 @@ export interface TicketType {
         <ol class="list-decimal pl-4 space-y-1 text-blue-700">
           <li>Simpan nomor tiket Anda (screenshot atau catat).</li>
           <li>Cetak tiket PDF atau tunjukkan dari ponsel saat check-in.</li>
-          <li>Hadiri acara pada <strong>Sabtu, 10 Januari 2026</strong> di <strong>Kediri</strong>.</li>
+          <li id="success-step-3">Hadiri acara pada <strong>Sabtu, 10 Januari 2026</strong> di <strong>Kediri</strong>.</li>
         </ol>
       </div>
       <div class="mt-5 space-y-3">
@@ -307,6 +307,12 @@ export interface TicketType {
         const s = d.settings || {};
         if (s.formTitle && document.getElementById("form-title")) document.getElementById("form-title").textContent = s.formTitle;
         if (s.formSubtitle && document.getElementById("form-subtitle")) document.getElementById("form-subtitle").textContent = s.formSubtitle;
+        const step3 = document.getElementById("success-step-3");
+        if (step3 && s.locDate && s.locVenue) {
+          step3.innerHTML = "Hadiri acara pada <strong>" + escapeHtml(s.locDate) + "</strong> di <strong>" + escapeHtml(s.locVenue.split(",")[0].trim()) + "</strong>.";
+        }
+        const waLink = document.getElementById("wa-group-link");
+        if (waLink && s.waGroupLink) waLink.href = s.waGroupLink;
       }).catch(() => {});
     });
   </script>

@@ -17,6 +17,11 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
           <input id="loc-venue" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Nama tempat acara" />
         </div>
         <div>
+          <label class="block text-sm font-medium text-kkr-purple mb-1">Alamat Lengkap</label>
+          <input id="loc-address" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Jl. Himalaya No.06, Kediri" />
+          <p class="text-xs text-kkr-maroon/60 mt-1">Alamat lengkap untuk tampil di tiket PDF dan data terstruktur (JSON-LD).</p>
+        </div>
+        <div>
           <label class="block text-sm font-medium text-kkr-purple mb-1">URL Google Maps</label>
           <input id="loc-maps-link" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="https://maps.app.goo.gl/RCzwb8tiKNdVwXA59" />
           <p class="text-xs text-kkr-maroon/60 mt-1">Link Google Maps (bisa dari share/bagikan atau URL maps). Embed peta akan otomatis dibuat.</p>
@@ -197,6 +202,11 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
           <label class="block text-sm font-medium text-kkr-purple mb-1">Batas Akhir Pendaftaran</label>
           <input id="reg-deadline-iso" type="datetime-local" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" />
           <p id="preview-deadline" class="text-xs text-kkr-maroon/60 mt-1">Tampilan: —</p>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-kkr-purple mb-1">Tahun Event (tampil di tiket PDF)</label>
+          <input id="event-year" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="2025/2026" />
+          <p class="text-xs text-kkr-maroon/60 mt-1">Contoh: "2025/2026" atau "2026"</p>
         </div>
         <button type="submit" class="rounded-xl bg-kkr-red px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-kkr-maroon">Simpan Jadwal</button>
       </form>
@@ -386,9 +396,11 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
 
         const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
         setVal("loc-venue", s.locVenue || "");
+        setVal("loc-address", s.locAddress || "");
         setVal("loc-maps-link", s.locMapsLink || "");
         setVal("event-date-iso", s.eventDateISO ? utcToLocal(s.eventDateISO) : "");
         setVal("event-time-end", s.eventTimeEnd || "");
+        setVal("event-year", s.eventYear || "");
         setVal("reg-deadline-iso", s.regDeadlineISO ? utcToLocal(s.regDeadlineISO) : "");
         setVal("contact-email", s.contactEmail || "");
         setVal("contact-phone", s.contactPhone || "");
@@ -498,6 +510,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
       try {
         const res = await fetch("/api/settings", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({
           locVenue: document.getElementById("loc-venue").value.trim(),
+          locAddress: document.getElementById("loc-address").value.trim(),
           locMapsLink: document.getElementById("loc-maps-link").value.trim(),
         })});
         if (res.ok) toast("Lokasi berhasil disimpan!");
@@ -575,6 +588,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
       const eventIso = document.getElementById("event-date-iso").value;
       const timeEnd = document.getElementById("event-time-end").value;
       const deadlineIso = document.getElementById("reg-deadline-iso").value;
+      const eventYear = document.getElementById("event-year").value.trim();
 
       try {
         const res = await fetch("/api/settings", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({
@@ -584,6 +598,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
           eventDateISO: localToUTC(eventIso),
           eventTimeEnd: timeEnd,
           regDeadlineISO: localToUTC(deadlineIso),
+          eventYear: eventYear,
         })});
         if (res.ok) toast("Jadwal berhasil disimpan!");
         else throw new Error();
