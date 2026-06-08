@@ -1,5 +1,5 @@
 import type { APIRoute } from "astro";
-import { minioListAll, minioSet, minioGet, minioDelete, newId } from "../../../lib/minio-db";
+import { minioListAll, minioSet, newId } from "../../../lib/minio-db";
 
 export const prerender = false;
 

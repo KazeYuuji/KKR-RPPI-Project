@@ -74,6 +74,12 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
       return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
     }
 
+    function sanitizeUrl(url) {
+      if (!url) return "";
+      if (/^\s*javascript:/i.test(url)) return "";
+      return url;
+    }
+
     function toast(msg, type = "success") {
       const c = document.getElementById("toast-container");
       const el = document.createElement("div");
@@ -103,14 +109,14 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
         container.innerHTML = list.map((s) => `
           <div class="glass-card p-4 sm:p-5 transition-all duration-200 hover:shadow-md" data-id="${escapeHtml(String(s.id))}">
             <div class="flex items-start gap-3 sm:gap-4">
-              ${s.logo_url ? `<img src="${escapeHtml(s.logo_url)}" class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl object-contain border border-kkr-light/50 bg-white shadow-sm shrink-0" />` : `<div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-white border border-kkr-light/50 flex items-center justify-center shrink-0 shadow-sm"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 sm:w-6 sm:h-6 text-kkr-red/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>`}
+              ${s.logo_url ? `<img src="${escapeHtml(sanitizeUrl(s.logo_url))}" class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl object-contain border border-kkr-light/50 bg-white shadow-sm shrink-0" />` : `<div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-white border border-kkr-light/50 flex items-center justify-center shrink-0 shadow-sm"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 sm:w-6 sm:h-6 text-kkr-red/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>`}
               <div class="flex-1 min-w-0">
                 <div class="flex items-center gap-2 flex-wrap">
                   <h4 class="font-semibold text-kkr-dark truncate">${escapeHtml(s.name)}</h4>
                   <span class="inline-flex items-center gap-1 text-[10px] font-medium ${s.is_active ? 'text-emerald-600' : 'text-kkr-maroon/60'}"><span class="w-1 h-1 rounded-full ${s.is_active ? 'bg-emerald-500' : 'bg-slate-300'}"></span>${s.is_active ? 'Aktif' : 'Nonaktif'}</span>
                 </div>
                 ${s.description ? `<p class="mt-1.5 text-sm text-kkr-maroon line-clamp-2">${escapeHtml(s.description)}</p>` : ""}
-                ${s.website ? `<a href="${escapeHtml(s.website)}" target="_blank" rel="noopener noreferrer" class="mt-1.5 inline-flex items-center gap-1 text-xs text-kkr-red hover:text-kkr-red font-medium truncate max-w-full">${escapeHtml(s.website)} <span>↗</span></a>` : ""}
+                ${s.website ? `<a href="${escapeHtml(sanitizeUrl(s.website))}" target="_blank" rel="noopener noreferrer" class="mt-1.5 inline-flex items-center gap-1 text-xs text-kkr-red hover:text-kkr-red font-medium truncate max-w-full">${escapeHtml(s.website)} <span>↗</span></a>` : ""}
               </div>
               <div class="flex items-start gap-1 shrink-0 pt-1">
                 <button data-action="toggle" data-id="${escapeHtml(String(s.id))}" class="rounded-lg border px-3 py-1.5 text-xs font-semibold transition-colors shadow-sm ${s.is_active ? 'bg-white border-kkr-light/50 text-amber-600 hover:bg-amber-50 hover:border-amber-200' : 'bg-white border-kkr-light/50 text-emerald-600 hover:bg-emerald-50 hover:border-emerald-200'}">${s.is_active ? 'Nonaktif' : 'Aktif'}</button>

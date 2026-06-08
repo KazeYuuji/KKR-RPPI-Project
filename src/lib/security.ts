@@ -1,17 +1,28 @@
 // In-memory rate limiter per IP + endpoint
 const requestCounts = new Map<string, { count: number; resetAt: number }>();
 
+// Periodic cleanup to prevent memory leak
+if (typeof setInterval !== "undefined") {
+  setInterval(() => {
+    const now = Date.now();
+    for (const [key, entry] of requestCounts) {
+      if (now > entry.resetAt) requestCounts.delete(key);
+    }
+  }, 60_000).unref();
+}
+
 export function checkRateLimit(
   key: string,
   maxRequests: number,
   windowMs: number
 ): { allowed: boolean; remaining: number; resetAt: number } {
   const now = Date.now();
-  const entry = requestCounts.get(key);
+  let entry = requestCounts.get(key);
 
   if (!entry || now > entry.resetAt) {
-    requestCounts.set(key, { count: 1, resetAt: now + windowMs });
-    return { allowed: true, remaining: maxRequests - 1, resetAt: now + windowMs };
+    entry = { count: 1, resetAt: now + windowMs };
+    requestCounts.set(key, entry);
+    return { allowed: true, remaining: maxRequests - 1, resetAt: entry.resetAt };
   }
 
   entry.count++;
@@ -45,12 +56,12 @@ export function isValidOrigin(request: Request): boolean {
 
   if (!host) return false;
 
-  const allowed = [`https://${host}`, `http://${host}`];
+  const allowedOrigins = [`https://${host}`, `http://${host}`];
 
-  if (origin && !allowed.some(a => origin.startsWith(a))) {
+  if (origin && !allowedOrigins.some(a => origin === a)) {
     return false;
   }
-  if (!origin && referer && !allowed.some(a => referer.startsWith(a))) {
+  if (!origin && referer && !allowedOrigins.some(a => referer === a || referer.startsWith(a + "/"))) {
     return false;
   }
 

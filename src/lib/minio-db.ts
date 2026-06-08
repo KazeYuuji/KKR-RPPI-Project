@@ -30,7 +30,8 @@ function prefixPath(key: string): string {
 export async function minioGet<T = Record<string, any>>(key: string): Promise<T | null> {
   try {
     const resp = await getS3().send(new GetObjectCommand({ Bucket: MINIO_BUCKET, Key: prefixPath(key) }));
-    const text = await resp.Body!.transformToString();
+    if (!resp.Body) return null;
+    const text = await resp.Body.transformToString();
     return JSON.parse(text) as T;
   } catch {
     return null;
@@ -90,7 +91,8 @@ export async function uploadBuffer(buffer: Buffer, filename: string, contentType
 export async function downloadFromMinIO(key: string): Promise<{ buffer: Buffer; contentType: string } | null> {
   try {
     const resp = await getS3().send(new GetObjectCommand({ Bucket: MINIO_BUCKET, Key: prefixPath(key) }));
-    const buffer = Buffer.from(await resp.Body!.transformToByteArray());
+    if (!resp.Body) return null;
+    const buffer = Buffer.from(await resp.Body.transformToByteArray());
     return { buffer, contentType: resp.ContentType || "application/octet-stream" };
   } catch {
     return null;

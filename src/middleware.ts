@@ -41,7 +41,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   }
 
   // ---- Public GET endpoints ----
-  if ((url.startsWith("/api/tickets") || url.startsWith("/api/settings") || url.startsWith("/api/speakers") || url.startsWith("/api/sponsors") || url.startsWith("/api/altar-servers") || url.startsWith("/api/uploads")) && method === "GET") {
+  if ((url.startsWith("/api/tickets") || url.startsWith("/api/ticket-pdf") || url.startsWith("/api/settings") || url.startsWith("/api/speakers") || url.startsWith("/api/sponsors") || url.startsWith("/api/altar-servers") || url.startsWith("/api/uploads")) && method === "GET") {
     return next();
   }
 

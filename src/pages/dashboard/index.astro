@@ -309,7 +309,8 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
         config,
         (decodedText) => {
           document.getElementById("checkin-id").value = decodedText;
-          document.getElementById("checkin-form").requestSubmit();
+          const form = document.getElementById("checkin-form");
+          if (form.requestSubmit) { form.requestSubmit(); } else { form.submit(); }
           stopQrScanner();
         },
         () => {

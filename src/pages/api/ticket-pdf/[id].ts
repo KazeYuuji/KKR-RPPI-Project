@@ -1,5 +1,5 @@
 import type { APIRoute } from "astro";
-import { minioGet } from "../../../lib/minio-db";
+import { minioGet, minioListAll } from "../../../lib/minio-db";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 import QRCode from "qrcode";
 
@@ -17,7 +17,7 @@ export const GET: APIRoute = async ({ params }) => {
   const ticketData = await minioGet<Record<string, any>>(`tickets/${registrant.ticket}.json`);
   const ticketName = ticketData?.name || registrant.ticket;
 
-  const settingsList = await (await import("../../../lib/minio-db")).minioListAll<Record<string, string>>("settings/");
+  const settingsList = await minioListAll<Record<string, string>>("settings/");
   const settings: Record<string, string> = {};
   for (const s of settingsList) if (s.key) settings[s.key] = s.value;
 

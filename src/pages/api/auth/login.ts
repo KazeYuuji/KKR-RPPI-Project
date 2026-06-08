@@ -4,10 +4,11 @@ import { checkRateLimit } from "../../../lib/security";
 
 export const POST: APIRoute = async ({ request, clientAddress }) => {
   try {
-    const ip = clientAddress || request.headers.get("x-forwarded-for") || "unknown";
+    const ip = clientAddress || "unknown";
 
-    const { allowed, retryAfter } = checkRateLimit(`login:${ip}`, 5, 15 * 60_000);
-    if (!allowed) {
+    const result = checkRateLimit(`login:${ip}`, 5, 15 * 60_000);
+    if (!result.allowed) {
+      const retryAfter = Math.max(1, Math.ceil((result.resetAt - Date.now()) / 1000));
       return new Response(JSON.stringify({
         error: "Terlalu banyak percobaan. Coba lagi nanti.",
       }), {
