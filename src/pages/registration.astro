@@ -40,7 +40,7 @@ import RegistrationForm from "../components/RegistrationForm.astro";
             <p id="reg-venue" class="mt-4 text-lg font-semibold text-kkr-dark">Memuat...</p>
             <p id="reg-address" class="mt-3 text-sm text-kkr-dark/70"></p>
             <div class="mt-6 overflow-hidden rounded-[1.5rem] border border-white/20 relative">
-              <iframe id="reg-maps" class="aspect-[16/9] w-full" style="filter:grayscale(0.15) contrast(1.05)" loading="lazy" allowfullscreen referrerpolicy="no-referrer"></iframe>
+              <iframe id="reg-maps" class="aspect-[16/9] w-full" style="filter:grayscale(0.15) contrast(1.05)" loading="lazy" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
               <div class="pointer-events-none absolute inset-0 rounded-[1.5rem] ring-1 ring-inset ring-black/5"></div>
             </div>
             <a id="gmaps-link" href="#" target="_blank" rel="noopener" class="mt-3 inline-flex items-center gap-2 text-sm text-kkr-red hover:underline">Buka di Google Maps &rarr;</a>
@@ -56,11 +56,11 @@ import RegistrationForm from "../components/RegistrationForm.astro";
       return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
     }
 
-    function setGmaps(lat, lon, mapsLink) {
+    function setGmaps(url, mapsLink) {
       var iframe = document.getElementById("reg-maps");
       var gmapLink = document.getElementById("gmaps-link");
-      if (iframe) {
-        iframe.src = "https://maps.google.com/maps?q=" + lat + "," + lon + "&z=15&output=embed";
+      if (iframe && url) {
+        iframe.src = url;
       }
       if (gmapLink && mapsLink) {
         gmapLink.href = mapsLink;
@@ -88,8 +88,8 @@ import RegistrationForm from "../components/RegistrationForm.astro";
         document.getElementById("reg-venue").textContent = venue;
         document.getElementById("reg-address").textContent = "Lihat peta di bawah";
         osmCoords(venue, mapsLink).then(function(data) {
-          if (data && data.lat && data.lon) {
-            setGmaps(data.lat, data.lon, mapsLink);
+          if (data && data.url) {
+            setGmaps(data.url, mapsLink);
           }
         });
       } catch {}

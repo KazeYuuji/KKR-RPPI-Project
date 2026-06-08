@@ -322,8 +322,8 @@ import ChatBot from "../components/ChatBot.astro";
         if (mapsLink) params += "&mapsLink=" + encodeURIComponent(mapsLink);
         var res = await fetch("/api/geocode?" + params);
         var data = await res.json();
-        if (data && data.lat && data.lon && safe("loc-maps-iframe")) {
-          safe("loc-maps-iframe").src = "https://maps.google.com/maps?q=" + data.lat + "," + data.lon + "&z=15&output=embed";
+        if (data && data.url && safe("loc-maps-iframe")) {
+          safe("loc-maps-iframe").src = data.url;
         }
       } catch(e) {}
     }
