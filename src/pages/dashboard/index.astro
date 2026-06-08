@@ -208,7 +208,7 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
 
   <div id="toast-container" class="fixed top-4 right-4 z-[100] flex flex-col gap-2 pointer-events-none"></div>
 
-  <script>
+  <script type="module">
     import jsQR from "jsqr";
 
     let mediaStream = null;
@@ -324,20 +324,35 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
         return;
       }
 
-      navigator.mediaDevices.getUserMedia({ video: true })
+      if (!window.isSecureContext) {
+        showBlockedWithError(["Kamera hanya bisa diakses pada koneksi HTTPS."]);
+        btn.textContent = "Scan";
+        btn.disabled = false;
+        cameraRequestPending = false;
+        return;
+      }
+
+      navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: "environment" } } })
       .then(function (stream) {
         readerEl.classList.remove("hidden");
         readerEl.style.height = "320px";
         video.srcObject = stream;
         mediaStream = stream;
         video.play().then(function () {
+          hideCameraModal();
           qrScanning = true;
           scanPaused = false;
           btn.textContent = "Tutup";
           btn.disabled = false;
           scanLoop(video, canvas);
           cameraRequestPending = false;
-        }).catch(function () { cameraRequestPending = false; });
+        }).catch(function (err) {
+          const errMsg = err?.message || "Gagal memulai pratinjau video.";
+          showBlockedWithError(["Tidak dapat memutar kamera.", errMsg]);
+          btn.textContent = "Scan";
+          btn.disabled = false;
+          cameraRequestPending = false;
+        });
       }).catch(function (err) {
         var name = err.name || "";
         var msgs = [];
