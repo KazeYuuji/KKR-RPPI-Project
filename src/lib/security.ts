@@ -69,7 +69,7 @@ export function isValidOrigin(request: Request): boolean {
 }
 
 export const ALLOWED_IMAGE_TYPES = new Set([
-  "image/jpeg", "image/png", "image/webp", "image/gif", "image/svg+xml",
+  "image/jpeg", "image/png", "image/webp", "image/gif",
 ]);
 export const MAX_UPLOAD_SIZE = 5 * 1024 * 1024; // 5MB
 export const MAX_BODY_SIZE = 500 * 1024; // 500KB JSON

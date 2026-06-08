@@ -2,7 +2,7 @@ import type { APIRoute } from "astro";
 import { uploadBuffer } from "../../lib/minio-db";
 import { ALLOWED_IMAGE_TYPES, MAX_UPLOAD_SIZE } from "../../lib/security";
 
-const ALLOWED_EXT = new Set([".jpg", ".jpeg", ".png", ".webp", ".gif", ".svg"]);
+const ALLOWED_EXT = new Set([".jpg", ".jpeg", ".png", ".webp", ".gif"]);
 
 export const POST: APIRoute = async ({ request }) => {
   try {
@@ -13,7 +13,7 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     if (!ALLOWED_IMAGE_TYPES.has(file.type)) {
-      return new Response(JSON.stringify({ error: "Tipe file tidak diizinkan. Gunakan JPG, PNG, WebP, GIF, atau SVG" }), { status: 400, headers: { "Content-Type": "application/json" } });
+      return new Response(JSON.stringify({ error: "Tipe file tidak diizinkan. Gunakan JPG, PNG, WebP, atau GIF" }), { status: 400, headers: { "Content-Type": "application/json" } });
     }
 
     if (file.size > MAX_UPLOAD_SIZE) {
