@@ -113,7 +113,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     "frame-src https://www.openstreetmap.org",
     "frame-ancestors 'none'",
     "base-uri 'self'",
-    "connect-src 'self'",
+    "connect-src 'self' https://nominatim.openstreetmap.org",
   ].join("; ");
   response.headers.set("Content-Security-Policy", csp);
 

@@ -316,8 +316,19 @@ import ChatBot from "../components/ChatBot.astro";
       return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
     }
 
-    function deriveEmbedUrl(link, venue) {
-      return `https://www.openstreetmap.org/search?query=${encodeURIComponent(venue || "Lokasi Acara")}`;
+    async function osmEmbedUrl(venue) {
+      try {
+        var q = encodeURIComponent(venue || "Lokasi Acara");
+        var res = await fetch("https://nominatim.openstreetmap.org/search?q=" + q + "&format=json&limit=1", { headers: { "User-Agent": "KKR-RPPI/1.0" } });
+        var data = await res.json();
+        if (data && data.length > 0) {
+          var lat = parseFloat(data[0].lat);
+          var lon = parseFloat(data[0].lon);
+          var pad = 0.02;
+          return "https://www.openstreetmap.org/export/embed.html?bbox=" + (lon - pad) + "," + (lat - pad) + "," + (lon + pad) + "," + (lat + pad) + "&layer=mapnik&marker=" + lat + "," + lon;
+        }
+      } catch(e) {}
+      return "";
     }
 
     function sanitizeUrl(url) {
@@ -338,7 +349,6 @@ import ChatBot from "../components/ChatBot.astro";
         const time = s.locTime || "08:00 - 12:30 WIB";
         const regDeadline = s.regDeadline || "29 Desember 2025";
         const mapsLink = s.locMapsLink || "https://maps.app.goo.gl/RCzwb8tiKNdVwXA59";
-        const mapsSrc = s.locMaps || deriveEmbedUrl(mapsLink, venue);
         const email = s.contactEmail || "kkrrppi@gmail.com";
         const phone = s.contactPhone || "(0354) 682433";
         const wa = s.contactWa || "6285800753804";
@@ -428,7 +438,15 @@ import ChatBot from "../components/ChatBot.astro";
         if (safe("loc-phone")) safe("loc-phone").textContent = phone;
         if (safe("loc-wa")) { safe("loc-wa").href = "https://wa.me/" + wa; safe("loc-wa").textContent = "WhatsApp: +" + wa; }
         if (safe("loc-maps-btn")) safe("loc-maps-btn").href = sanitizeUrl(mapsLink);
-        if (safe("loc-maps-iframe")) safe("loc-maps-iframe").src = mapsSrc;
+        if (safe("loc-maps-iframe")) {
+          if (s.locMaps) {
+            safe("loc-maps-iframe").src = s.locMaps;
+          } else {
+            osmEmbedUrl(venue).then(function(url) {
+              if (url && safe("loc-maps-iframe")) safe("loc-maps-iframe").src = url;
+            });
+          }
+        }
 
         // CTA contact
         if (safe("cta-email")) safe("cta-email").textContent = email;

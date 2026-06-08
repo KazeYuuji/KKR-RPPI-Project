@@ -57,6 +57,21 @@ import RegistrationForm from "../components/RegistrationForm.astro";
       return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
     }
 
+    async function osmEmbedUrl(venue) {
+      try {
+        var q = encodeURIComponent(venue || "Lokasi Acara");
+        var res = await fetch("https://nominatim.openstreetmap.org/search?q=" + q + "&format=json&limit=1", { headers: { "User-Agent": "KKR-RPPI/1.0" } });
+        var data = await res.json();
+        if (data && data.length > 0) {
+          var lat = parseFloat(data[0].lat);
+          var lon = parseFloat(data[0].lon);
+          var pad = 0.02;
+          return "https://www.openstreetmap.org/export/embed.html?bbox=" + (lon - pad) + "," + (lat - pad) + "," + (lon + pad) + "," + (lat + pad) + "&layer=mapnik&marker=" + lat + "," + lon;
+        }
+      } catch(e) {}
+      return "";
+    }
+
     async function loadSettings() {
       try {
         const res = await fetch("/api/settings");
@@ -65,7 +80,13 @@ import RegistrationForm from "../components/RegistrationForm.astro";
         const venue = s.locVenue || "Kediri";
         document.getElementById("reg-venue").textContent = venue;
         document.getElementById("reg-address").textContent = "Lihat peta di bawah";
-        document.getElementById("reg-maps").src = `https://www.openstreetmap.org/search?query=${encodeURIComponent(venue)}`;
+        if (s.locMaps) {
+          document.getElementById("reg-maps").src = s.locMaps;
+        } else {
+          osmEmbedUrl(venue).then(function(url) {
+            if (url) document.getElementById("reg-maps").src = url;
+          });
+        }
       } catch {}
     }
 
