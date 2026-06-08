@@ -208,9 +208,8 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
 
   <div id="toast-container" class="fixed top-4 right-4 z-[100] flex flex-col gap-2 pointer-events-none"></div>
 
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
   <script type="module">
-    import jsQR from "jsqr";
-
     let mediaStream = null;
     let animFrameId = null;
     let qrScanning = false;
@@ -220,47 +219,36 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
       return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
     }
 
-    function toast(msg, type = "success") {
+    function toast(msg, type) {
+      if (type == null) type = "success";
       const c = document.getElementById("toast-container");
       const el = document.createElement("div");
-      el.className = `pointer-events-auto flex items-center gap-2.5 rounded-xl px-4 py-3 text-sm font-medium shadow-lg transition-all duration-300 animate-slide-up ${type === "success" ? "bg-emerald-50 text-emerald-800 border border-emerald-200" : "bg-red-50 text-red-800 border border-red-200"}`;
-      el.innerHTML = `${type === "success" ? `<svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>` : `<svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`}${msg}`;
+      el.className = "pointer-events-auto flex items-center gap-2.5 rounded-xl px-4 py-3 text-sm font-medium shadow-lg transition-all duration-300 animate-slide-up " + (type === "success" ? "bg-emerald-50 text-emerald-800 border border-emerald-200" : "bg-red-50 text-red-800 border border-red-200");
+      el.innerHTML = (type === "success" ? '<svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>' : '<svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>') + msg;
       c.appendChild(el);
-      setTimeout(() => { el.style.opacity = "0"; el.style.transform = "translateX(100%)"; setTimeout(() => el.remove(), 300); }, 3000);
+      setTimeout(function() { el.style.opacity = "0"; el.style.transform = "translateX(100%)"; setTimeout(function() { el.remove(); }, 300); }, 3000);
     }
 
     function showCameraModal() {
-      const modal = document.getElementById("camera-modal");
-      const title = document.getElementById("camera-modal-title");
-      const desc = document.getElementById("camera-modal-desc");
-      const steps = document.getElementById("camera-modal-steps");
-      const allowBtn = document.getElementById("camera-modal-allow");
-
-      modal.classList.remove("hidden");
-      title.textContent = "Akses Kamera Diperlukan";
-      desc.textContent = "Izinkan akses kamera untuk memindai QR code tiket.";
-      steps.classList.add("hidden");
+      document.getElementById("camera-modal").classList.remove("hidden");
+      document.getElementById("camera-modal-title").textContent = "Akses Kamera Diperlukan";
+      document.getElementById("camera-modal-desc").textContent = "Izinkan akses kamera untuk memindai QR code tiket.";
+      document.getElementById("camera-modal-steps").classList.add("hidden");
       var detailEl = document.getElementById("camera-modal-detail");
       if (detailEl) detailEl.classList.add("hidden");
-      allowBtn.textContent = "Izinkan Kamera";
-      allowBtn.disabled = false;
+      document.getElementById("camera-modal-allow").textContent = "Izinkan Kamera";
+      document.getElementById("camera-modal-allow").disabled = false;
     }
 
     function showBlockedWithError(msgs) {
-      const modal = document.getElementById("camera-modal");
-      const title = document.getElementById("camera-modal-title");
-      const desc = document.getElementById("camera-modal-desc");
-      const steps = document.getElementById("camera-modal-steps");
-      const allowBtn = document.getElementById("camera-modal-allow");
-      const errorEl = document.getElementById("camera-modal-detail");
-
-      modal.classList.remove("hidden");
-      title.textContent = "Kamera Tidak Dapat Diakses";
-      desc.textContent = msgs.join(" ");
-      steps.classList.remove("hidden");
+      document.getElementById("camera-modal").classList.remove("hidden");
+      document.getElementById("camera-modal-title").textContent = "Kamera Tidak Dapat Diakses";
+      document.getElementById("camera-modal-desc").textContent = msgs.join(" ");
+      document.getElementById("camera-modal-steps").classList.remove("hidden");
+      var errorEl = document.getElementById("camera-modal-detail");
       if (errorEl) { errorEl.textContent = msgs.join(" | "); errorEl.classList.remove("hidden"); }
-      allowBtn.textContent = "Coba Lagi";
-      allowBtn.disabled = false;
+      document.getElementById("camera-modal-allow").textContent = "Coba Lagi";
+      document.getElementById("camera-modal-allow").disabled = false;
     }
 
     function hideCameraModal() {
@@ -270,44 +258,40 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
     function decodeFrame(video, canvas) {
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
-      const ctx = canvas.getContext("2d");
+      var ctx = canvas.getContext("2d");
       if (!ctx) return null;
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const code = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: "dontInvert" });
-      return code?.data || null;
+      var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      var code = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: "dontInvert" });
+      return (code && code.data) || null;
     }
 
     async function detectBarcode(video) {
       if (!window.BarcodeDetector) return null;
       try {
-        const detector = new BarcodeDetector({ formats: ["qr_code"] });
-        const barcodes = await detector.detect(video);
+        var detector = new BarcodeDetector({ formats: ["qr_code"] });
+        var barcodes = await detector.detect(video);
         return barcodes.length > 0 ? barcodes[0].rawValue : null;
-      } catch {
-        return null;
-      }
+      } catch (e) { return null; }
     }
 
     function scanLoop(video, canvas) {
       if (!qrScanning) return;
-      animFrameId = requestAnimationFrame(() => scanLoop(video, canvas));
+      animFrameId = requestAnimationFrame(function() { scanLoop(video, canvas); });
 
-      detectBarcode(video).then(result => {
+      detectBarcode(video).then(function(result) {
         if (result) {
           document.getElementById("checkin-id").value = result;
-          const form = document.getElementById("checkin-form");
-          if (form.requestSubmit) form.requestSubmit();
-          else form.submit();
+          var form = document.getElementById("checkin-form");
+          if (form.requestSubmit) form.requestSubmit(); else form.submit();
           stopQrScanner();
           return;
         }
-        const decoded = decodeFrame(video, canvas);
+        var decoded = decodeFrame(video, canvas);
         if (decoded) {
           document.getElementById("checkin-id").value = decoded;
-          const form = document.getElementById("checkin-form");
-          if (form.requestSubmit) form.requestSubmit();
-          else form.submit();
+          var form = document.getElementById("checkin-form");
+          if (form.requestSubmit) form.requestSubmit(); else form.submit();
           stopQrScanner();
         }
       });
@@ -321,13 +305,13 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
       video.srcObject = stream;
       mediaStream = stream;
 
-      video.onloadedmetadata = () => {
-        video.play().then(() => {
+      video.onloadedmetadata = function() {
+        video.play().then(function() {
           qrScanning = true;
           btn.textContent = "Tutup";
           btn.disabled = false;
           scanLoop(video, canvas);
-        }).catch(() => {
+        }).catch(function() {
           showBlockedWithError(["Gagal memutar kamera."]);
           btn.textContent = "Scan"; btn.disabled = false;
         });
@@ -335,10 +319,10 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
     }
 
     async function tryCamera() {
-      const btn = document.getElementById("scan-qr-btn");
-      const readerEl = document.getElementById("qr-reader");
-      const video = document.getElementById("qr-video");
-      const canvas = document.getElementById("qr-canvas");
+      var btn = document.getElementById("scan-qr-btn");
+      var readerEl = document.getElementById("qr-reader");
+      var video = document.getElementById("qr-video");
+      var canvas = document.getElementById("qr-canvas");
 
       btn.disabled = true;
       btn.textContent = "Mengakses kamera...";
@@ -352,14 +336,14 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
         btn.textContent = "Scan"; btn.disabled = false; return;
       }
 
-      let stream;
+      var stream;
       try {
         stream = await navigator.mediaDevices.getUserMedia({
           video: { facingMode: { ideal: "environment" } }
         });
       } catch (err) {
-        const name = err.name || "";
-        const msgs = [];
+        var name = err.name || "";
+        var msgs = [];
         if (name === "NotAllowedError" || name === "PermissionDeniedError") {
           msgs.push("Akses kamera ditolak oleh browser.");
           msgs.push("Klik 'Coba Lagi' setelah mengizinkan di pengaturan.");
@@ -375,20 +359,20 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
     }
 
     async function requestCamera() {
-      const btn = document.getElementById("scan-qr-btn");
-      const readerEl = document.getElementById("qr-reader");
-      const video = document.getElementById("qr-video");
-      const canvas = document.getElementById("qr-canvas");
+      var btn = document.getElementById("scan-qr-btn");
+      var readerEl = document.getElementById("qr-reader");
+      var video = document.getElementById("qr-video");
+      var canvas = document.getElementById("qr-canvas");
 
       btn.disabled = true;
       btn.textContent = "Mengakses kamera...";
 
-      let stream;
+      var stream;
       try {
         stream = await navigator.mediaDevices.getUserMedia({
           video: { facingMode: { ideal: "environment" } }
         });
-      } catch {
+      } catch (e) {
         showBlockedWithError(["Akses kamera tetap ditolak. Periksa pengaturan browser."]);
         btn.textContent = "Scan"; btn.disabled = false;
         return;
@@ -398,14 +382,14 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
     }
 
     function stopQrScanner() {
-      const readerEl = document.getElementById("qr-reader");
-      const video = document.getElementById("qr-video");
-      const btn = document.getElementById("scan-qr-btn");
+      var readerEl = document.getElementById("qr-reader");
+      var video = document.getElementById("qr-video");
+      var btn = document.getElementById("scan-qr-btn");
 
       qrScanning = false;
       if (animFrameId) { cancelAnimationFrame(animFrameId); animFrameId = null; }
       if (mediaStream) {
-        mediaStream.getTracks().forEach(t => t.stop());
+        mediaStream.getTracks().forEach(function(t) { t.stop(); });
         mediaStream = null;
       }
       video.srcObject = null;
@@ -417,20 +401,20 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
 
     async function loadStats() {
       try {
-        const res = await fetch("/api/stats");
-        const d = await res.json();
-        const cards = document.querySelectorAll("#stats-grid > div");
-        const tr = d.totalRegistrants || 0;
-        const ci = d.checkedIn || 0;
+        var res = await fetch("/api/stats");
+        var d = await res.json();
+        var cards = document.querySelectorAll("#stats-grid > div");
+        var tr = d.totalRegistrants || 0;
+        var ci = d.checkedIn || 0;
         if (cards.length >= 4) {
-          const values = [tr, ci, tr - ci, d.sponsorCount || 0];
-          cards.forEach((card, i) => {
-            const valEl = card.querySelector(".text-2xl");
+          var values = [tr, ci, tr - ci, d.sponsorCount || 0];
+          cards.forEach(function(card, i) {
+            var valEl = card.querySelector(".text-2xl");
             if (valEl && values[i] !== undefined) {
-              const target = values[i];
-              let current = 0;
-              const step = Math.max(1, Math.floor(target / 30));
-              const interval = setInterval(() => {
+              var target = values[i];
+              var current = 0;
+              var step = Math.max(1, Math.floor(target / 30));
+              var interval = setInterval(function() {
                 current = Math.min(current + step, target);
                 valEl.textContent = current;
                 if (current >= target) clearInterval(interval);
@@ -439,9 +423,8 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
           });
         }
 
-        // Analytics ringkasan
-        const uc = tr - ci;
-        const rate = tr > 0 ? Math.round((ci / tr) * 100) : 0;
+        var uc = tr - ci;
+        var rate = tr > 0 ? Math.round((ci / tr) * 100) : 0;
         document.getElementById("summary-checked").textContent = ci;
         document.getElementById("summary-unchecked").textContent = uc;
         document.getElementById("checkin-rate").textContent = rate + "% check-in";
@@ -450,125 +433,95 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
         document.getElementById("metric-total").textContent = tr;
         document.getElementById("metric-rate").textContent = rate + "%";
 
-        // Sponsor & speaker counts
-        try {
-          const spRes = await fetch("/api/sponsors");
-          const spData = await spRes.json();
-          document.getElementById("metric-sponsors").textContent = (spData.sponsors || []).filter(s => s.is_active).length;
-        } catch {}
-        try {
-          const spkRes = await fetch("/api/speakers");
-          const spkData = await spkRes.json();
-          document.getElementById("metric-speakers").textContent = (spkData.speakers || []).filter(s => s.is_active).length;
-        } catch {}
-        try {
-          const alRes = await fetch("/api/altar-servers");
-          const alData = await alRes.json();
-          document.getElementById("metric-altar").textContent = (alData.altarServers || []).filter(s => s.is_active).length;
-        } catch {}
-      } catch {}
+        try { var r = await fetch("/api/sponsors"); var rd = await r.json(); document.getElementById("metric-sponsors").textContent = (rd.sponsors || []).filter(function(s){return s.is_active}).length; } catch(e) {}
+        try { var r = await fetch("/api/speakers"); var rd = await r.json(); document.getElementById("metric-speakers").textContent = (rd.speakers || []).filter(function(s){return s.is_active}).length; } catch(e) {}
+        try { var r = await fetch("/api/altar-servers"); var rd = await r.json(); document.getElementById("metric-altar").textContent = (rd.altarServers || []).filter(function(s){return s.is_active}).length; } catch(e) {}
+      } catch(e) {}
     }
 
     async function loadRegistrants() {
       try {
-        const res = await fetch("/api/registrants");
-        const d = await res.json();
-        const list = d.registrants || [];
-        const tbody = document.getElementById("registrant-rows");
+        var res = await fetch("/api/registrants");
+        var d = await res.json();
+        var list = d.registrants || [];
+        var tbody = document.getElementById("registrant-rows");
         if (!list.length) {
-          tbody.innerHTML = `<tr><td colspan="5" class="py-12 text-center text-kkr-maroon/60 text-sm">Belum ada pendaftar.</td></tr>`;
+          tbody.innerHTML = '<tr><td colspan="5" class="py-12 text-center text-kkr-maroon/60 text-sm">Belum ada pendaftar.</td></tr>';
           return;
         }
-        tbody.innerHTML = list.map((r) => `
-          <tr class="hover:bg-white/50 transition-colors">
-            <td class="py-3.5 px-5">
-              <div class="flex items-center gap-2.5">
-                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-kkr-light to-kkr-light flex items-center justify-center text-xs font-bold text-kkr-red shrink-0">${escapeHtml(r.name.charAt(0).toUpperCase())}</div>
-                <span class="font-medium text-kkr-dark">${escapeHtml(r.name)}</span>
-              </div>
-            </td>
-            <td class="py-3.5 px-5 text-kkr-maroon hidden sm:table-cell">${escapeHtml(r.school || "")}</td>
-            <td class="py-3.5 px-5 text-kkr-maroon">${escapeHtml(r.ticket)}</td>
-            <td class="py-3.5 px-5 hidden md:table-cell"><span class="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold ${r.checked_in ? 'bg-kkr-dark text-white' : 'bg-kkr-light/40 text-kkr-maroon'}">${r.checked_in ? '✓ Checked-in' : '— Belum'}</span></td>
-            <td class="py-3.5 px-5 text-right">
-              ${r.checked_in ? '<span class="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-semibold bg-kkr-dark text-white"><svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Done</span>' : `<button data-action="checkin" data-id="${escapeHtml(String(r.id))}" class="rounded-lg px-2.5 py-1.5 text-xs font-semibold transition bg-emerald-100 text-emerald-700 hover:bg-emerald-200">CI</button>`}
-            </td>
-          </tr>
-        `).join("");
-      } catch {}
+        tbody.innerHTML = list.map(function(r) {
+          return '<tr class="hover:bg-white/50 transition-colors">' +
+            '<td class="py-3.5 px-5"><div class="flex items-center gap-2.5"><div class="w-8 h-8 rounded-full bg-gradient-to-br from-kkr-light to-kkr-light flex items-center justify-center text-xs font-bold text-kkr-red shrink-0">' + escapeHtml(r.name.charAt(0).toUpperCase()) + '</div><span class="font-medium text-kkr-dark">' + escapeHtml(r.name) + '</span></div></td>' +
+            '<td class="py-3.5 px-5 text-kkr-maroon hidden sm:table-cell">' + escapeHtml(r.school || "") + '</td>' +
+            '<td class="py-3.5 px-5 text-kkr-maroon">' + escapeHtml(r.ticket) + '</td>' +
+            '<td class="py-3.5 px-5 hidden md:table-cell"><span class="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold ' + (r.checked_in ? 'bg-kkr-dark text-white' : 'bg-kkr-light/40 text-kkr-maroon') + '">' + (r.checked_in ? '✓ Checked-in' : '— Belum') + '</span></td>' +
+            '<td class="py-3.5 px-5 text-right">' + (r.checked_in ? '<span class="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-semibold bg-kkr-dark text-white"><svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Done</span>' : '<button data-action="checkin" data-id="' + escapeHtml(String(r.id)) + '" class="rounded-lg px-2.5 py-1.5 text-xs font-semibold transition bg-emerald-100 text-emerald-700 hover:bg-emerald-200">CI</button>') + '</td>' +
+            '</tr>';
+        }).join("");
+      } catch(e) {}
     }
 
     async function loadTickets() {
       try {
-        const res = await fetch("/api/tickets");
-        const d = await res.json();
-        const container = document.getElementById("ticket-mini-list");
-        const list = d.tickets || [];
-        container.innerHTML = list.map((t) => `
-          <div class="flex items-center justify-between rounded-xl border border-kkr-light/30 bg-white/50 p-3.5 transition hover:border-kkr-light/50">
-            <div class="flex items-center gap-3">
-              <div class="w-2 h-2 rounded-full ${t.remaining > 0 ? 'bg-emerald-400' : 'bg-red-400'}"></div>
-              <div>
-                <p class="text-sm font-semibold text-kkr-dark">${escapeHtml(t.name)}</p>
-                <p class="text-xs text-kkr-maroon/80 mt-0.5">Sisa: ${t.remaining} tiket</p>
-              </div>
-            </div>
-            <span class="text-xs font-semibold px-2.5 py-1 rounded-full ${t.remaining > 0 ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'}">${t.remaining > 0 ? 'Tersedia' : 'Habis'}</span>
-          </div>
-        `).join("");
-      } catch {}
+        var res = await fetch("/api/tickets");
+        var d = await res.json();
+        var container = document.getElementById("ticket-mini-list");
+        var list = d.tickets || [];
+        container.innerHTML = list.map(function(t) {
+          return '<div class="flex items-center justify-between rounded-xl border border-kkr-light/30 bg-white/50 p-3.5 transition hover:border-kkr-light/50">' +
+            '<div class="flex items-center gap-3"><div class="w-2 h-2 rounded-full ' + (t.remaining > 0 ? 'bg-emerald-400' : 'bg-red-400') + '"></div><div><p class="text-sm font-semibold text-kkr-dark">' + escapeHtml(t.name) + '</p><p class="text-xs text-kkr-maroon/80 mt-0.5">Sisa: ' + t.remaining + ' tiket</p></div></div>' +
+            '<span class="text-xs font-semibold px-2.5 py-1 rounded-full ' + (t.remaining > 0 ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700') + '">' + (t.remaining > 0 ? 'Tersedia' : 'Habis') + '</span></div>';
+        }).join("");
+      } catch(e) {}
     }
 
-    document.getElementById("registrant-rows")?.addEventListener("click", async (e) => {
-      const btn = e.target.closest("button[data-action]");
+    document.getElementById("registrant-rows")?.addEventListener("click", async function(e) {
+      var btn = e.target.closest("button[data-action]");
       if (!btn) return;
-      const id = btn.dataset.id;
+      var id = btn.dataset.id;
       try {
-        const res = await fetch("/api/registrants", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id, action: "checkin" }) });
+        var res = await fetch("/api/registrants", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: id, action: "checkin" }) });
         if (res.ok) { loadRegistrants(); loadStats(); toast("Check-in berhasil!"); }
-        else {
-          const d = await res.json();
-          toast(d.error || "Gagal", "error");
-        }
-      } catch { toast("Gagal check-in", "error"); }
+        else { var d = await res.json(); toast(d.error || "Gagal", "error"); }
+      } catch(e) { toast("Gagal check-in", "error"); }
     });
 
-    document.getElementById("checkin-form")?.addEventListener("submit", async (e) => {
+    document.getElementById("checkin-form")?.addEventListener("submit", async function(e) {
       e.preventDefault();
-      const code = document.getElementById("checkin-id").value.trim();
+      var code = document.getElementById("checkin-id").value.trim();
       if (!code) return;
-      const resultEl = document.getElementById("checkin-result");
+      var resultEl = document.getElementById("checkin-result");
       resultEl.className = "rounded-xl p-3 text-sm";
       try {
-        const res = await fetch("/api/registrants", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: code, action: "checkin" }) });
-        const d = await res.json();
+        var res = await fetch("/api/registrants", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: code, action: "checkin" }) });
+        var d = await res.json();
         if (res.ok) {
-          const name = d.registrant?.name || "Peserta ditemukan";
+          var name = d.registrant?.name || "Peserta ditemukan";
           resultEl.className = "rounded-xl p-3 text-sm bg-emerald-50 text-emerald-700 border border-emerald-200";
-          resultEl.textContent = `${name} — Check-in berhasil!`;
+          resultEl.textContent = name + " — Check-in berhasil!";
           loadRegistrants(); loadStats();
         } else {
           resultEl.className = "rounded-xl p-3 text-sm bg-red-50 text-red-700 border border-red-200";
           resultEl.textContent = d.error || "ID tidak ditemukan";
         }
-      } catch {
+      } catch(e) {
         resultEl.className = "rounded-xl p-3 text-sm bg-red-50 text-red-700 border border-red-200";
         resultEl.textContent = "Terjadi kesalahan";
       }
       resultEl.classList.remove("hidden");
     });
 
-    document.getElementById("scan-qr-btn")?.addEventListener("click", () => {
+    document.getElementById("scan-qr-btn")?.addEventListener("click", function() {
       if (qrScanning) { stopQrScanner(); }
       else { tryCamera(); }
     });
 
     document.getElementById("camera-modal-allow")?.addEventListener("click", requestCamera);
-    document.getElementById("camera-modal-cancel")?.addEventListener("click", () => {
+    document.getElementById("camera-modal-cancel")?.addEventListener("click", function() {
       hideCameraModal();
       document.getElementById("scan-qr-btn").disabled = false;
     });
 
-    document.addEventListener("DOMContentLoaded", () => { loadStats(); loadRegistrants(); loadTickets(); });
+    document.addEventListener("DOMContentLoaded", function() { loadStats(); loadRegistrants(); loadTickets(); });
   </script>
 </AdminLayout>
