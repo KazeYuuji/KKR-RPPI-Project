@@ -251,7 +251,7 @@ import ChatBot from "../components/ChatBot.astro";
 
           <div class="overflow-hidden rounded-2xl glass-card h-full min-h-[280px]">
             <div class="relative h-full w-full">
-              <iframe id="loc-maps-iframe" class="absolute inset-0 h-full w-full" src="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" style="filter:grayscale(0.15) contrast(1.05)"></iframe>
+              <iframe id="loc-maps-iframe" class="absolute inset-0 h-full w-full" src="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" style="filter:grayscale(0.15) contrast(1.05)"></iframe>
               <div class="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-inset ring-black/5"></div>
             </div>
           </div>
@@ -317,13 +317,7 @@ import ChatBot from "../components/ChatBot.astro";
     }
 
     function deriveEmbedUrl(link, venue) {
-      if (!link) return `https://www.google.com/maps?q=${encodeURIComponent(venue || "Lokasi Acara")}&output=embed`;
-      if (link.includes("output=embed")) return link;
-      if (link.includes("google.com/maps")) {
-        if (link.includes("?")) return link + "&output=embed";
-        return `https://www.google.com/maps?q=${encodeURIComponent(venue || "Lokasi Acara")}&output=embed`;
-      }
-      return `https://www.google.com/maps?q=${encodeURIComponent(venue || "Lokasi Acara")}&output=embed`;
+      return `https://www.openstreetmap.org/search?query=${encodeURIComponent(venue || "Lokasi Acara")}`;
     }
 
     function sanitizeUrl(url) {
