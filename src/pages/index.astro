@@ -249,8 +249,11 @@ import ChatBot from "../components/ChatBot.astro";
             </div>
           </div>
 
-          <div class="overflow-hidden rounded-2xl glass-card h-72">
-            <iframe id="loc-maps-iframe" class="h-full w-full" src="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          <div class="overflow-hidden rounded-2xl glass-card h-full min-h-[280px]">
+            <div class="relative h-full w-full">
+              <iframe id="loc-maps-iframe" class="absolute inset-0 h-full w-full" src="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" style="filter:grayscale(0.15) contrast(1.05)"></iframe>
+              <div class="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-inset ring-black/5"></div>
+            </div>
           </div>
         </div>
       </section>

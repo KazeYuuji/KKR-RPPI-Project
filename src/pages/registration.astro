@@ -39,8 +39,11 @@ import RegistrationForm from "../components/RegistrationForm.astro";
             <p class="text-sm uppercase tracking-[0.3em] text-kkr-maroon/80">Lokasi Acara</p>
             <p id="reg-venue" class="mt-4 text-lg font-semibold text-kkr-dark">Memuat...</p>
             <p id="reg-address" class="mt-3 text-sm text-kkr-dark/70"></p>
-            <div class="mt-6 overflow-hidden rounded-[1.5rem] border border-white/20">
-              <iframe id="reg-maps" src="" class="h-52 w-full" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            <div class="mt-6 overflow-hidden rounded-[1.5rem] border border-white/20 relative">
+              <div class="aspect-[16/9]">
+                <iframe id="reg-maps" src="" class="absolute inset-0 h-full w-full" loading="lazy" referrerpolicy="no-referrer-when-downgrade" style="filter:grayscale(0.15) contrast(1.05)"></iframe>
+              </div>
+              <div class="pointer-events-none absolute inset-0 rounded-[1.5rem] ring-1 ring-inset ring-black/5"></div>
             </div>
           </div>
         </aside>
