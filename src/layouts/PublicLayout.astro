@@ -30,12 +30,12 @@ const canonical = new URL(Astro.url.pathname, siteUrl).href;
     <link rel="canonical" href={canonical} />
 
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="/logo-header.png" />
+    <link rel="icon" type="image/png" href="/logo-header-small.png" />
     <link rel="apple-touch-icon" href="/logo-header.png" />
 
     <!-- Preload hero assets -->
     <link rel="preload" as="image" href="/logo.png" />
-    <link rel="preload" as="image" href="/logo-header.png" />
+    <link rel="preload" as="image" href="/logo-header-small.png" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
@@ -111,7 +111,7 @@ const canonical = new URL(Astro.url.pathname, siteUrl).href;
       <header class="sticky top-0 z-40 border-b border-white/10 bg-kkr-dark/95 shadow-lg shadow-black/20">
         <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
           <a href="/" class="flex items-center gap-3 text-lg font-semibold tracking-tight text-white">
-            <img src="/logo-header.png" alt="KKR RPPI logo" class="h-10 w-10 object-contain rounded-full" loading="lazy" decoding="async" />
+            <img src="/logo-header-small.png" alt="KKR RPPI logo" class="h-10 w-10 object-contain rounded-full" loading="lazy" decoding="async" />
             <span>KKR <span class="text-kkr-gold">RPPI</span></span>
           </a>
 
@@ -154,7 +154,7 @@ const canonical = new URL(Astro.url.pathname, siteUrl).href;
         <div class="mx-auto max-w-7xl flex flex-col sm:flex-row items-center justify-between gap-2">
           <div class="flex items-center gap-3 text-sm">
             <a href="/" class="flex items-center gap-2 font-semibold text-white">
-              <img src="/logo-header.png" alt="KKR RPPI logo" class="h-7 w-7 object-contain rounded-full" />
+              <img src="/logo-header-small.png" alt="KKR RPPI logo" class="h-7 w-7 object-contain rounded-full" />
               KKR <span class="text-kkr-gold">RPPI</span>
             </a>
             <span class="text-white/30 hidden sm:inline">|</span>
