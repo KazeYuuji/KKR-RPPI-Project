@@ -699,6 +699,6 @@ import ChatBot from "../components/ChatBot.astro";
       }
     });
 
-    document.addEventListener("DOMContentLoaded", () => { loadSettings(); loadSpeakers(); loadAltarServers(); loadSponsors(); });
+    document.addEventListener("DOMContentLoaded", () => { loadSettings(); loadSpeakers(); loadAltarServers(); loadSponsors(); console.log("hydration started"); });
   </script>
 </PublicLayout>
