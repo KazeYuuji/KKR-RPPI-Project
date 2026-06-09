@@ -521,7 +521,7 @@ import ChatBot from "../components/ChatBot.astro";
                   ${s.title ? `<span class="inline-block text-[10px] font-semibold uppercase tracking-wider text-kkr-red bg-kkr-light/80 px-2.5 py-0.5 rounded-full mt-4">${escapeHtml(s.title)}</span>` : ""}
                   <h3 class="text-xl sm:text-2xl font-semibold text-kkr-dark mt-1.5">${escapeHtml(s.name)}</h3>
                   ${s.organization ? `<p class="text-sm text-kkr-dark/60 mt-0.5">${escapeHtml(s.organization)}</p>` : ""}
-                  ${s.tags ? `<div class="flex flex-wrap gap-1.5 mt-3 justify-center sm:justify-start">${s.tags.split(",").map(t => `<span class="text-[10px] bg-kkr-light text-kkr-red px-2 py-0.5 rounded-full font-medium">${escapeHtml(t.trim())}</span>`).join("")}</div>` : ""}
+                  ${s.tags && typeof s.tags === 'string' ? `<div class="flex flex-wrap gap-1.5 mt-3 justify-center sm:justify-start">${s.tags.split(",").map(t => `<span class="text-[10px] bg-kkr-light text-kkr-red px-2 py-0.5 rounded-full font-medium">${escapeHtml(t.trim())}</span>`).join("")}</div>` : ""}
                   ${s.description ? `<p class="mt-3 text-xs text-kkr-dark/70 leading-relaxed">${escapeHtml(s.description)}</p>` : ""}
                 </div>
                 <div class="relative flex flex-col justify-center ${s.story ? '' : 'items-center justify-center'}">
@@ -585,7 +585,7 @@ import ChatBot from "../components/ChatBot.astro";
               ${s.organization ? `<p class="text-kkr-dark/70 text-xs">${escapeHtml(s.organization)}</p>` : ""}
             </div>
             ${s.description ? `<div class="mt-2"><p class="text-xs text-kkr-dark/80 leading-relaxed text-center max-w-[200px] mx-auto break-words">${escapeHtml(s.description)}</p></div>` : '<div class="flex-1"></div>'}
-            ${s.tags ? `<div class="flex flex-wrap justify-center gap-1.5 mt-3">${s.tags.split(",").map(t => `<span class="text-[10px] bg-kkr-light text-kkr-red px-2 py-0.5 rounded-full font-medium">${escapeHtml(t.trim())}</span>`).join("")}</div>` : ""}
+            ${s.tags && typeof s.tags === 'string' ? `<div class="flex flex-wrap justify-center gap-1.5 mt-3">${s.tags.split(",").map(t => `<span class="text-[10px] bg-kkr-light text-kkr-red px-2 py-0.5 rounded-full font-medium">${escapeHtml(t.trim())}</span>`).join("")}</div>` : ""}
           </div>`;
         if (list.length > 3) {
           const base = "rounded-2xl glass-card p-4 sm:p-5 text-center hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 shrink-0 w-[200px] sm:w-[220px] flex flex-col";

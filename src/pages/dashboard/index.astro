@@ -454,7 +454,7 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
         }
         tbody.innerHTML = list.map(function(r) {
           return '<tr class="hover:bg-white/50 transition-colors">' +
-            '<td class="py-3.5 px-5"><div class="flex items-center gap-2.5"><div class="w-8 h-8 rounded-full bg-gradient-to-br from-kkr-light to-kkr-light flex items-center justify-center text-xs font-bold text-kkr-red shrink-0">' + escapeHtml(r.name.charAt(0).toUpperCase()) + '</div><span class="font-medium text-kkr-dark">' + escapeHtml(r.name) + '</span></div></td>' +
+            '<td class="py-3.5 px-5"><div class="flex items-center gap-2.5"><div class="w-8 h-8 rounded-full bg-gradient-to-br from-kkr-light to-kkr-light flex items-center justify-center text-xs font-bold text-kkr-red shrink-0">' + escapeHtml((r.name || "?").charAt(0).toUpperCase()) + '</div><span class="font-medium text-kkr-dark">' + escapeHtml(r.name || "Tanpa Nama") + '</span></div></td>' +
             '<td class="py-3.5 px-5 text-kkr-maroon hidden sm:table-cell">' + escapeHtml(r.school || "") + '</td>' +
             '<td class="py-3.5 px-5 text-kkr-maroon">' + escapeHtml(r.ticket) + '</td>' +
             '<td class="py-3.5 px-5 hidden md:table-cell"><span class="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold ' + (r.checked_in ? 'bg-kkr-dark text-white' : 'bg-kkr-light/40 text-kkr-maroon') + '">' + (r.checked_in ? '✓ Checked-in' : '— Belum') + '</span></td>' +
