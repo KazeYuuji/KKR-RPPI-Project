@@ -54,7 +54,14 @@ const faqs = [
   function addBotMessage(text) {
     const div = document.createElement("div");
     div.className = "flex gap-2 items-start";
-    div.innerHTML = `<div class="w-7 h-7 rounded-full bg-kkr-light/70 flex items-center justify-center text-[10px] font-bold text-kkr-red shrink-0">AI</div><div class="bg-kkr-light/40 rounded-2xl rounded-tl-sm px-4 py-2.5 text-sm text-kkr-purple">${text}</div>`;
+    const avatar = document.createElement("div");
+    avatar.className = "w-7 h-7 rounded-full bg-kkr-light/70 flex items-center justify-center text-[10px] font-bold text-kkr-red shrink-0";
+    avatar.textContent = "AI";
+    const msg = document.createElement("div");
+    msg.className = "bg-kkr-light/40 rounded-2xl rounded-tl-sm px-4 py-2.5 text-sm text-kkr-purple";
+    msg.textContent = text;
+    div.appendChild(avatar);
+    div.appendChild(msg);
     body.appendChild(div);
     body.scrollTop = body.scrollHeight;
   }

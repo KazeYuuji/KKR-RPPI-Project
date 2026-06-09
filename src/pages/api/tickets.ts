@@ -1,6 +1,7 @@
 import type { APIRoute } from "astro";
 import { minioListAll, minioSet, minioGet, minioDelete, newId } from "../../lib/minio-db";
-import { sanitizeId } from "../../lib/security";
+import { getAdminFromRequest } from "../../lib/auth";
+import { sanitizeId, isValidOrigin, checkRateLimit } from "../../lib/security";
 
 export const GET: APIRoute = async () => {
   try {
@@ -19,6 +20,13 @@ export const GET: APIRoute = async () => {
 
 export const POST: APIRoute = async ({ request }) => {
   try {
+    const admin = getAdminFromRequest(request);
+    if (!admin) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { "Content-Type": "application/json" } });
+    if (!isValidOrigin(request)) return new Response(JSON.stringify({ error: "Forbidden" }), { status: 403, headers: { "Content-Type": "application/json" } });
+
+    const rl = checkRateLimit("ticket-post:" + (admin?.id || "unknown"), 30, 60000);
+    if (!rl.allowed) return new Response(JSON.stringify({ error: "Terlalu banyak permintaan" }), { status: 429, headers: { "Content-Type": "application/json" } });
+
     const body = await request.json();
     if (body.action === "delete") {
       const id = sanitizeId(body.id);

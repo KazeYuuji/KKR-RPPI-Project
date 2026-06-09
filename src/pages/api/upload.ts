@@ -1,6 +1,7 @@
 import type { APIRoute } from "astro";
 import { uploadBuffer } from "../../lib/minio-db";
-import { ALLOWED_IMAGE_TYPES, MAX_UPLOAD_SIZE } from "../../lib/security";
+import { getAdminFromRequest } from "../../lib/auth";
+import { ALLOWED_IMAGE_TYPES, MAX_UPLOAD_SIZE, isValidOrigin, checkRateLimit } from "../../lib/security";
 
 const ALLOWED_EXT = new Set([".jpg", ".jpeg", ".png", ".webp", ".gif"]);
 
@@ -22,6 +23,13 @@ function checkMagicBytes(buffer: Uint8Array, mimeType: string): boolean {
 
 export const POST: APIRoute = async ({ request }) => {
   try {
+    const admin = getAdminFromRequest(request);
+    if (!admin) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { "Content-Type": "application/json" } });
+    if (!isValidOrigin(request)) return new Response(JSON.stringify({ error: "Forbidden" }), { status: 403, headers: { "Content-Type": "application/json" } });
+
+    const rl = checkRateLimit("upload-post:" + (admin?.id || "unknown"), 20, 60000);
+    if (!rl.allowed) return new Response(JSON.stringify({ error: "Terlalu banyak permintaan" }), { status: 429, headers: { "Content-Type": "application/json" } });
+
     const formData = await request.formData();
     const file = formData.get("file") as File | null;
     if (!file) {

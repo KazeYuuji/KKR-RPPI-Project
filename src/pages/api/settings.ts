@@ -1,5 +1,7 @@
 import type { APIRoute } from "astro";
 import { minioListAll, minioSet } from "../../lib/minio-db";
+import { getAdminFromRequest } from "../../lib/auth";
+import { isValidOrigin, checkRateLimit } from "../../lib/security";
 
 const ALLOWED_SETTING_KEYS = new Set([
   "locVenue", "locAddress", "locDate", "locTime", "locMapsLink", "locMaps",
@@ -57,6 +59,13 @@ export const GET: APIRoute = async () => {
 
 export const POST: APIRoute = async ({ request }) => {
   try {
+    const admin = getAdminFromRequest(request);
+    if (!admin) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { "Content-Type": "application/json" } });
+    if (!isValidOrigin(request)) return new Response(JSON.stringify({ error: "Forbidden" }), { status: 403, headers: { "Content-Type": "application/json" } });
+
+    const rl = checkRateLimit("settings-post:" + (admin?.id || "unknown"), 20, 60000);
+    if (!rl.allowed) return new Response(JSON.stringify({ error: "Terlalu banyak permintaan" }), { status: 429, headers: { "Content-Type": "application/json" } });
+
     const body = await request.json();
     const updates: Record<string, string> = {};
     for (const [key, value] of Object.entries(body)) {

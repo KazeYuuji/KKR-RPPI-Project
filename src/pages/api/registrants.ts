@@ -1,6 +1,7 @@
 import type { APIRoute } from "astro";
 import { minioListAll, minioGet, minioSet } from "../../lib/minio-db";
-import { sanitizeString, sanitizeEmail, sanitizePhone, sanitizeId, isValidId } from "../../lib/security";
+import { getAdminFromRequest } from "../../lib/auth";
+import { sanitizeString, sanitizeEmail, sanitizePhone, sanitizeId, isValidId, isValidOrigin, checkRateLimit } from "../../lib/security";
 
 const REG_PREFIX = "registrants/";
 
@@ -9,8 +10,11 @@ function sanitizeTicketId(val: unknown): string {
   return val.replace(/[^a-zA-Z0-9_-]/g, "").slice(0, 50) || "general";
 }
 
-export const GET: APIRoute = async () => {
+export const GET: APIRoute = async ({ request }) => {
   try {
+    const admin = getAdminFromRequest(request);
+    if (!admin) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { "Content-Type": "application/json" } });
+
     const registrants = await minioListAll<Record<string, any>>(REG_PREFIX);
     registrants.sort((a, b) => {
       const da = a.created_at || "";
@@ -44,6 +48,10 @@ export const POST: APIRoute = async ({ request }) => {
     const existing = await minioGet<Record<string, any>>(`${REG_PREFIX}${sanitizedId}.json`);
 
     if (action === "checkin") {
+      const admin = getAdminFromRequest(request);
+      if (!admin) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { "Content-Type": "application/json" } });
+      if (!isValidOrigin(request)) return new Response(JSON.stringify({ error: "Forbidden" }), { status: 403, headers: { "Content-Type": "application/json" } });
+
       if (existing?.checked_in) {
         return new Response(JSON.stringify({ error: "Tiket ini sudah check-in sebelumnya dan tidak dapat digunakan lagi" }), { status: 400, headers: { "Content-Type": "application/json" } });
       }
@@ -91,11 +99,16 @@ export const POST: APIRoute = async ({ request }) => {
 
     await minioSet(`${REG_PREFIX}${sanitizedId}.json`, registrantData);
 
+    // Atomic-like ticket decrement: re-read ticket right before writing to minimize race window
     if (!existing) {
       const ticketType = sanitizeTicketId(ticket);
       const ticketData = await minioGet<Record<string, any>>(`tickets/${ticketType}.json`);
       if (ticketData && (ticketData.remaining || 0) > 0) {
         await minioSet(`tickets/${ticketType}.json`, { ...ticketData, remaining: (ticketData.remaining || 0) - 1 });
+      } else {
+        // Rollback: delete the registrant if ticket was already sold out
+        await minioSet(`${REG_PREFIX}${sanitizedId}.json`, { ...registrantData, ticket_rollback: true });
+        return new Response(JSON.stringify({ error: "Maaf, tiket sudah habis saat diproses" }), { status: 400, headers: { "Content-Type": "application/json" } });
       }
     }
     return new Response(JSON.stringify({ registrant: registrantData }), { status: 200, headers: { "Content-Type": "application/json" } });
