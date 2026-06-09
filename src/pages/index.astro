@@ -177,7 +177,7 @@ import ChatBot from "../components/ChatBot.astro";
             <div class="inline-block w-8 h-8 border-2 border-kkr-maroon border-t-transparent rounded-full animate-spin"></div>
             <p class="mt-3 text-sm">Memuat sponsor...</p>
           </div>
-          <div class="sponsor-track flex hidden" style="width: max-content;">
+          <div class="sponsor-track scroll-track flex hidden" style="width: max-content;">
             <div class="flex gap-6 items-stretch" data-copy="1"></div>
             <div class="flex gap-6 items-stretch" data-copy="2" aria-hidden="true"></div>
           </div>
@@ -346,24 +346,6 @@ import ChatBot from "../components/ChatBot.astro";
     }
 
     function safe(id) { return document.getElementById(id); }
-
-    function startScroll(selector, speed = 1) {
-      const el = document.querySelector(selector);
-      if (!el) return;
-      let x = 0, running = true, copyW = 0;
-      el.addEventListener('mouseenter', () => running = false);
-      el.addEventListener('mouseleave', () => running = true);
-      function frame() {
-        if (!copyW) { copyW = el.scrollWidth / 2; }
-        if (copyW > 0 && running) {
-          x -= speed;
-          if (x <= -copyW) x = 0;
-          el.style.transform = 'translateX(' + x + 'px)';
-        }
-        requestAnimationFrame(frame);
-      }
-      requestAnimationFrame(frame);
-    }
 
     async function loadSettings() {
       try {
@@ -610,12 +592,11 @@ import ChatBot from "../components/ChatBot.astro";
           const html = list.map(makeCard(base)).join("");
           container.innerHTML = `
             <div class="overflow-hidden" style="mask-image: linear-gradient(to right, transparent 0, black 40px, black calc(100% - 40px), transparent 100%);">
-              <div class="altar-scroll flex" style="width: max-content;">
+              <div class="scroll-track flex" style="width: max-content;">
                 <div class="flex gap-3 sm:gap-4">${html}</div>
                 <div class="flex gap-3 sm:gap-4" aria-hidden="true">${html}</div>
               </div>
             </div>`;
-          startScroll('.altar-scroll');
         } else {
         } else {
           const base = "rounded-2xl glass-card p-4 sm:p-5 text-center hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 w-full flex flex-col";
@@ -663,7 +644,6 @@ import ChatBot from "../components/ChatBot.astro";
         } else {
           document.querySelector('[data-copy="1"]').innerHTML = html;
           document.querySelector('[data-copy="2"]').innerHTML = html;
-          startScroll('.sponsor-track');
         }
       } catch {
         document.getElementById("sponsor-grid").innerHTML = `<div class="text-center py-12 text-red-500"><p>Gagal memuat data sponsor.</p></div>`;
