@@ -2,20 +2,50 @@ import type { APIRoute } from "astro";
 import { minioListAll, minioSet, newId } from "../../lib/minio-db";
 
 const ALLOWED_SETTING_KEYS = new Set([
+  // Location
   "locVenue", "locAddress", "locDate", "locTime", "locMapsLink", "locMaps",
+  // Schedule
   "eventDateISO", "eventTimeEnd", "eventYear", "eventName",
-  "regDeadline", "regDeadlineISO", "churchLogo", "waGroupLink",
-  "contactEmail", "contactPhone", "contactWa",
-  "heroSubtitleLabel", "heroHeading", "heroLine1", "heroLine2", "heroLine3",
-  "heroVerse", "heroVerseRef",
-  "aboutHeading", "aboutSubtitle", "aboutDescription",
-  "aboutCard1Title", "aboutCard1Desc", "aboutCard2Title", "aboutCard2Desc", "aboutCard3Title", "aboutCard3Desc",
-  "sectionSpeakersTitle", "sectionSpeakersSubtitle", "sectionAltarTitle", "sectionAltarSubtitle",
-  "sectionSponsorsTitle", "sectionSponsorsSubtitle", "sectionLocationTitle", "sectionLocationSubtitle",
-  "btnRegister", "btnLearnMore", "ctaHeading", "ctaSubtitle", "ctaDescription",
+  "regDeadline", "regDeadlineISO",
+  // Contact
+  "contactEmail", "contactPhone", "contactWa", "waGroupLink",
+  // Church
+  "churchLogo",
+  // Section texts
+  "sectionLabelSpeakers", "sectionHeadingSpeakers", "sectionLabelStory",
+  "btnSpeakerPrev", "btnSpeakerNext",
+  "sectionLabelAltar", "sectionHeadingAltar", "sectionDescAltar",
+  "sectionLabelSponsors", "sectionHeadingSponsors", "sectionDescSponsors",
+  "sectionLabelLocation", "sectionLabelCta",
+  "btnHeroPrimary", "btnHeroSecondary", "btnSponsorContact",
+  // Hero
+  "heroSubtitleLabel", "heroTitle1", "heroTitle2",
+  "heroHeading1", "heroHeading2", "heroHeading3",
+  "heroSubtitle", "heroVerse", "heroVerseRef",
+  // About
+  "aboutTitle", "aboutDesc1", "aboutDesc2",
+  "aboutCard1Title", "aboutCard1Desc", "aboutCard2Title", "aboutCard2Desc",
+  "aboutBlockquote", "eventCardBadge",
+  // CTA
+  "ctaTitle", "ctaDesc",
+  "ctaHeading", "ctaSubtitle", "ctaDescription",
+  // Section headings (aliases)
+  "sectionSpeakersTitle", "sectionSpeakersSubtitle",
+  "sectionAltarTitle", "sectionAltarSubtitle",
+  "sectionSponsorsTitle", "sectionSponsorsSubtitle",
+  "sectionLocationTitle", "sectionLocationSubtitle",
+  // Buttons
+  "btnRegister", "btnLearnMore",
+  // Form
   "formTitle", "formSubtitle",
-  "countdownSubtitle", "countdownHeading", "countdownRegLabel", "countdownRegDesc",
+  // Countdown
+  "countdownSubtitle", "countdownHeading",
+  "countdownRegLabel", "countdownRegDesc",
   "countdownEventLabel", "countdownEventDesc",
+  // Hero deprecated aliases
+  "heroHeading", "heroLine1", "heroLine2", "heroLine3",
+  "heroVerseRef",
+  "aboutHeading", "aboutSubtitle", "aboutDescription",
 ]);
 
 export const GET: APIRoute = async () => {

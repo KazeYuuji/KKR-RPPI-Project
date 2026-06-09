@@ -76,8 +76,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
 
     function sanitizeUrl(url) {
       if (!url) return "";
-      if (/^\s*javascript:/i.test(url)) return "";
-      return url;
+      try { const u = new URL(url); return (u.protocol === "http:" || u.protocol === "https:") ? url : ""; } catch { return ""; }
     }
 
     function toast(msg, type = "success") {
