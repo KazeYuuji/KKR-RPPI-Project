@@ -128,17 +128,17 @@ const canonical = new URL(Astro.url.pathname, siteUrl).href;
           </a>
 
           <nav class="hidden items-center gap-7 text-sm font-semibold text-white/90 md:flex">
-            <a href="/#home" class="transition hover:text-kkr-gold">Beranda</a>
-            <a href="/#about" class="transition hover:text-kkr-gold">Info</a>
-            <a href="/#speakers" class="transition hover:text-kkr-gold">Pembicara</a>
-            <a href="/#altar" class="transition hover:text-kkr-gold">Pelayan Altar</a>
-            <a href="/#sponsors" class="transition hover:text-kkr-gold">Sponsor</a>
-            <a href="/#location" class="transition hover:text-kkr-gold">Lokasi</a>
+            <a href="/#home" class="transition hover:text-kkr-gold"><span id="nav-home">Beranda</span></a>
+            <a href="/#about" class="transition hover:text-kkr-gold"><span id="nav-info">Info</span></a>
+            <a href="/#speakers" class="transition hover:text-kkr-gold"><span id="nav-speakers">Pembicara</span></a>
+            <a href="/#altar" class="transition hover:text-kkr-gold"><span id="nav-altar">Pelayan Altar</span></a>
+            <a href="/#sponsors" class="transition hover:text-kkr-gold"><span id="nav-sponsors">Sponsor</span></a>
+            <a href="/#location" class="transition hover:text-kkr-gold"><span id="nav-location">Lokasi</span></a>
           </nav>
 
           <div class="flex items-center gap-3">
             <a href="/registration" class="hidden sm:inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-kkr-gold to-kkr-gold px-5 py-2.5 text-sm font-semibold text-kkr-dark shadow-lg shadow-kkr-gold/30 transition hover:shadow-xl hover:shadow-kkr-gold/40 hover:-translate-y-0.5">
-              Daftar
+              <span id="btn-nav-register">Daftar</span>
               <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
             </a>
             <button id="mobile-menu-btn" class="md:hidden p-2 rounded-xl hover:bg-white/10 text-white/70 transition-colors" aria-label="Menu navigasi">
@@ -148,13 +148,13 @@ const canonical = new URL(Astro.url.pathname, siteUrl).href;
         </div>
 
         <div id="mobile-menu" class="md:hidden hidden border-t border-white/10 bg-kkr-dark/95 px-6 py-5 space-y-2">
-          {["Beranda", "Info", "Pembicara", "Pelayan Altar", "Sponsor", "Lokasi"].map((label, i) => {
+          {[["Beranda","nav-home"],["Info","nav-info"],["Pembicara","nav-speakers"],["Pelayan Altar","nav-altar"],["Sponsor","nav-sponsors"],["Lokasi","nav-location"]].map(([label, id], i) => {
             const hrefs = ["#home", "#about", "#speakers", "#altar", "#sponsors", "#location"];
             return (
-              <a href={hrefs[i]} class="block px-4 py-2.5 rounded-xl text-sm font-semibold text-white/90 hover:bg-white/10 hover:text-kkr-gold transition-colors">{label}</a>
+              <a href={hrefs[i]} class="block px-4 py-2.5 rounded-xl text-sm font-semibold text-white/90 hover:bg-white/10 hover:text-kkr-gold transition-colors"><span id={id + "-mobile"}>{label}</span></a>
             );
           })}
-          <a href="/registration" class="block px-4 py-2.5 rounded-xl text-sm font-semibold text-kkr-dark bg-gradient-to-r from-kkr-gold to-kkr-gold text-center mt-3">Daftar Sekarang</a>
+          <a href="/registration" class="block px-4 py-2.5 rounded-xl text-sm font-semibold text-kkr-dark bg-gradient-to-r from-kkr-gold to-kkr-gold text-center mt-3"><span id="btn-nav-register-mobile">Daftar Sekarang</span></a>
         </div>
       </header>
 
@@ -224,6 +224,26 @@ const canonical = new URL(Astro.url.pathname, siteUrl).href;
 
       function esc(s) { if (!s) return ""; return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
 
+      async function loadNav() {
+        try {
+          const s = await (window.__SETTINGS_CACHE || fetch("/api/settings").then(r => r.json()).then(d => d.settings || {}));
+          const navIds = ["nav-home","nav-info","nav-speakers","nav-altar","nav-sponsors","nav-location"];
+          const navKeys = ["navLabelHome","navLabelInfo","navLabelSpeakers","navLabelAltar","navLabelSponsors","navLabelLocation"];
+          const fallbacks = ["Beranda","Info","Pembicara","Pelayan Altar","Sponsor","Lokasi"];
+          navIds.forEach((id, i) => {
+            const val = s[navKeys[i]] || fallbacks[i];
+            const el = document.getElementById(id);
+            if (el) el.textContent = val;
+            const elMobile = document.getElementById(id + "-mobile");
+            if (elMobile) elMobile.textContent = val;
+          });
+          const btnReg = document.getElementById("btn-nav-register");
+          if (btnReg) btnReg.textContent = s.btnNavRegister || "Daftar";
+          const btnRegMobile = document.getElementById("btn-nav-register-mobile");
+          if (btnRegMobile) btnRegMobile.textContent = s.btnNavRegisterMobile || "Daftar Sekarang";
+        } catch {}
+      }
+
       async function loadContact() {
         try {
           const s = await (window.__SETTINGS_CACHE || fetch("/api/settings").then(r => r.json()).then(d => d.settings || {}));
@@ -245,7 +265,7 @@ const canonical = new URL(Astro.url.pathname, siteUrl).href;
           el.innerHTML = html;
         } catch {}
       }
-      loadContact();
+      loadNav(); loadContact();
     </script>
   </body>
 </html>

@@ -30,6 +30,59 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
       </form>
     </div>
 
+    <!-- General Info -->
+    <div class="glass-card p-6 sm:p-8">
+      <div class="flex items-center gap-3 mb-1">
+        <span class="w-8 h-8 rounded-xl bg-kkr-light/40 flex items-center justify-center text-kkr-red shrink-0"><svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></span>
+        <h2 class="text-xl font-semibold text-kkr-dark">Info Umum</h2>
+      </div>
+      <p class="text-sm text-kkr-maroon mt-1">Nama event, logo, dan link grup WhatsApp. Digunakan di footer, halaman pendaftaran, dan data terstruktur.</p>
+      <form id="general-form" class="mt-6 space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-kkr-purple mb-1">Nama Event</label>
+          <input id="event-name" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="KKR RPPI 2026" />
+          <p class="text-xs text-kkr-maroon/60 mt-1">Digunakan di footer, judul JSON-LD, dan tiket PDF.</p>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-kkr-purple mb-1">Logo Gereja (URL)</label>
+          <input id="church-logo" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="/logo-small.png" />
+          <p class="text-xs text-kkr-maroon/60 mt-1">URL logo yang tampil di halaman pendaftaran dan countdown. Bisa path relatif seperti /logo-small.png</p>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-kkr-purple mb-1">Link Grup WhatsApp</label>
+          <input id="wa-group-link" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="https://chat.whatsapp.com/..." />
+          <p class="text-xs text-kkr-maroon/60 mt-1">Link undangan grup WhatsApp yang muncul setelah pendaftaran berhasil.</p>
+        </div>
+        <button type="submit" class="rounded-xl bg-kkr-red px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-kkr-maroon">Simpan Info Umum</button>
+      </form>
+    </div>
+
+    <!-- Navigasi -->
+    <div class="glass-card p-6 sm:p-8">
+      <div class="flex items-center gap-3 mb-1">
+        <span class="w-8 h-8 rounded-xl bg-kkr-light/40 flex items-center justify-center text-kkr-red shrink-0"><svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h2l2-5 3 10 3-10 3 10 2-5h2"/></svg></span>
+        <h2 class="text-xl font-semibold text-kkr-dark">Navigasi</h2>
+      </div>
+      <p class="text-sm text-kkr-maroon mt-1">Sesuaikan teks menu navigasi dan tombol daftar di header website.</p>
+      <form id="nav-form" class="mt-6 space-y-4">
+        <div class="grid gap-4 sm:grid-cols-3">
+          <div><label class="block text-sm font-medium text-kkr-purple mb-1">Beranda</label><input id="nav-label-home" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Beranda" /></div>
+          <div><label class="block text-sm font-medium text-kkr-purple mb-1">Info</label><input id="nav-label-info" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Info" /></div>
+          <div><label class="block text-sm font-medium text-kkr-purple mb-1">Pembicara</label><input id="nav-label-speakers" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Pembicara" /></div>
+        </div>
+        <div class="grid gap-4 sm:grid-cols-3">
+          <div><label class="block text-sm font-medium text-kkr-purple mb-1">Pelayan Altar</label><input id="nav-label-altar" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Pelayan Altar" /></div>
+          <div><label class="block text-sm font-medium text-kkr-purple mb-1">Sponsor</label><input id="nav-label-sponsors" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Sponsor" /></div>
+          <div><label class="block text-sm font-medium text-kkr-purple mb-1">Lokasi</label><input id="nav-label-location" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Lokasi" /></div>
+        </div>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div><label class="block text-sm font-medium text-kkr-purple mb-1">Tombol Daftar (Desktop)</label><input id="btn-nav-register" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Daftar" /></div>
+          <div><label class="block text-sm font-medium text-kkr-purple mb-1">Tombol Daftar (Mobile)</label><input id="btn-nav-register-mobile" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Daftar Sekarang" /></div>
+        </div>
+        <button type="submit" class="rounded-xl bg-kkr-red px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-kkr-maroon">Simpan Navigasi</button>
+      </form>
+    </div>
+
     <!-- Landing Page Sections -->
     <div class="glass-card p-6 sm:p-8">
       <div class="flex items-center gap-3 mb-1">
@@ -171,6 +224,15 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
             <input id="countdown-event-desc" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Menuju Puncak Acara" />
           </div>
         </div>
+        <div class="border-t border-kkr-light/30 pt-4">
+          <p class="text-xs font-semibold uppercase tracking-wider text-kkr-purple mb-3">Label Satuan Waktu</p>
+          <div class="grid gap-4 sm:grid-cols-4">
+            <div><label class="block text-sm font-medium text-kkr-purple mb-1">Hari</label><input id="countdown-unit-days" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Hari" /></div>
+            <div><label class="block text-sm font-medium text-kkr-purple mb-1">Jam</label><input id="countdown-unit-hours" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Jam" /></div>
+            <div><label class="block text-sm font-medium text-kkr-purple mb-1">Menit</label><input id="countdown-unit-minutes" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Menit" /></div>
+            <div><label class="block text-sm font-medium text-kkr-purple mb-1">Detik</label><input id="countdown-unit-seconds" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Detik" /></div>
+          </div>
+        </div>
         <button type="submit" class="rounded-xl bg-kkr-red px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-kkr-maroon">Simpan Teks Countdown</button>
       </form>
     </div>
@@ -276,6 +338,10 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
           <label class="block text-sm font-medium text-kkr-purple mb-1">Subtitle Hero (ayat + ref)</label>
           <textarea id="hero-subtitle" rows="2" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder='"Jika umat-Ku yang disebut dengan nama-Ku merendahkan diri, berdoa dan mencari wajah-Ku, maka Aku akan mendengar dari sorga." — 2 Tawarikh 7:14'></textarea>
         </div>
+        <div>
+          <label class="block text-sm font-medium text-kkr-purple mb-1">Label Section Tentang Acara</label>
+          <input id="about-section-label" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Tentang Acara" />
+        </div>
         <div class="grid gap-4 sm:grid-cols-2">
           <div>
             <label class="block text-sm font-medium text-kkr-purple mb-1">Judul Tentang Acara</label>
@@ -310,9 +376,15 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
         </div>
         <div class="border-t border-kkr-light/30 pt-4">
           <p class="text-xs font-semibold uppercase tracking-wider text-kkr-purple mb-3">Kartu Info Acara (di samping About)</p>
-          <div>
-            <label class="block text-sm font-medium text-kkr-purple mb-1">Label Badge Kartu</label>
-            <input id="event-card-badge" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Terbuka untuk umum" />
+          <div class="grid gap-4 sm:grid-cols-2 mb-4">
+            <div><label class="block text-sm font-medium text-kkr-purple mb-1">Label Badge Kartu</label><input id="event-card-badge" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Terbuka untuk umum" /></div>
+            <div><label class="block text-sm font-medium text-kkr-purple mb-1">Nama Brand</label><input id="event-card-brand" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="KKR RPPI" /></div>
+          </div>
+          <p class="text-xs font-semibold uppercase tracking-wider text-kkr-purple mb-3">Label Info Waktu & Tempat</p>
+          <div class="grid gap-4 sm:grid-cols-3">
+            <div><label class="block text-sm font-medium text-kkr-purple mb-1">Label "Pada"</label><input id="event-card-label-pada" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Pada" /></div>
+            <div><label class="block text-sm font-medium text-kkr-purple mb-1">Label "Pukul"</label><input id="event-card-label-pukul" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Pukul" /></div>
+            <div><label class="block text-sm font-medium text-kkr-purple mb-1">Label "Tempat"</label><input id="event-card-label-tempat" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Tempat" /></div>
           </div>
         </div>
         <div class="border-t border-kkr-light/30 pt-4">
@@ -342,7 +414,83 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
           <label class="block text-sm font-medium text-kkr-purple mb-1">Kutipan About (blockquote)</label>
           <textarea id="about-blockquote" rows="2" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder='"Jika umat-Ku yang disebut dengan nama-Ku merendahkan diri, berdoa dan mencari wajah-Ku, maka Aku akan mendengar dari sorga." — 2 Tawarikh 7:14'></textarea>
         </div>
+        <div class="border-t border-kkr-light/30 pt-4">
+          <p class="text-xs font-semibold uppercase tracking-wider text-kkr-purple mb-3">Label Section Lokasi</p>
+          <div class="grid gap-4 sm:grid-cols-3">
+            <div><label class="block text-sm font-medium text-kkr-purple mb-1">"Alamat"</label><input id="loc-sub-label-alamat" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Alamat" /></div>
+            <div><label class="block text-sm font-medium text-kkr-purple mb-1">"Tanggal"</label><input id="loc-sub-label-tanggal" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Tanggal" /></div>
+            <div><label class="block text-sm font-medium text-kkr-purple mb-1">"Waktu"</label><input id="loc-sub-label-waktu" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Waktu" /></div>
+          </div>
+          <div class="grid gap-4 sm:grid-cols-3 mt-4">
+            <div><label class="block text-sm font-medium text-kkr-purple mb-1">"Batas Daftar"</label><input id="loc-sub-label-batas-daftar" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Batas Daftar" /></div>
+            <div><label class="block text-sm font-medium text-kkr-purple mb-1">"Kontak"</label><input id="loc-sub-label-kontak" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Kontak" /></div>
+            <div><label class="block text-sm font-medium text-kkr-purple mb-1">Tombol Maps</label><input id="loc-btn-maps" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Buka di Google Maps" /></div>
+          </div>
+        </div>
+        <div class="border-t border-kkr-light/30 pt-4">
+          <p class="text-xs font-semibold uppercase tracking-wider text-kkr-purple mb-3">Label Section CTA</p>
+          <div>
+            <label class="block text-sm font-medium text-kkr-purple mb-1">Label "Kontak"</label>
+            <input id="cta-contact-label" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Kontak" />
+          </div>
+        </div>
         <button type="submit" class="rounded-xl bg-kkr-red px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-kkr-maroon">Simpan Teks</button>
+      </form>
+    </div>
+
+    <!-- Registration Page Text -->
+    <div class="glass-card p-6 sm:p-8">
+      <div class="flex items-center gap-3 mb-1">
+        <span class="w-8 h-8 rounded-xl bg-kkr-light/40 flex items-center justify-center text-kkr-red shrink-0"><svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></span>
+        <h2 class="text-xl font-semibold text-kkr-dark">Teks Halaman Pendaftaran</h2>
+      </div>
+      <p class="text-sm text-kkr-maroon mt-1">Sesuaikan teks yang muncul di halaman pendaftaran (/registration).</p>
+      <form id="reg-form" class="mt-6 space-y-4">
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label class="block text-sm font-medium text-kkr-purple mb-1">Label Section</label>
+            <input id="reg-section-label" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Registrasi" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-kkr-purple mb-1">Judul Halaman</label>
+            <input id="reg-heading" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Daftar Sekarang" />
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-kkr-purple mb-1">Deskripsi</label>
+          <textarea id="reg-description" rows="2" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Bergabunglah bersama kami dalam KKR RPPI."></textarea>
+        </div>
+        <div class="border-t border-kkr-light/30 pt-4">
+          <p class="text-xs font-semibold uppercase tracking-wider text-kkr-purple mb-3">Sidebar (Kartu Info Samping)</p>
+          <div class="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label class="block text-sm font-medium text-kkr-purple mb-1">Badge</label>
+              <input id="reg-sidebar-badge" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Detail Pendaftaran" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-kkr-purple mb-1">Judul</label>
+              <input id="reg-sidebar-title" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Selangkah lagi!" />
+            </div>
+          </div>
+          <div class="mt-4">
+            <label class="block text-sm font-medium text-kkr-purple mb-1">Deskripsi Sidebar</label>
+            <textarea id="reg-sidebar-desc" rows="2" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Isi data diri dengan benar untuk mendapatkan tiket KKR RPPI."></textarea>
+          </div>
+        </div>
+        <div class="border-t border-kkr-light/30 pt-4">
+          <p class="text-xs font-semibold uppercase tracking-wider text-kkr-purple mb-3">Label Peta & Lokasi</p>
+          <div class="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label class="block text-sm font-medium text-kkr-purple mb-1">Label "Lokasi Acara"</label>
+              <input id="reg-location-label" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Lokasi Acara" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-kkr-purple mb-1">Teks Tombol Maps</label>
+              <input id="reg-maps-btn-text" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="Buka di Google Maps →" />
+            </div>
+          </div>
+        </div>
+        <button type="submit" class="rounded-xl bg-kkr-red px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-kkr-maroon">Simpan Teks Pendaftaran</button>
       </form>
     </div>
 
@@ -425,7 +573,54 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
         setVal("about-blockquote", s.aboutBlockquote || "");
         setVal("event-card-badge", s.eventCardBadge || "");
         setVal("hero-subtitle-label", s.heroSubtitleLabel || "");
+        setVal("about-section-label", s.aboutSectionLabel || "");
+        setVal("event-name", s.eventName || "");
+        setVal("church-logo", s.churchLogo || "");
+        setVal("wa-group-link", s.waGroupLink || "");
 
+        // Nav labels
+        setVal("nav-label-home", s.navLabelHome || "");
+        setVal("nav-label-info", s.navLabelInfo || "");
+        setVal("nav-label-speakers", s.navLabelSpeakers || "");
+        setVal("nav-label-altar", s.navLabelAltar || "");
+        setVal("nav-label-sponsors", s.navLabelSponsors || "");
+        setVal("nav-label-location", s.navLabelLocation || "");
+        setVal("btn-nav-register", s.btnNavRegister || "");
+        setVal("btn-nav-register-mobile", s.btnNavRegisterMobile || "");
+
+        // Event card labels
+        setVal("event-card-label-pada", s.eventCardLabelPada || "");
+        setVal("event-card-label-pukul", s.eventCardLabelPukul || "");
+        setVal("event-card-label-tempat", s.eventCardLabelTempat || "");
+        setVal("event-card-brand", s.eventCardBrand || "");
+
+        // Location sub-labels
+        setVal("loc-sub-label-alamat", s.locSubLabelAlamat || "");
+        setVal("loc-sub-label-tanggal", s.locSubLabelTanggal || "");
+        setVal("loc-sub-label-waktu", s.locSubLabelWaktu || "");
+        setVal("loc-sub-label-batas-daftar", s.locSubLabelBatasDaftar || "");
+        setVal("loc-sub-label-kontak", s.locSubLabelKontak || "");
+        setVal("loc-btn-maps", s.locBtnMaps || "");
+
+        // CTA contact label
+        setVal("cta-contact-label", s.ctaContactLabel || "");
+
+        // Countdown unit labels
+        setVal("countdown-unit-days", s.countdownUnitDays || "");
+        setVal("countdown-unit-hours", s.countdownUnitHours || "");
+        setVal("countdown-unit-minutes", s.countdownUnitMinutes || "");
+        setVal("countdown-unit-seconds", s.countdownUnitSeconds || "");
+
+        // Registration page labels
+        setVal("reg-section-label", s.regSectionLabel || "");
+        setVal("reg-heading", s.regHeading || "");
+        setVal("reg-description", s.regDescription || "");
+        setVal("reg-sidebar-badge", s.regSidebarBadge || "");
+        setVal("reg-sidebar-title", s.regSidebarTitle || "");
+        setVal("reg-sidebar-desc", s.regSidebarDesc || "");
+        setVal("reg-location-label", s.regLocationLabel || "");
+        setVal("reg-maps-btn-text", s.regMapsBtnText || "");
+ 
         // Section texts
         setVal("section-label-speakers", s.sectionLabelSpeakers || "");
         setVal("section-heading-speakers", s.sectionHeadingSpeakers || "");
@@ -484,6 +679,43 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
       btn.disabled = false; btn.textContent = "Simpan Semua Teks Section";
     });
 
+    document.getElementById("general-form")?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const btn = e.target.querySelector("button[type=submit]");
+      btn.disabled = true; btn.textContent = "Menyimpan...";
+      try {
+        const res = await fetch("/api/settings", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({
+          eventName: document.getElementById("event-name").value.trim(),
+          churchLogo: document.getElementById("church-logo").value.trim(),
+          waGroupLink: document.getElementById("wa-group-link").value.trim(),
+        })});
+        if (res.ok) toast("Info umum berhasil disimpan!");
+        else throw new Error();
+      } catch { toast("Gagal menyimpan info umum", "error"); }
+      btn.disabled = false; btn.textContent = "Simpan Info Umum";
+    });
+
+    document.getElementById("nav-form")?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const btn = e.target.querySelector("button[type=submit]");
+      btn.disabled = true; btn.textContent = "Menyimpan...";
+      try {
+        const res = await fetch("/api/settings", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({
+          navLabelHome: document.getElementById("nav-label-home").value.trim(),
+          navLabelInfo: document.getElementById("nav-label-info").value.trim(),
+          navLabelSpeakers: document.getElementById("nav-label-speakers").value.trim(),
+          navLabelAltar: document.getElementById("nav-label-altar").value.trim(),
+          navLabelSponsors: document.getElementById("nav-label-sponsors").value.trim(),
+          navLabelLocation: document.getElementById("nav-label-location").value.trim(),
+          btnNavRegister: document.getElementById("btn-nav-register").value.trim(),
+          btnNavRegisterMobile: document.getElementById("btn-nav-register-mobile").value.trim(),
+        })});
+        if (res.ok) toast("Navigasi berhasil disimpan!");
+        else throw new Error();
+      } catch { toast("Gagal menyimpan navigasi", "error"); }
+      btn.disabled = false; btn.textContent = "Simpan Navigasi";
+    });
+
     document.getElementById("countdown-form")?.addEventListener("submit", async (e) => {
       e.preventDefault();
       const btn = e.target.querySelector("button[type=submit]");
@@ -496,6 +728,10 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
           countdownRegDesc: document.getElementById("countdown-reg-desc").value.trim(),
           countdownEventLabel: document.getElementById("countdown-event-label").value.trim(),
           countdownEventDesc: document.getElementById("countdown-event-desc").value.trim(),
+          countdownUnitDays: document.getElementById("countdown-unit-days").value.trim(),
+          countdownUnitHours: document.getElementById("countdown-unit-hours").value.trim(),
+          countdownUnitMinutes: document.getElementById("countdown-unit-minutes").value.trim(),
+          countdownUnitSeconds: document.getElementById("countdown-unit-seconds").value.trim(),
         })});
         if (res.ok) toast("Teks countdown berhasil disimpan!");
         else throw new Error();
@@ -651,11 +887,44 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
           aboutBlockquote: document.getElementById("about-blockquote").value.trim(),
           eventCardBadge: document.getElementById("event-card-badge").value.trim(),
           heroSubtitleLabel: document.getElementById("hero-subtitle-label").value.trim(),
+          aboutSectionLabel: document.getElementById("about-section-label").value.trim(),
+          eventCardLabelPada: document.getElementById("event-card-label-pada").value.trim(),
+          eventCardLabelPukul: document.getElementById("event-card-label-pukul").value.trim(),
+          eventCardLabelTempat: document.getElementById("event-card-label-tempat").value.trim(),
+          eventCardBrand: document.getElementById("event-card-brand").value.trim(),
+          locSubLabelAlamat: document.getElementById("loc-sub-label-alamat").value.trim(),
+          locSubLabelTanggal: document.getElementById("loc-sub-label-tanggal").value.trim(),
+          locSubLabelWaktu: document.getElementById("loc-sub-label-waktu").value.trim(),
+          locSubLabelBatasDaftar: document.getElementById("loc-sub-label-batas-daftar").value.trim(),
+          locSubLabelKontak: document.getElementById("loc-sub-label-kontak").value.trim(),
+          locBtnMaps: document.getElementById("loc-btn-maps").value.trim(),
+          ctaContactLabel: document.getElementById("cta-contact-label").value.trim(),
         })});
         if (res.ok) toast("Teks berhasil disimpan!");
         else throw new Error();
       } catch { toast("Gagal menyimpan teks", "error"); }
       btn.disabled = false; btn.textContent = "Simpan Teks";
+    });
+
+    document.getElementById("reg-form")?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const btn = e.target.querySelector("button[type=submit]");
+      btn.disabled = true; btn.textContent = "Menyimpan...";
+      try {
+        const res = await fetch("/api/settings", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({
+          regSectionLabel: document.getElementById("reg-section-label").value.trim(),
+          regHeading: document.getElementById("reg-heading").value.trim(),
+          regDescription: document.getElementById("reg-description").value.trim(),
+          regSidebarBadge: document.getElementById("reg-sidebar-badge").value.trim(),
+          regSidebarTitle: document.getElementById("reg-sidebar-title").value.trim(),
+          regSidebarDesc: document.getElementById("reg-sidebar-desc").value.trim(),
+          regLocationLabel: document.getElementById("reg-location-label").value.trim(),
+          regMapsBtnText: document.getElementById("reg-maps-btn-text").value.trim(),
+        })});
+        if (res.ok) toast("Teks pendaftaran berhasil disimpan!");
+        else throw new Error();
+      } catch { toast("Gagal menyimpan teks pendaftaran", "error"); }
+      btn.disabled = false; btn.textContent = "Simpan Teks Pendaftaran";
     });
 
     document.getElementById("admin-account-form")?.addEventListener("submit", async (e) => {

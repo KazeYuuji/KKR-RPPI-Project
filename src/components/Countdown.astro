@@ -25,12 +25,14 @@ const regClose = "2025-12-29T23:59:59";
             <p class="text-kkr-gold text-lg font-semibold mt-1" id="reg-deadline-label">29 Desember 2025</p>
             <p id="countdown-reg-desc" class="text-sm text-kkr-light mt-2">Batas Pendaftaran Tiket</p>
             <div id="reg-countdown" class="grid grid-cols-4 gap-3 mt-5">
-              {["Hari", "Jam", "Menit", "Detik"].map((label) => (
+              {["Hari", "Jam", "Menit", "Detik"].map((label, i) => {
+                const units = ["days", "hours", "minutes", "seconds"];
+                return (
                 <div class="bg-white/10 rounded-xl p-3 backdrop-blur-sm">
                   <p class="text-2xl sm:text-3xl font-bold tabular-nums" data-reg={label.toLowerCase()}>00</p>
-                  <p class="text-xs text-kkr-light/80 mt-1 uppercase tracking-wider">{label}</p>
+                  <p data-unit={units[i]} class="text-xs text-kkr-light/80 mt-1 uppercase tracking-wider">{label}</p>
                 </div>
-              ))}
+              );})}
             </div>
           </div>
 
@@ -39,12 +41,14 @@ const regClose = "2025-12-29T23:59:59";
             <p class="text-kkr-gold text-lg font-semibold mt-1" id="event-date-label">10 Januari 2026</p>
             <p id="countdown-event-desc" class="text-sm text-kkr-light mt-2">Menuju Puncak Acara</p>
             <div id="event-countdown" class="grid grid-cols-4 gap-3 mt-5">
-              {["Hari", "Jam", "Menit", "Detik"].map((label) => (
+              {["Hari", "Jam", "Menit", "Detik"].map((label, i) => {
+                const units = ["days", "hours", "minutes", "seconds"];
+                return (
                 <div class="bg-white/10 rounded-xl p-3 backdrop-blur-sm">
                   <p class="text-2xl sm:text-3xl font-bold tabular-nums" data-event={label.toLowerCase()}>00</p>
-                  <p class="text-xs text-kkr-light/80 mt-1 uppercase tracking-wider">{label}</p>
+                  <p data-unit={units[i]} class="text-xs text-kkr-light/80 mt-1 uppercase tracking-wider">{label}</p>
                 </div>
-              ))}
+              );})}
             </div>
           </div>
         </div>
@@ -83,6 +87,13 @@ const regClose = "2025-12-29T23:59:59";
       if (s.countdownRegDesc && document.getElementById("countdown-reg-desc")) document.getElementById("countdown-reg-desc").textContent = s.countdownRegDesc;
       if (s.countdownEventLabel && document.getElementById("countdown-event-label")) document.getElementById("countdown-event-label").textContent = s.countdownEventLabel;
       if (s.countdownEventDesc && document.getElementById("countdown-event-desc")) document.getElementById("countdown-event-desc").textContent = s.countdownEventDesc;
+      // Countdown unit labels
+      const unitMap = {days: "countdownUnitDays", hours: "countdownUnitHours", minutes: "countdownUnitMinutes", seconds: "countdownUnitSeconds"};
+      const unitFallbacks = {days: "Hari", hours: "Jam", minutes: "Menit", seconds: "Detik"};
+      Object.entries(unitMap).forEach(([unit, key]) => {
+        const val = s[key] || unitFallbacks[unit];
+        document.querySelectorAll(`[data-unit="${unit}"]`).forEach(el => el.textContent = val);
+      });
     }).catch(() => {});
 
     function tick() {
