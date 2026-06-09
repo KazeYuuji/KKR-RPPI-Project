@@ -63,12 +63,12 @@ export const POST: APIRoute = async ({ request }) => {
       if (!ALLOWED_SETTING_KEYS.has(key)) continue;
       updates[key] = String(value).slice(0, 2000);
     }
-    
+
     // Use MinIO directly as the only storage
     for (const [key, value] of Object.entries(updates)) {
       await minioSet(`settings/${key}.json`, { key, value });
     }
-    
+
     return new Response(JSON.stringify({ success: true, storage: "minio" }), { status: 200, headers: { "Content-Type": "application/json" } });
   } catch (err) {
     console.error("POST settings error:", err);
