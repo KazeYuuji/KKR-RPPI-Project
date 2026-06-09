@@ -1,7 +1,5 @@
 import type { APIRoute } from "astro";
 import { minioListAll, minioSet } from "../../lib/minio-db";
-import { readFileSync, writeFileSync, existsSync, mkdirSync } from "fs";
-import { join } from "path";
 
 const ALLOWED_SETTING_KEYS = new Set([
   "locVenue", "locAddress", "locDate", "locTime", "locMapsLink", "locMaps",
@@ -46,26 +44,13 @@ const ALLOWED_SETTING_KEYS = new Set([
   "regLocationLabel", "regMapsBtnText",
 ]);
 
-// Local fallback only for development (not on Vercel)
-const IS_VERCEL = import.meta.env.VERCEL === "1";
-const LOCAL_SETTINGS_FILE = join(process.cwd(), ".settings-cache", "settings.json");
-
-function readLocal(): Record<string, string> {
-  try { return existsSync(LOCAL_SETTINGS_FILE) ? JSON.parse(readFileSync(LOCAL_SETTINGS_FILE, "utf-8")) : {}; } catch { return {}; }
-}
-function writeLocal(data: Record<string, string>): void {
-  try { mkdirSync(join(process.cwd(), ".settings-cache"), { recursive: true }); writeFileSync(LOCAL_SETTINGS_FILE, JSON.stringify(data, null, 2)); } catch {}
-}
-
 export const GET: APIRoute = async () => {
   let minioResult: Record<string, string> = {};
   try {
     const settings = await minioListAll<Record<string, string>>("settings/");
     for (const s of settings) if (s.key) minioResult[s.key] = s.value;
-  } catch {}
-  if (!IS_VERCEL) {
-    const local = readLocal();
-    Object.assign(minioResult, local);
+  } catch (e) {
+    console.error("GET settings minio error:", e);
   }
   return new Response(JSON.stringify({ settings: minioResult }), { status: 200, headers: { "Content-Type": "application/json" } });
 };
@@ -78,19 +63,13 @@ export const POST: APIRoute = async ({ request }) => {
       if (!ALLOWED_SETTING_KEYS.has(key)) continue;
       updates[key] = String(value).slice(0, 2000);
     }
-    // Always try MinIO first
-    let minioOk = true;
-    try {
-      for (const [key, value] of Object.entries(updates)) await minioSet(`settings/${key}.json`, { key, value });
-    } catch { minioOk = false; }
-    // Local fallback only in dev
-    if (!IS_VERCEL) {
-      const local = readLocal();
-      Object.assign(local, updates);
-      writeLocal(local);
+    
+    // Use MinIO directly as the only storage
+    for (const [key, value] of Object.entries(updates)) {
+      await minioSet(`settings/${key}.json`, { key, value });
     }
-    if (!minioOk && IS_VERCEL) throw new Error("MinIO unavailable on Vercel");
-    return new Response(JSON.stringify({ success: true, storage: minioOk ? "minio" : "local-dev" }), { status: 200, headers: { "Content-Type": "application/json" } });
+    
+    return new Response(JSON.stringify({ success: true, storage: "minio" }), { status: 200, headers: { "Content-Type": "application/json" } });
   } catch (err) {
     console.error("POST settings error:", err);
     return new Response(JSON.stringify({ error: "Gagal menyimpan pengaturan" }), { status: 500, headers: { "Content-Type": "application/json" } });
