@@ -13,4 +13,3 @@ Thumbs.db
 .vercel/
 !.env.example
 .vercel
-.settings-cache/
