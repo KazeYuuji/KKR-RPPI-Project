@@ -72,8 +72,7 @@ const faqs = [
     closeIcon.classList.add("hidden");
   });
 
-  fetch("/api/settings").then(r=>r.json()).then(d=>{
-    const s=d.settings||{};
+  (window.__SETTINGS_CACHE || fetch("/api/settings").then(r=>r.json()).then(d=>d.settings||{})).then(s=>{
     const venue=s.locVenue||"GPI IMANUEL Kediri";
     const date=s.locDate||"Sabtu, 10 Januari 2026";
     const time=s.locTime||"08.00 - 12.30 WIB";

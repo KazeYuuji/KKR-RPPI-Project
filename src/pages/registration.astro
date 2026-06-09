@@ -83,9 +83,7 @@ import RegistrationForm from "../components/RegistrationForm.astro";
 
     async function loadSettings() {
       try {
-        const res = await fetch("/api/settings");
-        const d = await res.json();
-        const s = d.settings || {};
+        const s = await (window.__SETTINGS_CACHE || fetch("/api/settings").then(r => r.json()).then(d => d.settings || {}));
         const venue = s.locVenue || "Kediri";
         const mapsLink = s.locMapsLink || "";
         const logoUrl = s.churchLogo || "/logo.png";

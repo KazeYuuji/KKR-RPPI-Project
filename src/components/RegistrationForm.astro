@@ -143,7 +143,6 @@ export interface TicketType {
     }
 
     let lastTicketId = "";
-    let refreshInterval = null;
     let deadlinePassed = false;
 
     async function loadTickets() {
@@ -289,16 +288,13 @@ export interface TicketType {
 
     async function checkDeadline() {
       try {
-        const res = await fetch("/api/settings");
-        const d = await res.json();
-        const s = d.settings || {};
+        const s = await (window.__SETTINGS_CACHE || fetch("/api/settings").then(r => r.json()).then(d => d.settings || {}));
         if (s.regDeadlineISO) {
           let dl = s.regDeadlineISO;
           if (!dl.endsWith("Z") && !/[+-]\d{2}:\d{2}$/.test(dl)) dl += "+07:00";
           const deadline = new Date(dl).getTime();
           if (Date.now() > deadline) {
             deadlinePassed = true;
-            if (refreshInterval) clearInterval(refreshInterval);
             form.querySelectorAll("input, select, button").forEach(el => el.disabled = true);
             form.innerHTML = `<div class="rounded-2xl bg-red-50 p-8 text-center">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-red-500 mx-auto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -314,12 +310,8 @@ export interface TicketType {
       loadTickets();
       checkDeadline();
       toggleSchoolField();
-      refreshInterval = setInterval(loadTickets, 10000);
-      // Load form text from settings
-      fetch("/api/settings").then(r => r.json()).then(d => {
-        const s = d.settings || {};
-        if (s.formTitle && document.getElementById("form-title")) document.getElementById("form-title").textContent = s.formTitle;
-        if (s.formSubtitle && document.getElementById("form-subtitle")) document.getElementById("form-subtitle").textContent = s.formSubtitle;
+      document.addEventListener("visibilitychange", () => { if (!document.hidden) loadTickets(); });
+      (window.__SETTINGS_CACHE || fetch("/api/settings").then(r => r.json()).then(d => d.settings || {})).then(s => {
         const step3 = document.getElementById("success-step-3");
         if (step3 && s.locDate && s.locVenue) {
           step3.innerHTML = "Hadiri acara pada <strong>" + escapeHtml(s.locDate) + "</strong> di <strong>" + escapeHtml(s.locVenue.split(",")[0].trim()) + "</strong>.";

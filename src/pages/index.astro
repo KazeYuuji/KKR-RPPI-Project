@@ -10,13 +10,7 @@ import ChatBot from "../components/ChatBot.astro";
   <div class="space-y-16 sm:space-y-24 pb-24">
     <!-- Hero -->
     <section id="home" class="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
-      <div class="absolute inset-0 z-0 overflow-hidden">
-        <video autoplay muted loop playsinline preload="metadata" poster="/logo.png" class="h-full w-full object-cover" src="/videos/hero-bg.mp4"></video>
-      </div>
-      <div class="absolute inset-0 bg-gradient-to-br from-kkr-dark/85 via-kkr-purple/40 to-kkr-maroon/20"></div>
-      <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(243,159,90,0.18),transparent_25%),radial-gradient(circle_at_bottom_right,_rgba(232,188,185,0.16),transparent_22%)]"></div>
-      <div class="absolute top-20 left-10 w-64 h-64 rounded-full bg-kkr-gold/20 blur-3xl"></div>
-      <div class="absolute bottom-24 right-10 w-80 h-80 rounded-full bg-kkr-red/20 blur-3xl"></div>
+      <div class="absolute inset-0 bg-gradient-to-br from-kkr-dark via-kkr-purple to-kkr-maroon"></div>
 
       <div class="relative mx-auto max-w-7xl px-4 sm:px-6 w-full">
         <div class="grid gap-12 lg:grid-cols-1 lg:items-center justify-items-center">
@@ -338,9 +332,7 @@ import ChatBot from "../components/ChatBot.astro";
 
     async function loadSettings() {
       try {
-        const res = await fetch("/api/settings");
-        const d = await res.json();
-        const s = d.settings || {};
+        const s = await (window.__SETTINGS_CACHE || fetch("/api/settings").then(r => r.json()).then(d => d.settings || {}));
         const venue = s.locVenue || "Kediri";
         const date = s.locDate || "Sabtu, 10 Januari 2026";
         const time = s.locTime || "08:00 - 12:30 WIB";

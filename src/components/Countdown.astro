@@ -58,8 +58,7 @@ const regClose = "2025-12-29T23:59:59";
     if (isNaN(regTarget)) regTarget = Date.now() + 86400000;
     if (isNaN(eventTarget)) eventTarget = Date.now() + 86400000;
 
-    fetch("/api/settings").then(r => r.json()).then(d => {
-      const s = d.settings || {};
+    (window.__SETTINGS_CACHE || fetch("/api/settings").then(r => r.json()).then(d => d.settings || {})).then(s => {
       if (s.regDeadlineISO) {
         let dl = s.regDeadlineISO;
         if (!dl.endsWith("Z") && !/[+-]\d{2}:\d{2}$/.test(dl)) dl += "+07:00";
@@ -86,11 +85,11 @@ const regClose = "2025-12-29T23:59:59";
       if (s.countdownEventDesc && document.getElementById("countdown-event-desc")) document.getElementById("countdown-event-desc").textContent = s.countdownEventDesc;
     }).catch(() => {});
 
-    setInterval(() => {
+    function tick() {
       updateCountdown(regTarget, "reg");
       updateCountdown(eventTarget, "event");
-    }, 1000);
-    updateCountdown(regTarget, "reg");
-    updateCountdown(eventTarget, "event");
+    }
+    tick();
+    setInterval(tick, 1000);
   </script>
 </section>

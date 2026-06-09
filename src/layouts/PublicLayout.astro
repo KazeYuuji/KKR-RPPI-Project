@@ -35,7 +35,7 @@ const canonical = new URL(Astro.url.pathname, siteUrl).href;
 
     <!-- Preload hero assets -->
     <link rel="preload" as="image" href="/logo.png" />
-    <link rel="preload" as="fetch" href="/api/settings" crossorigin />
+    <link rel="preload" as="image" href="/logo-header.png" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
@@ -82,16 +82,36 @@ const canonical = new URL(Astro.url.pathname, siteUrl).href;
         }
       })}
     </script>
-    <script>fetch("/api/settings").then(r=>r.json()).then(d=>{const s=d.settings||{};const el=document.getElementById("ld-json");if(!el)return;try{const ld=JSON.parse(el.textContent);if(s.locVenue)ld.location.name=s.locVenue;if(s.locAddress)ld.location.address.streetAddress=s.locAddress;if(s.locVenue){const parts=s.locVenue.split(",");ld.location.address.addressLocality=(parts[parts.length-1]||s.locVenue).trim()}if(s.eventName)ld.name=s.eventName;if(s.contactEmail)ld.organizer.email=s.contactEmail;if(s.contactWa&&ld.organizer)ld.organizer.telephone="+"+s.contactWa.replace(/[^0-9]/g,"");if(s.eventDateISO)ld.startDate=s.eventDateISO;if(s.eventDateISO&&s.eventTimeEnd)ld.endDate=s.eventDateISO.replace(/\d{2}:\d{2}/,s.eventTimeEnd);el.textContent=JSON.stringify(ld)}catch{}}).catch(()=>{});</script>
+    <script type="module">
+      if (!window.__SETTINGS_CACHE) {
+        window.__SETTINGS_CACHE = fetch("/api/settings").then(r => r.json()).then(d => d.settings || {}).catch(() => ({}));
+      }
+      window.__SETTINGS_CACHE.then(s => {
+        const el = document.getElementById("ld-json");
+        if (!el) return;
+        try {
+          const ld = JSON.parse(el.textContent);
+          if (s.locVenue) ld.location.name = s.locVenue;
+          if (s.locAddress) ld.location.address.streetAddress = s.locAddress;
+          if (s.locVenue) { const parts = s.locVenue.split(","); ld.location.address.addressLocality = (parts[parts.length - 1] || s.locVenue).trim(); }
+          if (s.eventName) ld.name = s.eventName;
+          if (s.contactEmail) ld.organizer.email = s.contactEmail;
+          if (s.contactWa && ld.organizer) ld.organizer.telephone = "+" + s.contactWa.replace(/[^0-9]/g, "");
+          if (s.eventDateISO) ld.startDate = s.eventDateISO;
+          if (s.eventDateISO && s.eventTimeEnd) ld.endDate = s.eventDateISO.replace(/\d{2}:\d{2}/, s.eventTimeEnd);
+          el.textContent = JSON.stringify(ld);
+        } catch {}
+      });
+    </script>
 
     <title>{pageTitle}</title>
   </head>
   <body>
     <div class="min-h-screen">
-      <header class="sticky top-0 z-40 border-b border-white/10 bg-kkr-dark/85 backdrop-blur-xl shadow-lg shadow-black/20">
+      <header class="sticky top-0 z-40 border-b border-white/10 bg-kkr-dark/95 shadow-lg shadow-black/20">
         <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
           <a href="/" class="flex items-center gap-3 text-lg font-semibold tracking-tight text-white">
-            <img src="/logo-header.png" alt="KKR RPPI logo" class="h-10 w-10 object-contain rounded-full" />
+            <img src="/logo-header.png" alt="KKR RPPI logo" class="h-10 w-10 object-contain rounded-full" loading="lazy" decoding="async" />
             <span>KKR <span class="text-kkr-gold">RPPI</span></span>
           </a>
 
@@ -130,7 +150,7 @@ const canonical = new URL(Astro.url.pathname, siteUrl).href;
         <slot />
       </main>
 
-      <footer class="border-t border-white/10 bg-kkr-dark/80 backdrop-blur-lg px-6 py-4">
+      <footer class="border-t border-white/10 bg-kkr-dark/90 px-6 py-4">
         <div class="mx-auto max-w-7xl flex flex-col sm:flex-row items-center justify-between gap-2">
           <div class="flex items-center gap-3 text-sm">
             <a href="/" class="flex items-center gap-2 font-semibold text-white">
@@ -157,7 +177,7 @@ const canonical = new URL(Astro.url.pathname, siteUrl).href;
       <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
     </button>
 
-    <script>
+    <script type="module">
       const menuBtn = document.getElementById("mobile-menu-btn");
       const mobileMenu = document.getElementById("mobile-menu");
       menuBtn?.addEventListener("click", () => {
@@ -175,32 +195,26 @@ const canonical = new URL(Astro.url.pathname, siteUrl).href;
       });
 
       const backToTop = document.getElementById("back-to-top");
+      let scrollVis = false;
       if (backToTop) {
-        let ticking = false;
         window.addEventListener("scroll", () => {
-          if (!ticking) {
-            requestAnimationFrame(() => {
-              backToTop.classList.toggle("opacity-0", window.scrollY < 400);
-              backToTop.classList.toggle("translate-y-4", window.scrollY < 400);
-              backToTop.classList.toggle("opacity-100", window.scrollY >= 400);
-              backToTop.classList.toggle("translate-y-0", window.scrollY >= 400);
-              ticking = false;
-            });
-            ticking = true;
+          const show = window.scrollY >= 400;
+          if (show !== scrollVis) {
+            scrollVis = show;
+            backToTop.classList.toggle("opacity-0", !show);
+            backToTop.classList.toggle("translate-y-4", !show);
+            backToTop.classList.toggle("opacity-100", show);
+            backToTop.classList.toggle("translate-y-0", show);
           }
-        });
-        backToTop.addEventListener("click", () => {
-          window.scrollTo({ top: 0, behavior: "smooth" });
-        });
+        }, { passive: true });
+        backToTop.addEventListener("click", () => { window.scrollTo({ top: 0, behavior: "smooth" }); });
       }
 
       function esc(s) { if (!s) return ""; return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
 
       async function loadContact() {
         try {
-          const res = await fetch("/api/settings");
-          const d = await res.json();
-          const s = d.settings || {};
+          const s = await (window.__SETTINGS_CACHE || fetch("/api/settings").then(r => r.json()).then(d => d.settings || {}));
           const el = document.getElementById("footer-contact");
           const credit = document.getElementById("footer-credit");
           const email = s.contactEmail || "kkrrppi@gmail.com";
