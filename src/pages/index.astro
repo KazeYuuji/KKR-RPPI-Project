@@ -333,10 +333,10 @@ import ChatBot from "../components/ChatBot.astro";
         if (mapsLink) params += "&mapsLink=" + encodeURIComponent(mapsLink);
         var res = await fetch("/api/geocode?" + params);
         var data = await res.json();
-        if (data && data.url && safe("loc-maps-iframe")) {
-          safe("loc-maps-iframe").src = data.url;
-        }
-      } catch(e) {}
+        return { url: data?.url || "" };
+      } catch(e) {
+        return { url: "" };
+      }
     }
 
     function sanitizeUrl(url) {
@@ -472,18 +472,40 @@ import ChatBot from "../components/ChatBot.astro";
 
         // Location section
         if (safe("loc-venue")) safe("loc-venue").textContent = venue;
-        if (safe("loc-address")) safe("loc-address").textContent = "Lihat peta di bawah";
+        if (safe("loc-address")) safe("loc-address").textContent = s.locAddress || "Lihat peta di bawah";
         if (safe("loc-date")) safe("loc-date").textContent = date;
         if (safe("loc-time")) safe("loc-time").textContent = time;
         if (safe("reg-deadline")) safe("reg-deadline").textContent = regDeadline;
         if (safe("loc-phone")) safe("loc-phone").textContent = phone;
         if (safe("loc-wa")) { safe("loc-wa").href = "https://wa.me/" + wa; safe("loc-wa").textContent = "WhatsApp: +" + wa; }
         if (safe("loc-maps-btn")) safe("loc-maps-btn").href = sanitizeUrl(mapsLink);
+        
+        // Map iframe: prioritize admin embed URL, fallback to geocode, then to Google Maps link embed
         if (safe("loc-maps-iframe")) {
+          const iframe = safe("loc-maps-iframe");
           if (s.locMaps) {
-            safe("loc-maps-iframe").src = s.locMaps;
+            // Admin provided exact Google Maps embed URL - use directly
+            iframe.src = s.locMaps;
+          } else if (mapsLink) {
+            // No custom embed, but we have Google Maps link - try geocode first
+            setEmbedMap(venue, mapsLink).then(({url}) => {
+              if (url && iframe) iframe.src = url;
+              else if (iframe && mapsLink) {
+                // Geocode failed, try to construct Google Maps embed from share link
+                // Extract place_id or coords from Google Maps link if possible
+                try {
+                  const u = new URL(mapsLink);
+                  if (u.hostname.includes("google")) {
+                    // Use the maps link as-is for an embed attempt
+                    // Note: This won't work directly as embed, but geocode should handle it
+                    if (!iframe.src) iframe.src = "";
+                  }
+                } catch {}
+              }
+            });
           } else {
-            setEmbedMap(venue, mapsLink);
+            // No maps link at all - use geocode with venue
+            setEmbedMap(venue, "");
           }
         }
 

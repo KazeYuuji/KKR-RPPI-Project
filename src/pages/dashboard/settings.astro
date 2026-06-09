@@ -24,7 +24,15 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
         <div>
           <label class="block text-sm font-medium text-kkr-purple mb-1">URL Google Maps</label>
           <input id="loc-maps-link" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="https://maps.app.goo.gl/RCzwb8tiKNdVwXA59" />
-          <p class="text-xs text-kkr-maroon/60 mt-1">Link Google Maps (bisa dari share/bagikan atau URL maps). Embed peta akan otomatis dibuat.</p>
+          <p class="text-xs text-kkr-maroon/60 mt-1">Link Google Maps (bisa dari share/bagikan). Digunakan untuk tombol "Buka di Google Maps".</p>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-kkr-purple mb-1">URL Embed Peta (iframe src)</label>
+          <input id="loc-maps-embed" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="https://www.google.com/maps/embed?pb=..." />
+          <p class="text-xs text-kkr-maroon/60 mt-1">Cara dapatkan: Buka Google Maps → klik bagikan/share → pilih "Embed peta" → salin URL <code>src</code> dari iframe. Jika dikosongkan, akan otomatis menggunakan Google Maps link di atas.</p>
+          <div id="embed-preview-settings" class="mt-2 hidden">
+            <iframe id="embed-preview-iframe" class="w-full rounded-xl border border-kkr-light/50 shadow-sm" style="aspect-ratio:16/9" loading="lazy"></iframe>
+          </div>
         </div>
         <button type="submit" class="rounded-xl bg-kkr-red px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-kkr-maroon">Simpan Lokasi</button>
       </form>
@@ -553,6 +561,8 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
         setVal("loc-venue", s.locVenue || "");
         setVal("loc-address", s.locAddress || "");
         setVal("loc-maps-link", s.locMapsLink || "");
+        setVal("loc-maps-embed", s.locMaps || "");
+        updateEmbedPreview();
         setVal("event-date-iso", s.eventDateISO ? utcToLocal(s.eventDateISO) : "");
         setVal("event-time-end", s.eventTimeEnd || "");
         setVal("event-year", s.eventYear || "");
@@ -756,6 +766,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
           locVenue: document.getElementById("loc-venue").value.trim(),
           locAddress: document.getElementById("loc-address").value.trim(),
           locMapsLink: document.getElementById("loc-maps-link").value.trim(),
+          locMaps: document.getElementById("loc-maps-embed").value.trim(),
         })});
         if (res.ok) toast("Lokasi berhasil disimpan!");
         else throw new Error();
@@ -1013,6 +1024,18 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
       try { const url = await uploadFile(file); if (url) { document.getElementById("church-logo").value = url; updateLogoPreview(); toast("Logo berhasil diupload"); } } catch { toast("Gagal upload logo", "error"); }
       e.target.value = "";
     });
+
+    function updateEmbedPreview() {
+      const val = document.getElementById("loc-maps-embed").value.trim();
+      if (val) {
+        document.getElementById("embed-preview-settings").classList.remove("hidden");
+        document.getElementById("embed-preview-iframe").src = val;
+      } else {
+        document.getElementById("embed-preview-settings").classList.add("hidden");
+      }
+    }
+
+    document.getElementById("loc-maps-embed")?.addEventListener("input", updateEmbedPreview);
 
     document.addEventListener("DOMContentLoaded", async () => {
       loadSettings();
