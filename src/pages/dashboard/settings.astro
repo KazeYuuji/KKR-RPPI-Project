@@ -601,8 +601,11 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
           eventYear: eventYear,
         })});
         if (res.ok) toast("Jadwal berhasil disimpan!");
-        else throw new Error();
-      } catch { toast("Gagal menyimpan jadwal", "error"); }
+        else {
+          const errBody = await res.text().catch(() => "");
+          throw new Error(res.status + " " + errBody);
+        }
+      } catch (e) { console.error("schedule save error:", e); toast("Gagal menyimpan jadwal", "error"); }
       btn.disabled = false; btn.textContent = "Simpan Jadwal";
     });
 

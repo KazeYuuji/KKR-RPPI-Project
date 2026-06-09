@@ -98,7 +98,19 @@ const canonical = new URL(Astro.url.pathname, siteUrl).href;
           if (s.contactEmail) ld.organizer.email = s.contactEmail;
           if (s.contactWa && ld.organizer) ld.organizer.telephone = "+" + s.contactWa.replace(/[^0-9]/g, "");
           if (s.eventDateISO) ld.startDate = s.eventDateISO;
-          if (s.eventDateISO && s.eventTimeEnd) ld.endDate = s.eventDateISO.replace(/\d{2}:\d{2}/, s.eventTimeEnd);
+          if (s.eventDateISO && s.eventTimeEnd) {
+            const start = new Date(s.eventDateISO);
+            const [endH, endM] = s.eventTimeEnd.split(":").map(Number);
+            if (!isNaN(start.getTime()) && !isNaN(endH)) {
+              const startWIB = new Date(start.getTime() + 7 * 3600000);
+              const startH = startWIB.getUTCHours();
+              const startM = startWIB.getUTCMinutes();
+              let durMin = (endH - startH) * 60 + (endM - startM);
+              if (durMin < 0) durMin += 1440;
+              const end = new Date(start.getTime() + durMin * 60000);
+              if (!isNaN(end.getTime())) ld.endDate = end.toISOString();
+            }
+          }
           el.textContent = JSON.stringify(ld);
         } catch {}
       });
