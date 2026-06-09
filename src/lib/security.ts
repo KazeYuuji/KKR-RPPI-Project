@@ -56,6 +56,8 @@ export function isValidOrigin(request: Request): boolean {
   const allowedOrigins = [
     "https://kkrrppi.vercel.app",
     "https://www.kkrrppi.vercel.app",
+    "https://kkr-rppi.vercel.app",
+    "https://www.kkr-rppi.vercel.app",
   ];
 
   if (process.env.NODE_ENV === "development") {
@@ -64,8 +66,17 @@ export function isValidOrigin(request: Request): boolean {
 
   const check = (v: string) => allowedOrigins.some(a => v === a || v.startsWith(a + "/"));
 
-  if (origin) return check(origin);
-  if (referer) return check(referer);
+  if (origin) {
+    if (check(origin)) return true;
+    // Also accept same-origin requests dynamically
+    const reqUrl = new URL(request.url);
+    if (origin === reqUrl.origin) return true;
+  }
+  if (referer) {
+    if (check(referer)) return true;
+    const reqUrl = new URL(request.url);
+    if (referer.startsWith(reqUrl.origin)) return true;
+  }
   return false;
 }
 
