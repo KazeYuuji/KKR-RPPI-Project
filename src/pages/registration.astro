@@ -38,7 +38,6 @@ import RegistrationForm from "../components/RegistrationForm.astro";
 
           <div class="rounded-xl glass-card p-5">
             <div class="flex items-center gap-2">
-              <img src="/logo.png" alt="Logo Gereja" class="h-12 w-12 rounded-full border border-kkr-gold/30 bg-white p-1 object-contain shrink-0" id="reg-loc-logo" />
               <p class="text-[11px] uppercase tracking-[0.3em] text-kkr-maroon/80 font-medium">Lokasi Acara</p>
             </div>
             <p id="reg-venue" class="mt-2 text-sm font-semibold text-kkr-dark">Memuat...</p>
@@ -91,7 +90,6 @@ import RegistrationForm from "../components/RegistrationForm.astro";
         const mapsLink = s.locMapsLink || "";
         const logoUrl = s.churchLogo || "/logo.png";
         document.getElementById("reg-logo") && (document.getElementById("reg-logo").src = logoUrl);
-        document.getElementById("reg-loc-logo") && (document.getElementById("reg-loc-logo").src = logoUrl);
         document.getElementById("reg-venue").textContent = venue;
         document.getElementById("reg-address").textContent = "Lihat peta di bawah";
         osmCoords(venue, mapsLink).then(function(data) {
