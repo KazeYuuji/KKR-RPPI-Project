@@ -1,8 +1,3 @@
----
-const eventDate = "2026-01-10T08:00:00";
-const regClose = "2025-12-29T23:59:59";
----
-
 <section id="countdown" class="scroll-mt-20">
   <div class="mx-auto max-w-7xl px-6">
     <div class="rounded-[2.5rem] bg-gradient-to-br from-kkr-dark via-kkr-purple to-kkr-maroon p-8 sm:p-12 shadow-2xl shadow-kkr-dark/30 text-white relative overflow-hidden">
@@ -56,25 +51,28 @@ const regClose = "2025-12-29T23:59:59";
     </div>
   </div>
 
-  <script define:vars={{ eventDate, regClose }}>
-    let regTarget = new Date(regClose).getTime();
-    let eventTarget = new Date(eventDate).getTime();
-    if (isNaN(regTarget)) regTarget = Date.now() + 86400000;
-    if (isNaN(eventTarget)) eventTarget = Date.now() + 86400000;
+  <script>
+    let regTarget = Date.now() + 30 * 86400000;
+    let eventTarget = Date.now() + 30 * 86400000;
+
+    function startCountdown() {
+      tick();
+      setInterval(tick, 1000);
+    }
+
+    function parseWIBDate(str) {
+      if (!str) return NaN;
+      let dl = str;
+      if (!dl.endsWith("Z") && !/[+-]\d{2}:\d{2}$/.test(dl)) dl += "+07:00";
+      return new Date(dl).getTime();
+    }
 
     (window.__SETTINGS_CACHE || fetch("/api/settings").then(r => r.json()).then(d => d.settings || {})).then(s => {
-      if (s.regDeadlineISO) {
-        let dl = s.regDeadlineISO;
-        if (!dl.endsWith("Z") && !/[+-]\d{2}:\d{2}$/.test(dl)) dl += "+07:00";
-        const t = new Date(dl).getTime();
-        if (!isNaN(t)) regTarget = t;
-      }
-      if (s.eventDateISO) {
-        let dl = s.eventDateISO;
-        if (!dl.endsWith("Z") && !/[+-]\d{2}:\d{2}$/.test(dl)) dl += "+07:00";
-        const t = new Date(dl).getTime();
-        if (!isNaN(t)) eventTarget = t;
-      }
+      const rt = parseWIBDate(s.regDeadlineISO);
+      if (!isNaN(rt)) regTarget = rt;
+      const et = parseWIBDate(s.eventDateISO);
+      if (!isNaN(et)) eventTarget = et;
+
       const regLabel = document.getElementById("reg-deadline-label");
       const eventLabel = document.getElementById("event-date-label");
       const logo = document.getElementById("countdown-logo");
@@ -87,14 +85,16 @@ const regClose = "2025-12-29T23:59:59";
       if (s.countdownRegDesc && document.getElementById("countdown-reg-desc")) document.getElementById("countdown-reg-desc").textContent = s.countdownRegDesc;
       if (s.countdownEventLabel && document.getElementById("countdown-event-label")) document.getElementById("countdown-event-label").textContent = s.countdownEventLabel;
       if (s.countdownEventDesc && document.getElementById("countdown-event-desc")) document.getElementById("countdown-event-desc").textContent = s.countdownEventDesc;
-      // Countdown unit labels
+
       const unitMap = {days: "countdownUnitDays", hours: "countdownUnitHours", minutes: "countdownUnitMinutes", seconds: "countdownUnitSeconds"};
       const unitFallbacks = {days: "Hari", hours: "Jam", minutes: "Menit", seconds: "Detik"};
       Object.entries(unitMap).forEach(([unit, key]) => {
         const val = s[key] || unitFallbacks[unit];
         document.querySelectorAll(`[data-unit="${unit}"]`).forEach(el => el.textContent = val);
       });
-    }).catch(() => {});
+
+      startCountdown();
+    }).catch(() => startCountdown());
 
     function updateCountdown(target, prefix) {
       const diff = Math.max(0, target - Date.now());
@@ -113,7 +113,5 @@ const regClose = "2025-12-29T23:59:59";
       updateCountdown(regTarget, "reg");
       updateCountdown(eventTarget, "event");
     }
-    tick();
-    setInterval(tick, 1000);
   </script>
 </section>
