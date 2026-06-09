@@ -706,8 +706,7 @@ import ChatBot from "../components/ChatBot.astro";
       loadSponsors();
       console.log("hydration started");
       // Test fetch
-      fetch("/api/altar-servers").then(r => r.json()).then(d => console.log("altar-servers:", d)).catch(e => console.error("altar-servers error:", e));
-      fetch("/api/sponsors").then(r => r.json()).then(d => console.log("sponsors:", d)).catch(e => console.error("sponsors error:", e));
+    document.body.style.border = "3px solid lime";
     });
   </script>
 </PublicLayout>
