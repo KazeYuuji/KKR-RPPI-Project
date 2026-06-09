@@ -29,6 +29,8 @@ export const onRequest = defineMiddleware(async (context, next) => {
         status: 413, headers: { "Content-Type": "application/json" },
       });
     }
+    // Check actual body size from Content-Length as best-effort;
+    // individual endpoints may enforce further limits via streaming
   }
 
   // ---- CSRF / Origin validation for state-changing API requests ----

@@ -6,9 +6,19 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   try {
     const ip = clientAddress || "unknown";
 
-    const result = checkRateLimit(`login:${ip}`, 5, 15 * 60_000);
-    if (!result.allowed) {
-      const retryAfter = Math.max(1, Math.ceil((result.resetAt - Date.now()) / 1000));
+    const body = await request.json();
+    const username = typeof body?.username === "string" ? body.username.trim() : "";
+    const password = typeof body?.password === "string" ? body.password : "";
+
+    if (!username || !password) {
+      return new Response(JSON.stringify({ error: "Username dan password wajib diisi" }), {
+        status: 400, headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    const ipResult = checkRateLimit(`login:${ip}`, 5, 15 * 60_000);
+    if (!ipResult.allowed) {
+      const retryAfter = Math.max(1, Math.ceil((ipResult.resetAt - Date.now()) / 1000));
       return new Response(JSON.stringify({
         error: "Terlalu banyak percobaan. Coba lagi nanti.",
       }), {
@@ -20,13 +30,17 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
       });
     }
 
-    const body = await request.json();
-    const username = typeof body?.username === "string" ? body.username.trim() : "";
-    const password = typeof body?.password === "string" ? body.password : "";
-
-    if (!username || !password) {
-      return new Response(JSON.stringify({ error: "Username dan password wajib diisi" }), {
-        status: 400, headers: { "Content-Type": "application/json" },
+    const userResult = checkRateLimit(`login-user:${username.toLowerCase()}`, 5, 15 * 60_000);
+    if (!userResult.allowed) {
+      const retryAfter = Math.max(1, Math.ceil((userResult.resetAt - Date.now()) / 1000));
+      return new Response(JSON.stringify({
+        error: "Terlalu banyak percobaan untuk akun ini. Coba lagi nanti.",
+      }), {
+        status: 429,
+        headers: {
+          "Content-Type": "application/json",
+          "Retry-After": String(retryAfter),
+        },
       });
     }
 

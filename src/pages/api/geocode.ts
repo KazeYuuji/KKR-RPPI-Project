@@ -43,7 +43,12 @@ function cleanPlaceName(name: string): string {
 
 async function resolveMapUrl(link: string): Promise<string> {
   try {
-    const res = await fetch(link, { method: "HEAD", redirect: "follow" });
+    let u: URL;
+    try { u = new URL(link); } catch { return link; }
+    if (u.protocol !== "https:") return link;
+    const allowedHosts = ["maps.google.com", "www.google.com", "goo.gl", "google.com", "maps.app.goo.gl"];
+    if (!allowedHosts.some(h => u.hostname === h || u.hostname.endsWith("." + h))) return link;
+    const res = await fetch(u.toString(), { method: "HEAD", redirect: "follow", signal: AbortSignal.timeout(5000) });
     return res.url || link;
   } catch { return link; }
 }
@@ -76,6 +81,8 @@ const FALLBACKS = [
   "Kota Kediri, Jawa Timur",
   "Kediri Jawa Timur",
 ];
+
+const MAX_CACHE = 1000;
 
 export const GET: APIRoute = async ({ url }) => {
   const venue = url.searchParams.get("venue") || "";
@@ -129,6 +136,7 @@ export const GET: APIRoute = async ({ url }) => {
     }
 
     if (result) {
+      if (cache.size >= MAX_CACHE) cache.clear();
       cache.set(cacheKeyNorm, { ...result, ttl: Date.now() + 86_400_000 });
       return new Response(JSON.stringify(result), {
         status: 200, headers: { "Content-Type": "application/json" },

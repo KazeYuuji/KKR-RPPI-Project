@@ -1,6 +1,6 @@
 import type { APIRoute } from "astro";
 import { minioListAll, minioGet, minioSet } from "../../lib/minio-db";
-import { sanitizeString, sanitizeEmail, sanitizePhone } from "../../lib/security";
+import { sanitizeString, sanitizeEmail, sanitizePhone, sanitizeId, isValidId } from "../../lib/security";
 
 const REG_PREFIX = "registrants/";
 
@@ -32,18 +32,23 @@ export const POST: APIRoute = async ({ request }) => {
   try {
     const body = await request.json();
     const { id, name, school, email, whatsapp, participant_type, ticket, action } = body;
-    if (!id) {
-      return new Response(JSON.stringify({ error: "ID wajib diisi" }), { status: 400, headers: { "Content-Type": "application/json" } });
+    if (!id || !isValidId(id)) {
+      return new Response(JSON.stringify({ error: "ID pendaftar tidak valid" }), { status: 400, headers: { "Content-Type": "application/json" } });
     }
 
-    const existing = await minioGet<Record<string, any>>(`${REG_PREFIX}${id}.json`);
+    const sanitizedId = sanitizeId(id);
+    if (!sanitizedId) {
+      return new Response(JSON.stringify({ error: "ID pendaftar tidak valid" }), { status: 400, headers: { "Content-Type": "application/json" } });
+    }
+
+    const existing = await minioGet<Record<string, any>>(`${REG_PREFIX}${sanitizedId}.json`);
 
     if (action === "checkin") {
       if (existing?.checked_in) {
         return new Response(JSON.stringify({ error: "Tiket ini sudah check-in sebelumnya dan tidak dapat digunakan lagi" }), { status: 400, headers: { "Content-Type": "application/json" } });
       }
-      const updated = { ...(existing || {}), checked_in: 1, id };
-      await minioSet(`${REG_PREFIX}${id}.json`, updated);
+      const updated = { ...(existing || {}), checked_in: 1, id: sanitizedId };
+      await minioSet(`${REG_PREFIX}${sanitizedId}.json`, updated);
       return new Response(JSON.stringify({ registrant: updated }), { status: 200, headers: { "Content-Type": "application/json" } });
     }
 
@@ -73,7 +78,7 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     const registrantData = {
-      id, name: sanitizeString(name, 200),
+      id: sanitizedId, name: sanitizeString(name, 200),
       school: sanitizeString(school, 200),
       email: sanitizeEmail(email),
       whatsapp: sanitizePhone(whatsapp),
@@ -84,7 +89,7 @@ export const POST: APIRoute = async ({ request }) => {
       updated_at: new Date().toISOString(),
     };
 
-    await minioSet(`${REG_PREFIX}${id}.json`, registrantData);
+    await minioSet(`${REG_PREFIX}${sanitizedId}.json`, registrantData);
 
     if (!existing) {
       const ticketType = sanitizeTicketId(ticket);

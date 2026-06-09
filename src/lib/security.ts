@@ -52,20 +52,21 @@ export function sanitizePhone(val: unknown): string {
 export function isValidOrigin(request: Request): boolean {
   const origin = request.headers.get("origin");
   const referer = request.headers.get("referer");
-  const host = request.headers.get("host");
 
-  if (!host) return false;
+  const allowedOrigins = [
+    "https://kkrrppi.vercel.app",
+    "https://www.kkrrppi.vercel.app",
+  ];
 
-  const allowedOrigins = [`https://${host}`, `http://${host}`];
-
-  if (origin && !allowedOrigins.some(a => origin === a)) {
-    return false;
-  }
-  if (!origin && referer && !allowedOrigins.some(a => referer === a || referer.startsWith(a + "/"))) {
-    return false;
+  if (process.env.NODE_ENV === "development") {
+    allowedOrigins.push("http://localhost:4321");
   }
 
-  return true;
+  const check = (v: string) => allowedOrigins.some(a => v === a || v.startsWith(a + "/"));
+
+  if (origin) return check(origin);
+  if (referer) return check(referer);
+  return false;
 }
 
 export const ALLOWED_IMAGE_TYPES = new Set([
@@ -73,3 +74,13 @@ export const ALLOWED_IMAGE_TYPES = new Set([
 ]);
 export const MAX_UPLOAD_SIZE = 5 * 1024 * 1024; // 5MB
 export const MAX_BODY_SIZE = 500 * 1024; // 500KB JSON
+
+export function sanitizeId(val: unknown, maxLen = 100): string {
+  if (typeof val !== "string" || !val) return "";
+  return val.replace(/[^a-zA-Z0-9_-]/g, "").slice(0, maxLen);
+}
+
+export function isValidId(val: unknown): boolean {
+  if (typeof val !== "string" || !val) return false;
+  return /^[a-zA-Z0-9][a-zA-Z0-9_-]{0,98}[a-zA-Z0-9]$/.test(val);
+}

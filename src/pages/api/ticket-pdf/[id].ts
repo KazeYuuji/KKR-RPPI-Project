@@ -2,11 +2,12 @@ import type { APIRoute } from "astro";
 import { minioGet, minioListAll } from "../../../lib/minio-db";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 import QRCode from "qrcode";
+import { isValidId } from "../../../lib/security";
 
 export const GET: APIRoute = async ({ params }) => {
   const { id } = params;
-  if (!id) {
-    return new Response("ID tidak ditemukan", { status: 404 });
+  if (!id || !isValidId(id)) {
+    return new Response("ID tidak valid", { status: 404 });
   }
 
   const registrant = await minioGet<Record<string, any>>(`registrants/${id}.json`);
