@@ -3,51 +3,51 @@ import PublicLayout from "../layouts/PublicLayout.astro";
 import RegistrationForm from "../components/RegistrationForm.astro";
 ---
 <PublicLayout title="Daftar Sekarang | KKR RPPI" description="Formulir pendaftaran KKR RPPI.">
-  <div class="pb-16 pt-12 sm:pt-16">
-    <div class="mx-auto max-w-7xl px-6">
-      <div class="mb-8 grid gap-5 rounded-[1.5rem] glass-card p-6 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
-        <div class="space-y-3">
-          <p class="uppercase tracking-[0.35em] text-xs font-semibold text-kkr-red">Registrasi</p>
-          <h1 class="text-3xl font-semibold leading-tight text-kkr-dark sm:text-4xl">Daftar Sekarang</h1>
-          <p class="max-w-2xl text-sm text-kkr-dark/70">Bergabunglah bersama kami dalam KKR RPPI yang penuh kedamaian dan sukacita. Silakan lengkapi formulir di bawah ini.</p>
+  <div class="pb-12 pt-10 sm:pt-14">
+    <div class="mx-auto max-w-5xl px-4 sm:px-6">
+      <div class="mb-6 grid gap-4 rounded-xl glass-card p-5 sm:grid-cols-[1fr_auto] sm:items-center">
+        <div class="space-y-1">
+          <p class="text-[11px] uppercase tracking-[0.3em] font-semibold text-kkr-red">Registrasi</p>
+          <h1 class="text-2xl font-semibold leading-tight text-kkr-dark sm:text-3xl">Daftar Sekarang</h1>
+          <p class="text-xs text-kkr-dark/70">Bergabunglah bersama kami dalam KKR RPPI.</p>
         </div>
-        <div class="rounded-[1.25rem] glass-card p-5">
-          <p class="text-xs uppercase tracking-[0.3em] text-kkr-maroon/80">Informasi Tiket</p>
-          <p class="mt-3 text-2xl font-semibold text-kkr-dark">GRATIS</p>
-          <p class="mt-2 text-xs text-kkr-dark/70">Event ini diselenggarakan secara gratis untuk semua peserta.</p>
-          <div class="mt-4 space-y-3 rounded-[1.25rem] bg-white/80 p-4">
-            <div>
-              <p class="text-xs font-semibold text-kkr-dark">Daftar Tiket Tersedia</p>
-              <div id="ticket-info" class="mt-2 space-y-1.5"></div>
-            </div>
+        <div class="flex items-center gap-3 rounded-xl bg-white/70 p-3 sm:text-right">
+          <div>
+            <p class="text-[11px] uppercase tracking-[0.2em] text-kkr-maroon/70 font-medium">Tiket</p>
+            <p class="text-xl font-semibold text-kkr-dark">GRATIS</p>
+          </div>
+          <div class="h-10 w-px bg-kkr-light/60"></div>
+          <div>
+            <p class="text-[11px] uppercase tracking-[0.2em] text-kkr-maroon/70 font-medium">Tersedia</p>
+            <div id="ticket-info" class="space-y-0.5"></div>
           </div>
         </div>
       </div>
 
-      <div class="grid gap-6 lg:grid-cols-[1.3fr_0.9fr]">
-        <div class="rounded-[1.5rem] glass-card p-6 sm:p-8">
+      <div class="grid gap-5 lg:grid-cols-[1.2fr_1fr]">
+        <div class="rounded-xl glass-card p-5 sm:p-6">
           <RegistrationForm />
         </div>
-        <aside class="space-y-5">
-          <div class="rounded-[1.5rem] glass-card p-6 text-center">
-            <img src="/logo.png" alt="Logo Gereja" class="mx-auto h-16 w-16 sm:h-20 sm:w-20 rounded-full border-2 border-kkr-gold/40 bg-white p-1.5 object-contain shadow-lg shadow-kkr-gold/20" id="reg-logo" />
-            <p class="mt-3 text-xs uppercase tracking-[0.3em] text-kkr-red">Detail Pendaftaran</p>
-            <h2 class="mt-3 text-xl font-semibold text-kkr-dark">Selangkah lagi untuk konfirmasi tiket</h2>
-            <p class="mt-3 text-sm text-kkr-dark/70 leading-6">Isi data diri dengan benar untuk mendapatkan tiket KKR RPPI.</p>
+        <aside class="space-y-4">
+          <div class="rounded-xl glass-card p-5 text-center">
+            <img src="/logo.png" alt="Logo Gereja" class="mx-auto h-14 w-14 rounded-full border-2 border-kkr-gold/40 bg-white p-1.5 object-contain shadow-md shadow-kkr-gold/20" id="reg-logo" />
+            <p class="mt-2 text-[11px] uppercase tracking-[0.3em] font-semibold text-kkr-red">Detail Pendaftaran</p>
+            <h2 class="mt-2 text-base font-semibold text-kkr-dark">Selangkah lagi!</h2>
+            <p class="mt-2 text-xs text-kkr-dark/70 leading-5">Isi data diri dengan benar untuk mendapatkan tiket KKR RPPI.</p>
           </div>
 
-          <div class="rounded-[1.5rem] glass-card p-6">
-            <div class="flex items-center gap-2.5">
-              <img src="/logo.png" alt="Logo Gereja" class="h-10 w-10 rounded-full border border-kkr-gold/30 bg-white p-0.5 object-contain shrink-0" id="reg-loc-logo" />
-              <p class="text-xs uppercase tracking-[0.3em] text-kkr-maroon/80">Lokasi Acara</p>
+          <div class="rounded-xl glass-card p-5">
+            <div class="flex items-center gap-2">
+              <img src="/logo.png" alt="Logo Gereja" class="h-8 w-8 rounded-full border border-kkr-gold/30 bg-white p-0.5 object-contain shrink-0" id="reg-loc-logo" />
+              <p class="text-[11px] uppercase tracking-[0.3em] text-kkr-maroon/80 font-medium">Lokasi Acara</p>
             </div>
-            <p id="reg-venue" class="mt-3 text-base font-semibold text-kkr-dark">Memuat...</p>
-            <p id="reg-address" class="mt-2 text-xs text-kkr-dark/70"></p>
-            <div class="mt-4 overflow-hidden rounded-[1.25rem] border border-white/20 relative">
+            <p id="reg-venue" class="mt-2 text-sm font-semibold text-kkr-dark">Memuat...</p>
+            <p id="reg-address" class="mt-1 text-xs text-kkr-dark/70"></p>
+            <div class="mt-3 overflow-hidden rounded-xl border border-white/20 relative">
               <iframe id="reg-maps" class="aspect-[16/9] w-full" style="filter:grayscale(0.15) contrast(1.05)" loading="lazy" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
-              <div class="pointer-events-none absolute inset-0 rounded-[1.25rem] ring-1 ring-inset ring-black/5"></div>
+              <div class="pointer-events-none absolute inset-0 rounded-xl ring-1 ring-inset ring-black/5"></div>
             </div>
-            <a id="gmaps-link" href="#" target="_blank" rel="noopener" class="mt-2 inline-flex items-center gap-1.5 text-xs text-kkr-red hover:underline">Buka di Google Maps &rarr;</a>
+            <a id="gmaps-link" href="#" target="_blank" rel="noopener" class="mt-1.5 inline-flex items-center gap-1 text-xs text-kkr-red hover:underline">Buka di Google Maps &rarr;</a>
           </div>
         </aside>
       </div>
@@ -110,9 +110,9 @@ import RegistrationForm from "../components/RegistrationForm.astro";
         const info = document.getElementById("ticket-info");
         info.innerHTML = list.map(t => {
           const habis = t.remaining <= 0;
-          return '<div class="flex items-center justify-between rounded-lg ' + (habis ? "bg-red-50 border border-red-200" : "bg-white/90 border border-white/30") + ' px-3 py-2 text-xs">' +
-            '<span class="font-medium ' + (habis ? "text-red-700" : "text-kkr-dark") + '">' + escapeHtml(t.name) + '</span>' +
-            '<span class="' + (habis ? "text-red-600 font-semibold" : "text-kkr-dark/70") + '">' + (habis ? "Habis" : "Sisa " + t.remaining) + '</span>' +
+          return '<div class="flex items-center justify-between gap-2 ' + (habis ? "text-red-700" : "text-kkr-dark") + '">' +
+            '<span class="text-xs font-medium truncate">' + escapeHtml(t.name) + '</span>' +
+            '<span class="text-[11px] shrink-0 ' + (habis ? "text-red-500 font-semibold" : "text-kkr-dark/60") + '">' + (habis ? "Habis" : "Sisa " + t.remaining) + '</span>' +
           "</div>";
         }).join("");
       } catch {}
