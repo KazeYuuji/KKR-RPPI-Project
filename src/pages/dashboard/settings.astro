@@ -45,8 +45,15 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
         </div>
         <div>
           <label class="block text-sm font-medium text-kkr-purple mb-1">Logo Gereja (URL)</label>
-          <input id="church-logo" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="/logo-small.png" />
-          <p class="text-xs text-kkr-maroon/60 mt-1">URL logo yang tampil di halaman pendaftaran dan countdown. Bisa path relatif seperti /logo-small.png</p>
+          <div class="flex items-center gap-2">
+            <input id="church-logo" class="flex-1 min-w-0 rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="/logo-small.png" />
+            <button type="button" id="upload-logo-settings-btn" class="rounded-xl bg-kkr-light/40 hover:bg-kkr-light/60 px-4 py-2.5 text-sm font-semibold text-kkr-maroon transition-colors shrink-0">Upload</button>
+          </div>
+          <input type="file" id="logo-file-settings" accept="image/*" class="hidden" />
+          <div id="logo-preview-settings" class="mt-2 hidden">
+            <img id="logo-preview-settings-img" class="w-16 h-16 rounded-xl object-contain border border-kkr-light/50 bg-white shadow-sm" />
+          </div>
+          <p class="text-xs text-kkr-maroon/60 mt-1">URL logo yang tampil di halaman pendaftaran dan countdown.</p>
         </div>
         <div>
           <label class="block text-sm font-medium text-kkr-purple mb-1">Link Grup WhatsApp</label>
@@ -576,6 +583,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
         setVal("about-section-label", s.aboutSectionLabel || "");
         setVal("event-name", s.eventName || "");
         setVal("church-logo", s.churchLogo || "");
+        updateLogoPreview();
         setVal("wa-group-link", s.waGroupLink || "");
 
         // Nav labels
@@ -979,6 +987,31 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
         errorEl.classList.remove("hidden");
       }
       btn.disabled = false; btn.textContent = "Simpan Perubahan";
+    });
+
+    async function uploadFile(file) {
+      const fd = new FormData(); fd.append("file", file);
+      const res = await fetch("/api/upload", { method: "POST", body: fd });
+      const d = await res.json();
+      return d.url || null;
+    }
+
+    function updateLogoPreview() {
+      const val = document.getElementById("church-logo").value.trim();
+      if (val) {
+        document.getElementById("logo-preview-settings").classList.remove("hidden");
+        document.getElementById("logo-preview-settings-img").src = val;
+      } else {
+        document.getElementById("logo-preview-settings").classList.add("hidden");
+      }
+    }
+
+    document.getElementById("church-logo")?.addEventListener("input", updateLogoPreview);
+    document.getElementById("upload-logo-settings-btn")?.addEventListener("click", () => document.getElementById("logo-file-settings").click());
+    document.getElementById("logo-file-settings")?.addEventListener("change", async (e) => {
+      const file = e.target.files?.[0]; if (!file) return;
+      try { const url = await uploadFile(file); if (url) { document.getElementById("church-logo").value = url; updateLogoPreview(); toast("Logo berhasil diupload"); } } catch { toast("Gagal upload logo", "error"); }
+      e.target.value = "";
     });
 
     document.addEventListener("DOMContentLoaded", async () => {

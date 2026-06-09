@@ -83,7 +83,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
 
     function sanitizeUrl(url) {
       if (!url) return "";
-      try { const u = new URL(url); return (u.protocol === "http:" || u.protocol === "https:") ? url : ""; } catch { return ""; }
+      try { const u = new URL(url, window.location.origin); return (u.protocol === "http:" || u.protocol === "https:") ? u.href : ""; } catch { return ""; }
     }
 
     function toast(msg, type = "success") {
