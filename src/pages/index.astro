@@ -349,6 +349,7 @@ import ChatBot from "../components/ChatBot.astro";
     function safe(id) { return document.getElementById(id); }
 
     async function loadSettings() {
+      document.body.style.border = "3px solid lime";
       try {
         const s = await (window.__SETTINGS_CACHE || fetch("/api/settings").then(r => r.json()).then(d => d.settings || {}));
         const venue = s.locVenue || "Kediri";
