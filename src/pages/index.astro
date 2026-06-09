@@ -10,13 +10,9 @@ import ChatBot from "../components/ChatBot.astro";
   <div class="space-y-16 sm:space-y-24 pb-24">
     <!-- Hero -->
     <section id="home" class="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
-      <!-- Desktop: video background -->
-      <div class="absolute inset-0 z-0 overflow-hidden hidden md:block">
+      <div class="absolute inset-0 z-0 overflow-hidden">
         <video autoplay muted loop playsinline preload="metadata" poster="/logo-small.png" class="h-full w-full object-cover" src="/videos/hero-bg.mp4"></video>
       </div>
-      <!-- Mobile: static gradient fallback -->
-      <div class="absolute inset-0 bg-gradient-to-br from-kkr-dark via-kkr-purple to-kkr-maroon md:hidden"></div>
-      <!-- Overlay for readability -->
       <div class="absolute inset-0 bg-gradient-to-br from-kkr-dark/85 via-kkr-purple/40 to-kkr-maroon/20"></div>
 
       <div class="relative mx-auto max-w-7xl px-4 sm:px-6 w-full">
