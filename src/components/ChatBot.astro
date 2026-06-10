@@ -59,6 +59,7 @@ const faqs = [
   const sendBtn = document.getElementById("chat-send");
   const QS = document.getElementById("quick-questions");
 
+  window.__CHAT_SESSION_ID = "chat_" + Date.now().toString(36) + Math.random().toString(36).substring(2, 6);
   let isSending = false;
 
   function addBotMessage(text) {
@@ -126,7 +127,7 @@ const faqs = [
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: text.trim() }),
+        body: JSON.stringify({ message: text.trim(), sessionId: window.__CHAT_SESSION_ID || "default" }),
       });
       const data = await res.json();
       removeTypingIndicator();
