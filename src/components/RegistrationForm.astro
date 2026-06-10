@@ -19,39 +19,17 @@ export interface TicketType {
         <span class="text-[11px] font-medium text-kkr-purple">Nama Lengkap *</span>
         <input name="name" required class="mt-1 w-full rounded-lg border border-kkr-light/70 bg-white px-3 py-2 text-sm text-kkr-dark outline-none transition focus:border-kkr-red focus:ring-2 focus:ring-kkr-maroon/20" placeholder="Nama sesuai identitas" />
       </label>
-      <label id="school-field" class="block">
-        <span class="text-[11px] font-medium text-kkr-purple">Sekolah / Instansi <span id="school-required" class="text-kkr-red">*</span></span>
-        <input name="school" required class="mt-1 w-full rounded-lg border border-kkr-light/70 bg-white px-3 py-2 text-sm text-kkr-dark outline-none transition focus:border-kkr-red focus:ring-2 focus:ring-kkr-maroon/20" placeholder="Nama sekolah/instansi" />
+      <label class="block">
+        <span class="text-[11px] font-medium text-kkr-purple">Email *</span>
+        <input type="email" name="email" required class="mt-1 w-full rounded-lg border border-kkr-light/70 bg-white px-3 py-2 text-sm text-kkr-dark outline-none transition focus:border-kkr-red focus:ring-2 focus:ring-kkr-maroon/20" placeholder="contoh@email.com" />
       </label>
     </div>
 
     <div class="grid gap-2.5 sm:grid-cols-2">
       <label class="block">
-        <span class="text-[11px] font-medium text-kkr-purple">Email *</span>
-        <input type="email" name="email" required class="mt-1 w-full rounded-lg border border-kkr-light/70 bg-white px-3 py-2 text-sm text-kkr-dark outline-none transition focus:border-kkr-red focus:ring-2 focus:ring-kkr-maroon/20" placeholder="contoh@email.com" />
-      </label>
-      <label class="block">
         <span class="text-[11px] font-medium text-kkr-purple">WhatsApp *</span>
         <input name="whatsapp" required class="mt-1 w-full rounded-lg border border-kkr-light/70 bg-white px-3 py-2 text-sm text-kkr-dark outline-none transition focus:border-kkr-red focus:ring-2 focus:ring-kkr-maroon/20" placeholder="0812xxxxxxx" />
       </label>
-    </div>
-
-    <div class="space-y-2.5">
-      <div>
-        <p class="text-[11px] font-medium text-kkr-purple">Status Peserta</p>
-        <div class="mt-1.5 grid grid-cols-2 gap-2">
-          {[
-            { value: "Student", label: "Pelajar" },
-            { value: "General", label: "Umum" },
-          ].map((option) => (
-            <label class="cursor-pointer rounded-lg border border-kkr-light/70 bg-white px-3 py-2 text-center text-xs font-semibold text-kkr-purple transition has-checked:border-kkr-red has-checked:bg-kkr-light has-checked:text-kkr-red hover:border-kkr-maroon">
-              <input type="radio" name="status" value={option.value} class="sr-only" checked={option.value === "Student"} data-status={option.value} />
-              {option.label}
-            </label>
-          ))}
-        </div>
-      </div>
-
       <label class="block">
         <span class="text-[11px] font-medium text-kkr-purple">Jenis Tiket *</span>
         <div class="relative mt-1">
@@ -213,16 +191,12 @@ export interface TicketType {
 
       const data = new FormData(form);
       const id = genId();
-      const participantType = data.get("status")?.toString() || "Student";
-      const schoolVal = participantType === "Student" ? (data.get("school")?.toString().trim() || "-") : "";
       const ticketType = data.get("ticketType")?.toString() || "general";
       const payload = {
         id,
         name: data.get("name")?.toString().trim() || "-",
-        school: schoolVal,
         email: data.get("email")?.toString().trim() || "",
         whatsapp: data.get("whatsapp")?.toString().trim() || "",
-        participant_type: participantType,
         ticket: ticketType,
         checked_in: 0,
       };
@@ -246,7 +220,6 @@ export interface TicketType {
           QRCode.toCanvas(qrCanvas, id, { width: 110, margin: 2, color: { dark: "#1a1a1f", light: "#ffffff" } });
           modal.classList.remove("pointer-events-none", "opacity-0");
           form.reset();
-          toggleSchoolField();
           loadTickets();
         } else {
           alert(result.error || "Gagal mendaftar");
@@ -267,23 +240,6 @@ export interface TicketType {
     });
     modal.addEventListener("click", (e) => {
       if (e.target === modal) modal.classList.add("pointer-events-none", "opacity-0");
-    });
-
-    function toggleSchoolField() {
-      const selected = document.querySelector('input[name="status"]:checked');
-      const schoolField = document.getElementById("school-field");
-      const schoolInput = schoolField?.querySelector('input[name="school"]');
-      if (selected && selected.value === "General") {
-        schoolField.classList.add("hidden");
-        schoolInput.removeAttribute("required");
-      } else {
-        schoolField.classList.remove("hidden");
-        schoolInput.setAttribute("required", "");
-      }
-    }
-
-    document.querySelectorAll('input[name="status"]').forEach(el => {
-      el.addEventListener("change", toggleSchoolField);
     });
 
     async function checkDeadline() {
@@ -309,7 +265,6 @@ export interface TicketType {
     document.addEventListener("DOMContentLoaded", () => {
       loadTickets();
       checkDeadline();
-      toggleSchoolField();
       document.addEventListener("visibilitychange", () => { if (!document.hidden) loadTickets(); });
       (window.__SETTINGS_CACHE || fetch("/api/settings").then(r => r.json()).then(d => d.settings || {})).then(s => {
         const step3 = document.getElementById("success-step-3");

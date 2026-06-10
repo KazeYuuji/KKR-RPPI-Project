@@ -35,7 +35,7 @@ export const GET: APIRoute = async ({ request }) => {
 export const POST: APIRoute = async ({ request }) => {
   try {
     const body = await request.json();
-    const { id, name, school, email, whatsapp, participant_type, ticket, action } = body;
+    const { id, name, email, whatsapp, ticket, action } = body;
     if (!id || !isValidId(id)) {
       return new Response(JSON.stringify({ error: "ID pendaftar tidak valid" }), { status: 400, headers: { "Content-Type": "application/json" } });
     }
@@ -87,10 +87,8 @@ export const POST: APIRoute = async ({ request }) => {
 
     const registrantData = {
       id: sanitizedId, name: sanitizeString(name, 200),
-      school: sanitizeString(school, 200),
       email: sanitizeEmail(email),
       whatsapp: sanitizePhone(whatsapp),
-      participant_type: sanitizeString(participant_type, 50) || "Student",
       ticket: sanitizeTicketId(ticket),
       checked_in: existing?.checked_in ? 1 : 0,
       created_at: existing?.created_at || new Date().toISOString(),
