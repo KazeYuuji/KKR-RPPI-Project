@@ -8,44 +8,55 @@ const faqs = [
 ];
 ---
 
-<div id="chatbot" class="fixed bottom-20 right-4 sm:right-6 z-50 flex flex-col items-end gap-3">
-  <div id="chat-window" class="hidden w-[340px] sm:w-[380px] bg-white rounded-2xl shadow-2xl border border-kkr-light/50 overflow-hidden animate-scale-in origin-bottom-right flex flex-col" style="max-height:520px">
-    <div class="bg-gradient-to-r from-kkr-maroon to-kkr-red p-4 text-white shrink-0">
-      <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center text-xs font-bold">AI</div>
-        <div>
-          <p class="font-semibold text-sm">Elias</p>
-          <p class="text-xs text-kkr-light">Asisten KKR RPPI</p>
+<div id="chatbot" class="fixed bottom-24 right-4 sm:right-6 z-50 flex flex-col items-end gap-3">
+  <div id="chat-window" class="hidden w-[360px] sm:w-[400px] bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/40 overflow-hidden animate-scale-in origin-bottom-right flex flex-col" style="max-height:560px;box-shadow:0 25px 60px -12px rgba(128,0,32,0.35)">
+    <div class="relative bg-gradient-to-br from-kkr-maroon via-kkr-red to-kkr-gold p-5 text-white shrink-0 overflow-hidden">
+      <div class="absolute inset-0 opacity-10" style="background-image:radial-gradient(circle at 20% 50%,white 0%,transparent 50%),radial-gradient(circle at 80% 20%,white 0%,transparent 50%)"></div>
+      <div class="absolute -top-6 -right-6 w-24 h-24 bg-white/5 rounded-full blur-xl"></div>
+      <div class="absolute -bottom-4 -left-4 w-16 h-16 bg-white/5 rounded-full blur-lg"></div>
+      <div class="flex items-center gap-3 relative">
+        <div class="w-10 h-10 rounded-full bg-white/20 backdrop-blur flex items-center justify-center text-sm font-bold border border-white/20 shadow-inner" style="background:linear-gradient(135deg,rgba(255,255,255,0.25),rgba(255,255,255,0.08))">AI</div>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2">
+            <p class="font-semibold text-sm">Elias</p>
+            <span class="w-1.5 h-1.5 rounded-full bg-green-300 animate-pulse"></span>
+            <span class="text-[10px] text-white/60 font-medium">Online</span>
+          </div>
+          <p class="text-xs text-white/70 truncate">Asisten KKR RPPI</p>
         </div>
-        <button id="chat-close" class="ml-auto p-1 rounded-lg hover:bg-white/20 transition-colors">
+        <button id="chat-close" class="p-1.5 rounded-xl hover:bg-white/20 transition-colors">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
       </div>
     </div>
-    <div id="chat-body" class="flex-1 p-4 overflow-y-auto space-y-3" style="min-height:200px;max-height:320px">
-      <div class="flex gap-2 items-start">
-        <div class="w-7 h-7 rounded-full bg-kkr-light/70 flex items-center justify-center text-[10px] font-bold text-kkr-red shrink-0">AI</div>
-        <div class="bg-kkr-light/40 rounded-2xl rounded-tl-sm px-4 py-2.5 text-sm text-kkr-purple">
+    <div id="chat-body" class="flex-1 p-4 overflow-y-auto space-y-3 scroll-smooth" style="min-height:240px;max-height:360px;scrollbar-width:thin;scrollbar-color:rgba(128,0,32,0.15) transparent">
+      <div class="flex gap-2.5 items-start">
+        <div class="w-7 h-7 rounded-full bg-gradient-to-br from-kkr-maroon/10 to-kkr-red/10 border border-kkr-red/10 flex items-center justify-center text-[10px] font-bold text-kkr-red shrink-0">AI</div>
+        <div class="bg-white rounded-2xl rounded-tl-sm px-4 py-2.5 text-sm text-kkr-dark shadow-sm border border-kkr-light/30" style="box-shadow:0 2px 8px rgba(128,0,32,0.06)">
+          <div class="font-semibold text-kkr-red text-xs mb-0.5">Elias</div>
           Halo! Saya <strong>Elias</strong>, asisten KKR RPPI. Ada yang bisa saya bantu?
         </div>
       </div>
       <div id="quick-questions" class="flex flex-wrap gap-2 pt-1">
         {faqs.slice(0, 3).map((faq) => (
-          <button data-question={faq.q} class="text-xs bg-kkr-light text-kkr-red px-3 py-1.5 rounded-full hover:bg-kkr-light/70 transition-colors font-medium">{faq.q}</button>
+          <button data-question={faq.q} class="text-xs bg-gradient-to-r from-kkr-maroon/5 to-kkr-red/5 text-kkr-red px-3.5 py-1.5 rounded-full hover:from-kkr-maroon/10 hover:to-kkr-red/10 transition-all font-medium border border-kkr-red/10 hover:border-kkr-red/20 active:scale-95">{faq.q}</button>
         ))}
       </div>
     </div>
-    <div class="border-t border-kkr-light/40 p-3 flex gap-2 shrink-0">
-      <input id="chat-input" type="text" placeholder="Ketik pesan..." class="flex-1 rounded-xl border border-kkr-light/60 bg-kkr-light/20 px-3.5 py-2 text-sm text-kkr-dark outline-none transition focus:border-kkr-red/50 focus:bg-white focus:ring-2 focus:ring-kkr-red/10 placeholder:text-kkr-dark/30" />
-      <button id="chat-send" class="rounded-xl bg-gradient-to-r from-kkr-red to-kkr-gold px-3.5 py-2 text-white shadow-md hover:shadow-lg transition-all disabled:opacity-50" disabled>
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    <div class="border-t border-kkr-light/40 p-3 flex gap-2 shrink-0 bg-white/50">
+      <input id="chat-input" type="text" placeholder="Ketik pesan..." class="flex-1 rounded-2xl border border-kkr-light/60 bg-kkr-light/20 px-4 py-2.5 text-sm text-kkr-dark outline-none transition-all focus:border-kkr-red/40 focus:bg-white focus:ring-4 focus:ring-kkr-red/5 placeholder:text-kkr-dark/25" />
+      <button id="chat-send" class="rounded-2xl bg-gradient-to-r from-kkr-red to-kkr-gold px-4 py-2.5 text-white shadow-md hover:shadow-lg transition-all disabled:opacity-40 disabled:cursor-not-allowed active:scale-95" disabled>
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
       </button>
     </div>
   </div>
-  <button id="chat-toggle" class="w-14 h-14 rounded-full bg-gradient-to-r from-kkr-red to-kkr-gold text-white shadow-lg shadow-kkr-maroon/30 flex items-center justify-center hover:scale-105 transition-transform active:scale-95">
-    <svg id="chat-icon" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-    <svg id="close-icon" class="hidden w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-  </button>
+  <div class="relative">
+    <div class="absolute -inset-1 bg-gradient-to-r from-kkr-red to-kkr-gold rounded-full blur-md opacity-60 animate-pulse"></div>
+    <button id="chat-toggle" class="relative w-14 h-14 rounded-full bg-gradient-to-br from-kkr-red to-kkr-gold text-white shadow-xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-300">
+      <svg id="chat-icon" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <svg id="close-icon" class="hidden w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
 </div>
 
 <script define:vars={{ faqs }}>
@@ -64,14 +75,22 @@ const faqs = [
 
   function addBotMessage(text) {
     const div = document.createElement("div");
-    div.className = "flex gap-2 items-start";
+    div.className = "flex gap-2.5 items-start animate-fade-in";
     const avatar = document.createElement("div");
-    avatar.className = "w-7 h-7 rounded-full bg-kkr-light/70 flex items-center justify-center text-[10px] font-bold text-kkr-red shrink-0";
+    avatar.className = "w-7 h-7 rounded-full bg-gradient-to-br from-kkr-maroon/10 to-kkr-red/10 border border-kkr-red/10 flex items-center justify-center text-[10px] font-bold text-kkr-red shrink-0";
     avatar.textContent = "AI";
     const msg = document.createElement("div");
-    msg.className = "bg-kkr-light/40 rounded-2xl rounded-tl-sm px-4 py-2.5 text-sm text-kkr-purple";
+    msg.className = "bg-white rounded-2xl rounded-tl-sm px-4 py-2.5 text-sm text-kkr-dark shadow-sm border border-kkr-light/30";
     msg.style.whiteSpace = "pre-wrap";
-    msg.textContent = text;
+    msg.style.boxShadow = "0 2px 8px rgba(128,0,32,0.06)";
+    const name = document.createElement("div");
+    name.className = "font-semibold text-kkr-red text-xs mb-0.5";
+    name.textContent = "Elias";
+    msg.appendChild(name);
+    const content = document.createElement("span");
+    content.style.whiteSpace = "pre-wrap";
+    content.textContent = text;
+    msg.appendChild(content);
     div.appendChild(avatar);
     div.appendChild(msg);
     body.appendChild(div);
@@ -80,12 +99,12 @@ const faqs = [
 
   function addUserMessage(text) {
     const div = document.createElement("div");
-    div.className = "flex gap-2 items-start flex-row-reverse";
+    div.className = "flex gap-2.5 items-start flex-row-reverse animate-fade-in";
     const avatar = document.createElement("div");
-    avatar.className = "w-7 h-7 rounded-full bg-gradient-to-br from-kkr-red to-kkr-gold flex items-center justify-center text-[10px] font-bold text-white shrink-0";
+    avatar.className = "w-7 h-7 rounded-full bg-gradient-to-br from-kkr-red to-kkr-gold flex items-center justify-center text-[10px] font-bold text-white shrink-0 shadow-sm";
     avatar.textContent = "U";
     const msg = document.createElement("div");
-    msg.className = "bg-gradient-to-br from-kkr-red/10 to-kkr-gold/10 rounded-2xl rounded-tr-sm px-4 py-2.5 text-sm text-kkr-dark";
+    msg.className = "bg-gradient-to-br from-kkr-red/5 to-kkr-gold/5 rounded-2xl rounded-tr-sm px-4 py-2.5 text-sm text-kkr-dark border border-kkr-red/5";
     msg.style.whiteSpace = "pre-wrap";
     msg.textContent = text;
     div.appendChild(avatar);
@@ -96,14 +115,15 @@ const faqs = [
 
   function addTypingIndicator() {
     const div = document.createElement("div");
-    div.className = "flex gap-2 items-start";
+    div.className = "flex gap-2.5 items-start";
     div.id = "typing-indicator";
     const avatar = document.createElement("div");
-    avatar.className = "w-7 h-7 rounded-full bg-kkr-light/70 flex items-center justify-center text-[10px] font-bold text-kkr-red shrink-0";
+    avatar.className = "w-7 h-7 rounded-full bg-gradient-to-br from-kkr-maroon/10 to-kkr-red/10 border border-kkr-red/10 flex items-center justify-center text-[10px] font-bold text-kkr-red shrink-0";
     avatar.textContent = "AI";
     const msg = document.createElement("div");
-    msg.className = "bg-kkr-light/40 rounded-2xl rounded-tl-sm px-4 py-3 text-sm text-kkr-purple";
-    msg.innerHTML = '<div class="flex gap-1"><span class="w-2 h-2 rounded-full bg-kkr-red/40 animate-bounce" style="animation-delay:0ms"></span><span class="w-2 h-2 rounded-full bg-kkr-red/40 animate-bounce" style="animation-delay:150ms"></span><span class="w-2 h-2 rounded-full bg-kkr-red/40 animate-bounce" style="animation-delay:300ms"></span></div>';
+    msg.className = "bg-white rounded-2xl rounded-tl-sm px-4 py-3 text-sm border border-kkr-light/30 shadow-sm";
+    msg.style.boxShadow = "0 2px 8px rgba(128,0,32,0.06)";
+    msg.innerHTML = '<div class="flex gap-1.5 items-center"><span class="w-2 h-2 rounded-full bg-kkr-red/40 animate-bounce" style="animation-delay:0ms"></span><span class="w-2 h-2 rounded-full bg-kkr-red/40 animate-bounce" style="animation-delay:150ms"></span><span class="w-2 h-2 rounded-full bg-kkr-red/40 animate-bounce" style="animation-delay:300ms"></span><span class="text-[10px] text-kkr-dark/30 ml-1">mengetik...</span></div>';
     div.appendChild(avatar);
     div.appendChild(msg);
     body.appendChild(div);
@@ -150,12 +170,18 @@ const faqs = [
   }
 
   input.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") sendMessage(input.value);
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage(input.value);
+      input.value = "";
+      sendBtn.disabled = true;
+    }
   });
 
   sendBtn.addEventListener("click", () => {
     sendMessage(input.value);
     input.value = "";
+    sendBtn.disabled = true;
   });
 
   input.addEventListener("input", () => {
@@ -200,3 +226,24 @@ const faqs = [
     }
   });
 </script>
+
+<style>
+  .animate-fade-in {
+    animation: fadeInUp 0.25s ease-out;
+  }
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-scale-in {
+    animation: scaleIn 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  @keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.9) translateY(8px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  #chat-body::-webkit-scrollbar { width: 4px; }
+  #chat-body::-webkit-scrollbar-track { background: transparent; }
+  #chat-body::-webkit-scrollbar-thumb { background: rgba(128,0,32,0.15); border-radius: 99px; }
+  #chat-body::-webkit-scrollbar-thumb:hover { background: rgba(128,0,32,0.25); }
+</style>
