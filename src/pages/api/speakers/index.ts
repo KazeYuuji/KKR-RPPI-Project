@@ -1,7 +1,7 @@
 import type { APIRoute } from "astro";
 import { minioListAll, minioSet, newId } from "../../../lib/minio-db";
 import { getAdminFromRequest } from "../../../lib/auth";
-import { isValidOrigin, sanitizeString, checkRateLimit } from "../../../lib/security";
+import { isValidOrigin, sanitizeString, sanitizeUrl, checkRateLimit } from "../../../lib/security";
 
 export const prerender = false;
 
@@ -32,7 +32,7 @@ export const POST: APIRoute = async ({ request }) => {
     }
     const id = newId();
     const now = new Date().toISOString();
-    const speaker = { id, name: sanitizeString(name, 200), title: sanitizeString(title, 200), organization: sanitizeString(organization, 200), description: sanitizeString(description, 2000), photo_url: sanitizeString(photo_url, 500), tags: sanitizeString(tags, 500), story: sanitizeString(story, 5000), is_active: 1, created_at: now, updated_at: now };
+    const speaker = { id, name: sanitizeString(name, 200), title: sanitizeString(title, 200), organization: sanitizeString(organization, 200), description: sanitizeString(description, 2000), photo_url: sanitizeUrl(photo_url, 500), tags: sanitizeString(tags, 500), story: sanitizeString(story, 5000), is_active: 1, created_at: now, updated_at: now };
     await minioSet(`speakers/${id}.json`, speaker);
     return new Response(JSON.stringify({ speaker }), { status: 201, headers: { "Content-Type": "application/json" } });
   } catch (err) {

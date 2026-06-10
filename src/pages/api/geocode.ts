@@ -58,17 +58,30 @@ async function resolveMapUrl(link: string): Promise<string> {
   } catch { return link; }
 }
 
+let lastNominatimCall = 0;
 async function geoFromNominatim(query: string): Promise<{ url: string; lat: number; lon: number } | null> {
-  const q = encodeURIComponent(query);
-  const res = await fetch(
-    `https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1`,
-    { headers: { "User-Agent": "KKR-RPPI/1.0" } },
-  );
-  const data = await res.json();
-  if (data && data.length > 0) {
-    const lat = parseFloat(data[0].lat);
-    const lon = parseFloat(data[0].lon);
-    return { url: buildEmbedUrl(lat, lon), lat, lon };
+  // Throttle: max 1 request per second (Nominatim usage policy)
+  const now = Date.now();
+  const sinceLast = now - lastNominatimCall;
+  if (sinceLast < 1100) {
+    await new Promise(r => setTimeout(r, 1100 - sinceLast));
+  }
+  lastNominatimCall = Date.now();
+
+  try {
+    const q = encodeURIComponent(query);
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1`,
+      { headers: { "User-Agent": "KKR-RPPI/1.0" }, signal: AbortSignal.timeout(8000) },
+    );
+    const data = await res.json();
+    if (data && data.length > 0) {
+      const lat = parseFloat(data[0].lat);
+      const lon = parseFloat(data[0].lon);
+      return { url: buildEmbedUrl(lat, lon), lat, lon };
+    }
+  } catch (err) {
+    console.error("Nominatim error:", err);
   }
   return null;
 }

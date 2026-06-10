@@ -32,7 +32,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     }
 
     const record = await minioGet<Record<string, any>>(`admins/${admin.username}.json`);
-    if (!record || !verifyPassword(current_password, record.password)) {
+    if (!record || !(await verifyPassword(current_password, record.password))) {
       return new Response(JSON.stringify({ error: "Password saat ini salah" }), {
         status: 403, headers: { "Content-Type": "application/json" },
       });
@@ -67,7 +67,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
           status: 400, headers: { "Content-Type": "application/json" },
         });
       }
-      updated.password = hashPassword(new_password);
+      updated.password = await hashPassword(new_password);
     }
 
     const oldKey = `admins/${admin.username}.json`;

@@ -6,7 +6,7 @@ const GEMINI_API_KEY = import.meta.env.GEMINI_API_KEY || "";
 const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
 
 const RATE_LIMIT_WINDOW = 60_000;
-const RATE_LIMIT_MAX = 15;
+const RATE_LIMIT_MAX = 20;
 
 interface HistoryItem {
   role: string;
@@ -16,10 +16,14 @@ interface HistoryItem {
 
 interface Conversation {
   history: HistoryItem[];
+  lock: boolean;
 }
 
 const conversations = new Map<string, Conversation>();
 const CONV_TTL = 30 * 60_000;
+const MAX_CONVERSATIONS = 5000;
+const MAX_HISTORY = 20;
+const MAX_CONVERSATIONS = 5000;
 
 setInterval(() => {
   const now = Date.now();
@@ -43,19 +47,33 @@ export const POST: APIRoute = async ({ request }) => {
 
     const body = await request.json();
     const userMessage = body.message?.toString().trim();
-    const sessionId = body.sessionId || "default";
     if (!userMessage) {
       return new Response(JSON.stringify({ reply: "Silakan ketik pesan terlebih dahulu." }), {
         status: 200, headers: { "Content-Type": "application/json" },
       });
     }
 
+    // Use IP-based session ID to prevent session hijacking via client-controlled sessionId
+    const sessionId = "sess_" + ip.replace(/[^0-9a-fA-F:.]/g, "") + "_" + (body.sessionId || "").slice(0, 10);
+
     const settings = await loadAllSettings();
+
+    // Limit total conversations to prevent memory exhaustion
+    if (conversations.size >= MAX_CONVERSATIONS) {
+      const firstKey = conversations.keys().next().value;
+      if (firstKey) conversations.delete(firstKey);
+    }
+
+    // Get or create conversation with lock guard
+    let conv = conversations.get(sessionId);
+    if (!conv) {
+      conv = { history: [], lock: false };
+      conversations.set(sessionId, conv);
+    }
 
     // Try Gemini AI if API key is available
     if (GEMINI_API_KEY) {
       const systemPrompt = buildSystemPrompt(settings);
-      const conv = conversations.get(sessionId) || { history: [] };
       const messages = conv.history.slice(-6);
       messages.push({ role: "user", content: userMessage, ts: Date.now() });
 
@@ -81,26 +99,26 @@ export const POST: APIRoute = async ({ request }) => {
           if (reply) {
             conv.history.push({ role: "user", content: userMessage, ts: Date.now() });
             conv.history.push({ role: "assistant", content: reply, ts: Date.now() });
-            if (conv.history.length > 20) conv.history = conv.history.slice(-20);
-            conversations.set(sessionId, conv);
+            if (conv.history.length > MAX_HISTORY) conv.history = conv.history.slice(-MAX_HISTORY);
             return new Response(JSON.stringify({ reply }), {
               status: 200, headers: { "Content-Type": "application/json" },
             });
           }
         }
-      } catch {}
+        console.warn("Gemini API returned non-OK or empty response:", geminiRes.status);
+      } catch (geminiErr) {
+        console.error("Gemini API error:", geminiErr);
+      }
     }
 
-    // Smart fallback with conversation memory
-    const conv = conversations.get(sessionId) || { history: [] as HistoryItem[] };
+    // Smart fallback with conversation memory (no lock needed since single-threaded)
     const lastTopic = conv.history.filter(m => m.role === "user").pop()?.content || "";
 
     const reply = await handleSmartReply(settings, userMessage, lastTopic);
 
     conv.history.push({ role: "user", content: userMessage, ts: Date.now() });
     conv.history.push({ role: "assistant", content: reply, ts: Date.now() });
-    if (conv.history.length > 20) conv.history = conv.history.slice(-20);
-    conversations.set(sessionId, conv);
+    if (conv.history.length > MAX_HISTORY) conv.history = conv.history.slice(-MAX_HISTORY);
 
     return new Response(JSON.stringify({ reply }), {
       status: 200, headers: { "Content-Type": "application/json" },

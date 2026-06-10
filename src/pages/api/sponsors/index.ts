@@ -1,7 +1,7 @@
 import type { APIRoute } from "astro";
 import { minioListAll, minioSet, newId } from "../../../lib/minio-db";
 import { getAdminFromRequest } from "../../../lib/auth";
-import { isValidOrigin, sanitizeString, checkRateLimit } from "../../../lib/security";
+import { isValidOrigin, sanitizeString, sanitizeUrl, checkRateLimit } from "../../../lib/security";
 
 export const prerender = false;
 
@@ -32,7 +32,7 @@ export const POST: APIRoute = async ({ request }) => {
     }
     const id = newId();
     const now = new Date().toISOString();
-    const sponsor = { id, name: sanitizeString(name, 200), website: sanitizeString(website, 500), description: sanitizeString(description, 2000), logo_url: sanitizeString(logo_url, 500), is_active: 1, created_at: now, updated_at: now };
+    const sponsor = { id, name: sanitizeString(name, 200), website: sanitizeUrl(website, 500), description: sanitizeString(description, 2000), logo_url: sanitizeUrl(logo_url, 500), is_active: 1, created_at: now, updated_at: now };
     await minioSet(`sponsors/${id}.json`, sponsor);
     return new Response(JSON.stringify({ sponsor }), { status: 201, headers: { "Content-Type": "application/json" } });
   } catch (err) {

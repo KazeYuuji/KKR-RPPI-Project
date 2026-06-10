@@ -45,44 +45,32 @@ export const POST: APIRoute = async ({ request }) => {
       return new Response(JSON.stringify({ error: "ID pendaftar tidak valid" }), { status: 400, headers: { "Content-Type": "application/json" } });
     }
 
+    // Rate limit registrations per IP
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+    const rl = checkRateLimit("register-post:" + ip, 10, 60_000);
+    if (!rl.allowed) {
+      return new Response(JSON.stringify({ error: "Terlalu banyak percobaan pendaftaran. Coba lagi nanti." }), { status: 429, headers: { "Content-Type": "application/json" } });
+    }
+
     const existing = await minioGet<Record<string, any>>(`${REG_PREFIX}${sanitizedId}.json`);
 
     if (action === "checkin") {
       const admin = getAdminFromRequest(request);
       if (!admin) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { "Content-Type": "application/json" } });
       if (!isValidOrigin(request)) return new Response(JSON.stringify({ error: "Forbidden" }), { status: 403, headers: { "Content-Type": "application/json" } });
-
+      if (!existing) {
+        return new Response(JSON.stringify({ error: "Pendaftar tidak ditemukan" }), { status: 404, headers: { "Content-Type": "application/json" } });
+      }
       if (existing?.checked_in) {
         return new Response(JSON.stringify({ error: "Tiket ini sudah check-in sebelumnya dan tidak dapat digunakan lagi" }), { status: 400, headers: { "Content-Type": "application/json" } });
       }
-      const updated = { ...(existing || {}), checked_in: 1, id: sanitizedId };
+      const updated = { ...existing, checked_in: 1, id: sanitizedId };
       await minioSet(`${REG_PREFIX}${sanitizedId}.json`, updated);
       return new Response(JSON.stringify({ registrant: updated }), { status: 200, headers: { "Content-Type": "application/json" } });
     }
 
     if (!name) {
       return new Response(JSON.stringify({ error: "Nama wajib diisi" }), { status: 400, headers: { "Content-Type": "application/json" } });
-    }
-
-    if (!existing) {
-      const settings = await minioListAll<Record<string, any>>("settings/");
-      const deadlineSetting = settings.find(s => s.key === "regDeadlineISO");
-      if (deadlineSetting?.value) {
-        let deadlineStr = deadlineSetting.value;
-        if (!deadlineStr.endsWith('Z') && !/[+-]\d{2}:\d{2}$/.test(deadlineStr)) deadlineStr += '+07:00';
-        if (Date.now() > new Date(deadlineStr).getTime()) {
-          return new Response(JSON.stringify({ error: "Maaf, batas waktu pendaftaran telah berakhir" }), { status: 400, headers: { "Content-Type": "application/json" } });
-        }
-      }
-
-      const ticketType = sanitizeTicketId(ticket);
-      const ticketData = await minioGet<Record<string, any>>(`tickets/${ticketType}.json`);
-      if (!ticketData) {
-        return new Response(JSON.stringify({ error: "Jenis tiket tidak ditemukan" }), { status: 400, headers: { "Content-Type": "application/json" } });
-      }
-      if ((ticketData.remaining || 0) <= 0) {
-        return new Response(JSON.stringify({ error: "Maaf, tiket sudah habis!" }), { status: 400, headers: { "Content-Type": "application/json" } });
-      }
     }
 
     const registrantData = {
@@ -95,19 +83,41 @@ export const POST: APIRoute = async ({ request }) => {
       updated_at: new Date().toISOString(),
     };
 
-    await minioSet(`${REG_PREFIX}${sanitizedId}.json`, registrantData);
-
-    // Atomic-like ticket decrement: re-read ticket right before writing to minimize race window
     if (!existing) {
+      const settings = await minioListAll<Record<string, any>>("settings/");
+      const deadlineSetting = settings.find(s => s.key === "regDeadlineISO");
+      if (deadlineSetting?.value) {
+        let deadlineStr = deadlineSetting.value;
+        if (!deadlineStr.endsWith('Z') && !/[+-]\d{2}:\d{2}$/.test(deadlineStr)) deadlineStr += '+07:00';
+        if (Date.now() > new Date(deadlineStr).getTime()) {
+          return new Response(JSON.stringify({ error: "Maaf, batas waktu pendaftaran telah berakhir" }), { status: 400, headers: { "Content-Type": "application/json" } });
+        }
+      }
+
+      // Ticket availability check + decrement (read-after-write pattern to minimize race)
       const ticketType = sanitizeTicketId(ticket);
       const ticketData = await minioGet<Record<string, any>>(`tickets/${ticketType}.json`);
-      if (ticketData && (ticketData.remaining || 0) > 0) {
-        await minioSet(`tickets/${ticketType}.json`, { ...ticketData, remaining: (ticketData.remaining || 0) - 1 });
+      if (!ticketData) {
+        return new Response(JSON.stringify({ error: "Jenis tiket tidak ditemukan" }), { status: 400, headers: { "Content-Type": "application/json" } });
+      }
+      if ((ticketData.remaining || 0) <= 0) {
+        return new Response(JSON.stringify({ error: "Maaf, tiket sudah habis!" }), { status: 400, headers: { "Content-Type": "application/json" } });
+      }
+
+      // Write registrant first, then decrement ticket
+      await minioSet(`${REG_PREFIX}${sanitizedId}.json`, registrantData);
+
+      // Re-read ticket to minimize race window
+      const freshTicket = await minioGet<Record<string, any>>(`tickets/${ticketType}.json`);
+      if (freshTicket && (freshTicket.remaining || 0) > 0) {
+        await minioSet(`tickets/${ticketType}.json`, { ...freshTicket, remaining: (freshTicket.remaining || 0) - 1 });
       } else {
-        // Rollback: delete the registrant if ticket was already sold out
+        // Rollback: mark registrant as rolled back (keep record for audit)
         await minioSet(`${REG_PREFIX}${sanitizedId}.json`, { ...registrantData, ticket_rollback: true });
         return new Response(JSON.stringify({ error: "Maaf, tiket sudah habis saat diproses" }), { status: 400, headers: { "Content-Type": "application/json" } });
       }
+    } else {
+      await minioSet(`${REG_PREFIX}${sanitizedId}.json`, registrantData);
     }
     return new Response(JSON.stringify({ registrant: registrantData }), { status: 200, headers: { "Content-Type": "application/json" } });
   } catch (err) {

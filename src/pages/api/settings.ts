@@ -73,6 +73,20 @@ export const POST: APIRoute = async ({ request }) => {
       updates[key] = String(value).slice(0, 2000);
     }
 
+    // Validate date fields
+    if (updates.regDeadlineISO) {
+      const d = new Date(updates.regDeadlineISO);
+      if (isNaN(d.getTime())) {
+        return new Response(JSON.stringify({ error: "Format tanggal regDeadlineISO tidak valid" }), { status: 400, headers: { "Content-Type": "application/json" } });
+      }
+    }
+    if (updates.eventDateISO) {
+      const d = new Date(updates.eventDateISO);
+      if (isNaN(d.getTime())) {
+        return new Response(JSON.stringify({ error: "Format tanggal eventDateISO tidak valid" }), { status: 400, headers: { "Content-Type": "application/json" } });
+      }
+    }
+
     // Use MinIO directly as the only storage
     for (const [key, value] of Object.entries(updates)) {
       await minioSet(`settings/${key}.json`, { key, value });

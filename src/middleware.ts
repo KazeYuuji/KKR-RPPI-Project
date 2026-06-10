@@ -5,6 +5,29 @@ import { checkRateLimit, isValidOrigin, MAX_BODY_SIZE } from "./lib/security";
 const protectedPaths = ["/dashboard", "/api/stats", "/api/upload"];
 const apiPrefix = "/api";
 
+function withSecurityHeaders(res: Response): Response {
+  res.headers.set("X-Content-Type-Options", "nosniff");
+  res.headers.set("X-Frame-Options", "DENY");
+  res.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+  res.headers.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
+  res.headers.set("Permissions-Policy", "geolocation=(), microphone=(), camera=(self)");
+  const csp = [
+    "default-src 'self'",
+    "script-src 'self' 'unsafe-inline'",
+    "style-src 'self' 'unsafe-inline'",
+    "img-src 'self' data: blob: https://*.tile.openstreetmap.org https://www.openstreetmap.org https://openstreetmap.org",
+    "font-src 'self'",
+    "form-action 'self'",
+    "frame-src https://www.openstreetmap.org https://maps.google.com",
+    "frame-ancestors 'none'",
+    "base-uri 'self'",
+    "object-src 'none'",
+    "connect-src 'self' https://nominatim.openstreetmap.org https://generativelanguage.googleapis.com",
+  ].join("; ");
+  res.headers.set("Content-Security-Policy", csp);
+  return res;
+}
+
 export const onRequest = defineMiddleware(async (context, next) => {
   const url = context.url.pathname;
   const method = context.request.method;
@@ -14,10 +37,10 @@ export const onRequest = defineMiddleware(async (context, next) => {
   if (url.startsWith(apiPrefix)) {
     const { allowed } = checkRateLimit(`global:${ip}`, 200, 60_000);
     if (!allowed) {
-      return new Response(JSON.stringify({ error: "Too many requests" }), {
+      return withSecurityHeaders(new Response(JSON.stringify({ error: "Too many requests" }), {
         status: 429,
         headers: { "Content-Type": "application/json", "Retry-After": "60" },
-      });
+      }));
     }
   }
 
@@ -25,20 +48,18 @@ export const onRequest = defineMiddleware(async (context, next) => {
   if (["POST", "PUT", "PATCH"].includes(method) && !url.startsWith("/api/upload")) {
     const contentLength = parseInt(context.request.headers.get("content-length") || "0", 10);
     if (contentLength > MAX_BODY_SIZE) {
-      return new Response(JSON.stringify({ error: "Request body too large" }), {
+      return withSecurityHeaders(new Response(JSON.stringify({ error: "Request body too large" }), {
         status: 413, headers: { "Content-Type": "application/json" },
-      });
+      }));
     }
-    // Check actual body size from Content-Length as best-effort;
-    // individual endpoints may enforce further limits via streaming
   }
 
   // ---- CSRF / Origin validation for state-changing API requests ----
   if (["POST", "PUT", "PATCH", "DELETE"].includes(method) && url.startsWith(apiPrefix)) {
     if (!isValidOrigin(context.request)) {
-      return new Response(JSON.stringify({ error: "Forbidden" }), {
+      return withSecurityHeaders(new Response(JSON.stringify({ error: "Forbidden" }), {
         status: 403, headers: { "Content-Type": "application/json" },
-      });
+      }));
     }
   }
 
@@ -55,9 +76,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
   if (url.startsWith("/api/registrants") && method === "POST") {
     const { allowed } = checkRateLimit(`register:${ip}`, 10, 60_000);
     if (!allowed) {
-      return new Response(JSON.stringify({ error: "Too many registration attempts" }), {
+      return withSecurityHeaders(new Response(JSON.stringify({ error: "Too many registration attempts" }), {
         status: 429, headers: { "Content-Type": "application/json" },
-      });
+      }));
     }
     try {
       const clone = context.request.clone();
@@ -81,47 +102,26 @@ export const onRequest = defineMiddleware(async (context, next) => {
     const admin = getAdminFromRequest(context.request);
     if (!admin) {
       if (url.startsWith(apiPrefix)) {
-        return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        return withSecurityHeaders(new Response(JSON.stringify({ error: "Unauthorized" }), {
           status: 401, headers: { "Content-Type": "application/json" },
-        });
+        }));
       }
-      return context.redirect("/login");
+      return withSecurityHeaders(context.redirect("/login"));
     }
     context.locals.admin = admin;
 
     // Rate limit per admin action
     const { allowed } = checkRateLimit(`admin:${admin.username}:${ip}`, 60, 60_000);
     if (!allowed) {
-      return new Response(JSON.stringify({ error: "Too many requests" }), {
+      return withSecurityHeaders(new Response(JSON.stringify({ error: "Too many requests" }), {
         status: 429, headers: { "Content-Type": "application/json" },
-      });
+      }));
     }
   }
 
   const response = await next();
 
   // ---- Security headers ----
-  response.headers.set("X-Content-Type-Options", "nosniff");
-  response.headers.set("X-Frame-Options", "DENY");
-  response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
-  response.headers.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
-  response.headers.set("Permissions-Policy", "geolocation=(), microphone=(), camera=(self)");
-
-  // Content-Security-Policy
-  // NOTE: 'unsafe-inline' on script-src required for Astro inline component scripts
-  const csp = [
-    "default-src 'self'",
-    "script-src 'self' 'unsafe-inline'",
-    "style-src 'self' 'unsafe-inline'",
-    "img-src 'self' data: blob: https://*.tile.openstreetmap.org https://www.openstreetmap.org https://openstreetmap.org",
-    "font-src 'self'",
-    "form-action 'self'",
-    "frame-src https://www.openstreetmap.org https://maps.google.com",
-    "frame-ancestors 'none'",
-    "base-uri 'self'",
-    "connect-src 'self' https://nominatim.openstreetmap.org https://generativelanguage.googleapis.com",
-  ].join("; ");
-  response.headers.set("Content-Security-Policy", csp);
-
+  withSecurityHeaders(response);
   return response;
 });

@@ -1,4 +1,6 @@
 // In-memory rate limiter per IP + endpoint
+// NOTE: On serverless (Vercel), this is per-instance, not global.
+// Use external Redis/KV for true global rate limiting at scale.
 const requestCounts = new Map<string, { count: number; resetAt: number }>();
 
 // Periodic cleanup to prevent memory leak
@@ -16,6 +18,9 @@ export function checkRateLimit(
   maxRequests: number,
   windowMs: number
 ): { allowed: boolean; remaining: number; resetAt: number } {
+  if (windowMs <= 0 || maxRequests <= 0) {
+    return { allowed: true, remaining: Infinity, resetAt: Date.now() };
+  }
   const now = Date.now();
   let entry = requestCounts.get(key);
 
@@ -35,12 +40,16 @@ export function checkRateLimit(
 
 export function sanitizeString(val: unknown, maxLen = 500): string {
   if (typeof val !== "string") return "";
-  return val.trim().replace(/[<>]/g, "").slice(0, maxLen);
+  return val.trim()
+    .replace(/[<>&"'`]/g, "")
+    .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, "")
+    .slice(0, maxLen);
 }
 
 export function sanitizeEmail(val: unknown): string {
   if (typeof val !== "string") return "";
   const email = val.trim().toLowerCase().slice(0, 254);
+  if (!email) return "";
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? email : "";
 }
 
@@ -53,6 +62,11 @@ export function isValidOrigin(request: Request): boolean {
   const origin = request.headers.get("origin");
   const referer = request.headers.get("referer");
 
+  // Dynamic same-origin check: works with any deployment
+  const reqUrl = new URL(request.url);
+  const dynamicOrigin = reqUrl.origin;
+
+  // Explicitly allowed origins (preview deployments etc.)
   const allowedOrigins = [
     "https://kkrrppi.vercel.app",
     "https://www.kkrrppi.vercel.app",
@@ -64,18 +78,15 @@ export function isValidOrigin(request: Request): boolean {
     allowedOrigins.push("http://localhost:4321");
   }
 
-  const check = (v: string) => allowedOrigins.some(a => v === a || v.startsWith(a + "/"));
+  const check = (v: string) =>
+    v === dynamicOrigin || v.startsWith(dynamicOrigin + "/") ||
+    allowedOrigins.some(a => v === a || v.startsWith(a + "/"));
 
   if (origin) {
     if (check(origin)) return true;
-    // Also accept same-origin requests dynamically
-    const reqUrl = new URL(request.url);
-    if (origin === reqUrl.origin) return true;
   }
   if (referer) {
     if (check(referer)) return true;
-    const reqUrl = new URL(request.url);
-    if (referer.startsWith(reqUrl.origin)) return true;
   }
   return false;
 }
@@ -94,4 +105,16 @@ export function sanitizeId(val: unknown, maxLen = 100): string {
 export function isValidId(val: unknown): boolean {
   if (typeof val !== "string" || !val) return false;
   return /^[a-zA-Z0-9][a-zA-Z0-9_-]{0,98}[a-zA-Z0-9]$/.test(val);
+}
+
+export function sanitizeUrl(val: unknown, maxLen = 500): string {
+  if (typeof val !== "string") return "";
+  const s = val.trim().replace(/[<>&"'`]/g, "").slice(0, maxLen);
+  try {
+    const u = new URL(s);
+    if (u.protocol === "http:" || u.protocol === "https:") return s;
+  } catch {}
+  // Allow relative URLs starting with /
+  if (/^\/[a-zA-Z0-9_\-./]+$/.test(s)) return s;
+  return "";
 }

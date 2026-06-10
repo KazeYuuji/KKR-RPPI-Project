@@ -24,7 +24,11 @@ function getS3(): S3Client {
 }
 
 function prefixPath(key: string): string {
-  return key.replace(/^\//, "");
+  let k = key.replace(/^\//, "");
+  if (k.includes("..") || k.includes("~")) {
+    throw new Error("Invalid key path: " + k);
+  }
+  return k;
 }
 
 export async function minioGet<T = Record<string, any>>(key: string): Promise<T | null> {
@@ -33,24 +37,32 @@ export async function minioGet<T = Record<string, any>>(key: string): Promise<T 
     if (!resp.Body) return null;
     const text = await resp.Body.transformToString();
     return JSON.parse(text) as T;
-  } catch {
+  } catch (err) {
+    console.error("minioGet error for", key, ":", err);
     return null;
   }
 }
 
 export async function minioSet(key: string, data: unknown): Promise<void> {
-  await getS3().send(new PutObjectCommand({
-    Bucket: MINIO_BUCKET,
-    Key: prefixPath(key),
-    Body: JSON.stringify(data),
-    ContentType: "application/json",
-  }));
+  try {
+    await getS3().send(new PutObjectCommand({
+      Bucket: MINIO_BUCKET,
+      Key: prefixPath(key),
+      Body: JSON.stringify(data),
+      ContentType: "application/json",
+    }));
+  } catch (err) {
+    console.error("minioSet error for", key, ":", err);
+    throw err;
+  }
 }
 
 export async function minioDelete(key: string): Promise<void> {
   try {
     await getS3().send(new DeleteObjectCommand({ Bucket: MINIO_BUCKET, Key: prefixPath(key) }));
-  } catch {}
+  } catch (err) {
+    console.error("minioDelete error for", key, ":", err);
+  }
 }
 
 export async function minioList(prefix: string): Promise<string[]> {
@@ -60,7 +72,8 @@ export async function minioList(prefix: string): Promise<string[]> {
       Prefix: prefixPath(prefix),
     }));
     return (resp.Contents || []).map(o => o.Key!).filter(Boolean);
-  } catch {
+  } catch (err) {
+    console.error("minioList error for", prefix, ":", err);
     return [];
   }
 }
@@ -75,8 +88,10 @@ export async function minioListAll<T = Record<string, any>>(prefix: string): Pro
   return items;
 }
 
+let _idCounter = 0;
 export function newId(): string {
-  return Date.now().toString(36) + Math.random().toString(36).substring(2, 8);
+  _idCounter = (_idCounter + 1) % 9999;
+  return Date.now().toString(36) + _idCounter.toString(36).padStart(3, "0") + Math.random().toString(36).substring(2, 6);
 }
 
 // upload file (buffer)

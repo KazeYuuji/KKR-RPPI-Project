@@ -38,7 +38,8 @@ export const POST: APIRoute = async ({ request }) => {
     }
     if (body.action === "create") {
       const id = "ticket-" + newId();
-      await minioSet(`tickets/${id}.json`, { id, name: body.name || "Tiket Baru", remaining: body.remaining || 0 });
+      const remaining = typeof body.remaining === "number" ? Math.max(0, Math.floor(body.remaining)) : 0;
+      await minioSet(`tickets/${id}.json`, { id, name: String(body.name || "Tiket Baru").slice(0, 200), remaining });
       return new Response(JSON.stringify({ id, success: true }), {
         status: 200, headers: { "Content-Type": "application/json" },
       });
@@ -47,7 +48,8 @@ export const POST: APIRoute = async ({ request }) => {
     for (const t of tickets) {
       const id = sanitizeId(t.id);
       if (id) {
-        await minioSet(`tickets/${id}.json`, { id, name: t.name, remaining: t.remaining });
+        const remaining = typeof t.remaining === "number" ? Math.max(0, Math.floor(t.remaining)) : 0;
+        await minioSet(`tickets/${id}.json`, { id, name: String(t.name || "").slice(0, 200), remaining });
       }
     }
     const updated = await minioListAll<Record<string, any>>("tickets/");

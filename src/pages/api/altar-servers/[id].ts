@@ -1,7 +1,7 @@
 import type { APIRoute } from "astro";
 import { minioGet, minioSet, minioDelete } from "../../../lib/minio-db";
 import { getAdminFromRequest } from "../../../lib/auth";
-import { isValidOrigin, sanitizeString, checkRateLimit } from "../../../lib/security";
+import { isValidOrigin, sanitizeString, sanitizeUrl, checkRateLimit } from "../../../lib/security";
 
 export const prerender = false;
 
@@ -40,7 +40,7 @@ export const PUT: APIRoute = async ({ params, request }) => {
       title: body.title !== undefined ? sanitizeString(body.title, 200) : existing.title,
       organization: body.organization !== undefined ? sanitizeString(body.organization, 200) : existing.organization,
       description: body.description !== undefined ? sanitizeString(body.description, 2000) : existing.description,
-      photo_url: body.photo_url !== undefined ? sanitizeString(body.photo_url, 500) : existing.photo_url,
+      photo_url: body.photo_url !== undefined ? sanitizeUrl(body.photo_url, 500) : existing.photo_url,
       tags: body.tags !== undefined ? sanitizeString(body.tags, 500) : existing.tags,
       is_active: body.is_active !== undefined ? (body.is_active ? 1 : 0) : existing.is_active,
       updated_at: new Date().toISOString(),
