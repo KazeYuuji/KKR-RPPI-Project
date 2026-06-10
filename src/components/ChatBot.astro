@@ -2,16 +2,15 @@
 const faqs = [
   { q: "Apa itu KKR RPPI?", a: "KKR RPPI adalah kebaktian kebangunan rohani yang mempersatukan siswa, alumni, guru, dan masyarakat untuk mengalami kebangunan rohani dalam Yesus Kristus." },
   { q: "Kapan dan di mana acara dilaksanakan?", a: "Acara akan dilaksanakan pada @date di @venue. Mulai pukul @time." },
-  { q: "Bagaimana cara mendaftar?", a: "Kunjungi halaman pendaftaran, isi data diri, pilih tiket gratis, dan dapatkan tiketmu langsung! Setelah itu tim kami akan memverifikasi pendaftaran Anda." },
-  { q: "Berapa harga tiketnya?", a: "Gratis! Semua tiket tersedia tanpa biaya. Event ini diselenggarakan secara gratis untuk seluruh peserta. Daftar sekarang dan amankan tiketmu." },
-  { q: "Apa yang perlu disiapkan?", a: "Cukup siapkan data diri (nama, email, WhatsApp), pilih tiket yang tersedia, dan kamu akan mendapatkan tiket digital secara instan." },
+  { q: "Bagaimana cara mendaftar?", a: "Kunjungi halaman pendaftaran, isi data diri, pilih tiket gratis, dan dapatkan tiketmu langsung!" },
+  { q: "Berapa harga tiketnya?", a: "Gratis! Semua tiket tersedia tanpa biaya. Daftar sekarang dan amankan tiketmu." },
   { q: "Bagaimana cara menghubungi panitia?", a: "Anda dapat menghubungi kami via WhatsApp di @wa atau email ke @email." },
 ];
 ---
 
 <div id="chatbot" class="fixed bottom-20 right-4 sm:right-6 z-50 flex flex-col items-end gap-3">
-  <div id="chat-window" class="hidden w-[340px] sm:w-[380px] bg-white rounded-2xl shadow-2xl border border-kkr-light/50 overflow-hidden animate-scale-in origin-bottom-right">
-    <div class="bg-gradient-to-r from-kkr-maroon to-kkr-red p-4 text-white">
+  <div id="chat-window" class="hidden w-[340px] sm:w-[380px] bg-white rounded-2xl shadow-2xl border border-kkr-light/50 overflow-hidden animate-scale-in origin-bottom-right flex flex-col" style="max-height:520px">
+    <div class="bg-gradient-to-r from-kkr-maroon to-kkr-red p-4 text-white shrink-0">
       <div class="flex items-center gap-3">
         <div class="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center text-xs font-bold">AI</div>
         <div>
@@ -23,18 +22,24 @@ const faqs = [
         </button>
       </div>
     </div>
-    <div id="chat-body" class="p-4 max-h-[350px] overflow-y-auto space-y-3">
+    <div id="chat-body" class="flex-1 p-4 overflow-y-auto space-y-3" style="min-height:200px;max-height:320px">
       <div class="flex gap-2 items-start">
         <div class="w-7 h-7 rounded-full bg-kkr-light/70 flex items-center justify-center text-[10px] font-bold text-kkr-red shrink-0">AI</div>
         <div class="bg-kkr-light/40 rounded-2xl rounded-tl-sm px-4 py-2.5 text-sm text-kkr-purple">
-          Halo! Saya Elias, asisten KKR RPPI. Ada yang bisa saya bantu?
+          Halo! Saya <strong>Elias</strong>, asisten KKR RPPI. Ada yang bisa saya bantu?
         </div>
       </div>
-      <div class="flex flex-wrap gap-2 pt-1">
+      <div id="quick-questions" class="flex flex-wrap gap-2 pt-1">
         {faqs.slice(0, 3).map((faq) => (
           <button data-question={faq.q} class="text-xs bg-kkr-light text-kkr-red px-3 py-1.5 rounded-full hover:bg-kkr-light/70 transition-colors font-medium">{faq.q}</button>
         ))}
       </div>
+    </div>
+    <div class="border-t border-kkr-light/40 p-3 flex gap-2 shrink-0">
+      <input id="chat-input" type="text" placeholder="Ketik pesan..." class="flex-1 rounded-xl border border-kkr-light/60 bg-kkr-light/20 px-3.5 py-2 text-sm text-kkr-dark outline-none transition focus:border-kkr-red/50 focus:bg-white focus:ring-2 focus:ring-kkr-red/10 placeholder:text-kkr-dark/30" />
+      <button id="chat-send" class="rounded-xl bg-gradient-to-r from-kkr-red to-kkr-gold px-3.5 py-2 text-white shadow-md hover:shadow-lg transition-all disabled:opacity-50" disabled>
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
     </div>
   </div>
   <button id="chat-toggle" class="w-14 h-14 rounded-full bg-gradient-to-r from-kkr-red to-kkr-gold text-white shadow-lg shadow-kkr-maroon/30 flex items-center justify-center hover:scale-105 transition-transform active:scale-95">
@@ -50,6 +55,11 @@ const faqs = [
   const chatIcon = document.getElementById("chat-icon");
   const closeIcon = document.getElementById("close-icon");
   const body = document.getElementById("chat-body");
+  const input = document.getElementById("chat-input");
+  const sendBtn = document.getElementById("chat-send");
+  const QS = document.getElementById("quick-questions");
+
+  let isSending = false;
 
   function addBotMessage(text) {
     const div = document.createElement("div");
@@ -59,6 +69,21 @@ const faqs = [
     avatar.textContent = "AI";
     const msg = document.createElement("div");
     msg.className = "bg-kkr-light/40 rounded-2xl rounded-tl-sm px-4 py-2.5 text-sm text-kkr-purple";
+    msg.innerHTML = text;
+    div.appendChild(avatar);
+    div.appendChild(msg);
+    body.appendChild(div);
+    body.scrollTop = body.scrollHeight;
+  }
+
+  function addUserMessage(text) {
+    const div = document.createElement("div");
+    div.className = "flex gap-2 items-start flex-row-reverse";
+    const avatar = document.createElement("div");
+    avatar.className = "w-7 h-7 rounded-full bg-gradient-to-br from-kkr-red to-kkr-gold flex items-center justify-center text-[10px] font-bold text-white shrink-0";
+    avatar.textContent = "U";
+    const msg = document.createElement("div");
+    msg.className = "bg-gradient-to-br from-kkr-red/10 to-kkr-gold/10 rounded-2xl rounded-tr-sm px-4 py-2.5 text-sm text-kkr-dark";
     msg.textContent = text;
     div.appendChild(avatar);
     div.appendChild(msg);
@@ -66,11 +91,80 @@ const faqs = [
     body.scrollTop = body.scrollHeight;
   }
 
+  function addTypingIndicator() {
+    const div = document.createElement("div");
+    div.className = "flex gap-2 items-start";
+    div.id = "typing-indicator";
+    const avatar = document.createElement("div");
+    avatar.className = "w-7 h-7 rounded-full bg-kkr-light/70 flex items-center justify-center text-[10px] font-bold text-kkr-red shrink-0";
+    avatar.textContent = "AI";
+    const msg = document.createElement("div");
+    msg.className = "bg-kkr-light/40 rounded-2xl rounded-tl-sm px-4 py-3 text-sm text-kkr-purple";
+    msg.innerHTML = '<div class="flex gap-1"><span class="w-2 h-2 rounded-full bg-kkr-red/40 animate-bounce" style="animation-delay:0ms"></span><span class="w-2 h-2 rounded-full bg-kkr-red/40 animate-bounce" style="animation-delay:150ms"></span><span class="w-2 h-2 rounded-full bg-kkr-red/40 animate-bounce" style="animation-delay:300ms"></span></div>';
+    div.appendChild(avatar);
+    div.appendChild(msg);
+    body.appendChild(div);
+    body.scrollTop = body.scrollHeight;
+  }
+
+  function removeTypingIndicator() {
+    const el = document.getElementById("typing-indicator");
+    if (el) el.remove();
+  }
+
+  async function sendMessage(text) {
+    if (isSending || !text.trim()) return;
+    isSending = true;
+    sendBtn.disabled = true;
+    input.disabled = true;
+
+    addUserMessage(text.trim());
+    QS?.classList.add("hidden");
+    addTypingIndicator();
+
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: text.trim() }),
+      });
+      const data = await res.json();
+      removeTypingIndicator();
+      if (data.reply) {
+        addBotMessage(data.reply);
+      } else {
+        addBotMessage("Maaf, saya tidak bisa menjawab pertanyaan itu saat ini. Silakan coba lagi.");
+      }
+    } catch {
+      removeTypingIndicator();
+      addBotMessage("Maaf, terjadi gangguan. Silakan coba lagi nanti.");
+    }
+
+    isSending = false;
+    sendBtn.disabled = false;
+    input.disabled = false;
+    input.focus();
+  }
+
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") sendMessage(input.value);
+  });
+
+  sendBtn.addEventListener("click", () => {
+    sendMessage(input.value);
+    input.value = "";
+  });
+
+  input.addEventListener("input", () => {
+    sendBtn.disabled = !input.value.trim() || isSending;
+  });
+
   toggle.addEventListener("click", () => {
     const isOpen = !chatWindow.classList.contains("hidden");
     chatWindow.classList.toggle("hidden");
     chatIcon.classList.toggle("hidden", !isOpen);
     closeIcon.classList.toggle("hidden", isOpen);
+    if (!isOpen) input.focus();
   });
 
   close.addEventListener("click", () => {
@@ -95,7 +189,11 @@ const faqs = [
     if (btn) {
       const q = btn.dataset.question;
       const faq = faqs.find(f => f.q === q);
-      if (faq) addBotMessage(faq.a);
+      if (faq) {
+        sendMessage(q);
+        input.value = "";
+        sendBtn.disabled = true;
+      }
     }
   });
 </script>

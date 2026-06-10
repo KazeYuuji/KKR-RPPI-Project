@@ -48,6 +48,10 @@ export const onRequest = defineMiddleware(async (context, next) => {
   }
 
   // ---- Public POST registration ----
+  if (url.startsWith("/api/chat") && method === "POST") {
+    return next();
+  }
+
   if (url.startsWith("/api/registrants") && method === "POST") {
     const { allowed } = checkRateLimit(`register:${ip}`, 10, 60_000);
     if (!allowed) {
@@ -114,7 +118,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     "frame-src https://www.openstreetmap.org https://maps.google.com",
     "frame-ancestors 'none'",
     "base-uri 'self'",
-    "connect-src 'self' https://nominatim.openstreetmap.org",
+    "connect-src 'self' https://nominatim.openstreetmap.org https://generativelanguage.googleapis.com",
   ].join("; ");
   response.headers.set("Content-Security-Policy", csp);
 
