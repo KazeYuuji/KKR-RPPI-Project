@@ -58,11 +58,17 @@
   <script>
     let regTarget = Date.now() + 30 * 86400000;
     let eventTarget = Date.now() + 30 * 86400000;
+    let cdi;
 
     function startCountdown() {
       tick();
-      setInterval(tick, 1000);
+      cdi = setInterval(tick, 1000);
     }
+
+    document.addEventListener("visibilitychange", function() {
+      if (document.hidden && cdi) { clearInterval(cdi); cdi = null; }
+      else if (!document.hidden && !cdi) { startCountdown(); }
+    });
 
     function parseWIBDate(str) {
       if (!str) return NaN;

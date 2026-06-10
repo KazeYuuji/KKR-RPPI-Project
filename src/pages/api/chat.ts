@@ -1,23 +1,52 @@
 import type { APIRoute } from "astro";
 import { minioListAll } from "../../lib/minio-db";
+import { checkRateLimit } from "../../lib/security";
 
 const GEMINI_API_KEY = import.meta.env.GEMINI_API_KEY || "";
 const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
 
+const RATE_LIMIT_WINDOW = 60_000;
+const RATE_LIMIT_MAX = 15;
+
+interface HistoryItem {
+  role: string;
+  content: string;
+  ts?: number;
+}
+
 interface Conversation {
-  history: Array<{ role: string; content: string }>;
+  history: HistoryItem[];
 }
 
 const conversations = new Map<string, Conversation>();
+const CONV_TTL = 30 * 60_000;
+
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, conv] of conversations) {
+    const last = conv.history[conv.history.length - 1];
+    if (conv.history.length && last && last.ts && now - last.ts > CONV_TTL) {
+      conversations.delete(key);
+    }
+  }
+}, 60_000);
 
 export const POST: APIRoute = async ({ request }) => {
   try {
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+    const rl = checkRateLimit("chat:" + ip, RATE_LIMIT_MAX, RATE_LIMIT_WINDOW);
+    if (!rl.allowed) {
+      return new Response(JSON.stringify({ error: "Terlalu banyak permintaan. Silakan coba lagi nanti." }), {
+        status: 429, headers: { "Content-Type": "application/json" },
+      });
+    }
+
     const body = await request.json();
     const userMessage = body.message?.toString().trim();
     const sessionId = body.sessionId || "default";
     if (!userMessage) {
-      return new Response(JSON.stringify({ error: "Pesan tidak boleh kosong" }), {
-        status: 400, headers: { "Content-Type": "application/json" },
+      return new Response(JSON.stringify({ reply: "Silakan ketik pesan terlebih dahulu." }), {
+        status: 200, headers: { "Content-Type": "application/json" },
       });
     }
 
@@ -28,12 +57,15 @@ export const POST: APIRoute = async ({ request }) => {
       const systemPrompt = buildSystemPrompt(settings);
       const conv = conversations.get(sessionId) || { history: [] };
       const messages = conv.history.slice(-6);
-      messages.push({ role: "user", content: userMessage });
+      messages.push({ role: "user", content: userMessage, ts: Date.now() });
 
       try {
-        const geminiRes = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+        const geminiRes = await fetch(GEMINI_API_URL, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            "x-goog-api-key": GEMINI_API_KEY,
+          },
           body: JSON.stringify({
             contents: messages.map(m => ({
               role: m.role === "assistant" ? "model" : "user",
@@ -47,8 +79,8 @@ export const POST: APIRoute = async ({ request }) => {
           const data = await geminiRes.json();
           const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text;
           if (reply) {
-            conv.history.push({ role: "user", content: userMessage });
-            conv.history.push({ role: "assistant", content: reply });
+            conv.history.push({ role: "user", content: userMessage, ts: Date.now() });
+            conv.history.push({ role: "assistant", content: reply, ts: Date.now() });
             if (conv.history.length > 20) conv.history = conv.history.slice(-20);
             conversations.set(sessionId, conv);
             return new Response(JSON.stringify({ reply }), {
@@ -60,13 +92,13 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     // Smart fallback with conversation memory
-    const conv = conversations.get(sessionId) || { history: [] };
+    const conv = conversations.get(sessionId) || { history: [] as HistoryItem[] };
     const lastTopic = conv.history.filter(m => m.role === "user").pop()?.content || "";
 
     const reply = await handleSmartReply(settings, userMessage, lastTopic);
 
-    conv.history.push({ role: "user", content: userMessage });
-    conv.history.push({ role: "assistant", content: reply });
+    conv.history.push({ role: "user", content: userMessage, ts: Date.now() });
+    conv.history.push({ role: "assistant", content: reply, ts: Date.now() });
     if (conv.history.length > 20) conv.history = conv.history.slice(-20);
     conversations.set(sessionId, conv);
 

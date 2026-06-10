@@ -70,7 +70,8 @@ const faqs = [
     avatar.textContent = "AI";
     const msg = document.createElement("div");
     msg.className = "bg-kkr-light/40 rounded-2xl rounded-tl-sm px-4 py-2.5 text-sm text-kkr-purple";
-    msg.innerHTML = text;
+    msg.style.whiteSpace = "pre-wrap";
+    msg.textContent = text;
     div.appendChild(avatar);
     div.appendChild(msg);
     body.appendChild(div);
@@ -85,6 +86,7 @@ const faqs = [
     avatar.textContent = "U";
     const msg = document.createElement("div");
     msg.className = "bg-gradient-to-br from-kkr-red/10 to-kkr-gold/10 rounded-2xl rounded-tr-sm px-4 py-2.5 text-sm text-kkr-dark";
+    msg.style.whiteSpace = "pre-wrap";
     msg.textContent = text;
     div.appendChild(avatar);
     div.appendChild(msg);

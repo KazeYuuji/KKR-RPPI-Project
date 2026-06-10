@@ -43,7 +43,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   }
 
   // ---- Public GET endpoints ----
-  if ((url.startsWith("/api/tickets") || url.startsWith("/api/ticket-pdf") || url.startsWith("/api/settings") || url.startsWith("/api/speakers") || url.startsWith("/api/sponsors") || url.startsWith("/api/altar-servers") || url.startsWith("/api/uploads")) && method === "GET") {
+  if ((url.startsWith("/api/tickets") || url.startsWith("/api/ticket-pdf") || url.startsWith("/api/settings") || url.startsWith("/api/speakers") || url.startsWith("/api/sponsors") || url.startsWith("/api/altar-servers") || url.startsWith("/api/uploads") || url.startsWith("/api/geocode")) && method === "GET") {
     return next();
   }
 
@@ -108,11 +108,12 @@ export const onRequest = defineMiddleware(async (context, next) => {
   response.headers.set("Permissions-Policy", "geolocation=(), microphone=(), camera=(self)");
 
   // Content-Security-Policy
+  // NOTE: 'unsafe-inline' on script-src required for Astro inline component scripts
   const csp = [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net",
-    "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net",
-    "img-src 'self' data: blob: https://*.tile.openstreetmap.org https://www.openstreetmap.org https://openstreetmap.org https://cdn.jsdelivr.net",
+    "script-src 'self' 'unsafe-inline'",
+    "style-src 'self' 'unsafe-inline'",
+    "img-src 'self' data: blob: https://*.tile.openstreetmap.org https://www.openstreetmap.org https://openstreetmap.org",
     "font-src 'self'",
     "form-action 'self'",
     "frame-src https://www.openstreetmap.org https://maps.google.com",

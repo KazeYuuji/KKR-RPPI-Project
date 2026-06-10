@@ -1,4 +1,5 @@
 import type { APIRoute } from "astro";
+import { checkRateLimit } from "../../lib/security";
 
 const cache = new Map<string, { url: string; lat: number; lon: number; ttl: number }>();
 
@@ -46,10 +47,14 @@ async function resolveMapUrl(link: string): Promise<string> {
     let u: URL;
     try { u = new URL(link); } catch { return link; }
     if (u.protocol !== "https:") return link;
-    const allowedHosts = ["maps.google.com", "www.google.com", "goo.gl", "google.com", "maps.app.goo.gl"];
+    const allowedHosts = ["maps.google.com", "www.google.com", "google.com", "maps.app.goo.gl"];
     if (!allowedHosts.some(h => u.hostname === h || u.hostname.endsWith("." + h))) return link;
-    const res = await fetch(u.toString(), { method: "HEAD", redirect: "follow", signal: AbortSignal.timeout(5000) });
-    return res.url || link;
+    const res = await fetch(u.toString(), { method: "HEAD", redirect: "manual", signal: AbortSignal.timeout(5000) });
+    const loc = res.headers.get("location");
+    if (loc) {
+      try { new URL(loc); return loc; } catch { return link; }
+    }
+    return u.toString();
   } catch { return link; }
 }
 
@@ -84,7 +89,15 @@ const FALLBACKS = [
 
 const MAX_CACHE = 1000;
 
-export const GET: APIRoute = async ({ url }) => {
+export const GET: APIRoute = async ({ url, request }) => {
+  const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+  const rl = checkRateLimit("geocode:" + ip, 60, 60_000);
+  if (!rl.allowed) {
+    return new Response(JSON.stringify({ url: "", lat: 0, lon: 0 }), {
+      status: 429, headers: { "Content-Type": "application/json" },
+    });
+  }
+
   const venue = url.searchParams.get("venue") || "";
   const mapsLink = url.searchParams.get("mapsLink") || "";
   const cacheKey = mapsLink || venue || "default";

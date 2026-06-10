@@ -65,7 +65,7 @@ import RegistrationForm from "../components/RegistrationForm.astro";
             <p id="reg-venue" class="text-sm font-semibold text-kkr-dark">Memuat...</p>
             <p id="reg-address" class="mt-1 text-xs text-kkr-dark/60"></p>
             <div class="mt-3 overflow-hidden rounded-xl border border-kkr-light/30 relative shadow-sm">
-              <iframe id="reg-maps" class="aspect-[16/9] w-full" style="filter:grayscale(0.15) contrast(1.05)" loading="lazy" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+              <iframe id="reg-maps" title="Peta Lokasi Acara" class="aspect-[16/9] w-full" style="filter:grayscale(0.15) contrast(1.05)" loading="lazy" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
               <div class="pointer-events-none absolute inset-0 rounded-xl ring-1 ring-inset ring-black/5"></div>
             </div>
             <a id="gmaps-link" href="#" target="_blank" rel="noopener" class="mt-2 inline-flex items-center gap-1.5 text-xs text-kkr-red font-medium hover:underline transition-colors">
@@ -149,6 +149,6 @@ import RegistrationForm from "../components/RegistrationForm.astro";
       } catch {}
     }
 
-    document.addEventListener("DOMContentLoaded", function() { loadSettings(); loadTickets(); setInterval(loadTickets, 10000); });
+    document.addEventListener("DOMContentLoaded", function() { loadSettings(); loadTickets(); var ti = setInterval(loadTickets, 10000); document.addEventListener("visibilitychange", function() { if (document.hidden) clearInterval(ti); else loadTickets(); }); });
   </script>
 </PublicLayout>
