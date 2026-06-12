@@ -23,7 +23,6 @@ const conversations = new Map<string, Conversation>();
 const CONV_TTL = 30 * 60_000;
 const MAX_CONVERSATIONS = 5000;
 const MAX_HISTORY = 20;
-const MAX_CONVERSATIONS = 5000;
 
 setInterval(() => {
   const now = Date.now();
