@@ -73,7 +73,9 @@ export const GET: APIRoute = async ({ params }) => {
 
     yy -= 4;
     page.drawRectangle({ x: M, y: yy + 6, width: PW - 2 * M, height: 1, color: cLight });
-    page.drawText("INFORMASI ACARA", { x: M, y: yy - 8, size: 9, font: fontB, color: cAccent });
+
+    yy -= 6;
+    page.drawText("INFORMASI ACARA", { x: M, y: yy, size: 9, font: fontB, color: cAccent });
     yy -= 30;
 
     row("LOKASI", venue);
@@ -81,16 +83,25 @@ export const GET: APIRoute = async ({ params }) => {
     row("TANGGAL", date);
     row("WAKTU", time);
 
-    // QR Code (gracefully skip if fails)
+    const infoBottomY = yy + 10;
+
+    page.drawRectangle({ x: M, y: infoBottomY, width: PW - 2 * M, height: 1, color: cLight });
+
     try {
-      const qrBuf = await QRCode.toBuffer(registrant.id, { width: 300, margin: 2, color: { dark: "#141416", light: "#ffffff" } });
+      const qrBuf = await QRCode.toBuffer(registrant.id, { width: 400, margin: 2, color: { dark: "#141416", light: "#ffffff" } });
       const qrImg = await pdfDoc.embedPng(qrBuf);
-      const qrS = 120;
-      const qrX = PW - M - qrS;
-      const qrY = 58;
-      page.drawRectangle({ x: qrX - 8, y: qrY - 8, width: qrS + 16, height: qrS + 20, color: cWhite, borderColor: cLight, borderWidth: 1 });
-      page.drawImage(qrImg, { x: qrX, y: qrY + 4, width: qrS, height: qrS });
-      page.drawText("Scan untuk check-in", { x: qrX, y: qrY - 12, size: 8, font: fontR, color: cGray });
+      const qrS = 180;
+      const qrX = (PW - qrS) / 2;
+      const qrY = infoBottomY - qrS - 50;
+
+      page.drawText("Scan QR Code untuk Check-in", {
+        x: (PW - 140) / 2, y: qrY + qrS + 24, size: 11, font: fontB, color: cAccent,
+      });
+      page.drawRectangle({ x: qrX - 10, y: qrY - 10, width: qrS + 20, height: qrS + 46, color: cWhite, borderColor: cLight, borderWidth: 1 });
+      page.drawImage(qrImg, { x: qrX, y: qrY, width: qrS, height: qrS });
+      page.drawText("Tunjukkan QR ini saat datang", {
+        x: (PW - 122) / 2, y: qrY - 18, size: 8, font: fontR, color: cGray,
+      });
     } catch (qrErr) {
       console.error("QR generation failed (non-fatal):", qrErr);
     }
