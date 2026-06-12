@@ -45,46 +45,64 @@ export const GET: APIRoute = async ({ params }) => {
     const cLight = rgb(0.92, 0.92, 0.94);
     const cWhite = rgb(1, 1, 1);
     const cAccent = rgb(0.75, 0.2, 0.2);
+    const cGold = rgb(0.78, 0.58, 0.16);
+    const cGoldLight = rgb(0.85, 0.72, 0.35);
 
     page.drawRectangle({ x: 6, y: 6, width: PW - 12, height: PH - 12, color: cWhite, borderColor: cAccent, borderWidth: 2 });
     page.drawRectangle({ x: 10, y: 10, width: PW - 20, height: PH - 20, color: cWhite, borderColor: cLight, borderWidth: 1 });
 
+    page.drawLine({ start: { x: 12, y: PH - 144 }, end: { x: PW - 12, y: PH - 144 }, color: cGold, thickness: 1 });
+    page.drawLine({ start: { x: 12, y: PH - 12 }, end: { x: PW - 12, y: PH - 12 }, color: cGold, thickness: 1 });
+
     page.drawRectangle({ x: 12, y: PH - 140, width: PW - 24, height: 128, color: cAccent });
-    page.drawText("KKR RPPI", { x: 40, y: PH - 94, size: 26, font: fontB, color: cWhite });
-    page.drawText(year, { x: 42, y: PH - 120, size: 14, font: fontO, color: rgb(0.9, 0.7, 0.7) });
-    page.drawRectangle({ x: PW - 145, y: PH - 128, width: 115, height: 30, color: cWhite });
-    page.drawText("TIKET MASUK", { x: PW - 133, y: PH - 120, size: 13, font: fontB, color: cAccent });
-    page.drawText(ticketName.toUpperCase(), { x: PW - 133, y: PH - 137, size: 9, font: fontR, color: cGray });
+    page.drawText("KKR RPPI", { x: 40, y: PH - 94, size: 28, font: fontB, color: cWhite });
+    page.drawText(year, { x: 42, y: PH - 120, size: 14, font: fontO, color: cGoldLight });
+    page.drawRectangle({ x: PW - 145, y: PH - 128, width: 115, height: 30, color: cGold });
+    page.drawText("TIKET MASUK", { x: PW - 138, y: PH - 120, size: 13, font: fontB, color: cWhite });
+    page.drawText(ticketName.toUpperCase(), { x: PW - 138, y: PH - 137, size: 9, font: fontR, color: cGoldLight });
 
     const divY = PH - 162;
     page.drawRectangle({ x: M, y: divY, width: PW - 2 * M, height: 1, color: cLight });
 
     let yy = divY - 30;
-    const row = (label: string, value: string) => {
-      page.drawText(label, { x: M, y: yy, size: 8, font: fontR, color: cGray });
-      page.drawText(String(value || "-"), { x: M, y: yy - 14, size: 11, font: fontB, color: cDark });
-      yy -= 36;
+    page.drawText("DATA PENDAFTAR", { x: M, y: yy + 4, size: 9, font: fontB, color: cGold });
+    yy -= 22;
+
+    const rowRight = (label: string, value: string) => {
+      const lx = 260;
+      page.drawText(label, { x: lx, y: yy, size: 8, font: fontR, color: cGray });
+      page.drawText(String(value || "-"), { x: lx, y: yy - 14, size: 11, font: fontB, color: cDark });
     };
 
-    row("NAMA PENDAFTAR", registrant.name);
-    row("ID TIKET", registrant.id);
-    row("EMAIL", registrant.email);
-    row("NOMOR WHATSAPP", registrant.whatsapp);
+    page.drawText("NAMA LENGKAP", { x: M, y: yy, size: 8, font: fontR, color: cGray });
+    page.drawText(String(registrant.name || "-"), { x: M, y: yy - 14, size: 11, font: fontB, color: cDark });
+    rowRight("ID TIKET", registrant.id);
+    yy -= 36;
 
-    yy -= 4;
-    page.drawRectangle({ x: M, y: yy + 6, width: PW - 2 * M, height: 1, color: cLight });
+    page.drawText("EMAIL", { x: M, y: yy, size: 8, font: fontR, color: cGray });
+    page.drawText(String(registrant.email || "-"), { x: M, y: yy - 14, size: 11, font: fontB, color: cDark });
+    rowRight("WHATSAPP", registrant.whatsapp);
+    yy -= 36;
 
     yy -= 6;
-    page.drawText("INFORMASI ACARA", { x: M, y: yy, size: 9, font: fontB, color: cAccent });
-    yy -= 30;
+    page.drawRectangle({ x: M, y: yy + 6, width: PW - 2 * M, height: 1, color: cLight });
+    yy -= 4;
+    page.drawText("LOKASI & WAKTU", { x: M, y: yy, size: 9, font: fontB, color: cGold });
+    yy -= 22;
 
-    row("LOKASI", venue);
-    row("ALAMAT", address);
-    row("TANGGAL", date);
-    row("WAKTU", time);
+    page.drawText("TEMPAT", { x: M, y: yy, size: 8, font: fontR, color: cGray });
+    page.drawText(venue, { x: M, y: yy - 14, size: 11, font: fontB, color: cDark });
+    page.drawText("TANGGAL", { x: 260, y: yy, size: 8, font: fontR, color: cGray });
+    page.drawText(date, { x: 260, y: yy - 14, size: 11, font: fontB, color: cDark });
+    yy -= 36;
+
+    page.drawText("ALAMAT", { x: M, y: yy, size: 8, font: fontR, color: cGray });
+    page.drawText(address, { x: M, y: yy - 14, size: 11, font: fontB, color: cDark });
+    page.drawText("WAKTU", { x: 260, y: yy, size: 8, font: fontR, color: cGray });
+    page.drawText(time, { x: 260, y: yy - 14, size: 11, font: fontB, color: cDark });
+    yy -= 36;
 
     const infoBottomY = yy + 10;
-
     page.drawRectangle({ x: M, y: infoBottomY, width: PW - 2 * M, height: 1, color: cLight });
 
     try {
@@ -92,12 +110,12 @@ export const GET: APIRoute = async ({ params }) => {
       const qrImg = await pdfDoc.embedPng(qrBuf);
       const qrS = 180;
       const qrX = (PW - qrS) / 2;
-      const qrY = infoBottomY - qrS - 50;
+      const qrY = infoBottomY - qrS - 48;
 
       page.drawText("Scan QR Code untuk Check-in", {
         x: (PW - 140) / 2, y: qrY + qrS + 24, size: 11, font: fontB, color: cAccent,
       });
-      page.drawRectangle({ x: qrX - 10, y: qrY - 10, width: qrS + 20, height: qrS + 46, color: cWhite, borderColor: cLight, borderWidth: 1 });
+      page.drawRectangle({ x: qrX - 10, y: qrY - 10, width: qrS + 20, height: qrS + 46, color: cWhite, borderColor: cGold, borderWidth: 1 });
       page.drawImage(qrImg, { x: qrX, y: qrY, width: qrS, height: qrS });
       page.drawText("Tunjukkan QR ini saat datang", {
         x: (PW - 122) / 2, y: qrY - 18, size: 8, font: fontR, color: cGray,

@@ -85,75 +85,36 @@ export interface TicketType {
 
   <!-- Success Modal -->
   <div id="success-modal" class="pointer-events-none fixed inset-0 z-[60] flex items-center justify-center bg-black/50 backdrop-blur-sm opacity-0 transition-all duration-300 p-3 sm:p-4">
-    <div class="relative w-full max-w-xl rounded-2xl bg-white shadow-2xl shadow-black/20 animate-scale-in overflow-hidden">
-      <div class="pointer-events-none absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-emerald-400 via-emerald-500 to-emerald-600"></div>
+    <div class="relative w-full max-w-sm rounded-2xl bg-white shadow-2xl shadow-black/20 animate-scale-in overflow-hidden">
+      <div class="pointer-events-none absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-kkr-red via-kkr-gold to-kkr-red"></div>
       <button id="modal-close" class="absolute right-3 top-4 z-10 rounded-full bg-white/80 backdrop-blur p-1.5 text-kkr-dark/40 shadow-sm transition hover:bg-white hover:text-kkr-dark hover:shadow-md" aria-label="Tutup">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
-      <div class="flex flex-col sm:flex-row">
-        <div class="sm:w-3/5 px-6 pt-8 pb-6 sm:border-r border-kkr-light/30">
-          <div class="flex items-center gap-3">
-            <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-emerald-50 shadow-inner shadow-emerald-200/50">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            </div>
-            <div>
-              <h3 id="success-title" class="text-base font-bold text-kkr-dark tracking-tight">Pendaftaran Berhasil!</h3>
-              <p id="success-subtitle" class="text-[11px] text-kkr-maroon/60 mt-0.5">Simpan nomor tiket dan cek info selanjutnya.</p>
-            </div>
-          </div>
-          <div class="mt-5 grid grid-cols-2 gap-2.5">
-            <div class="rounded-xl bg-gradient-to-br from-kkr-light/40 to-white p-3.5 shadow-sm border border-kkr-light/30">
-              <p class="text-[10px] font-medium uppercase tracking-wider text-kkr-maroon/50">Nomor Tiket</p>
-              <p id="ticket-code" class="mt-1 text-sm font-bold text-kkr-dark select-all tracking-wide">-</p>
-            </div>
-            <div class="rounded-xl bg-gradient-to-br from-kkr-light/40 to-white p-3.5 shadow-sm border border-kkr-light/30">
-              <p class="text-[10px] font-medium uppercase tracking-wider text-kkr-maroon/50">Jenis Tiket</p>
-              <p id="ticket-name" class="mt-1 text-sm font-bold text-kkr-dark tracking-wide">-</p>
-            </div>
-          </div>
-          <div class="mt-3.5 rounded-xl bg-gradient-to-br from-blue-50/80 to-white p-3.5 border border-blue-100/60 shadow-sm">
-            <p class="font-semibold text-blue-800 mb-1.5 flex items-center gap-1.5 text-xs">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-              Langkah Selanjutnya
-            </p>
-            <ol class="list-decimal pl-4 text-blue-700/80 text-[11px] leading-relaxed space-y-1">
-              <li>Simpan nomor tiket (screenshot atau catat).</li>
-              <li>Cetak tiket PDF atau tunjukkan dari ponsel saat check-in.</li>
-              <li id="success-step-3">Hadiri acara pada <strong>Sabtu, 10 Januari 2026</strong> di <strong>Kediri</strong>.</li>
-            </ol>
-          </div>
+      <div class="flex flex-col items-center px-8 pt-10 pb-8 text-center">
+        <div class="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-emerald-50 to-emerald-100 shadow-inner shadow-emerald-200/50 mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-emerald-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
         </div>
-        <div class="sm:w-2/5 px-6 pt-6 pb-6 flex flex-col items-center justify-center sm:pt-8">
-          <div class="rounded-xl bg-white p-2 shadow-sm border border-kkr-light/30">
-            <canvas id="qr-code-canvas" width="110" height="110" class="block"></canvas>
-          </div>
-          <div class="mt-5 w-full space-y-2.5">
-            <a id="pdf-download-btn" href="#" rel="noopener noreferrer" class="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-kkr-red to-kkr-gold px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-kkr-maroon/20 transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-              Cetak Tiket (PDF)
-            </a>
-            <a id="wa-group-link" href="https://chat.whatsapp.com/KKRRPPI2026" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center gap-2 rounded-xl border border-emerald-200 bg-gradient-to-br from-emerald-50 to-white px-4 py-2.5 text-sm font-semibold text-emerald-700 shadow-sm transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-              Gabung Grup WhatsApp
-            </a>
-          </div>
+        <h3 class="text-xl font-bold text-kkr-dark tracking-tight">Pendaftaran Berhasil!</h3>
+        <p class="text-sm text-kkr-maroon/60 mt-1.5 max-w-xs">Terima kasih telah mendaftar. Unduh tiket PDF Anda untuk check-in.</p>
+        <div class="mt-6 w-full">
+          <a id="pdf-download-btn" href="#" rel="noopener noreferrer" class="flex items-center justify-center gap-2.5 rounded-xl bg-gradient-to-r from-kkr-red to-kkr-gold px-5 py-3 text-base font-bold text-white shadow-lg shadow-kkr-maroon/20 transition-all duration-200 hover:shadow-xl hover:-translate-y-0.5 w-full">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            Unduh Tiket PDF
+          </a>
+          <p class="text-[11px] text-kkr-maroon/40 mt-2.5">Tunjukkan tiket PDF saat check-in di lokasi</p>
         </div>
       </div>
     </div>
   </div>
 
   <script>
-    import QRCode from "qrcode";
     const form = document.getElementById("registration-form");
     const select = document.getElementById("ticket-select");
     const btn = document.getElementById("submit-btn");
     const modal = document.getElementById("success-modal");
     const closeModalBtn = document.getElementById("modal-close");
-    const codeEl = document.getElementById("ticket-code");
-    const nameEl = document.getElementById("ticket-name");
     const stockEl = document.getElementById("ticket-stock");
     const pdfBtn = document.getElementById("pdf-download-btn");
-    const qrCanvas = document.getElementById("qr-code-canvas");
     let ticketInterval;
 
     function escapeHtml(str) {
@@ -263,9 +224,6 @@ export interface TicketType {
         const result = await res.json();
         if (res.ok) {
           lastTicketId = id;
-          codeEl.textContent = id;
-          const opt = select.selectedOptions[0];
-          nameEl.textContent = opt ? opt.textContent?.trim().replace(/\s*\(.*\)/, "") || ticketType : ticketType;
           pdfBtn.href = "/api/ticket-pdf/" + id;
           pdfBtn.onclick = async function(e) {
             e.preventDefault();
@@ -289,7 +247,6 @@ export interface TicketType {
             }
             btn.innerHTML = orig;
           };
-          QRCode.toCanvas(qrCanvas, id, { width: 110, margin: 2, color: { dark: "#1a1a1f", light: "#ffffff" } });
           modal.classList.remove("pointer-events-none", "opacity-0");
           form.reset();
           loadTickets();
@@ -336,14 +293,6 @@ export interface TicketType {
       loadTickets();
       checkDeadline();
       document.addEventListener("visibilitychange", () => { if (!document.hidden) loadTickets(); });
-      (window.__SETTINGS_CACHE || fetch("/api/settings").then(r => r.json()).then(d => d.settings || {})).then(s => {
-        const step3 = document.getElementById("success-step-3");
-        if (step3 && s.locDate && s.locVenue) {
-          step3.innerHTML = "Hadiri acara pada <strong>" + escapeHtml(s.locDate) + "</strong> di <strong>" + escapeHtml(s.locVenue.split(",")[0].trim()) + "</strong>.";
-        }
-        const waLink = document.getElementById("wa-group-link");
-        if (waLink && s.waGroupLink) waLink.href = s.waGroupLink;
-      }).catch(() => {});
     });
   </script>
 </section>
