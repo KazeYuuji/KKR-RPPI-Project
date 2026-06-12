@@ -267,10 +267,27 @@ export interface TicketType {
           const opt = select.selectedOptions[0];
           nameEl.textContent = opt ? opt.textContent?.trim().replace(/\s*\(.*\)/, "") || ticketType : ticketType;
           pdfBtn.href = "/api/ticket-pdf/" + id;
-          pdfBtn.onclick = function(e) {
+          pdfBtn.onclick = async function(e) {
             e.preventDefault();
-            const w = window.open("/api/ticket-pdf/" + id, "_blank");
-            if (!w || w.closed) alert("Izinkan pop-up untuk mengunduh PDF, atau klik kanan → Save link as...");
+            const btn = this;
+            const orig = btn.innerHTML;
+            btn.innerHTML = '<span class="flex items-center gap-2"><svg class="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Mengunduh...</span>';
+            try {
+              const r = await fetch("/api/ticket-pdf/" + id);
+              if (!r.ok) { alert("Gagal mengunduh: " + (await r.text())); btn.innerHTML = orig; return; }
+              const blob = await r.blob();
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = "tiket-" + id + ".pdf";
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+              setTimeout(function(){ URL.revokeObjectURL(url); }, 10000);
+            } catch(e2) {
+              alert("Terjadi kesalahan. Silakan coba lagi.");
+            }
+            btn.innerHTML = orig;
           };
           QRCode.toCanvas(qrCanvas, id, { width: 110, margin: 2, color: { dark: "#1a1a1f", light: "#ffffff" } });
           modal.classList.remove("pointer-events-none", "opacity-0");
