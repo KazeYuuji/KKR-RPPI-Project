@@ -16,74 +16,96 @@ export const GET: APIRoute = async ({ params }) => {
   }
 
   const ticketData = await minioGet<Record<string, any>>(`tickets/${registrant.ticket}.json`);
-  const ticketName = ticketData?.name || registrant.ticket;
+  const ticketName = ticketData?.name || registrant.ticket || "GRATIS";
 
   const settingsList = await minioListAll<Record<string, string>>("settings/");
-  const settings: Record<string, string> = {};
-  for (const s of settingsList) if (s.key) settings[s.key] = s.value;
+  const s: Record<string, string> = {};
+  for (const x of settingsList) if (x.key) s[x.key] = x.value;
 
-  const venue = settings.locVenue || "Kediri";
-  const date = settings.locDate || "Sabtu, 10 Januari 2026";
-  const time = settings.locTime || "08:00 - 12:30 WIB";
-  const address = settings.locAddress || settings.locVenue || "Jl. Himalaya No.06, Kediri";
-  const eventYear = settings.eventYear || new Date().getFullYear().toString();
+  const venue = s.locVenue || "GPI IMANUEL Kediri";
+  const address = s.locAddress || "Jl. Himalaya No.06, Kediri";
+  const date = s.locDate || "Sabtu, 10 Januari 2026";
+  const time = s.locTime || "08.00 - 12.30 WIB";
+  const year = s.eventYear || "2026";
 
   const pdfDoc = await PDFDocument.create();
-  const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-  const fontReg = await pdfDoc.embedFont(StandardFonts.Helvetica);
+  const fontB = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+  const fontR = await pdfDoc.embedFont(StandardFonts.Helvetica);
+  const fontO = await pdfDoc.embedFont(StandardFonts.HelveticaOblique);
 
-  const page = pdfDoc.addPage([400, 680]);
-  const { width, height } = page.getSize();
-  const dark = rgb(0.1, 0.1, 0.12);
-  const gray = rgb(0.45, 0.45, 0.48);
-  const lightBg = rgb(0.97, 0.97, 0.98);
-  const white = rgb(1, 1, 1);
-  const accent = rgb(0.8, 0.3, 0.3);
+  const PW = 500;
+  const PH = 780;
+  const page = pdfDoc.addPage([PW, PH]);
+  const M = 30;
+  const cDark = rgb(0.08, 0.08, 0.1);
+  const cGray = rgb(0.45, 0.45, 0.48);
+  const cLight = rgb(0.92, 0.92, 0.94);
+  const cWhite = rgb(1, 1, 1);
+  const cAccent = rgb(0.75, 0.2, 0.2);
+  const cGold = rgb(0.8, 0.6, 0.15);
 
-  page.drawRectangle({ x: 0, y: 0, width, height, color: lightBg });
-  page.drawRectangle({ x: 0, y: height - 160, width, height: 160, color: dark });
-  page.drawText("✝", { x: 30, y: height - 60, size: 32, color: accent });
-  page.drawText("KKR RPPI", { x: 75, y: height - 50, size: 22, font, color: white });
-  page.drawText(eventYear, { x: 75, y: height - 80, size: 14, font, color: rgb(0.9, 0.5, 0.5) });
-  page.drawText("TIKET MASUK", { x: 30, y: height - 120, size: 12, font: fontReg, color: rgb(0.7, 0.7, 0.7) });
-  page.drawText("GRATIS", { x: width - 80, y: height - 120, size: 14, font, color: rgb(0.3, 0.85, 0.5) });
-  page.drawRectangle({ x: 30, y: 430, width: width - 60, height: 1, color: rgb(0.85, 0.85, 0.88) });
+  // --- FULL BORDER ---
+  page.drawRectangle({ x: 6, y: 6, width: PW - 12, height: PH - 12, color: cWhite, borderColor: cAccent, borderWidth: 2 });
+  page.drawRectangle({ x: 10, y: 10, width: PW - 20, height: PH - 20, color: cWhite, borderColor: cLight, borderWidth: 1 });
 
-  let yPos = 400;
-  const fields = [
-    { label: "ID TIKET", value: registrant.id },
-    { label: "NAMA", value: registrant.name },
-    { label: "JENIS TIKET", value: ticketName },
-    { label: "PARTISIPAN", value: registrant.participant_type === "Student" ? "Pelajar" : "Umum" },
-    { label: "TANGGAL", value: date },
-    { label: "WAKTU", value: time },
-    { label: "LOKASI", value: venue },
-    { label: "ALAMAT", value: address },
-  ];
-  for (let i = 0; i < fields.length; i++) {
-    const isEven = i % 2 === 0;
-    if (isEven) {
-      page.drawRectangle({ x: 30, y: yPos - 6, width: width - 60, height: 30, color: white });
-    }
-    page.drawText(fields[i].label, { x: 35, y: yPos, size: 8, font: fontReg, color: gray });
-    page.drawText(fields[i].value, { x: 35, y: yPos - 13, size: 10, font, color: dark });
-    yPos -= 36;
-  }
+  // --- TOP BANNER ---
+  page.drawRectangle({ x: 12, y: PH - 140, width: PW - 24, height: 128, color: cAccent });
+  // decorative cross
+  page.drawText("†", { x: 35, y: PH - 105, size: 38, color: rgb(0.92, 0.4, 0.4) });
+  page.drawText("KKR RPPI", { x: 80, y: PH - 94, size: 26, font: fontB, color: cWhite });
+  page.drawText(year, { x: 82, y: PH - 120, size: 14, font: fontO, color: rgb(0.9, 0.7, 0.7) });
+  // ticket badge
+  page.drawRectangle({ x: PW - 145, y: PH - 128, width: 115, height: 30, color: cWhite });
+  page.drawText("TIKET MASUK", { x: PW - 133, y: PH - 120, size: 13, font: fontB, color: cAccent });
+  page.drawText(ticketName.toUpperCase(), { x: PW - 133, y: PH - 137, size: 9, font: fontR, color: cGray });
 
-  const qrBuffer = await QRCode.toBuffer(registrant.id, {
-    width: 240, margin: 2,
-    color: { dark: "#1a1a1f", light: "#f7f7f8" },
+  // --- DIVIDER LINE ---
+  const divY = PH - 162;
+  page.drawRectangle({ x: M, y: divY, width: PW - 2 * M, height: 1, color: cLight });
+
+  // --- FIELDS ---
+  let yy = divY - 30;
+  const row = (label: string, value: string) => {
+    page.drawText(label, { x: M, y: yy, size: 8, font: fontR, color: cGray });
+    page.drawText(String(value || "-"), { x: M, y: yy - 14, size: 11, font: fontB, color: cDark });
+    yy -= 36;
+  };
+
+  row("NAMA PENDAFTAR", registrant.name);
+  row("ID TIKET", registrant.id);
+  row("EMAIL", registrant.email);
+  row("NOMOR WHATSAPP", registrant.whatsapp);
+
+  // --- SECTION: INFO ACARA ---
+  yy -= 4;
+  page.drawRectangle({ x: M, y: yy + 6, width: PW - 2 * M, height: 1, color: cLight });
+  page.drawText("INFORMASI ACARA", { x: M, y: yy - 8, size: 9, font: fontB, color: cAccent });
+  yy -= 30;
+
+  row("LOKASI", venue);
+  row("ALAMAT", address);
+  row("TANGGAL", date);
+  row("WAKTU", time);
+
+  // --- QR CODE ---
+  const qrBuf = await QRCode.toBuffer(registrant.id, {
+    width: 300, margin: 2,
+    color: { dark: "#141416", light: "#ffffff" },
   });
-  const qrImage = await pdfDoc.embedPng(qrBuffer);
-  const qrSize = 110;
-  const qrX = width - 30 - qrSize;
-  const qrY = 48;
-  page.drawRectangle({ x: qrX - 6, y: qrY - 6, width: qrSize + 12, height: qrSize + 12, color: white });
-  page.drawImage(qrImage, { x: qrX, y: qrY, width: qrSize, height: qrSize });
-  page.drawText("Scan untuk check-in", { x: qrX, y: qrY - 12, size: 7, font: fontReg, color: gray });
+  const qrImg = await pdfDoc.embedPng(qrBuf);
+  const qrS = 120;
+  const qrX = PW - M - qrS;
+  const qrY = 58;
+  page.drawRectangle({ x: qrX - 8, y: qrY - 8, width: qrS + 16, height: qrS + 20, color: cWhite, borderColor: cLight, borderWidth: 1 });
+  page.drawImage(qrImg, { x: qrX, y: qrY + 4, width: qrS, height: qrS });
+  page.drawText("Scan untuk check-in", { x: qrX, y: qrY - 12, size: 8, font: fontR, color: cGray });
+  page.drawText("KR-RPPI", { x: qrX + 30, y: qrY - 24, size: 6, font: fontO, color: cGray });
 
-  page.drawRectangle({ x: 0, y: 0, width, height: 40, color: dark });
-  page.drawText("Terima kasih telah mendaftar. Sampai jumpa di KKR RPPI!", { x: 30, y: 14, size: 8, font: fontReg, color: gray });
+  // --- FOOTER ---
+  page.drawRectangle({ x: 12, y: 12, width: PW - 24, height: 38, color: cAccent });
+  page.drawText("Terima kasih telah mendaftar. Sampai jumpa di KKR RPPI! Tuhan Yesus memberkati 🙏", {
+    x: M, y: 32, size: 9, font: fontR, color: cWhite,
+  });
 
   const pdfBytes = await pdfDoc.save();
   return new Response(pdfBytes, {
