@@ -87,7 +87,7 @@ export const POST: APIRoute = async ({ request }) => {
           body: JSON.stringify({
             contents: messages.map(m => ({
               role: m.role === "assistant" ? "model" : "user",
-              parts: [{ text: m.content }],
+              parts: [{ text: typeof m.content === "string" ? m.content : "" }],
             })),
             systemInstruction: { parts: [{ text: systemPrompt }] },
             generationConfig: { temperature: 0.7, maxOutputTokens: 500 },
