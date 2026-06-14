@@ -67,11 +67,23 @@ export async function minioDelete(key: string): Promise<void> {
 
 export async function minioList(prefix: string): Promise<string[]> {
   try {
-    const resp = await getS3().send(new ListObjectsV2Command({
-      Bucket: MINIO_BUCKET,
-      Prefix: prefixPath(prefix),
-    }));
-    return (resp.Contents || []).map(o => o.Key!).filter(Boolean);
+    const keys: string[] = [];
+    let isTruncated = true;
+    let marker: string | undefined;
+    while (isTruncated) {
+      const resp = await getS3().send(new ListObjectsV2Command({
+        Bucket: MINIO_BUCKET,
+        Prefix: prefixPath(prefix),
+        MaxKeys: 1000,
+        ...(marker ? { StartAfter: marker } : {}),
+      }));
+      const batch = (resp.Contents || []).map(o => o.Key!).filter(Boolean);
+      keys.push(...batch);
+      isTruncated = resp.IsTruncated === true;
+      if (isTruncated && batch.length > 0) marker = batch[batch.length - 1];
+      else isTruncated = false;
+    }
+    return keys;
   } catch (err) {
     console.error("minioList error for", prefix, ":", err);
     return [];
@@ -80,12 +92,8 @@ export async function minioList(prefix: string): Promise<string[]> {
 
 export async function minioListAll<T = Record<string, any>>(prefix: string): Promise<T[]> {
   const keys = await minioList(prefix);
-  const items: T[] = [];
-  for (const key of keys) {
-    const item = await minioGet<T>(key);
-    if (item) items.push(item);
-  }
-  return items;
+  const items = await Promise.all(keys.map(key => minioGet<T>(key)));
+  return items.filter(Boolean) as T[];
 }
 
 let _idCounter = 0;

@@ -53,7 +53,8 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     // Use IP-based session ID to prevent session hijacking via client-controlled sessionId
-    const sessionId = "sess_" + ip.replace(/[^0-9a-fA-F:.]/g, "") + "_" + (body.sessionId || "").slice(0, 10);
+    const clientPart = typeof body.sessionId === "string" ? body.sessionId.replace(/[^a-zA-Z0-9_-]/g, "").slice(0, 10) : "";
+    const sessionId = "sess_" + ip.replace(/[^0-9a-fA-F:.]/g, "") + "_" + clientPart;
 
     const settings = await loadAllSettings();
 

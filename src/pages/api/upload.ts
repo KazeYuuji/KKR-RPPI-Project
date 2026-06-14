@@ -5,20 +5,17 @@ import { ALLOWED_IMAGE_TYPES, MAX_UPLOAD_SIZE, isValidOrigin, checkRateLimit } f
 
 const ALLOWED_EXT = new Set([".jpg", ".jpeg", ".png", ".webp", ".gif"]);
 
-const MAGIC_BYTES: Record<string, Uint8Array[]> = {
-  "image/jpeg": [new Uint8Array([0xFF, 0xD8, 0xFF])],
-  "image/png": [new Uint8Array([0x89, 0x50, 0x4E, 0x47])],
-  "image/webp": [new Uint8Array([0x52, 0x49, 0x46, 0x46])],
-  "image/gif": [new Uint8Array([0x47, 0x49, 0x46, 0x38])],
+const MAGIC_BYTES: Record<string, ((buffer: Uint8Array) => boolean)[]> = {
+  "image/jpeg": [(b => b.length >= 3 && b[0] === 0xFF && b[1] === 0xD8 && b[2] === 0xFF)],
+  "image/png": [(b => b.length >= 4 && b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4E && b[3] === 0x47)],
+  "image/webp": [(b => b.length >= 12 && b[0] === 0x52 && b[1] === 0x49 && b[2] === 0x46 && b[3] === 0x46 && b[8] === 0x57 && b[9] === 0x45 && b[10] === 0x42 && b[11] === 0x50)],
+  "image/gif": [(b => b.length >= 4 && b[0] === 0x47 && b[1] === 0x49 && b[2] === 0x46 && b[3] === 0x38)],
 };
 
 function checkMagicBytes(buffer: Uint8Array, mimeType: string): boolean {
-  const signatures = MAGIC_BYTES[mimeType];
-  if (!signatures) return false;
-  return signatures.some(sig => {
-    if (buffer.length < sig.length) return false;
-    return sig.every((b, i) => buffer[i] === b);
-  });
+  const checks = MAGIC_BYTES[mimeType];
+  if (!checks) return false;
+  return checks.some(fn => fn(buffer));
 }
 
 export const POST: APIRoute = async ({ request }) => {

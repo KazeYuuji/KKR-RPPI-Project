@@ -41,7 +41,7 @@ export function checkRateLimit(
 export function sanitizeString(val: unknown, maxLen = 500): string {
   if (typeof val !== "string") return "";
   return val.trim()
-    .replace(/[<>&"'`]/g, "")
+    .replace(/[<>&"]/g, "")
     .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, "")
     .slice(0, maxLen);
 }
@@ -58,15 +58,17 @@ export function sanitizePhone(val: unknown): string {
   return val.trim().replace(/[^0-9+]/g, "").slice(0, 20);
 }
 
+function isDev(): boolean {
+  try { return import.meta.env.DEV; } catch { return process.env.NODE_ENV === "development"; }
+}
+
 export function isValidOrigin(request: Request): boolean {
   const origin = request.headers.get("origin");
   const referer = request.headers.get("referer");
 
-  // Dynamic same-origin check: works with any deployment
   const reqUrl = new URL(request.url);
   const dynamicOrigin = reqUrl.origin;
 
-  // Explicitly allowed origins (preview deployments etc.)
   const allowedOrigins = [
     "https://kkrrppi.vercel.app",
     "https://www.kkrrppi.vercel.app",
@@ -74,19 +76,25 @@ export function isValidOrigin(request: Request): boolean {
     "https://www.kkr-rppi.vercel.app",
   ];
 
-  if (process.env.NODE_ENV === "development") {
+  if (isDev()) {
     allowedOrigins.push("http://localhost:4321");
   }
 
-  const check = (v: string) =>
-    v === dynamicOrigin || v.startsWith(dynamicOrigin + "/") ||
-    allowedOrigins.some(a => v === a || v.startsWith(a + "/"));
+  const matchesOrigin = (v: string): boolean => {
+    try {
+      const parsed = new URL(v);
+      const originOnly = parsed.origin;
+      return originOnly === dynamicOrigin || allowedOrigins.includes(originOnly);
+    } catch {
+      return false;
+    }
+  };
 
   if (origin) {
-    if (check(origin)) return true;
+    if (matchesOrigin(origin)) return true;
   }
   if (referer) {
-    if (check(referer)) return true;
+    if (matchesOrigin(referer)) return true;
   }
   return false;
 }
@@ -109,12 +117,11 @@ export function isValidId(val: unknown): boolean {
 
 export function sanitizeUrl(val: unknown, maxLen = 500): string {
   if (typeof val !== "string") return "";
-  const s = val.trim().replace(/[<>&"'`]/g, "").slice(0, maxLen);
+  const s = val.trim().replace(/[<>&"]/g, "").slice(0, maxLen);
   try {
     const u = new URL(s);
     if (u.protocol === "http:" || u.protocol === "https:") return s;
   } catch {}
-  // Allow relative URLs starting with /
   if (/^\/[a-zA-Z0-9_\-./]+$/.test(s)) return s;
   return "";
 }

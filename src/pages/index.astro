@@ -574,12 +574,12 @@ import ChatBot from "../components/ChatBot.astro";
             </div>
           `;
           if (total > 1) {
-            document.getElementById("sp-prev")?.addEventListener("click", () => {
+            container.querySelector("#sp-prev")?.addEventListener("click", () => {
               if (currentIndex > 0) { currentIndex--; renderSpeaker(currentIndex); }
-            });
-            document.getElementById("sp-next")?.addEventListener("click", () => {
+            }, { once: true });
+            container.querySelector("#sp-next")?.addEventListener("click", () => {
               if (currentIndex < total - 1) { currentIndex++; renderSpeaker(currentIndex); }
-            });
+            }, { once: true });
           }
         }
 
@@ -755,10 +755,7 @@ import ChatBot from "../components/ChatBot.astro";
     });
 
     document.addEventListener("DOMContentLoaded", () => {
-      loadSettings();
-      loadSpeakers();
-      loadAltarServers();
-      loadSponsors();
+      Promise.all([loadSettings(), loadSpeakers(), loadAltarServers(), loadSponsors()]).catch(console.warn);
     });
   </script>
 </PublicLayout>

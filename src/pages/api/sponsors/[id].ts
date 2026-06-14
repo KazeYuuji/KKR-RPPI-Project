@@ -58,6 +58,10 @@ export const DELETE: APIRoute = async ({ params, request }) => {
     if (!admin) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { "Content-Type": "application/json" } });
     if (!isValidOrigin(request)) return new Response(JSON.stringify({ error: "Forbidden" }), { status: 403, headers: { "Content-Type": "application/json" } });
 
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || request.headers.get("cf-connecting-ip") || "unknown";
+    const rl = checkRateLimit("sponsor-delete:" + ip, 20, 60000);
+    if (!rl.allowed) return new Response(JSON.stringify({ error: "Terlalu banyak permintaan" }), { status: 429, headers: { "Content-Type": "application/json" } });
+
     const existing = await minioGet(`sponsors/${id}.json`);
     if (!existing) {
       return new Response(JSON.stringify({ error: "Sponsor tidak ditemukan" }), { status: 404, headers: { "Content-Type": "application/json" } });

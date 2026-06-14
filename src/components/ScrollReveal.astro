@@ -40,4 +40,8 @@ const { class: className, delay = 0 } = Astro.props;
     opacity: 1;
     transform: translateY(0);
   }
+  @media (prefers-reduced-motion) {
+    .reveal { opacity: 1; transform: translateY(0); }
+  }
+  .no-js .reveal { opacity: 1; transform: translateY(0); }
 </style>

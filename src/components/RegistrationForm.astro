@@ -122,7 +122,6 @@ export interface TicketType {
       return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
     }
 
-    let lastTicketId = "";
     let deadlinePassed = false;
 
     async function loadTickets() {
@@ -181,10 +180,6 @@ export interface TicketType {
 
     select.addEventListener("change", validateSubmit);
 
-    function genId() {
-      return "KR-" + Date.now().toString(36).toUpperCase() + Math.random().toString(36).substring(2, 5).toUpperCase();
-    }
-
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
       if (deadlinePassed) {
@@ -201,15 +196,12 @@ export interface TicketType {
       }
 
       const data = new FormData(form);
-      const id = genId();
       const ticketType = data.get("ticketType")?.toString() || "general";
       const payload = {
-        id,
         name: data.get("name")?.toString().trim() || "-",
         email: data.get("email")?.toString().trim() || "",
         whatsapp: data.get("whatsapp")?.toString().trim() || "",
         ticket: ticketType,
-        checked_in: 0,
       };
 
       btn.disabled = true;
@@ -223,30 +215,33 @@ export interface TicketType {
         });
         const result = await res.json();
         if (res.ok) {
-          lastTicketId = id;
-          pdfBtn.href = "/api/ticket-pdf/" + id;
-          pdfBtn.onclick = async function(e) {
-            e.preventDefault();
-            const btn = this;
-            const orig = btn.innerHTML;
-            btn.innerHTML = '<span class="flex items-center gap-2"><svg class="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Mengunduh...</span>';
-            try {
-              const r = await fetch("/api/ticket-pdf/" + id);
-              if (!r.ok) { alert("Gagal mengunduh: " + (await r.text())); btn.innerHTML = orig; return; }
-              const blob = await r.blob();
-              const url = URL.createObjectURL(blob);
-              const a = document.createElement("a");
-              a.href = url;
-              a.download = "tiket-" + id + ".pdf";
-              document.body.appendChild(a);
-              a.click();
-              document.body.removeChild(a);
-              setTimeout(function(){ URL.revokeObjectURL(url); }, 10000);
-            } catch(e2) {
-              alert("Terjadi kesalahan. Silakan coba lagi.");
-            }
-            btn.innerHTML = orig;
-          };
+          const serverId = result.registrant?.id;
+          if (!serverId) { alert("Gagal mendapatkan ID tiket"); btn.innerHTML = '<span class="relative z-10 flex items-center justify-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>Konfirmasi Pendaftaran</span>'; return; }
+          pdfBtn.href = "/api/ticket-pdf/" + serverId;
+          (function(dlId) {
+            pdfBtn.onclick = async function(e) {
+              e.preventDefault();
+              const btn = this;
+              const orig = btn.innerHTML;
+              btn.innerHTML = '<span class="flex items-center gap-2"><svg class="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Mengunduh...</span>';
+              try {
+                const r = await fetch("/api/ticket-pdf/" + dlId);
+                if (!r.ok) { alert("Gagal mengunduh: " + (await r.text())); btn.innerHTML = orig; return; }
+                const blob = await r.blob();
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = "tiket-" + dlId + ".pdf";
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                setTimeout(function(){ URL.revokeObjectURL(url); }, 10000);
+              } catch(e2) {
+                alert("Terjadi kesalahan. Silakan coba lagi.");
+              }
+              btn.innerHTML = orig;
+            };
+          })(serverId);
           modal.classList.remove("pointer-events-none", "opacity-0");
           form.reset();
           loadTickets();

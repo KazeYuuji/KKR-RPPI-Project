@@ -10,6 +10,14 @@ if (!JWT_SECRET) {
 const JWT_EXPIRES = "24h";
 const BCRYPT_ROUNDS = 12;
 
+function isDev(): boolean {
+  try { return import.meta.env.DEV; } catch { return false; }
+}
+
+export function adminCookieName(): string {
+  return isDev() ? "token" : "__Secure-token";
+}
+
 export interface AdminPayload {
   id: string;
   username: string;
@@ -54,12 +62,12 @@ export async function authenticateAdmin(username: string, password: string): Pro
 
 export function getAdminFromRequest(request: Request): AdminPayload | null {
   const cookie = request.headers.get("cookie") || "";
-  const match = cookie.match(/(?:^|;\s*)__Secure-token=([^;]+)/);
+  const cookieName = adminCookieName();
+  const match = cookie.match(new RegExp("(?:^|;\\s*)" + cookieName + "=([^;]+)"));
   if (match) {
     const payload = verifyToken(match[1]);
     if (payload) return payload;
   }
-  // Fallback: Authorization Bearer header
   const auth = request.headers.get("authorization") || "";
   const bearer = auth.match(/^Bearer\s+(.+)$/i);
   if (bearer) return verifyToken(bearer[1]);

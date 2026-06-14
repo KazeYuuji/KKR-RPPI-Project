@@ -1,5 +1,5 @@
 import type { APIRoute } from "astro";
-import { getAdminFromRequest, verifyPassword, hashPassword, signToken } from "../../../lib/auth";
+import { getAdminFromRequest, verifyPassword, hashPassword, signToken, adminCookieName } from "../../../lib/auth";
 import { minioGet, minioSet, minioDelete } from "../../../lib/minio-db";
 import { checkRateLimit } from "../../../lib/security";
 
@@ -87,9 +87,11 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
       email: updated.email || "",
     });
 
+    const cookieName = adminCookieName();
+    const secureFlag = cookieName.startsWith("__Secure-") ? "; Secure" : "";
     const headers = new Headers({ "Content-Type": "application/json" });
     headers.append("Set-Cookie",
-      `__Secure-token=${newToken}; HttpOnly; Secure; Path=/; SameSite=Strict; Max-Age=86400`);
+      `${cookieName}=${newToken}; HttpOnly${secureFlag}; Path=/; SameSite=Strict; Max-Age=86400`);
 
     const messages: string[] = [];
     if (new_username && new_username !== admin.username) messages.push("Username berhasil diubah");

@@ -46,8 +46,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
   // ---- Body size limit (exclude file uploads) ----
   if (["POST", "PUT", "PATCH"].includes(method) && !url.startsWith("/api/upload")) {
-    const contentLength = parseInt(context.request.headers.get("content-length") || "0", 10);
-    if (contentLength > MAX_BODY_SIZE) {
+    const rawLen = context.request.headers.get("content-length") || "0";
+    const contentLength = parseInt(rawLen, 10);
+    if (isNaN(contentLength) || contentLength > MAX_BODY_SIZE) {
       return withSecurityHeaders(new Response(JSON.stringify({ error: "Request body too large" }), {
         status: 413, headers: { "Content-Type": "application/json" },
       }));
@@ -63,8 +64,8 @@ export const onRequest = defineMiddleware(async (context, next) => {
     }
   }
 
-  // ---- Public GET endpoints ----
-  if ((url.startsWith("/api/tickets") || url.startsWith("/api/ticket-pdf") || url.startsWith("/api/settings") || url.startsWith("/api/speakers") || url.startsWith("/api/sponsors") || url.startsWith("/api/altar-servers") || url.startsWith("/api/uploads") || url.startsWith("/api/geocode")) && method === "GET") {
+  // ---- Public GET endpoints (no auth required) ----
+  if ((url.startsWith("/api/tickets") || url.startsWith("/api/settings") || url.startsWith("/api/speakers") || url.startsWith("/api/sponsors") || url.startsWith("/api/altar-servers") || url.startsWith("/api/uploads") || url.startsWith("/api/geocode")) && method === "GET") {
     return next();
   }
 
@@ -92,6 +93,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   // ---- Auth check for protected routes ----
   const isProtected = protectedPaths.some((p) => url.startsWith(p)) ||
     url.startsWith("/api/registrants") ||
+    url.startsWith("/api/ticket-pdf") ||
     (url.startsWith("/api/tickets") && method !== "GET") ||
     (url.startsWith("/api/settings") && method !== "GET") ||
     (url.startsWith("/api/speakers") && method !== "GET") ||

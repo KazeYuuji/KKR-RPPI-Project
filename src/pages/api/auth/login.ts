@@ -1,5 +1,5 @@
 import type { APIRoute } from "astro";
-import { authenticateAdmin, signToken } from "../../../lib/auth";
+import { authenticateAdmin, signToken, adminCookieName } from "../../../lib/auth";
 import { checkRateLimit } from "../../../lib/security";
 
 export const POST: APIRoute = async ({ request, clientAddress }) => {
@@ -52,9 +52,11 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     }
 
     const token = signToken(admin);
+    const cookieName = adminCookieName();
+    const secureFlag = cookieName.startsWith("__Secure-") ? "; Secure" : "";
     const headers = new Headers({ "Content-Type": "application/json" });
     headers.append("Set-Cookie",
-      `__Secure-token=${token}; HttpOnly; Secure; Path=/; SameSite=Strict; Max-Age=86400`);
+      `${cookieName}=${token}; HttpOnly${secureFlag}; Path=/; SameSite=Strict; Max-Age=86400`);
 
     return new Response(JSON.stringify({ success: true, admin }), { status: 200, headers });
   } catch (err) {
