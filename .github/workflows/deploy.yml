@@ -1,0 +1,52 @@
+name: KKR RPPI Project Deploy (Direct Server Build)
+
+on:
+  push:
+    branches: [ "production" ]
+
+concurrency:
+  group: deploy-kkr-rppi
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 1. Copy seluruh source code ke server VPS menggunakan SSH Password
+      - name: Copy files to Server via SCP
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          port: ${{ secrets.SERVER_PORT_SSH || 22 }}
+          source: "."
+          target: "/www/wwwroot/kkr-rppi-project"
+          rm: false # Set true jika ingin menghapus folder target sebelum copy agar bersih
+
+      # 2. Hubungkan via SSH Password dan lakukan build & run container langsung di server
+      - name: Build and Deploy on Server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          port: ${{ secrets.SERVER_PORT_SSH || 22 }}
+          script: |
+            set -e
+            cd /www/wwwroot/kkr-rppi-project
+            
+            # Pastikan file .env ada (minimal kosong) agar docker compose tidak error
+            touch .env
+            
+            # Build image baru langsung di server dan jalankan
+            docker compose up --build -d
+
+            # Bersihkan sisa build cache dan image lama yang tidak terpakai
+            docker image prune -f
+            docker builder prune -f
+            
+            docker compose ps
