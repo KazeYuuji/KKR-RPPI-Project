@@ -1,7 +1,7 @@
 import type { APIRoute } from "astro";
 import { minioListAll, minioSet, minioGet, minioDelete, newId } from "../../lib/minio-db";
 import { getAdminFromRequest } from "../../lib/auth";
-import { sanitizeId, isValidOrigin, checkRateLimit } from "../../lib/security";
+import { sanitizeId, sanitizeString, isValidOrigin, checkRateLimit } from "../../lib/security";
 
 export const GET: APIRoute = async () => {
   try {
@@ -39,7 +39,7 @@ export const POST: APIRoute = async ({ request }) => {
     if (body.action === "create") {
       const id = "ticket-" + newId();
       const remaining = typeof body.remaining === "number" ? Math.max(0, Math.floor(body.remaining)) : 0;
-      await minioSet(`tickets/${id}.json`, { id, name: String(body.name || "Tiket Baru").slice(0, 200), remaining });
+      await minioSet(`tickets/${id}.json`, { id, name: sanitizeString(body.name, 200) || "Tiket Baru", remaining });
       return new Response(JSON.stringify({ id, success: true }), {
         status: 200, headers: { "Content-Type": "application/json" },
       });
@@ -49,7 +49,7 @@ export const POST: APIRoute = async ({ request }) => {
       const id = sanitizeId(t.id);
       if (id) {
         const remaining = typeof t.remaining === "number" ? Math.max(0, Math.floor(t.remaining)) : 0;
-        await minioSet(`tickets/${id}.json`, { id, name: String(t.name || "").slice(0, 200), remaining });
+        await minioSet(`tickets/${id}.json`, { id, name: sanitizeString(t.name, 200), remaining });
       }
     }
     const updated = await minioListAll<Record<string, any>>("tickets/");

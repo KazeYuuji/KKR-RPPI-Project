@@ -94,7 +94,7 @@ const faqs = [
     div.appendChild(avatar);
     div.appendChild(msg);
     body.appendChild(div);
-    body.scrollTop = body.scrollHeight;
+    msg.scrollIntoView({ block: "end", behavior: "smooth" });
   }
 
   function addUserMessage(text) {
@@ -110,7 +110,7 @@ const faqs = [
     div.appendChild(avatar);
     div.appendChild(msg);
     body.appendChild(div);
-    body.scrollTop = body.scrollHeight;
+    msg.scrollIntoView({ block: "end", behavior: "smooth" });
   }
 
   function addTypingIndicator() {

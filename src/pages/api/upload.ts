@@ -27,6 +27,11 @@ export const POST: APIRoute = async ({ request }) => {
     const rl = checkRateLimit("upload-post:" + (admin?.id || "unknown"), 20, 60000);
     if (!rl.allowed) return new Response(JSON.stringify({ error: "Terlalu banyak permintaan" }), { status: 429, headers: { "Content-Type": "application/json" } });
 
+    const contentLength = parseInt(request.headers.get("content-length") || "0", 10);
+    if (!isNaN(contentLength) && contentLength > MAX_UPLOAD_SIZE + 1024) {
+      return new Response(JSON.stringify({ error: "File terlalu besar. Maksimal 5MB" }), { status: 413, headers: { "Content-Type": "application/json" } });
+    }
+
     const formData = await request.formData();
     const file = formData.get("file") as File | null;
     if (!file) {

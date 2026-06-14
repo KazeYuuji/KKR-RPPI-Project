@@ -33,9 +33,12 @@ const canonical = new URL(Astro.url.pathname, siteUrl).href;
     <link rel="icon" type="image/png" href="/logo-header-small.png" />
     <link rel="apple-touch-icon" href="/logo-header.png" />
 
-    <!-- Preload hero assets -->
-    <link rel="preload" as="image" href="/logo.png" />
-    <link rel="preload" as="image" href="/logo-header-small.png" />
+    <!-- Preload LCP image -->
+    <link rel="preload" as="image" href="/images/hero-bg.jpg" fetchpriority="high" />
+    <!-- DNS prefetch for external APIs -->
+    <link rel="preconnect" href="https://generativelanguage.googleapis.com" />
+    <link rel="preconnect" href="https://nominatim.openstreetmap.org" />
+    <link rel="dns-prefetch" href="https://cdn.kediritechnopark.com" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
