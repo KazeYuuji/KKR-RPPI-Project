@@ -1,4 +1,4 @@
-name: KKR RPPI Project Deploy (Direct Server Build)
+name: KKR RPPI Project Deploy (Build on GitHub & Load on Server)
 
 on:
   push:
@@ -9,13 +9,25 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # 1. Copy seluruh source code ke server VPS menggunakan SSH Password
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # 1. Build image Docker di runner GitHub
+      - name: Build Docker Image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          tags: kkr-rppi-project:latest
+          outputs: type=docker,dest=kkr-rppi-project.tar
+
+      # 2. Transfer file tar & docker-compose ke server VPS
       - name: Copy files to Server via SCP
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -23,12 +35,12 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           password: ${{ secrets.SERVER_PASSWORD }}
           port: ${{ secrets.SERVER_PORT_SSH || 22 }}
-          source: "."
+          source: "kkr-rppi-project.tar,docker-compose.yml"
           target: "/www/wwwroot/kkr-rppi-project"
-          rm: false # Set true jika ingin menghapus folder target sebelum copy agar bersih
+          rm: false
 
-      # 2. Hubungkan via SSH Password dan lakukan build & run container langsung di server
-      - name: Build and Deploy on Server
+      # 3. Load image dan jalankan container di server VPS
+      - name: Load Image and Run Container
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SERVER_IP }}
@@ -42,11 +54,15 @@ jobs:
             # Pastikan file .env ada (minimal kosong) agar docker compose tidak error
             touch .env
             
-            # Build image baru langsung di server dan jalankan
-            docker compose up --build -d
-
-            # Bersihkan sisa build cache dan image lama yang tidak terpakai
-            docker image prune -f
-            docker builder prune -f
+            # Load image dari file tar yang ditransfer
+            docker load -i kkr-rppi-project.tar
             
+            # Jalankan container menggunakan compose
+            docker compose up -d
+            
+            # Bersihkan file tar untuk menghemat ruang disk server
+            rm -f kkr-rppi-project.tar
+            
+            # Bersihkan image lama yang tak terpakai
+            docker image prune -f
             docker compose ps
