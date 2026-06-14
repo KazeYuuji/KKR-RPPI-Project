@@ -4,7 +4,7 @@ import node from "@astrojs/node";
 import sitemap from "@astrojs/sitemap";
 
 export default defineConfig({
-  site: "https://kkrrppi.vercel.app",
+  site: "https://kkrppi.kediritechnopark.com",
   output: "server",
   adapter: node({
     mode: "standalone",

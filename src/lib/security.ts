@@ -74,6 +74,8 @@ export function isValidOrigin(request: Request): boolean {
     "https://www.kkrrppi.vercel.app",
     "https://kkr-rppi.vercel.app",
     "https://www.kkr-rppi.vercel.app",
+    "https://kkrppi.kediritechnopark.com",
+    "https://www.kkrppi.kediritechnopark.com",
   ];
 
   if (isDev()) {
