@@ -119,7 +119,7 @@ import ChatBot from "../components/ChatBot.astro";
             <span id="section-label-speakers" class="text-sm font-semibold uppercase tracking-[0.25em] text-white">Pembicara</span>
             <span class="inline-block w-8 h-px bg-kkr-red"></span>
           </div>
-          <h2 id="section-heading-speakers" class="text-3xl sm:text-4xl font-semibold text-white">Bersama Pembicara Rohani</h2>
+          <h2 id="section-heading-speakers" class="text-3xl sm:text-4xl font-semibold text-white">menghadirkan...</h2>
           <div class="w-12 h-0.5 bg-gradient-to-r from-kkr-red to-kkr-gold mx-auto rounded-full"></div>
         </div>
 
@@ -163,11 +163,11 @@ import ChatBot from "../components/ChatBot.astro";
         <div class="text-center max-w-2xl mx-auto space-y-4 mb-12">
           <div class="flex items-center justify-center gap-3">
             <span class="inline-block w-8 h-px bg-kkr-red"></span>
-            <span id="section-label-sponsors" class="text-sm font-semibold uppercase tracking-[0.25em] text-white">Sponsor & Mitra</span>
+            <span id="section-label-sponsors" class="text-sm font-semibold uppercase tracking-[0.25em] text-white">Sponsor</span>
             <span class="inline-block w-8 h-px bg-kkr-red"></span>
           </div>
-          <h2 id="section-heading-sponsors" class="text-3xl sm:text-4xl font-semibold text-white">Didukung oleh</h2>
-          <p id="section-desc-sponsors" class="section-text-muted max-w-xl mx-auto">Para sponsor dan mitra yang mendukung terselenggaranya KKR RPPI 2026</p>
+          <h2 id="section-heading-sponsors" class="text-3xl sm:text-4xl font-semibold text-white">SPONSOR BY</h2>
+          <p id="section-desc-sponsors" class="section-text-muted max-w-xl mx-auto">seluruh pihak yang telah dengan penuh kasih mendukung terselenggaranya KKR RPPI 2026</p>
           <div class="w-12 h-0.5 bg-gradient-to-r from-kkr-red to-kkr-gold mx-auto rounded-full"></div>
         </div>
 
@@ -535,6 +535,8 @@ import ChatBot from "../components/ChatBot.astro";
         function renderSpeaker(index) {
           const s = list[index];
           const total = list.length;
+          const heading = safe("section-heading-speakers");
+          if (heading) heading.textContent = "menghadirkan " + (s.title ? s.title + " " : "") + (s.name || "");
           container.innerHTML = `
             <div class="glass-card rounded-3xl p-8 sm:p-10 md:p-12">
               <div class="grid gap-8 sm:grid-cols-[1fr_1.8fr] sm:items-center">
