@@ -6,7 +6,7 @@ services:
     container_name: kkrppi
     restart: always
     ports:
-      - "4321:4321"
+      - "5476:4321"
     env_file:
       - .env
     # Optional: If you need to mount any local folder (e.g. if the app downloads/backups any local SQLite files)
