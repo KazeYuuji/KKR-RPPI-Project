@@ -48,28 +48,13 @@ body:not(.admin) {
   background: none;
 }
 
-#home::after {
-  content: "";
+.hero-bg-container {
   position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -100px;
-  height: 1200px;
-  pointer-events: none;
-  background: linear-gradient(
-    180deg,
-    rgba(29,26,57,0) 0%,
-    rgba(40,28,65,0.02) 10%,
-    rgba(70,45,85,0.06) 20%,
-    rgba(100,60,100,0.12) 30%,
-    rgba(140,75,110,0.2) 40%,
-    rgba(160,95,120,0.3) 50%,
-    rgba(180,120,130,0.42) 60%,
-    rgba(200,140,135,0.54) 70%,
-    rgba(220,160,140,0.66) 80%,
-    rgba(232,175,145,0.8) 90%,
-    #f0a35e 100%
-  );
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 60%, rgba(0, 0, 0, 0) 100%);
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 60%, rgba(0, 0, 0, 0) 100%);
 }
 
 body.admin {
