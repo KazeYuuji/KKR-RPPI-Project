@@ -182,7 +182,7 @@ const canonical = new URL(Astro.url.pathname, siteUrl).href;
         <div class="mx-auto max-w-7xl mt-3 pt-3 border-t border-white/5 flex flex-wrap items-center justify-center gap-x-6 gap-y-1 text-xs text-white/50">
           <a href="/privacy" class="hover:text-kkr-gold transition-colors">Kebijakan Privasi</a>
           <a href="/terms" class="hover:text-kkr-gold transition-colors">Syarat & Ketentuan</a>
-          <span id="footer-copy">&copy; 2026 KKR RPPI. Hak cipta dilindungi.</span>
+          <span id="footer-copy">&copy; 2026 Kediri Technopark. Hak cipta dilindungi.</span>
         </div>
       </footer>
     </div>
@@ -259,7 +259,7 @@ const canonical = new URL(Astro.url.pathname, siteUrl).href;
           const evName = s.eventName || "KKR RPPI";
           if (credit) credit.textContent = "Panitia " + esc(evName) + (venue ? " " + esc(venue.split(",")[0].trim()) : "");
           const copyEl = document.getElementById("footer-copy");
-          if (copyEl) copyEl.textContent = "\u00a9 " + new Date().getFullYear() + " " + esc(evName) + ". Hak cipta dilindungi.";
+          if (copyEl) copyEl.textContent = "\u00a9 " + new Date().getFullYear() + " Kediri Technopark. Hak cipta dilindungi.";
           let html = `<a href="mailto:${encodeURI(email)}" class="hover:text-kkr-gold transition-colors">Email</a>`;
           html += `<span class="text-white/20">|</span><a href="https://wa.me/${wa.replace(/[^0-9]/g, "")}" target="_blank" class="hover:text-kkr-gold transition-colors">WhatsApp</a>`;
           if (phone) {
