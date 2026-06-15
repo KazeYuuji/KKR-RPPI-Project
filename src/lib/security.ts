@@ -98,6 +98,15 @@ export function isValidOrigin(request: Request): boolean {
   if (referer) {
     if (matchesOrigin(referer)) return true;
   }
+  // Fallback: if neither Origin nor Referer is sent (e.g., direct same-origin requests),
+  // check Host header against the request URL origin
+  const host = request.headers.get("host");
+  if (host) {
+    try {
+      const hostOrigin = `${reqUrl.protocol}//${host.split(":")[0]}`;
+      if (allowedOrigins.some(o => o.startsWith(hostOrigin))) return true;
+    } catch {}
+  }
   return false;
 }
 

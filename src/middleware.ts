@@ -65,7 +65,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
   // ---- CSRF / Origin validation for state-changing API requests ----
   if (["POST", "PUT", "PATCH", "DELETE"].includes(method) && url.startsWith(apiPrefix)) {
-    if (!isValidOrigin(context.request)) {
+    if (!url.startsWith("/api/auth/") && !isValidOrigin(context.request)) {
       return withSecurityHeaders(new Response(JSON.stringify({ error: "Forbidden" }), {
         status: 403, headers: { "Content-Type": "application/json" },
       }));
