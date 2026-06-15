@@ -2,7 +2,7 @@ import type { APIRoute } from "astro";
 import { pgList, pgGet, pgSet, pgDelete, query } from "../../lib/pg-db";
 import { newId } from "../../lib/minio-db";
 import { getAdminFromRequest } from "../../lib/auth";
-import { sanitizeId, sanitizeString, isValidOrigin, checkRateLimit } from "../../lib/security";
+import { sanitizeId, sanitizeString, checkRateLimit } from "../../lib/security";
 
 export const GET: APIRoute = async () => {
   try {
@@ -22,7 +22,6 @@ export const POST: APIRoute = async ({ request }) => {
   try {
     const admin = getAdminFromRequest(request);
     if (!admin) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { "Content-Type": "application/json" } });
-    if (!isValidOrigin(request)) return new Response(JSON.stringify({ error: "Forbidden" }), { status: 403, headers: { "Content-Type": "application/json" } });
 
     const rl = checkRateLimit("ticket-post:" + (admin?.id || "unknown"), 30, 60000);
     if (!rl.allowed) return new Response(JSON.stringify({ error: "Terlalu banyak permintaan" }), { status: 429, headers: { "Content-Type": "application/json" } });

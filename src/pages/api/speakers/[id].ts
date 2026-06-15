@@ -1,7 +1,7 @@
 import type { APIRoute } from "astro";
 import { pgGet, pgSet, pgDelete } from "../../../lib/pg-db";
 import { getAdminFromRequest } from "../../../lib/auth";
-import { isValidOrigin, sanitizeString, sanitizeUrl, checkRateLimit } from "../../../lib/security";
+import { sanitizeString, sanitizeUrl, checkRateLimit } from "../../../lib/security";
 
 export const prerender = false;
 
@@ -24,7 +24,6 @@ export const PUT: APIRoute = async ({ params, request }) => {
   try {
     const admin = getAdminFromRequest(request);
     if (!admin) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { "Content-Type": "application/json" } });
-    if (!isValidOrigin(request)) return new Response(JSON.stringify({ error: "Forbidden" }), { status: 403, headers: { "Content-Type": "application/json" } });
 
     const rl = checkRateLimit("speaker-put:" + (admin?.id || "unknown"), 30, 60000);
     if (!rl.allowed) return new Response(JSON.stringify({ error: "Terlalu banyak permintaan" }), { status: 429, headers: { "Content-Type": "application/json" } });
@@ -59,7 +58,6 @@ export const DELETE: APIRoute = async ({ params, request }) => {
   try {
     const admin = getAdminFromRequest(request);
     if (!admin) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { "Content-Type": "application/json" } });
-    if (!isValidOrigin(request)) return new Response(JSON.stringify({ error: "Forbidden" }), { status: 403, headers: { "Content-Type": "application/json" } });
 
     const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || request.headers.get("cf-connecting-ip") || "unknown";
     const rl = checkRateLimit("speaker-delete:" + ip, 20, 60000);

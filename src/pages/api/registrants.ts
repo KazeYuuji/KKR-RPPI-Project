@@ -52,7 +52,7 @@ export const POST: APIRoute = async ({ request }) => {
       if (!id) return new Response(JSON.stringify({ error: "ID pendaftar tidak valid" }), { status: 400, headers: { "Content-Type": "application/json" } });
       const admin = getAdminFromRequest(request);
       if (!admin) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { "Content-Type": "application/json" } });
-      if (!isValidOrigin(request)) return new Response(JSON.stringify({ error: "Forbidden" }), { status: 403, headers: { "Content-Type": "application/json" } });
+
       const existing = await pgGet<Record<string, any>>("registrants", id);
       if (!existing) return new Response(JSON.stringify({ error: "Pendaftar tidak ditemukan" }), { status: 404, headers: { "Content-Type": "application/json" } });
       if (existing?.checked_in) return new Response(JSON.stringify({ error: "Tiket ini sudah check-in sebelumnya" }), { status: 400, headers: { "Content-Type": "application/json" } });
