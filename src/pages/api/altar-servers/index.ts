@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
-import { minioListAll, minioSet, newId } from "../../../lib/minio-db";
+import { pgList, pgSet } from "../../../lib/pg-db";
+import { newId } from "../../../lib/minio-db";
 import { getAdminFromRequest } from "../../../lib/auth";
 import { isValidOrigin, sanitizeString, sanitizeUrl, checkRateLimit } from "../../../lib/security";
 
@@ -7,8 +8,7 @@ export const prerender = false;
 
 export const GET: APIRoute = async () => {
   try {
-    const items = await minioListAll<Record<string, any>>("altar_servers/");
-    items.sort((a, b) => (b.is_active ? 1 : 0) - (a.is_active ? 1 : 0) || (b.created_at || "").localeCompare(a.created_at || ""));
+    const items = await pgList<Record<string, any>>("altar_servers", "is_active DESC, created_at DESC");
     return new Response(JSON.stringify({ altarServers: items }), { status: 200, headers: { "Content-Type": "application/json" } });
   } catch (err) {
     console.error("GET altar-servers error:", err);
@@ -33,7 +33,7 @@ export const POST: APIRoute = async ({ request }) => {
     const id = newId();
     const now = new Date().toISOString();
     const altarServer = { id, name: sanitizeString(name, 200), title: sanitizeString(title, 200), organization: sanitizeString(organization, 200), description: sanitizeString(description, 2000), photo_url: sanitizeUrl(photo_url, 500), tags: sanitizeString(tags, 500), is_active: 1, created_at: now, updated_at: now };
-    await minioSet(`altar_servers/${id}.json`, altarServer);
+    await pgSet("altar_servers", altarServer);
     return new Response(JSON.stringify({ altarServer }), { status: 201, headers: { "Content-Type": "application/json" } });
   } catch (err) {
     console.error("POST altar-server error:", err);

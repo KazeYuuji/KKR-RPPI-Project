@@ -1,5 +1,5 @@
 import type { APIRoute } from "astro";
-import { minioGet, minioListAll } from "../../../lib/minio-db";
+import { pgGet, pgGetSettings } from "../../../lib/pg-db";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 import QRCode from "qrcode";
 import { isValidId } from "../../../lib/security";
@@ -13,17 +13,15 @@ export const GET: APIRoute = async ({ params }) => {
       return new Response("ID tiket tidak valid", { status: 400, headers: { "Content-Type": "text/plain" } });
     }
 
-    const registrant = await minioGet<Record<string, any>>(`registrants/${id}.json`);
+    const registrant = await pgGet<Record<string, any>>("registrants", id);
     if (!registrant) {
       return new Response("Pendaftar tidak ditemukan", { status: 404, headers: { "Content-Type": "text/plain" } });
     }
 
-    const ticketData = await minioGet<Record<string, any>>(`tickets/${registrant.ticket}.json`);
+    const ticketData = await pgGet<Record<string, any>>("tickets", registrant.ticket);
     const ticketName = ticketData?.name || "GRATIS";
 
-    const settingsList = await minioListAll<Record<string, string>>("settings/");
-    const s: Record<string, string> = {};
-    for (const x of settingsList) if (x.key) s[x.key] = x.value;
+    const s = await pgGetSettings();
 
     const venue = s.locVenue || "GPI IMANUEL Kediri";
     const address = s.locAddress || "Jl. Himalaya No.06, Kediri";

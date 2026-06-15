@@ -1,9 +1,8 @@
 import type { APIRoute } from "astro";
-import { minioListAll, minioGet, minioSet, newId } from "../../lib/minio-db";
+import { pgList, pgGet, pgSet, queryOne, pgGetSettings } from "../../lib/pg-db";
+import { newId } from "../../lib/minio-db";
 import { getAdminFromRequest } from "../../lib/auth";
 import { sanitizeString, sanitizeEmail, sanitizePhone, sanitizeId, isValidId, isValidOrigin, checkRateLimit } from "../../lib/security";
-
-const REG_PREFIX = "registrants/";
 
 function sanitizeTicketId(val: unknown): string {
   if (typeof val !== "string") return "general";
@@ -11,18 +10,12 @@ function sanitizeTicketId(val: unknown): string {
 }
 
 // Retry ticket decrement to mitigate race condition
-async function decrementTicket(ticketType: string, maxRetries = 3): Promise<boolean> {
-  for (let i = 0; i < maxRetries; i++) {
-    const ticket = await minioGet<Record<string, any>>(`tickets/${ticketType}.json`);
-    if (!ticket) return false;
-    const remaining = ticket.remaining || 0;
-    if (remaining <= 0) return false;
-    await minioSet(`tickets/${ticketType}.json`, { ...ticket, remaining: remaining - 1 });
-    // Verify the write took effect
-    const verify = await minioGet<Record<string, any>>(`tickets/${ticketType}.json`);
-    if (verify && verify.remaining === remaining - 1) return true;
-  }
-  return false;
+async function decrementTicket(ticketType: string): Promise<boolean> {
+  const result = await queryOne<{ remaining: number }>(
+    "UPDATE tickets SET remaining = remaining - 1 WHERE id = $1 AND remaining > 0 RETURNING remaining",
+    [ticketType]
+  );
+  return result !== null;
 }
 
 export const GET: APIRoute = async ({ request }) => {
@@ -30,12 +23,7 @@ export const GET: APIRoute = async ({ request }) => {
     const admin = getAdminFromRequest(request);
     if (!admin) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { "Content-Type": "application/json" } });
 
-    const registrants = await minioListAll<Record<string, any>>(REG_PREFIX);
-    registrants.sort((a, b) => {
-      const da = a.created_at || "";
-      const db = b.created_at || "";
-      return da > db ? -1 : da < db ? 1 : 0;
-    });
+    const registrants = await pgList<Record<string, any>>("registrants", "created_at DESC");
     return new Response(JSON.stringify({ registrants }), {
       status: 200, headers: { "Content-Type": "application/json" },
     });
@@ -65,10 +53,10 @@ export const POST: APIRoute = async ({ request }) => {
       const admin = getAdminFromRequest(request);
       if (!admin) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { "Content-Type": "application/json" } });
       if (!isValidOrigin(request)) return new Response(JSON.stringify({ error: "Forbidden" }), { status: 403, headers: { "Content-Type": "application/json" } });
-      const existing = await minioGet<Record<string, any>>(`${REG_PREFIX}${id}.json`);
+      const existing = await pgGet<Record<string, any>>("registrants", id);
       if (!existing) return new Response(JSON.stringify({ error: "Pendaftar tidak ditemukan" }), { status: 404, headers: { "Content-Type": "application/json" } });
       if (existing?.checked_in) return new Response(JSON.stringify({ error: "Tiket ini sudah check-in sebelumnya" }), { status: 400, headers: { "Content-Type": "application/json" } });
-      await minioSet(`${REG_PREFIX}${id}.json`, { ...existing, checked_in: 1, id });
+      await pgSet("registrants", { ...existing, checked_in: 1, id });
       return new Response(JSON.stringify({ registrant: { ...existing, checked_in: 1 } }), { status: 200, headers: { "Content-Type": "application/json" } });
     }
 
@@ -89,19 +77,19 @@ export const POST: APIRoute = async ({ request }) => {
       updated_at: new Date().toISOString(),
     };
 
-    const settings = await minioListAll<Record<string, any>>("settings/");
-    const deadlineSetting = settings.find(s => s.key === "regDeadlineISO");
-    if (deadlineSetting?.value) {
-      let deadlineStr = deadlineSetting.value;
-      if (!deadlineStr.endsWith('Z') && !/[+-]\d{2}:\d{2}$/.test(deadlineStr)) deadlineStr += '+07:00';
-      if (Date.now() > new Date(deadlineStr).getTime()) {
+    const settings = await pgGetSettings();
+    const deadlineStr = settings.regDeadlineISO;
+    if (deadlineStr) {
+      let ds = deadlineStr;
+      if (!ds.endsWith('Z') && !/[+-]\d{2}:\d{2}$/.test(ds)) ds += '+07:00';
+      if (Date.now() > new Date(ds).getTime()) {
         return new Response(JSON.stringify({ error: "Maaf, batas waktu pendaftaran telah berakhir" }), { status: 400, headers: { "Content-Type": "application/json" } });
       }
     }
 
-    // Ticket availability check + atomic decrement with retry
+    // Ticket availability check + atomic decrement
     const ticketType = sanitizeTicketId(ticket);
-    const ticketData = await minioGet<Record<string, any>>(`tickets/${ticketType}.json`);
+    const ticketData = await pgGet<Record<string, any>>("tickets", ticketType);
     if (!ticketData) {
       return new Response(JSON.stringify({ error: "Jenis tiket tidak ditemukan" }), { status: 400, headers: { "Content-Type": "application/json" } });
     }
@@ -109,14 +97,14 @@ export const POST: APIRoute = async ({ request }) => {
       return new Response(JSON.stringify({ error: "Maaf, tiket sudah habis!" }), { status: 400, headers: { "Content-Type": "application/json" } });
     }
 
-    // Decrement ticket with retry
+    // Decrement ticket (atomic)
     const decremented = await decrementTicket(ticketType);
     if (!decremented) {
       return new Response(JSON.stringify({ error: "Maaf, tiket sudah habis saat diproses" }), { status: 400, headers: { "Content-Type": "application/json" } });
     }
 
     // Write registrant
-    await minioSet(`${REG_PREFIX}${sanitizedId}.json`, registrantData);
+    await pgSet("registrants", registrantData);
 
     return new Response(JSON.stringify({ registrant: registrantData }), { status: 200, headers: { "Content-Type": "application/json" } });
   } catch (err) {

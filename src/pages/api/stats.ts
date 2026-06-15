@@ -1,5 +1,5 @@
 import type { APIRoute } from "astro";
-import { minioListAll } from "../../lib/minio-db";
+import { query, queryOne } from "../../lib/pg-db";
 
 let statsCache: { data: string; ttl: number } | null = null;
 
@@ -10,13 +10,15 @@ export const GET: APIRoute = async () => {
         status: 200, headers: { "Content-Type": "application/json", "Cache-Control": "private, max-age=30" },
       });
     }
-    const [registrants, sponsors] = await Promise.all([
-      minioListAll<Record<string, any>>("registrants/"),
-      minioListAll("sponsors/"),
+    const [totalReg, checkedInResult, sponsorCountResult] = await Promise.all([
+      queryOne<{ count: string }>("SELECT COUNT(*) as count FROM registrants"),
+      queryOne<{ count: string }>("SELECT COUNT(*) as count FROM registrants WHERE checked_in = 1"),
+      queryOne<{ count: string }>("SELECT COUNT(*) as count FROM sponsors"),
     ]);
-    const totalRegistrants = registrants.length;
-    const checkedIn = registrants.filter(r => r.checked_in).length;
-    const data = JSON.stringify({ totalRegistrants, checkedIn, sponsorCount: sponsors.length });
+    const totalRegistrants = parseInt(totalReg?.count || "0", 10);
+    const checkedIn = parseInt(checkedInResult?.count || "0", 10);
+    const sponsorCount = parseInt(sponsorCountResult?.count || "0", 10);
+    const data = JSON.stringify({ totalRegistrants, checkedIn, sponsorCount });
     statsCache = { data, ttl: Date.now() + 30_000 };
     return new Response(data, {
       status: 200, headers: { "Content-Type": "application/json", "Cache-Control": "private, max-age=30" },

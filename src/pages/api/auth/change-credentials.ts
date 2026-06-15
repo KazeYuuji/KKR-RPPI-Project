@@ -1,6 +1,6 @@
 import type { APIRoute } from "astro";
 import { getAdminFromRequest, verifyPassword, hashPassword, signToken, adminCookieName } from "../../../lib/auth";
-import { minioGet, minioSet, minioDelete } from "../../../lib/minio-db";
+import { pgGet, pgSet, pgDelete, queryOne } from "../../../lib/pg-db";
 import { checkRateLimit } from "../../../lib/security";
 
 export const POST: APIRoute = async ({ request, clientAddress }) => {
@@ -31,7 +31,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
       });
     }
 
-    const record = await minioGet<Record<string, any>>(`admins/${admin.username}.json`);
+    const record = await queryOne<Record<string, any>>("SELECT * FROM admins WHERE username = $1", [admin.username]);
     if (!record || !(await verifyPassword(current_password, record.password))) {
       return new Response(JSON.stringify({ error: "Password saat ini salah" }), {
         status: 403, headers: { "Content-Type": "application/json" },
@@ -51,7 +51,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
           status: 400, headers: { "Content-Type": "application/json" },
         });
       }
-      const existing = await minioGet(`admins/${new_username}.json`);
+      const existing = await queryOne("SELECT id FROM admins WHERE username = $1", [new_username]);
       if (existing) {
         return new Response(JSON.stringify({ error: "Username sudah digunakan" }), {
           status: 409, headers: { "Content-Type": "application/json" },
@@ -70,16 +70,10 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
       updated.password = await hashPassword(new_password);
     }
 
-    const oldKey = `admins/${admin.username}.json`;
-    const newKey = new_username && new_username !== admin.username
-      ? `admins/${new_username}.json`
-      : oldKey;
-
-    await minioSet(newKey, updated);
-
-    if (newKey !== oldKey) {
-      await minioDelete(oldKey);
+    if (new_username && new_username !== admin.username) {
+      await pgDelete("admins", admin.username);
     }
+    await pgSet("admins", updated);
 
     const newToken = signToken({
       id: updated.id,

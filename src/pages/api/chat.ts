@@ -1,5 +1,5 @@
 import type { APIRoute } from "astro";
-import { minioListAll } from "../../lib/minio-db";
+import { pgGetSettings } from "../../lib/pg-db";
 import { checkRateLimit } from "../../lib/security";
 
 const GEMINI_API_KEY = import.meta.env.GEMINI_API_KEY || "";
@@ -133,10 +133,7 @@ export const POST: APIRoute = async ({ request }) => {
 
 async function loadAllSettings(): Promise<Record<string, string>> {
   try {
-    const settings = await minioListAll<Record<string, string>>("settings/");
-    const result: Record<string, string> = {};
-    for (const s of settings) if (s.key) result[s.key] = s.value;
-    return result;
+    return await pgGetSettings();
   } catch {
     return {};
   }

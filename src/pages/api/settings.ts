@@ -1,5 +1,5 @@
 import type { APIRoute } from "astro";
-import { minioListAll, minioSet } from "../../lib/minio-db";
+import { pgSetSetting, pgGetSettings } from "../../lib/pg-db";
 import { getAdminFromRequest } from "../../lib/auth";
 import { isValidOrigin, checkRateLimit } from "../../lib/security";
 
@@ -47,14 +47,13 @@ const ALLOWED_SETTING_KEYS = new Set([
 ]);
 
 export const GET: APIRoute = async () => {
-  let minioResult: Record<string, string> = {};
   try {
-    const settings = await minioListAll<Record<string, string>>("settings/");
-    for (const s of settings) if (s.key) minioResult[s.key] = s.value;
+    const settings = await pgGetSettings();
+    return new Response(JSON.stringify({ settings }), { status: 200, headers: { "Content-Type": "application/json" } });
   } catch (e) {
-    console.error("GET settings minio error:", e);
+    console.error("GET settings error:", e);
+    return new Response(JSON.stringify({ settings: {} }), { status: 200, headers: { "Content-Type": "application/json" } });
   }
-  return new Response(JSON.stringify({ settings: minioResult }), { status: 200, headers: { "Content-Type": "application/json" } });
 };
 
 export const POST: APIRoute = async ({ request }) => {
@@ -87,12 +86,11 @@ export const POST: APIRoute = async ({ request }) => {
       }
     }
 
-    // Use MinIO directly as the only storage
     for (const [key, value] of Object.entries(updates)) {
-      await minioSet(`settings/${key}.json`, { key, value });
+      await pgSetSetting(key, value as string);
     }
 
-    return new Response(JSON.stringify({ success: true, storage: "minio" }), { status: 200, headers: { "Content-Type": "application/json" } });
+    return new Response(JSON.stringify({ success: true }), { status: 200, headers: { "Content-Type": "application/json" } });
   } catch (err) {
     console.error("POST settings error:", err);
     return new Response(JSON.stringify({ error: "Gagal menyimpan pengaturan" }), { status: 500, headers: { "Content-Type": "application/json" } });

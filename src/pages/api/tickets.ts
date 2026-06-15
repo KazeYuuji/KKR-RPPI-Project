@@ -1,12 +1,12 @@
 import type { APIRoute } from "astro";
-import { minioListAll, minioSet, minioGet, minioDelete, newId } from "../../lib/minio-db";
+import { pgList, pgGet, pgSet, pgDelete, query } from "../../lib/pg-db";
+import { newId } from "../../lib/minio-db";
 import { getAdminFromRequest } from "../../lib/auth";
 import { sanitizeId, sanitizeString, isValidOrigin, checkRateLimit } from "../../lib/security";
 
 export const GET: APIRoute = async () => {
   try {
-    const tickets = await minioListAll<Record<string, any>>("tickets/");
-    tickets.sort((a, b) => (a.id || "").localeCompare(b.id || ""));
+    const tickets = await pgList<Record<string, any>>("tickets", "id ASC");
     return new Response(JSON.stringify({ tickets }), {
       status: 200, headers: { "Content-Type": "application/json" },
     });
@@ -31,7 +31,7 @@ export const POST: APIRoute = async ({ request }) => {
     if (body.action === "delete") {
       const id = sanitizeId(body.id);
       if (!id) return new Response(JSON.stringify({ error: "ID tidak valid" }), { status: 400, headers: { "Content-Type": "application/json" } });
-      await minioDelete(`tickets/${id}.json`);
+      await pgDelete("tickets", id);
       return new Response(JSON.stringify({ success: true }), {
         status: 200, headers: { "Content-Type": "application/json" },
       });
@@ -39,21 +39,20 @@ export const POST: APIRoute = async ({ request }) => {
     if (body.action === "create") {
       const id = "ticket-" + newId();
       const remaining = typeof body.remaining === "number" ? Math.max(0, Math.floor(body.remaining)) : 0;
-      await minioSet(`tickets/${id}.json`, { id, name: sanitizeString(body.name, 200) || "Tiket Baru", remaining });
+      await pgSet("tickets", { id, name: sanitizeString(body.name, 200) || "Tiket Baru", remaining });
       return new Response(JSON.stringify({ id, success: true }), {
         status: 200, headers: { "Content-Type": "application/json" },
       });
     }
-    const tickets = Array.isArray(body) ? body : [body];
-    for (const t of tickets) {
+    const tix = Array.isArray(body) ? body : [body];
+    for (const t of tix) {
       const id = sanitizeId(t.id);
       if (id) {
         const remaining = typeof t.remaining === "number" ? Math.max(0, Math.floor(t.remaining)) : 0;
-        await minioSet(`tickets/${id}.json`, { id, name: sanitizeString(t.name, 200), remaining });
+        await pgSet("tickets", { id, name: sanitizeString(t.name, 200), remaining });
       }
     }
-    const updated = await minioListAll<Record<string, any>>("tickets/");
-    updated.sort((a, b) => (a.id || "").localeCompare(b.id || ""));
+    const updated = await pgList<Record<string, any>>("tickets", "id ASC");
     return new Response(JSON.stringify({ tickets: updated }), {
       status: 200, headers: { "Content-Type": "application/json" },
     });

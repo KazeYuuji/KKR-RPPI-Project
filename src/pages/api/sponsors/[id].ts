@@ -1,5 +1,5 @@
 import type { APIRoute } from "astro";
-import { minioGet, minioSet, minioDelete } from "../../../lib/minio-db";
+import { pgGet, pgSet, pgDelete } from "../../../lib/pg-db";
 import { getAdminFromRequest } from "../../../lib/auth";
 import { isValidOrigin, sanitizeString, sanitizeUrl, checkRateLimit } from "../../../lib/security";
 
@@ -8,7 +8,7 @@ export const prerender = false;
 export const GET: APIRoute = async ({ params }) => {
   const { id } = params;
   try {
-    const sponsor = await minioGet<Record<string, any>>(`sponsors/${id}.json`);
+    const sponsor = await pgGet<Record<string, any>>("sponsors", id!);
     if (!sponsor) {
       return new Response(JSON.stringify({ error: "Sponsor tidak ditemukan" }), { status: 404, headers: { "Content-Type": "application/json" } });
     }
@@ -30,7 +30,7 @@ export const PUT: APIRoute = async ({ params, request }) => {
     if (!rl.allowed) return new Response(JSON.stringify({ error: "Terlalu banyak permintaan" }), { status: 429, headers: { "Content-Type": "application/json" } });
 
     const body = await request.json();
-    const existing = await minioGet<Record<string, any>>(`sponsors/${id}.json`);
+    const existing = await pgGet<Record<string, any>>("sponsors", id!);
     if (!existing) {
       return new Response(JSON.stringify({ error: "Sponsor tidak ditemukan" }), { status: 404, headers: { "Content-Type": "application/json" } });
     }
@@ -43,7 +43,7 @@ export const PUT: APIRoute = async ({ params, request }) => {
       is_active: body.is_active !== undefined ? (body.is_active ? 1 : 0) : existing.is_active,
       updated_at: new Date().toISOString(),
     };
-    await minioSet(`sponsors/${id}.json`, updated);
+    await pgSet("sponsors", updated);
     return new Response(JSON.stringify({ sponsor: updated }), { status: 200, headers: { "Content-Type": "application/json" } });
   } catch (err) {
     console.error("PUT sponsor error:", err);
@@ -62,11 +62,11 @@ export const DELETE: APIRoute = async ({ params, request }) => {
     const rl = checkRateLimit("sponsor-delete:" + ip, 20, 60000);
     if (!rl.allowed) return new Response(JSON.stringify({ error: "Terlalu banyak permintaan" }), { status: 429, headers: { "Content-Type": "application/json" } });
 
-    const existing = await minioGet(`sponsors/${id}.json`);
+    const existing = await pgGet("sponsors", id!);
     if (!existing) {
       return new Response(JSON.stringify({ error: "Sponsor tidak ditemukan" }), { status: 404, headers: { "Content-Type": "application/json" } });
     }
-    await minioDelete(`sponsors/${id}.json`);
+    await pgDelete("sponsors", id!);
     return new Response(JSON.stringify({ success: true }), { status: 200, headers: { "Content-Type": "application/json" } });
   } catch (err) {
     console.error("DELETE sponsor error:", err);

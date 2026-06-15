@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-import { minioGet } from "./minio-db";
+import { queryOne } from "./pg-db";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 if (!JWT_SECRET) {
@@ -50,7 +50,7 @@ export async function authenticateAdmin(username: string, password: string): Pro
   if (!username || typeof username !== "string" || !password || typeof password !== "string") return null;
   try {
     if (username.length > 100 || password.length > 200) return null;
-    const admin = await minioGet<Record<string, any>>(`admins/${username}.json`);
+    const admin = await queryOne<Record<string, any>>("SELECT * FROM admins WHERE username = $1", [username]);
     if (!admin || !admin.password) return null;
     if (!(await verifyPassword(password, admin.password))) return null;
     return { id: admin.id, username: admin.username, email: admin.email || "" };

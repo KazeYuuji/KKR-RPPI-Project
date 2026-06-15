@@ -1,5 +1,5 @@
 import type { APIRoute } from "astro";
-import { minioGet, minioSet, minioDelete } from "../../../lib/minio-db";
+import { pgGet, pgSet, pgDelete } from "../../../lib/pg-db";
 import { getAdminFromRequest } from "../../../lib/auth";
 import { isValidOrigin, sanitizeString, sanitizeUrl, checkRateLimit } from "../../../lib/security";
 
@@ -8,7 +8,7 @@ export const prerender = false;
 export const GET: APIRoute = async ({ params }) => {
   const { id } = params;
   try {
-    const speaker = await minioGet<Record<string, any>>(`speakers/${id}.json`);
+    const speaker = await pgGet<Record<string, any>>("speakers", id!);
     if (!speaker) {
       return new Response(JSON.stringify({ error: "Pembicara tidak ditemukan" }), { status: 404, headers: { "Content-Type": "application/json" } });
     }
@@ -30,7 +30,7 @@ export const PUT: APIRoute = async ({ params, request }) => {
     if (!rl.allowed) return new Response(JSON.stringify({ error: "Terlalu banyak permintaan" }), { status: 429, headers: { "Content-Type": "application/json" } });
 
     const body = await request.json();
-    const existing = await minioGet<Record<string, any>>(`speakers/${id}.json`);
+    const existing = await pgGet<Record<string, any>>("speakers", id!);
     if (!existing) {
       return new Response(JSON.stringify({ error: "Pembicara tidak ditemukan" }), { status: 404, headers: { "Content-Type": "application/json" } });
     }
@@ -46,7 +46,7 @@ export const PUT: APIRoute = async ({ params, request }) => {
       is_active: body.is_active !== undefined ? (body.is_active ? 1 : 0) : existing.is_active,
       updated_at: new Date().toISOString(),
     };
-    await minioSet(`speakers/${id}.json`, updated);
+    await pgSet("speakers", updated);
     return new Response(JSON.stringify({ speaker: updated }), { status: 200, headers: { "Content-Type": "application/json" } });
   } catch (err) {
     console.error("PUT speaker error:", err);
@@ -65,11 +65,11 @@ export const DELETE: APIRoute = async ({ params, request }) => {
     const rl = checkRateLimit("speaker-delete:" + ip, 20, 60000);
     if (!rl.allowed) return new Response(JSON.stringify({ error: "Terlalu banyak permintaan" }), { status: 429, headers: { "Content-Type": "application/json" } });
 
-    const existing = await minioGet(`speakers/${id}.json`);
+    const existing = await pgGet("speakers", id!);
     if (!existing) {
       return new Response(JSON.stringify({ error: "Pembicara tidak ditemukan" }), { status: 404, headers: { "Content-Type": "application/json" } });
     }
-    await minioDelete(`speakers/${id}.json`);
+    await pgDelete("speakers", id!);
     return new Response(JSON.stringify({ success: true }), { status: 200, headers: { "Content-Type": "application/json" } });
   } catch (err) {
     console.error("DELETE speaker error:", err);

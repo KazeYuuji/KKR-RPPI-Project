@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
-import { minioListAll, minioSet, newId } from "../../../lib/minio-db";
+import { pgList, pgSet } from "../../../lib/pg-db";
+import { newId } from "../../../lib/minio-db";
 import { getAdminFromRequest } from "../../../lib/auth";
 import { isValidOrigin, sanitizeString, sanitizeUrl, checkRateLimit } from "../../../lib/security";
 
@@ -7,8 +8,7 @@ export const prerender = false;
 
 export const GET: APIRoute = async () => {
   try {
-    const items = await minioListAll<Record<string, any>>("sponsors/");
-    items.sort((a, b) => (b.is_active ? 1 : 0) - (a.is_active ? 1 : 0) || (b.created_at || "").localeCompare(a.created_at || ""));
+    const items = await pgList<Record<string, any>>("sponsors", "is_active DESC, created_at DESC");
     return new Response(JSON.stringify({ sponsors: items }), { status: 200, headers: { "Content-Type": "application/json" } });
   } catch (err) {
     console.error("GET sponsors error:", err);
@@ -33,7 +33,7 @@ export const POST: APIRoute = async ({ request }) => {
     const id = newId();
     const now = new Date().toISOString();
     const sponsor = { id, name: sanitizeString(name, 200), website: sanitizeUrl(website, 500), description: sanitizeString(description, 2000), logo_url: sanitizeUrl(logo_url, 500), is_active: 1, created_at: now, updated_at: now };
-    await minioSet(`sponsors/${id}.json`, sponsor);
+    await pgSet("sponsors", sponsor);
     return new Response(JSON.stringify({ sponsor }), { status: 201, headers: { "Content-Type": "application/json" } });
   } catch (err) {
     console.error("POST sponsor error:", err);
