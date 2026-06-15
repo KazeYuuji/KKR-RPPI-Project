@@ -51,13 +51,16 @@ jobs:
             set -e
             cd /www/wwwroot/kkr-rppi-project
             
-            # Pastikan file .env ada (minimal kosong) agar docker compose tidak error
+            # Pastikan file .env ada
             touch .env
             
             # Load image dari file tar yang ditransfer
             docker load -i kkr-rppi-project.tar
             
-            # Jalankan container menggunakan compose
+            # Hentikan container lama & hapus orphans
+            docker compose down --remove-orphans || true
+            
+            # Jalankan container baru
             docker compose up -d
             
             # Bersihkan file tar untuk menghemat ruang disk server
@@ -65,4 +68,9 @@ jobs:
             
             # Bersihkan image lama yang tak terpakai
             docker image prune -f
+            
+            # Verifikasi container berjalan
+            sleep 3
             docker compose ps
+            echo "--- Container logs (last 20 lines) ---"
+            docker logs kkrppi --tail 20 2>/dev/null || echo "(container not ready yet)"
