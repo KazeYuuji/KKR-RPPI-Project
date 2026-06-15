@@ -123,6 +123,26 @@ export interface TicketType {
     }
 
     let deadlinePassed = false;
+    const ticketLabel = select?.closest("label");
+    const ticketLabelSpan = ticketLabel?.querySelector(":scope > span");
+    const ticketSelectWrap = select?.parentElement;
+
+    function setTicketFieldSingle(ticket) {
+      if (ticketLabelSpan) {
+        ticketLabelSpan.innerHTML = 'Tiket <span class="font-normal text-kkr-maroon/70">· ' + escapeHtml(ticket.name) + '</span>';
+      }
+      select.innerHTML = '<option value="' + escapeHtml(ticket.id) + '">' + escapeHtml(ticket.name) + '</option>';
+      select.value = ticket.id;
+      if (ticketSelectWrap) ticketSelectWrap.style.display = "none";
+      stockEl.innerHTML = '<span class="inline-flex items-center gap-1.5 text-[10px] px-2.5 py-1 rounded-full font-medium bg-emerald-50 text-emerald-700 border border-emerald-100">' +
+        '<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>' +
+        'Sisa ' + ticket.remaining + ' tiket</span>';
+    }
+
+    function resetTicketField() {
+      if (ticketLabelSpan) ticketLabelSpan.innerHTML = 'Jenis Tiket <span class="text-kkr-red">*</span>';
+      if (ticketSelectWrap) ticketSelectWrap.style.display = "";
+    }
 
     async function loadTickets() {
       try {
@@ -130,12 +150,17 @@ export interface TicketType {
         const d = await res.json();
         const tickets = d.tickets || [];
         const prevVal = select.value;
+        const avail = tickets.filter(t => t.remaining > 0);
 
-        renderTicketOptions(tickets);
-        renderStockIndicators(tickets);
-
-        if (prevVal && [...select.options].some(o => o.value === prevVal && !o.disabled)) {
-          select.value = prevVal;
+        if (avail.length === 1) {
+          setTicketFieldSingle(avail[0]);
+        } else {
+          resetTicketField();
+          renderTicketOptions(tickets);
+          renderStockIndicators(tickets);
+          if (prevVal && [...select.options].some(o => o.value === prevVal && !o.disabled)) {
+            select.value = prevVal;
+          }
         }
         validateSubmit();
       } catch {
