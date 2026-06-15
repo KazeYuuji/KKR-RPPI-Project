@@ -3,18 +3,19 @@ import pg from "pg";
 const PG_HOST = process.env.PGHOST || "postgresql";
 const PG_PORT = parseInt(process.env.PGPORT || "5432", 10);
 const PG_USER = process.env.PGUSER || "kediritechnopark";
-const PG_PASSWORD = process.env.PGPASSWORD!;
+const PG_PASSWORD = process.env.PGPASSWORD || "";
 const PG_DATABASE = process.env.PGDATABASE || "kkr_rppi";
 
-if (!PG_PASSWORD) {
-  throw new Error("PGPASSWORD environment variable is required");
-}
-
-let pool: pg.Pool;
-let schemaInit = false;
+let pool: pg.Pool | null = null;
+let poolError: Error | null = null;
 
 async function getPool(): Promise<pg.Pool> {
+  if (poolError) throw poolError;
   if (!pool) {
+    if (!PG_PASSWORD) {
+      poolError = new Error("PGPASSWORD environment variable is required");
+      throw poolError;
+    }
     pool = new pg.Pool({
       host: PG_HOST,
       port: PG_PORT,
@@ -25,10 +26,6 @@ async function getPool(): Promise<pg.Pool> {
       idleTimeoutMillis: 30000,
       connectionTimeoutMillis: 5000,
     });
-  }
-  if (!schemaInit) {
-    schemaInit = true;
-    try { await initSchema(); } catch (e) { console.error("Schema init error:", e); }
   }
   return pool;
 }
