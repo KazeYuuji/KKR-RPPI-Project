@@ -1,18 +1,12 @@
 ---
-import "../styles/global.css";
+import PublicLayout from "../layouts/PublicLayout.astro";
 ---
 
-<!doctype html>
-<html lang="id">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login — Admin Dashboard</title>
-  </head>
-  <body class="min-h-screen bg-gradient-to-br from-kkr-light via-white to-pink-50 flex items-center justify-center p-4">
+<PublicLayout title="Login Admin | KKR RPPI" description="Admin dashboard login">
+  <div class="min-h-screen bg-gradient-to-br from-kkr-light via-white to-pink-50 flex items-center justify-center p-4">
     <div class="w-full max-w-md animate-fade-in">
       <div class="text-center mb-8">
-        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-kkr-red to-kkr-red flex items-center justify-center mx-auto mb-4 shadow-lg shadow-kkr-light/50">
+        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-kkr-red to-kkr-maroon flex items-center justify-center mx-auto mb-4 shadow-lg shadow-kkr-light/50">
           <span class="text-white font-bold text-2xl">KR</span>
         </div>
         <h1 class="text-2xl font-bold text-kkr-dark">Admin Dashboard</h1>
@@ -87,5 +81,5 @@ import "../styles/global.css";
       });
       }
     </script>
-  </body>
-</html>
+  </div>
+</PublicLayout>

@@ -708,7 +708,7 @@ import ChatBot from "../components/ChatBot.astro";
       const card = e.target.closest(".sponsor-card");
       if (!card) return;
       const id = card.dataset.id;
-      const sponsor = allSponsors.find(s => s.id == id);
+      const sponsor = allSponsors.find(s => String(s.id) === String(id));
       if (!sponsor) return;
       const modal = document.getElementById("sponsor-modal");
       const logoEl = document.getElementById("sp-modal-logo");

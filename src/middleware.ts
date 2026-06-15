@@ -48,6 +48,12 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
   // ---- Body size limit (exclude file uploads) ----
   if (["POST", "PUT", "PATCH"].includes(method) && !url.startsWith("/api/upload")) {
+    const te = context.request.headers.get("transfer-encoding");
+    if (te?.toLowerCase() === "chunked") {
+      return withSecurityHeaders(new Response(JSON.stringify({ error: "Transfer-Encoding chunked not supported for this endpoint" }), {
+        status: 411, headers: { "Content-Type": "application/json" },
+      }));
+    }
     const rawLen = context.request.headers.get("content-length") || "0";
     const contentLength = parseInt(rawLen, 10);
     if (isNaN(contentLength) || contentLength > MAX_BODY_SIZE) {
