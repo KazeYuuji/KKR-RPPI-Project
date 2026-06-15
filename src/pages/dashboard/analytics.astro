@@ -129,7 +129,7 @@ const clockIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewB
   <script>
     async function loadAnalyticsStats() {
       try {
-        const res = await fetch("/api/stats");
+        const res = await fetch("/api/stats?_t=" + Date.now());
         const d = await res.json();
         const total = d.totalRegistrants || 0;
         const checkedIn = d.checkedIn || 0;
@@ -152,12 +152,12 @@ const clockIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewB
 
         // Load sponsor & speaker counts for table
         try {
-          const spRes = await fetch("/api/sponsors");
+          const spRes = await fetch("/api/sponsors?_t=" + Date.now());
           const spData = await spRes.json();
           cells[3].textContent = (spData.sponsors || []).filter(s => s.is_active).length;
         } catch {}
         try {
-          const spkRes = await fetch("/api/speakers");
+          const spkRes = await fetch("/api/speakers?_t=" + Date.now());
           const spkData = await spkRes.json();
           cells[4].textContent = (spkData.speakers || []).filter(s => s.is_active).length;
         } catch {}
@@ -176,7 +176,7 @@ const clockIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewB
 
     async function loadTicketChart() {
       try {
-        const res = await fetch("/api/registrants");
+        const res = await fetch("/api/registrants?_t=" + Date.now());
         const d = await res.json();
         const list = d.registrants || [];
         const countMap = {};

@@ -97,7 +97,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
 
     async function loadSponsors() {
       try {
-        const res = await fetch("/api/sponsors");
+        const res = await fetch("/api/sponsors?_t=" + Date.now());
         const d = await res.json();
         const list = d.sponsors || [];
         const container = document.getElementById("sponsor-list");
@@ -180,7 +180,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
         try { await fetch(`/api/sponsors/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ is_active: btn.textContent.trim() === "Nonaktif" ? false : true }) }); loadSponsors(); } catch { toast("Gagal memperbarui", "error"); }
       }
       if (btn.dataset.action === "edit") {
-        try { const res = await fetch(`/api/sponsors/${id}`); const d = await res.json(); if (d.sponsor) fillForm(d.sponsor); } catch { toast("Gagal memuat data", "error"); }
+        try { const res = await fetch(`/api/sponsors/${id}?_t=${Date.now()}`); const d = await res.json(); if (d.sponsor) fillForm(d.sponsor); } catch { toast("Gagal memuat data", "error"); }
       }
     });
 

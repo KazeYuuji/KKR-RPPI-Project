@@ -37,7 +37,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
 
     async function loadTickets() {
       try {
-        const res = await fetch("/api/tickets");
+        const res = await fetch("/api/tickets?_t=" + Date.now());
         const d = await res.json();
         const list = d.tickets || [];
         const container = document.getElementById("ticket-list");

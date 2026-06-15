@@ -104,7 +104,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
 
     async function loadAltarServers() {
       try {
-        const res = await fetch("/api/altar-servers");
+        const res = await fetch("/api/altar-servers?_t=" + Date.now());
         const d = await res.json();
         const list = d.altarServers || [];
         const container = document.getElementById("altar-list");
@@ -186,7 +186,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
         try { const res = await fetch(`/api/altar-servers/${id}`, { method: "DELETE" }); if (res.ok) { toast("Pelayan altar dihapus"); loadAltarServers(); } } catch { toast("Gagal menghapus", "error"); }
       }
       if (btn.dataset.action === "edit") {
-        try { const res = await fetch(`/api/altar-servers/${id}`); const d = await res.json(); if (d.altarServer) fillForm(d.altarServer); } catch { toast("Gagal memuat data", "error"); }
+        try { const res = await fetch(`/api/altar-servers/${id}?_t=${Date.now()}`); const d = await res.json(); if (d.altarServer) fillForm(d.altarServer); } catch { toast("Gagal memuat data", "error"); }
       }
     });
 

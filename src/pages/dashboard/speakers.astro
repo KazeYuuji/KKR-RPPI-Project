@@ -110,7 +110,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
 
     async function loadSpeakers() {
       try {
-        const res = await fetch("/api/speakers");
+        const res = await fetch("/api/speakers?_t=" + Date.now());
         const d = await res.json();
         const list = d.speakers || [];
         const container = document.getElementById("speaker-list");
@@ -193,7 +193,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
         try { const res = await fetch(`/api/speakers/${id}`, { method: "DELETE" }); if (res.ok) { toast("Pembicara dihapus"); loadSpeakers(); } } catch { toast("Gagal menghapus", "error"); }
       }
       if (btn.dataset.action === "edit") {
-        try { const res = await fetch(`/api/speakers/${id}`); const d = await res.json(); if (d.speaker) fillForm(d.speaker); } catch { toast("Gagal memuat data", "error"); }
+        try { const res = await fetch(`/api/speakers/${id}?_t=${Date.now()}`); const d = await res.json(); if (d.speaker) fillForm(d.speaker); } catch { toast("Gagal memuat data", "error"); }
       }
     });
 

@@ -404,7 +404,7 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
 
     async function loadStats() {
       try {
-        var res = await fetch("/api/stats");
+        var res = await fetch("/api/stats?_t=" + Date.now());
         var d = await res.json();
         var cards = document.querySelectorAll("#stats-grid > div");
         var tr = d.totalRegistrants || 0;
@@ -436,15 +436,15 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
         document.getElementById("metric-total").textContent = tr;
         document.getElementById("metric-rate").textContent = rate + "%";
 
-        try { var r = await fetch("/api/sponsors"); var rd = await r.json(); document.getElementById("metric-sponsors").textContent = (rd.sponsors || []).filter(function(s){return s.is_active}).length; } catch(e) {}
-        try { var r = await fetch("/api/speakers"); var rd = await r.json(); document.getElementById("metric-speakers").textContent = (rd.speakers || []).filter(function(s){return s.is_active}).length; } catch(e) {}
-        try { var r = await fetch("/api/altar-servers"); var rd = await r.json(); document.getElementById("metric-altar").textContent = (rd.altarServers || []).filter(function(s){return s.is_active}).length; } catch(e) {}
+        try { var r = await fetch("/api/sponsors?_t=" + Date.now()); var rd = await r.json(); document.getElementById("metric-sponsors").textContent = (rd.sponsors || []).filter(function(s){return s.is_active}).length; } catch(e) {}
+        try { var r = await fetch("/api/speakers?_t=" + Date.now()); var rd = await r.json(); document.getElementById("metric-speakers").textContent = (rd.speakers || []).filter(function(s){return s.is_active}).length; } catch(e) {}
+        try { var r = await fetch("/api/altar-servers?_t=" + Date.now()); var rd = await r.json(); document.getElementById("metric-altar").textContent = (rd.altarServers || []).filter(function(s){return s.is_active}).length; } catch(e) {}
       } catch(e) {}
     }
 
     async function loadRegistrants() {
       try {
-        var res = await fetch("/api/registrants");
+        var res = await fetch("/api/registrants?_t=" + Date.now());
         var d = await res.json();
         var list = d.registrants || [];
         var tbody = document.getElementById("registrant-rows");
@@ -466,7 +466,7 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
 
     async function loadTickets() {
       try {
-        var res = await fetch("/api/tickets");
+        var res = await fetch("/api/tickets?_t=" + Date.now());
         var d = await res.json();
         var container = document.getElementById("ticket-mini-list");
         var list = d.tickets || [];

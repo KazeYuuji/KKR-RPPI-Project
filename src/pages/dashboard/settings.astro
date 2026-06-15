@@ -553,7 +553,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
 
     async function loadSettings() {
       try {
-        const res = await fetch("/api/settings");
+        const res = await fetch("/api/settings?_t=" + Date.now());
         const d = await res.json();
         const s = d.settings || {};
 
@@ -1040,7 +1040,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
     document.addEventListener("DOMContentLoaded", async () => {
       loadSettings();
       try {
-        const res = await fetch("/api/auth/me");
+        const res = await fetch("/api/auth/me?_t=" + Date.now());
         if (res.ok) {
           const data = await res.json();
           const el = document.getElementById("admin-current-username");
