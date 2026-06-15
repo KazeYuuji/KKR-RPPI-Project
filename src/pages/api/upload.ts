@@ -62,8 +62,15 @@ export const POST: APIRoute = async ({ request }) => {
     return new Response(JSON.stringify({ url: `/api/uploads/${filename}` }), {
       status: 200, headers: { "Content-Type": "application/json" },
     });
-  } catch (err) {
-    console.error("POST upload error:", err);
-    return new Response(JSON.stringify({ error: "Gagal upload" }), { status: 500, headers: { "Content-Type": "application/json" } });
+  } catch (err: any) {
+    console.error("POST upload error:", err?.message || err, err?.stack || "");
+    const msg = err?.message?.includes("connect") || err?.message?.includes("ECONN") || err?.message?.includes("ENOTFOUND") || err?.code === "NetworkingError"
+      ? "Gagal terhubung ke server penyimpanan. Coba lagi."
+      : err?.message?.includes("status 403") || err?.message?.includes("AccessDenied")
+        ? "Akses penyimpanan ditolak. Periksa kredensial MinIO."
+        : err?.message?.includes("NoSuchBucket")
+          ? "Bucket penyimpanan tidak ditemukan."
+          : "Gagal upload";
+    return new Response(JSON.stringify({ error: msg }), { status: 500, headers: { "Content-Type": "application/json" } });
   }
 };

@@ -1004,6 +1004,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
       const fd = new FormData(); fd.append("file", file);
       const res = await fetch("/api/upload", { method: "POST", body: fd });
       const d = await res.json();
+      if (!res.ok) throw new Error(d.error || "Gagal upload");
       return d.url || null;
     }
 
@@ -1021,7 +1022,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
     document.getElementById("upload-logo-settings-btn")?.addEventListener("click", () => document.getElementById("logo-file-settings").click());
     document.getElementById("logo-file-settings")?.addEventListener("change", async (e) => {
       const file = e.target.files?.[0]; if (!file) return;
-      try { const url = await uploadFile(file); if (url) { document.getElementById("church-logo").value = url; updateLogoPreview(); toast("Logo berhasil diupload"); } } catch { toast("Gagal upload logo", "error"); }
+      try { const url = await uploadFile(file); if (url) { document.getElementById("church-logo").value = url; updateLogoPreview(); toast("Logo berhasil diupload"); } } catch (e) { toast(e.message || "Gagal upload logo", "error"); }
       e.target.value = "";
     });
 

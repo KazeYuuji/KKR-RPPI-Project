@@ -99,6 +99,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
       const fd = new FormData(); fd.append("file", file);
       const res = await fetch("/api/upload", { method: "POST", body: fd });
       const d = await res.json();
+      if (!res.ok) throw new Error(d.error || "Gagal upload");
       return d.url || null;
     }
 
@@ -193,7 +194,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
     document.getElementById("upload-photo-btn")?.addEventListener("click", () => document.getElementById("photo-file-input").click());
     document.getElementById("photo-file-input")?.addEventListener("change", async (e) => {
       const file = e.target.files?.[0]; if (!file) return;
-      try { const url = await uploadFile(file); if (url) { document.getElementById("as-photo").value = url; document.getElementById("photo-preview").classList.remove("hidden"); document.getElementById("photo-preview-img").src = url; toast("Foto berhasil diupload"); } } catch { toast("Gagal upload foto", "error"); }
+      try { const url = await uploadFile(file); if (url) { document.getElementById("as-photo").value = url; document.getElementById("photo-preview").classList.remove("hidden"); document.getElementById("photo-preview-img").src = url; toast("Foto berhasil diupload"); } } catch (e) { toast(e.message || "Gagal upload foto", "error"); }
       e.target.value = "";
     });
 

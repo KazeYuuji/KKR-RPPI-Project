@@ -3,7 +3,7 @@ import { getAdminFromRequest } from "./lib/auth";
 import { checkRateLimit, isValidOrigin, MAX_BODY_SIZE } from "./lib/security";
 import { initSchema } from "./lib/pg-db";
 
-const protectedPaths = ["/dashboard", "/api/stats", "/api/upload"];
+const protectedPaths = ["/dashboard", "/api/stats", "/api/upload", "/api/diag"];
 const apiPrefix = "/api";
 
 function withSecurityHeaders(res: Response): Response {
