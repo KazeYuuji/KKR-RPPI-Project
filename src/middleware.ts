@@ -1,6 +1,7 @@
 import { defineMiddleware } from "astro/middleware";
 import { getAdminFromRequest } from "./lib/auth";
 import { checkRateLimit, isValidOrigin, MAX_BODY_SIZE } from "./lib/security";
+import { initSchema } from "./lib/pg-db";
 
 const protectedPaths = ["/dashboard", "/api/stats", "/api/upload"];
 const apiPrefix = "/api";
@@ -30,7 +31,19 @@ function withSecurityHeaders(res: Response): Response {
   return res;
 }
 
+let schemaInitialized = false;
+
 export const onRequest = defineMiddleware(async (context, next) => {
+  if (!schemaInitialized) {
+    try {
+      await initSchema();
+      console.log("Database schema initialized");
+    } catch (err) {
+      console.error("Schema init error:", err);
+    }
+    schemaInitialized = true;
+  }
+
   const url = context.url.pathname;
   const method = context.request.method;
   const ip = context.clientAddress || context.request.headers.get("x-forwarded-for") || "unknown";
