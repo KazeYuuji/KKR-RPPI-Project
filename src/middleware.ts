@@ -76,23 +76,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     }
   }
 
-  // ---- CSRF / Origin validation for state-changing API requests ----
-  if (["POST", "PUT", "PATCH", "DELETE"].includes(method) && url.startsWith(apiPrefix)) {
-    if (!url.startsWith("/api/auth/") && !isValidOrigin(context.request)) {
-      return withSecurityHeaders(new Response(JSON.stringify({ error: "Forbidden" }), {
-        status: 403, headers: { "Content-Type": "application/json" },
-      }));
-    }
-  }
-
-  // ---- Public GET endpoints (no auth required) ----
-  if ((url.startsWith("/api/tickets") || url.startsWith("/api/settings") || url.startsWith("/api/speakers") || url.startsWith("/api/sponsors") || url.startsWith("/api/altar-servers") || url.startsWith("/api/uploads") || url.startsWith("/api/geocode")) && method === "GET") {
-    const response = await next();
-    response.headers.set("Cache-Control", "public, s-maxage=60, stale-while-revalidate=300");
-    return response;
-  }
-
-  // ---- Public POST registration ----
+  // ---- Public POST endpoints (no origin/auth required) ----
   if (url.startsWith("/api/chat") && method === "POST") {
     return next();
   }
@@ -111,6 +95,22 @@ export const onRequest = defineMiddleware(async (context, next) => {
     } catch {
       console.error("Middleware parse registrants body error");
     }
+  }
+
+  // ---- CSRF / Origin validation for state-changing API requests ----
+  if (["POST", "PUT", "PATCH", "DELETE"].includes(method) && url.startsWith(apiPrefix)) {
+    if (!url.startsWith("/api/auth/") && !url.startsWith("/api/chat") && !isValidOrigin(context.request)) {
+      return withSecurityHeaders(new Response(JSON.stringify({ error: "Forbidden" }), {
+        status: 403, headers: { "Content-Type": "application/json" },
+      }));
+    }
+  }
+
+  // ---- Public GET endpoints (no auth required) ----
+  if ((url.startsWith("/api/tickets") || url.startsWith("/api/settings") || url.startsWith("/api/speakers") || url.startsWith("/api/sponsors") || url.startsWith("/api/altar-servers") || url.startsWith("/api/uploads") || url.startsWith("/api/geocode")) && method === "GET") {
+    const response = await next();
+    response.headers.set("Cache-Control", "public, s-maxage=60, stale-while-revalidate=300");
+    return response;
   }
 
   // ---- Auth check for protected routes ----
