@@ -90,28 +90,36 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
 
     <!-- Main Grid -->
     <div class="grid gap-6 xl:grid-cols-[1.5fr_1fr]">
-      <!-- Registrants -->
+      <!-- Registrants Table -->
       <div class="rounded-2xl glass-card overflow-hidden">
         <div class="p-5 sm:p-6 border-b border-white/20">
-          <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h3 class="text-lg font-semibold text-kkr-dark">Daftar Peserta</h3>
               <p class="text-sm text-kkr-maroon/80 mt-0.5">Data peserta yang telah mendaftar</p>
             </div>
-            <div class="flex items-center gap-2">
-              <div class="relative">
-                <input id="search-registrant" type="text" placeholder="Cari nama..." class="w-48 sm:w-56 rounded-xl border border-kkr-light/50 bg-white pl-9 pr-3 py-2 text-sm text-kkr-dark outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" />
-                <svg class="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-kkr-maroon/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-              </div>
-              <span class="shrink-0 inline-flex items-center gap-1.5 text-xs text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-full font-medium">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                Live
-              </span>
-            </div>
+            <span class="inline-flex items-center gap-1.5 text-xs text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-full font-medium">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+              Live dari database
+            </span>
           </div>
         </div>
-        <div id="registrant-count" class="px-5 sm:px-6 pt-4 text-xs text-kkr-maroon/60"></div>
-        <div id="registrant-cards" class="p-4 sm:p-5 grid gap-2.5 max-h-[600px] overflow-y-auto"></div>
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-sm">
+            <thead>
+              <tr class="text-kkr-dark/80 text-xs uppercase tracking-wider">
+                <th class="py-3.5 px-5 font-semibold text-left">Nama</th>
+                <th class="py-3.5 px-5 font-semibold text-left hidden sm:table-cell">Sekolah</th>
+                <th class="py-3.5 px-5 font-semibold text-left">Tiket</th>
+                <th class="py-3.5 px-5 font-semibold text-left hidden md:table-cell">Check-in</th>
+                <th class="py-3.5 px-5 font-semibold text-right">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="registrant-rows" class="divide-y divide-kkr-light/30">
+              <tr><td colspan="6" class="py-12 text-center text-kkr-maroon/60 text-sm">Memuat data...</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <!-- Sidebar Widgets -->
@@ -434,54 +442,25 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
       } catch(e) {}
     }
 
-    var _allRegistrants = [];
-
-    function renderRegistrantCards(list) {
-      var container = document.getElementById("registrant-cards");
-      var countEl = document.getElementById("registrant-count");
-      if (!list.length) {
-        container.innerHTML = '<div class="py-12 text-center text-kkr-maroon/60 text-sm">Belum ada pendaftar.</div>';
-        countEl.textContent = "";
-        return;
-      }
-      countEl.textContent = list.length + " peserta";
-      container.innerHTML = list.map(function(r) {
-        var initial = escapeHtml((r.name || "?").charAt(0).toUpperCase());
-        var name = escapeHtml(r.name || "Tanpa Nama");
-        var ticketType = escapeHtml(r.ticket || "-");
-        var ticketId = escapeHtml(String(r.id));
-        var checkedIn = r.checked_in;
-        var statusClass = checkedIn ? "bg-kkr-dark text-white" : "bg-kkr-light/40 text-kkr-maroon";
-        var statusText = checkedIn ? "✓ Checked-in" : "— Belum";
-        var actionHtml = checkedIn
-          ? '<span class="inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-xs font-semibold bg-kkr-dark text-white"><svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Done</span>'
-          : '<button data-action="checkin" data-id="' + ticketId + '" class="rounded-lg px-2.5 py-1.5 text-xs font-semibold transition bg-emerald-100 text-emerald-700 hover:bg-emerald-200 hover:shadow-sm active:scale-[0.97]">Check-in</button>';
-
-        return '<div class="flex items-center gap-3 rounded-xl border border-kkr-light/30 bg-white/60 p-3.5 transition hover:border-kkr-light/60 hover:bg-white/90 hover:shadow-sm">' +
-          '<div class="w-9 h-9 rounded-full bg-gradient-to-br from-kkr-light to-white flex items-center justify-center text-sm font-bold text-kkr-red shrink-0 shadow-sm border border-kkr-light/30">' + initial + '</div>' +
-          '<div class="flex-1 min-w-0 grid gap-x-3 gap-y-0.5 sm:grid-cols-[1fr_auto_auto] sm:items-center">' +
-            '<div class="truncate"><span class="font-semibold text-kkr-dark text-sm">' + name + '</span></div>' +
-            '<div class="flex items-center gap-1.5 text-xs text-kkr-maroon/70 sm:text-right"><span class="font-medium text-kkr-maroon">' + ticketType + '</span><span class="text-kkr-maroon/40">·</span><code class="font-mono text-[11px] bg-kkr-light/30 px-1.5 py-0.5 rounded select-all">' + ticketId + '</code><button data-copy="' + ticketId + '" class="ml-0.5 rounded-md px-1.5 py-0.5 text-kkr-maroon/50 hover:text-kkr-red hover:bg-kkr-light/30 transition active:scale-90" title="Salin ID tiket"><svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button></div>' +
-            '<div class="flex items-center gap-2 sm:text-right"><span class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold ' + statusClass + '">' + statusText + '</span>' + actionHtml + '</div>' +
-          '</div>' +
-        '</div>';
-      }).join("");
-    }
-
-    function filterRegistrants() {
-      var query = (document.getElementById("search-registrant").value || "").toLowerCase().trim();
-      var filtered = query
-        ? _allRegistrants.filter(function(r) { return (r.name || "").toLowerCase().includes(query); })
-        : _allRegistrants;
-      renderRegistrantCards(filtered);
-    }
-
     async function loadRegistrants() {
       try {
         var res = await fetch("/api/registrants?_t=" + Date.now());
         var d = await res.json();
-        _allRegistrants = d.registrants || [];
-        filterRegistrants();
+        var list = d.registrants || [];
+        var tbody = document.getElementById("registrant-rows");
+        if (!list.length) {
+          tbody.innerHTML = '<tr><td colspan="5" class="py-12 text-center text-kkr-maroon/60 text-sm">Belum ada pendaftar.</td></tr>';
+          return;
+        }
+        tbody.innerHTML = list.map(function(r) {
+          return '<tr class="hover:bg-white/50 transition-colors">' +
+            '<td class="py-3.5 px-5"><div class="flex items-center gap-2.5"><div class="w-8 h-8 rounded-full bg-gradient-to-br from-kkr-light to-kkr-light flex items-center justify-center text-xs font-bold text-kkr-red shrink-0">' + escapeHtml((r.name || "?").charAt(0).toUpperCase()) + '</div><span class="font-medium text-kkr-dark">' + escapeHtml(r.name || "Tanpa Nama") + '</span></div></td>' +
+            '<td class="py-3.5 px-5 text-kkr-maroon hidden sm:table-cell">' + escapeHtml(r.school || "") + '</td>' +
+            '<td class="py-3.5 px-5 text-kkr-maroon">' + escapeHtml(r.ticket) + '</td>' +
+            '<td class="py-3.5 px-5 hidden md:table-cell"><span class="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold ' + (r.checked_in ? 'bg-kkr-dark text-white' : 'bg-kkr-light/40 text-kkr-maroon') + '">' + (r.checked_in ? '✓ Checked-in' : '— Belum') + '</span></td>' +
+            '<td class="py-3.5 px-5 text-right">' + (r.checked_in ? '<span class="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-semibold bg-kkr-dark text-white"><svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Done</span>' : '<button data-action="checkin" data-id="' + escapeHtml(String(r.id)) + '" class="rounded-lg px-2.5 py-1.5 text-xs font-semibold transition bg-emerald-100 text-emerald-700 hover:bg-emerald-200">CI</button>') + '</td>' +
+            '</tr>';
+        }).join("");
       } catch(e) {}
     }
 
@@ -499,34 +478,15 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
       } catch(e) {}
     }
 
-    document.getElementById("registrant-cards")?.addEventListener("click", async function(e) {
+    document.getElementById("registrant-rows")?.addEventListener("click", async function(e) {
       var btn = e.target.closest("button[data-action]");
-      if (btn) {
-        var id = btn.dataset.id;
-        try {
-          var res = await fetch("/api/registrants", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: id, action: "checkin" }) });
-          if (res.ok) { loadRegistrants(); loadStats(); toast("Check-in berhasil!"); }
-          else { var d = await res.json(); toast(d.error || "Gagal", "error"); }
-        } catch(e) { toast("Gagal check-in", "error"); }
-        return;
-      }
-      var copyBtn = e.target.closest("button[data-copy]");
-      if (copyBtn) {
-        var id = copyBtn.getAttribute("data-copy");
-        try {
-          await navigator.clipboard.writeText(id);
-          toast("ID tiket disalin: " + id);
-        } catch {
-          var ta = document.createElement("textarea");
-          ta.value = id;
-          ta.style.position = "fixed"; ta.style.opacity = "0";
-          document.body.appendChild(ta);
-          ta.select();
-          document.execCommand("copy");
-          document.body.removeChild(ta);
-          toast("ID tiket disalin: " + id);
-        }
-      }
+      if (!btn) return;
+      var id = btn.dataset.id;
+      try {
+        var res = await fetch("/api/registrants", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: id, action: "checkin" }) });
+        if (res.ok) { loadRegistrants(); loadStats(); toast("Check-in berhasil!"); }
+        else { var d = await res.json(); toast(d.error || "Gagal", "error"); }
+      } catch(e) { toast("Gagal check-in", "error"); }
     });
 
     document.getElementById("checkin-form")?.addEventListener("submit", async function(e) {
@@ -564,8 +524,6 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
       hideCameraModal();
       document.getElementById("scan-qr-btn").disabled = false;
     });
-
-    document.getElementById("search-registrant")?.addEventListener("input", filterRegistrants);
 
     document.addEventListener("DOMContentLoaded", function() { loadStats(); loadRegistrants(); loadTickets(); });
   </script>
