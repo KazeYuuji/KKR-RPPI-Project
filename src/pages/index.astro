@@ -651,13 +651,14 @@ import ChatBot from "../components/ChatBot.astro";
           const track = container.querySelector(".overflow-hidden > div");
           if (track) marquee(track);
         } else {
-          const base = "rounded-2xl glass-card p-4 sm:p-5 text-center hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 w-full flex flex-col";
+          const base = "rounded-2xl glass-card p-5 sm:p-6 text-center hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 w-full flex flex-col";
           const html = list.map(makeCard(base)).join("");
           if (list.length === 1) {
-            container.innerHTML = `<div class="flex justify-center max-w-[260px] mx-auto">${html}</div>`;
+            container.innerHTML = `<div class="flex justify-center max-w-[280px] mx-auto">${html}</div>`;
+          } else if (list.length === 2) {
+            container.innerHTML = `<div class="grid gap-6 sm:grid-cols-2 max-w-xl mx-auto">${html}</div>`;
           } else {
-            const gridCols = list.length === 2 ? "sm:grid-cols-2 max-w-xl" : "sm:grid-cols-3 max-w-3xl";
-            container.innerHTML = `<div class="grid gap-4 ${gridCols} mx-auto">${html}</div>`;
+            container.innerHTML = `<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 max-w-4xl mx-auto">${html}</div>`;
           }
         }
       } catch {
@@ -690,8 +691,14 @@ import ChatBot from "../components/ChatBot.astro";
           const container = document.getElementById("sponsor-grid");
           container.innerHTML = '';
           container.style.maskImage = 'none';
-          const gridCols = list.length === 1 ? "flex justify-center" : (list.length === 2 ? "grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-xl mx-auto" : "grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto");
-          container.innerHTML = `<div class="${gridCols}">${html}</div>`;
+          const gridCols = list.length === 1 ? "flex justify-center" : (list.length === 2 ? "grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-xl mx-auto" : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto");
+          const innerHtml = list.map(s => {
+            const logo = s.logo_url
+              ? `<img src="${escapeHtml(sanitizeUrl(s.logo_url))}" loading="lazy" decoding="async" class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl object-contain shrink-0" alt="${escapeHtml(s.name)}" />`
+              : `<div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-kkr-light to-white border border-kkr-light/50 flex items-center justify-center shrink-0"><svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-kkr-red/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>`;
+            return `<div class="sponsor-card flex items-center gap-3 sm:gap-4 rounded-2xl glass-card px-4 sm:px-6 py-4 sm:py-5 cursor-pointer transition-all duration-300 hover:shadow-2xl hover:-translate-y-1" data-id="${s.id}">${logo}<div class="min-w-0"><p class="font-semibold text-kkr-dark truncate text-sm sm:text-base">${escapeHtml(s.name)}</p></div></div>`;
+          }).join("");
+          container.innerHTML = `<div class="${gridCols}">${innerHtml}</div>`;
         } else {
           document.querySelector('[data-copy="1"]').innerHTML = html;
           document.querySelector('[data-copy="2"]').innerHTML = html;
