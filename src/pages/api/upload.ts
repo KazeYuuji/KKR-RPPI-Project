@@ -1,14 +1,14 @@
 import type { APIRoute } from "astro";
+import sharp from "sharp";
 import { uploadBuffer } from "../../lib/minio-db";
 import { getAdminFromRequest } from "../../lib/auth";
 import { ALLOWED_IMAGE_TYPES, MAX_UPLOAD_SIZE, checkRateLimit } from "../../lib/security";
 
-const ALLOWED_EXT = new Set([".jpg", ".jpeg", ".png", ".webp", ".gif"]);
+const ALLOWED_EXT = new Set([".jpg", ".jpeg", ".png", ".gif"]);
 
 const MAGIC_BYTES: Record<string, ((buffer: Uint8Array) => boolean)[]> = {
   "image/jpeg": [(b => b.length >= 3 && b[0] === 0xFF && b[1] === 0xD8 && b[2] === 0xFF)],
   "image/png": [(b => b.length >= 4 && b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4E && b[3] === 0x47)],
-  "image/webp": [(b => b.length >= 12 && b[0] === 0x52 && b[1] === 0x49 && b[2] === 0x46 && b[3] === 0x46 && b[8] === 0x57 && b[9] === 0x45 && b[10] === 0x42 && b[11] === 0x50)],
   "image/gif": [(b => b.length >= 4 && b[0] === 0x47 && b[1] === 0x49 && b[2] === 0x46 && b[3] === 0x38)],
 };
 
@@ -46,7 +46,7 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     const ext = file.name.includes(".") ? file.name.substring(file.name.lastIndexOf(".")).toLowerCase() : ".png";
-    if (!ALLOWED_EXT.has(ext)) {
+    if (!ALLOWED_EXT.has(ext) && ext !== ".webp") {
       return new Response(JSON.stringify({ error: "Ekstensi file tidak diizinkan" }), { status: 400, headers: { "Content-Type": "application/json" } });
     }
 
@@ -56,8 +56,9 @@ export const POST: APIRoute = async ({ request }) => {
       return new Response(JSON.stringify({ error: "File tidak valid atau rusak" }), { status: 400, headers: { "Content-Type": "application/json" } });
     }
 
-    const filename = `${Date.now()}-${Math.random().toString(36).substring(2, 8)}${ext}`;
-    await uploadBuffer(buffer, filename, file.type);
+    const webpBuffer = await sharp(buffer).webp({ quality: 80, effort: 4 }).toBuffer();
+    const filename = `${Date.now()}-${Math.random().toString(36).substring(2, 8)}.webp`;
+    await uploadBuffer(webpBuffer, filename, "image/webp");
 
     return new Response(JSON.stringify({ url: `/api/uploads/${filename}` }), {
       status: 200, headers: { "Content-Type": "application/json" },

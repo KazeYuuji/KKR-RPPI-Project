@@ -46,7 +46,7 @@ import RegistrationForm from "../components/RegistrationForm.astro";
             <div class="pointer-events-none absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-kkr-red via-kkr-gold to-kkr-maroon"></div>
             <div class="relative">
               <div class="mx-auto flex h-24 w-24 sm:h-28 sm:w-28 items-center justify-center rounded-full border-2 border-kkr-gold/40 bg-gradient-to-br from-white to-kkr-light/30 p-2 shadow-lg shadow-kkr-gold/20">
-                <img src="/logo-header.png" alt="Logo Gereja" class="h-full w-full object-contain rounded-full" id="reg-logo" />
+                <img src="/logo-header.webp" alt="Logo Gereja" class="h-full w-full object-contain rounded-full" id="reg-logo" />
               </div>
               <div class="mt-4 space-y-1">
                 <p id="reg-sidebar-badge" class="text-[11px] uppercase tracking-[0.3em] font-semibold text-kkr-red">Detail Pendaftaran</p>
@@ -111,7 +111,7 @@ import RegistrationForm from "../components/RegistrationForm.astro";
         const s = await (window.__SETTINGS_CACHE || fetch("/api/settings").then(r => r.json()).then(d => d.settings || {}));
         const venue = s.locVenue || "Kediri";
         const mapsLink = s.locMapsLink || "";
-        const logoUrl = s.churchLogo || "/logo-header.png";
+        const logoUrl = s.churchLogo || "/logo-header.webp";
         document.getElementById("reg-logo") && (document.getElementById("reg-logo").src = logoUrl);
         document.getElementById("reg-venue").textContent = venue;
         document.getElementById("reg-address").textContent = s.locAddress || "Lihat peta di bawah";
