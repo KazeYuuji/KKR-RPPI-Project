@@ -625,9 +625,9 @@ import ChatBot from "../components/ChatBot.astro";
           const html = list.map(makeCard(base)).join("");
           container.innerHTML = `
             <div class="overflow-hidden" style="mask-image: linear-gradient(to right, transparent 0, black 40px, black calc(100% - 40px), transparent 100%);">
-              <div class="flex gap-3 sm:gap-4" style="width: max-content;">
-                <div class="flex gap-3 sm:gap-4">${html}</div>
-                <div class="flex gap-3 sm:gap-4" aria-hidden="true">${html}</div>
+              <div class="flex gap-6 sm:gap-8" style="width: max-content;">
+                <div class="flex gap-6 sm:gap-8">${html}</div>
+                <div class="flex gap-6 sm:gap-8" aria-hidden="true">${html}</div>
               </div>
             </div>`;
           const track = container.querySelector(".overflow-hidden > div");
@@ -663,18 +663,18 @@ import ChatBot from "../components/ChatBot.astro";
         document.getElementById("sponsor-skeleton")?.classList.add("hidden");
         const card = (s) =>
           `<div class="sponsor-card shrink-0 cursor-pointer transition-all duration-300 hover:scale-110 active:scale-95" data-id="${s.id}">
-            ${s.logo_url ? `<img src="${escapeHtml(sanitizeUrl(s.logo_url))}" loading="lazy" decoding="async" class="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-contain" alt="${escapeHtml(s.name)}" />` : `<div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white/10 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-white/50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>`}
+            ${s.logo_url ? `<img src="${escapeHtml(sanitizeUrl(s.logo_url))}" loading="lazy" decoding="async" class="w-24 h-24 sm:w-28 sm:h-28 rounded-full object-contain" alt="${escapeHtml(s.name)}" />` : `<div class="w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-white/10 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-white/50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>`}
           </div>`;
         const html = list.map(card).join("");
         if (list.length <= 3) {
           const container = document.getElementById("sponsor-grid");
           container.innerHTML = '';
           container.style.maskImage = 'none';
-          const gridCols = list.length === 1 ? "flex justify-center" : (list.length === 2 ? "grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-xl mx-auto" : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto");
+          const gridCols = list.length === 1 ? "flex justify-center" : (list.length === 2 ? "grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-2xl mx-auto" : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-4xl mx-auto");
           const innerHtml = list.map(s => {
             const logo = s.logo_url
-              ? `<img src="${escapeHtml(sanitizeUrl(s.logo_url))}" loading="lazy" decoding="async" class="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-contain" alt="${escapeHtml(s.name)}" />`
-              : `<div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white/10 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-white/50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>`;
+              ? `<img src="${escapeHtml(sanitizeUrl(s.logo_url))}" loading="lazy" decoding="async" class="w-24 h-24 sm:w-28 sm:h-28 rounded-full object-contain" alt="${escapeHtml(s.name)}" />`
+              : `<div class="w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-white/10 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-white/50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>`;
             return `<div class="sponsor-card cursor-pointer transition-all duration-300 hover:scale-110 active:scale-95 mx-auto" data-id="${s.id}">${logo}</div>`;
           }).join("");
           container.innerHTML = `<div class="${gridCols}">${innerHtml}</div>`;
