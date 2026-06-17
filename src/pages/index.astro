@@ -318,28 +318,6 @@ import ChatBot from "../components/ChatBot.astro";
     </div>
   </div>
 
-  <!-- Altar Detail Modal -->
-  <div id="altar-modal" class="hidden fixed inset-0 z-[70] items-center justify-center bg-black/40 backdrop-blur-md p-4">
-    <div class="relative w-full max-w-lg rounded-[2rem] glass-card animate-scale-in">
-      <button id="altar-modal-close" class="absolute right-5 top-5 z-10 rounded-full bg-white/20 px-3 py-2 text-sm text-white/80 transition hover:bg-white/30">Tutup</button>
-      <div class="p-8 text-center">
-        <div class="relative inline-flex items-center justify-center mb-2">
-          <div class="absolute inset-0 bg-gradient-to-br from-kkr-gold/30 to-kkr-light/30 rounded-full blur-xl"></div>
-          <img id="altar-modal-photo" class="hidden w-32 h-32 rounded-full object-cover border-2 border-white/30 bg-white/30 shadow-lg" alt="" />
-          <div id="altar-modal-photo-placeholder" class="w-32 h-32 rounded-full bg-gradient-to-br from-kkr-light/80 to-white mx-auto flex items-center justify-center shadow-md shadow-kkr-light/40 hidden"><svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-kkr-red/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
-        </div>
-        <h3 id="altar-modal-name" class="mt-4 text-2xl font-semibold text-kkr-dark"></h3>
-        <p id="altar-modal-title" class="text-sm text-kkr-maroon/80 mt-1"></p>
-      </div>
-      <div id="altar-modal-desc-wrap" class="hidden px-8 pb-6 text-left">
-        <p id="altar-modal-desc" class="text-kkr-dark/80 leading-7 text-sm break-words"></p>
-      </div>
-      <div id="altar-modal-web-wrap" class="hidden px-8 pb-8 pt-4 text-center border-t border-white/20">
-        <a id="altar-modal-web" href="#" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 rounded-xl bg-kkr-red px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-kkr-maroon">Kunjungi Website <span>↗</span></a>
-      </div>
-    </div>
-  </div>
-
   <!-- Floating Components -->
   <ChatBot />
 
@@ -791,53 +769,8 @@ import ChatBot from "../components/ChatBot.astro";
       if (!card) return;
       const id = card.dataset.id;
       const altar = allAltarServers.find(s => String(s.id) === String(id));
-      if (!altar) return;
-      const modal = document.getElementById("altar-modal");
-      const photoEl = document.getElementById("altar-modal-photo");
-      const placeholderEl = document.getElementById("altar-modal-photo-placeholder");
-      if (altar.photo_url) {
-        photoEl.src = sanitizeUrl(altar.photo_url);
-        photoEl.alt = escapeHtml(altar.name) + " foto";
-        photoEl.classList.remove("hidden");
-        placeholderEl.classList.add("hidden");
-      } else {
-        photoEl.classList.add("hidden");
-        placeholderEl.classList.remove("hidden");
-      }
-      document.getElementById("altar-modal-name").textContent = altar.name;
-      document.getElementById("altar-modal-title").textContent = [altar.title, altar.organization].filter(Boolean).join(" · ");
-      const descEl = document.getElementById("altar-modal-desc");
-      const descWrap = document.getElementById("altar-modal-desc-wrap");
-      if (altar.description) {
-        descEl.textContent = altar.description;
-        descWrap.classList.remove("hidden");
-      } else {
-        descWrap.classList.add("hidden");
-      }
-      const webWrap = document.getElementById("altar-modal-web-wrap");
-      const webLink = document.getElementById("altar-modal-web");
-      if (altar.website) {
-        try { webLink.href = sanitizeUrl(new URL(altar.website).href); webLink.classList.remove("hidden"); } catch { webLink.classList.add("hidden"); }
-        webWrap.classList.remove("hidden");
-      } else {
-        webWrap.classList.add("hidden");
-      }
-      modal.classList.remove("hidden");
-      modal.classList.add("flex");
-    });
-
-    document.getElementById("altar-modal-close")?.addEventListener("click", () => {
-      const modal = document.getElementById("altar-modal");
-      modal.classList.add("hidden");
-      modal.classList.remove("flex");
-    });
-
-    document.getElementById("altar-modal")?.addEventListener("click", (e) => {
-      if (e.target === e.currentTarget) {
-        const modal = document.getElementById("altar-modal");
-        modal.classList.add("hidden");
-        modal.classList.remove("flex");
-      }
+      if (!altar || !altar.website) return;
+      try { window.open(sanitizeUrl(new URL(altar.website).href), "_blank", "noopener,noreferrer"); } catch {}
     });
 
     document.addEventListener("DOMContentLoaded", () => {
