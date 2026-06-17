@@ -298,26 +298,6 @@ import ChatBot from "../components/ChatBot.astro";
     </ScrollReveal>
   </div>
 
-  <!-- Sponsor Detail Modal -->
-  <div id="sponsor-modal" class="hidden fixed inset-0 z-[70] items-center justify-center bg-black/40 backdrop-blur-md p-4">
-    <div class="relative w-full max-w-lg rounded-[2rem] glass-card animate-scale-in">
-      <button id="sp-modal-close" class="absolute right-5 top-5 z-10 rounded-full bg-white/20 px-3 py-2 text-sm text-white/80 transition hover:bg-white/30">Tutup</button>
-      <div class="p-8 text-center">
-        <div class="relative inline-flex items-center justify-center mb-2">
-          <div class="absolute inset-0 bg-gradient-to-br from-kkr-gold/30 to-kkr-light/30 rounded-full blur-xl"></div>
-          <img id="sp-modal-logo" class="hidden w-32 h-32 rounded-full object-cover border-2 border-white/30 bg-white/30 shadow-lg" alt="" />
-        </div>
-        <h3 id="sp-modal-name" class="mt-4 text-2xl font-semibold text-kkr-dark"></h3>
-      </div>
-      <div id="sp-modal-desc-wrap" class="hidden px-8 pb-6 text-left">
-        <p id="sp-modal-desc" class="text-kkr-dark/80 leading-7 text-sm break-words"></p>
-      </div>
-      <div id="sp-modal-web-wrap" class="hidden px-8 pb-8 pt-4 text-center border-t border-white/20">
-        <a id="sp-modal-web" href="#" target="_blank" rel="noopener noreferrer" class="hidden inline-flex items-center gap-1.5 rounded-xl bg-kkr-red px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-kkr-maroon">Kunjungi Website <span>↗</span></a>
-      </div>
-    </div>
-  </div>
-
   <!-- Floating Components -->
   <ChatBot />
 
@@ -682,11 +662,8 @@ import ChatBot from "../components/ChatBot.astro";
         }
         document.getElementById("sponsor-skeleton")?.classList.add("hidden");
         const card = (s) =>
-          `<div class="sponsor-card flex items-center gap-4 rounded-2xl glass-card px-6 py-5 shrink-0 min-w-[260px] cursor-pointer transition-all duration-300 hover:shadow-2xl hover:-translate-y-1" data-id="${s.id}">
-            ${s.logo_url ? `<img src="${escapeHtml(sanitizeUrl(s.logo_url))}" loading="lazy" decoding="async" class="w-12 h-12 rounded-xl object-cover shrink-0" alt="${escapeHtml(s.name)}" />` : `<div class="w-12 h-12 rounded-xl bg-gradient-to-br from-kkr-light to-white border border-kkr-light/50 flex items-center justify-center shrink-0"><svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-kkr-red/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>`}
-            <div class="min-w-0">
-              <p class="font-semibold text-kkr-dark truncate">${escapeHtml(s.name)}</p>
-            </div>
+          `<div class="sponsor-card shrink-0 cursor-pointer transition-all duration-300 hover:scale-110 active:scale-95" data-id="${s.id}">
+            ${s.logo_url ? `<img src="${escapeHtml(sanitizeUrl(s.logo_url))}" loading="lazy" decoding="async" class="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-contain" alt="${escapeHtml(s.name)}" />` : `<div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white/10 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-white/50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>`}
           </div>`;
         const html = list.map(card).join("");
         if (list.length <= 3) {
@@ -696,9 +673,9 @@ import ChatBot from "../components/ChatBot.astro";
           const gridCols = list.length === 1 ? "flex justify-center" : (list.length === 2 ? "grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-xl mx-auto" : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto");
           const innerHtml = list.map(s => {
             const logo = s.logo_url
-              ? `<img src="${escapeHtml(sanitizeUrl(s.logo_url))}" loading="lazy" decoding="async" class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl object-contain shrink-0" alt="${escapeHtml(s.name)}" />`
-              : `<div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-kkr-light to-white border border-kkr-light/50 flex items-center justify-center shrink-0"><svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-kkr-red/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>`;
-            return `<div class="sponsor-card flex items-center gap-3 sm:gap-4 rounded-2xl glass-card px-4 sm:px-6 py-4 sm:py-5 cursor-pointer transition-all duration-300 hover:shadow-2xl hover:-translate-y-1" data-id="${s.id}">${logo}<div class="min-w-0"><p class="font-semibold text-kkr-dark truncate text-sm sm:text-base">${escapeHtml(s.name)}</p></div></div>`;
+              ? `<img src="${escapeHtml(sanitizeUrl(s.logo_url))}" loading="lazy" decoding="async" class="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-contain" alt="${escapeHtml(s.name)}" />`
+              : `<div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white/10 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-white/50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>`;
+            return `<div class="sponsor-card cursor-pointer transition-all duration-300 hover:scale-110 active:scale-95 mx-auto" data-id="${s.id}">${logo}</div>`;
           }).join("");
           container.innerHTML = `<div class="${gridCols}">${innerHtml}</div>`;
         } else {
@@ -713,54 +690,14 @@ import ChatBot from "../components/ChatBot.astro";
       }
     }
 
+    /* Sponsor card click */
     document.addEventListener("click", (e) => {
       const card = e.target.closest(".sponsor-card");
       if (!card) return;
       const id = card.dataset.id;
       const sponsor = allSponsors.find(s => String(s.id) === String(id));
-      if (!sponsor) return;
-      const modal = document.getElementById("sponsor-modal");
-      const logoEl = document.getElementById("sp-modal-logo");
-      if (sponsor.logo_url) {
-        logoEl.src = sanitizeUrl(sponsor.logo_url);
-        logoEl.alt = escapeHtml(sponsor.name) + " logo";
-        logoEl.classList.remove("hidden");
-      } else {
-        logoEl.classList.add("hidden");
-      }
-      document.getElementById("sp-modal-name").textContent = sponsor.name;
-      const descEl = document.getElementById("sp-modal-desc");
-      const descWrap = document.getElementById("sp-modal-desc-wrap");
-      if (sponsor.description) {
-        descEl.textContent = sponsor.description;
-        descWrap.classList.remove("hidden");
-      } else {
-        descWrap.classList.add("hidden");
-      }
-      const webWrap = document.getElementById("sp-modal-web-wrap");
-      const webLink = document.getElementById("sp-modal-web");
-      if (sponsor.website) {
-        try { webLink.href = sanitizeUrl(new URL(sponsor.website).href); } catch { webLink.href = "#"; }
-        webWrap.classList.remove("hidden");
-      } else {
-        webWrap.classList.add("hidden");
-      }
-      modal.classList.remove("hidden");
-      modal.classList.add("flex");
-    });
-
-    document.getElementById("sp-modal-close")?.addEventListener("click", () => {
-      const modal = document.getElementById("sponsor-modal");
-      modal.classList.add("hidden");
-      modal.classList.remove("flex");
-    });
-
-    document.getElementById("sponsor-modal")?.addEventListener("click", (e) => {
-      if (e.target === e.currentTarget) {
-        const modal = document.getElementById("sponsor-modal");
-        modal.classList.add("hidden");
-        modal.classList.remove("flex");
-      }
+      if (!sponsor || !sponsor.website) return;
+      try { window.open(sanitizeUrl(new URL(sponsor.website).href), "_blank", "noopener,noreferrer"); } catch {}
     });
 
     /* Altar card click */
