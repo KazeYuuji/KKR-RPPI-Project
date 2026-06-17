@@ -257,7 +257,7 @@ const canonical = new URL(Astro.url.pathname, siteUrl).href;
           const wa = s.contactWa || "6285800753804";
           const venue = s.locVenue || "";
           const evName = s.eventName || "KKR RPPI";
-          if (credit) credit.textContent = "Panitia " + esc(evName) + (venue ? " " + esc(venue.split(",")[0].trim()) : "");
+          if (credit) credit.textContent = "Powered By Kediri Technopark";
           const copyEl = document.getElementById("footer-copy");
           if (copyEl) copyEl.textContent = "\u00a9 " + new Date().getFullYear() + " Kediri Technopark. Hak cipta dilindungi.";
           let html = `<a href="mailto:${encodeURI(email)}" class="hover:text-kkr-gold transition-colors">Email</a>`;
