@@ -25,13 +25,13 @@ export const POST: APIRoute = async ({ request }) => {
     if (!rl.allowed) return new Response(JSON.stringify({ error: "Terlalu banyak permintaan" }), { status: 429, headers: { "Content-Type": "application/json" } });
 
     const body = await request.json();
-    const { name, title, organization, description, photo_url, tags } = body;
+    const { name, title, organization, description, photo_url, website } = body;
     if (!name) {
       return new Response(JSON.stringify({ error: "Nama pelayan altar wajib diisi" }), { status: 400, headers: { "Content-Type": "application/json" } });
     }
     const id = newId();
     const now = new Date().toISOString();
-    const altarServer = { id, name: sanitizeString(name, 200), title: sanitizeString(title, 200), organization: sanitizeString(organization, 200), description: sanitizeString(description, 2000), photo_url: sanitizeUrl(photo_url, 500), tags: sanitizeString(tags, 500), is_active: 1, created_at: now, updated_at: now };
+    const altarServer = { id, name: sanitizeString(name, 200), title: sanitizeString(title, 200), organization: sanitizeString(organization, 200), description: sanitizeString(description, 2000), photo_url: sanitizeUrl(photo_url, 500), website: sanitizeUrl(website, 500), is_active: 1, created_at: now, updated_at: now };
     await pgSet("altar_servers", altarServer);
     return new Response(JSON.stringify({ altarServer }), { status: 201, headers: { "Content-Type": "application/json" } });
   } catch (err) {

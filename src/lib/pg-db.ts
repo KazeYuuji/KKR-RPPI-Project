@@ -103,6 +103,7 @@ export async function initSchema(): Promise<void> {
     CREATE TABLE IF NOT EXISTS tickets (id TEXT PRIMARY KEY, name TEXT NOT NULL, remaining INTEGER DEFAULT 0);
     CREATE TABLE IF NOT EXISTS registrants (id TEXT PRIMARY KEY, name TEXT NOT NULL, school TEXT DEFAULT '', email TEXT DEFAULT '', whatsapp TEXT DEFAULT '', participant_type TEXT DEFAULT '', ticket TEXT, checked_in INTEGER DEFAULT 0, created_at TEXT DEFAULT '', updated_at TEXT DEFAULT '');
     CREATE TABLE IF NOT EXISTS admins (id TEXT PRIMARY KEY, username TEXT UNIQUE NOT NULL, email TEXT DEFAULT '', password TEXT NOT NULL, created_at TEXT DEFAULT '', updated_at TEXT DEFAULT '');
-    CREATE TABLE IF NOT EXISTS altar_servers (id TEXT PRIMARY KEY, name TEXT NOT NULL, title TEXT DEFAULT '', organization TEXT DEFAULT '', description TEXT DEFAULT '', photo_url TEXT DEFAULT '', tags TEXT DEFAULT '', is_active INTEGER DEFAULT 1, created_at TEXT DEFAULT '', updated_at TEXT DEFAULT '');
+    CREATE TABLE IF NOT EXISTS altar_servers (id TEXT PRIMARY KEY, name TEXT NOT NULL, title TEXT DEFAULT '', organization TEXT DEFAULT '', description TEXT DEFAULT '', photo_url TEXT DEFAULT '', website TEXT DEFAULT '', is_active INTEGER DEFAULT 1, created_at TEXT DEFAULT '', updated_at TEXT DEFAULT '');
+    ALTER TABLE altar_servers ADD COLUMN IF NOT EXISTS website TEXT DEFAULT '';
   `);
 }

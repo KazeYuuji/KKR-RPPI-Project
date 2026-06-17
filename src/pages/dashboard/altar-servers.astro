@@ -42,8 +42,8 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
             <textarea id="as-desc" rows="3" class="w-full rounded-xl border border-kkr-light/50 bg-white px-4 py-2.5 text-sm text-kkr-dark outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20 placeholder:text-kkr-maroon/60" placeholder="Deskripsi singkat"></textarea>
           </div>
           <div>
-            <label class="block text-xs font-semibold text-kkr-purple mb-1.5 uppercase tracking-wider">Tags (pisahkan koma)</label>
-            <input id="as-tags" class="w-full rounded-xl border border-kkr-light/50 bg-white px-4 py-2.5 text-sm text-kkr-dark outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20 placeholder:text-kkr-maroon/60" placeholder="Pelayanan, Ibadah, Rohani" />
+            <label class="block text-xs font-semibold text-kkr-purple mb-1.5 uppercase tracking-wider">Website / Link</label>
+            <input id="as-website" class="w-full rounded-xl border border-kkr-light/50 bg-white px-4 py-2.5 text-sm text-kkr-dark outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20 placeholder:text-kkr-maroon/60" placeholder="https://" />
           </div>
           <div>
             <label class="block text-xs font-semibold text-kkr-purple mb-1.5 uppercase tracking-wider">Foto</label>
@@ -124,7 +124,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
                 </div>
                 ${s.title || s.organization ? `<p class="text-xs text-kkr-maroon/80 mt-0.5 truncate">${escapeHtml([s.title, s.organization].filter(Boolean).join(" · "))}</p>` : ""}
                 ${s.description ? `<p class="mt-1.5 text-sm text-kkr-maroon line-clamp-2">${escapeHtml(s.description)}</p>` : ""}
-                ${s.tags && typeof s.tags === 'string' ? `<div class="flex flex-wrap gap-1 mt-2">${s.tags.split(",").map(t => `<span class="text-[10px] bg-kkr-light text-kkr-red px-2 py-0.5 rounded-full font-medium">${escapeHtml(t.trim())}</span>`).join("")}</div>` : ""}
+                ${s.website ? `<a href="${escapeHtml(sanitizeUrl(s.website))}" target="_blank" rel="noopener" class="inline-flex items-center gap-1 mt-1.5 text-xs text-kkr-red hover:text-kkr-maroon transition-colors"><svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span>Link</span></a>` : ""}
               </div>
               <div class="flex items-start gap-1 shrink-0 pt-1">
                 <button data-action="edit" data-id="${escapeHtml(String(s.id))}" class="rounded-lg bg-white border border-kkr-light/50 px-3 py-1.5 text-xs font-semibold text-kkr-maroon hover:bg-white hover:border-kkr-light/80 transition-colors shadow-sm">Edit</button>
@@ -144,7 +144,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
       document.getElementById("as-title").value = s.title || "";
       document.getElementById("as-org").value = s.organization || "";
       document.getElementById("as-desc").value = s.description || "";
-      document.getElementById("as-tags").value = s.tags || "";
+      document.getElementById("as-website").value = s.website || "";
       document.getElementById("as-photo").value = s.photo_url || "";
       document.getElementById("form-title").textContent = "Edit Pelayan Altar";
       document.getElementById("form-subtitle").textContent = "Perbarui data pelayan altar.";
@@ -157,7 +157,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
     document.getElementById("altar-form")?.addEventListener("submit", async (e) => {
       e.preventDefault();
       const id = document.getElementById("as-id").value;
-      const payload = { name: document.getElementById("as-name").value.trim(), title: document.getElementById("as-title").value.trim(), organization: document.getElementById("as-org").value.trim(), description: document.getElementById("as-desc").value.trim(), photo_url: document.getElementById("as-photo").value.trim(), tags: document.getElementById("as-tags").value.trim() };
+      const payload = { name: document.getElementById("as-name").value.trim(), title: document.getElementById("as-title").value.trim(), organization: document.getElementById("as-org").value.trim(), description: document.getElementById("as-desc").value.trim(), photo_url: document.getElementById("as-photo").value.trim(), website: document.getElementById("as-website").value.trim() };
       try {
         const url = id ? `/api/altar-servers/${id}` : "/api/altar-servers";
         const method = id ? "PUT" : "POST";

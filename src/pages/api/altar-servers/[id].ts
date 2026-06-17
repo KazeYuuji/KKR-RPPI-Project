@@ -40,7 +40,7 @@ export const PUT: APIRoute = async ({ params, request }) => {
       organization: body.organization !== undefined ? sanitizeString(body.organization, 200) : existing.organization,
       description: body.description !== undefined ? sanitizeString(body.description, 2000) : existing.description,
       photo_url: body.photo_url !== undefined ? sanitizeUrl(body.photo_url, 500) : existing.photo_url,
-      tags: body.tags !== undefined ? sanitizeString(body.tags, 500) : existing.tags,
+      website: body.website !== undefined ? sanitizeUrl(body.website, 500) : existing.website,
       is_active: body.is_active !== undefined ? (body.is_active ? 1 : 0) : existing.is_active,
       updated_at: new Date().toISOString(),
     };
