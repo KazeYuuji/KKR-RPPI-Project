@@ -1,29 +1,29 @@
 import type { APIRoute } from "astro";
 import { query } from "../../lib/pg-db";
 
-export const GET: APIRoute = async ({ request }) => {
-  let lastCount = -1;
-  let lastMaxId = -1;
-  let lastCheckedSum = -1;
+let lastState = "";
 
+export const GET: APIRoute = async ({ request }) => {
   const stream = new ReadableStream({
     start(controller) {
       controller.enqueue(`data: connected\n\n`);
 
       const interval = setInterval(async () => {
         try {
-          const rows = await query<{ count: string; max_id: string; checked_sum: string }>(
-            `SELECT COUNT(*) as count, COALESCE(MAX(id), 0) as max_id, COALESCE(SUM(CASE WHEN checked_in THEN 1 ELSE 0 END), 0) as checked_sum FROM registrants`
+          const rows = await query<{ state_hash: string }>(
+            `SELECT MD5(CONCAT(
+              COALESCE((SELECT COUNT(*)::text || '-' || COALESCE(MAX(id)::text,'0') || '-' || COALESCE(SUM(CASE WHEN checked_in THEN 1 ELSE 0 END)::text,'0') FROM registrants), ''),
+              COALESCE((SELECT COUNT(*)::text || '-' || COALESCE(MAX(id)::text,'0') FROM tickets), ''),
+              COALESCE((SELECT COUNT(*)::text || '-' || COALESCE(MAX(id)::text,'0') FROM speakers), ''),
+              COALESCE((SELECT COUNT(*)::text || '-' || COALESCE(MAX(id)::text,'0') FROM sponsors), ''),
+              COALESCE((SELECT COUNT(*)::text || '-' || COALESCE(MAX(id)::text,'0') FROM altar_servers), ''),
+              COALESCE((SELECT COUNT(*)::text FROM settings), '')
+            )) as state_hash`
           );
-          const row = rows[0];
-          const count = parseInt(row.count);
-          const maxId = parseInt(row.max_id);
-          const checkedSum = parseInt(row.checked_sum);
+          const hash = rows[0]?.state_hash || "";
 
-          if (count !== lastCount || maxId !== lastMaxId || checkedSum !== lastCheckedSum) {
-            lastCount = count;
-            lastMaxId = maxId;
-            lastCheckedSum = checkedSum;
+          if (hash !== lastState) {
+            lastState = hash;
             controller.enqueue(`data: refresh\n\n`);
           }
         } catch (e) {
@@ -31,8 +31,14 @@ export const GET: APIRoute = async ({ request }) => {
         }
       }, 2000);
 
+      // keepalive ping every 30s to prevent proxy timeouts
+      const keepalive = setInterval(() => {
+        try { controller.enqueue(`: keepalive\n\n`); } catch {}
+      }, 30000);
+
       request.signal.addEventListener("abort", () => {
         clearInterval(interval);
+        clearInterval(keepalive);
       });
     },
   });
