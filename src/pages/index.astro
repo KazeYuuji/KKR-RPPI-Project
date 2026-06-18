@@ -177,10 +177,6 @@ import ChatBot from "../components/ChatBot.astro";
             <div class="inline-block w-8 h-8 border-2 border-kkr-maroon border-t-transparent rounded-full animate-spin"></div>
             <p class="mt-3 text-sm">Memuat sponsor...</p>
           </div>
-          <div class="sponsor-track flex gap-6 hidden" style="width: max-content;">
-            <div class="flex gap-6 items-stretch" data-copy="1"></div>
-            <div class="flex gap-6 items-stretch" data-copy="2" aria-hidden="true"></div>
-          </div>
         </div>
 
         <div class="text-center mt-10">
@@ -661,29 +657,25 @@ import ChatBot from "../components/ChatBot.astro";
           return;
         }
         document.getElementById("sponsor-skeleton")?.classList.add("hidden");
+        const container = document.getElementById("sponsor-grid");
+        container.style.maskImage = 'none';
         const card = (s) =>
           `<div class="sponsor-card shrink-0 cursor-pointer transition-all duration-300 hover:scale-110 active:scale-95" data-id="${s.id}">
             ${s.logo_url ? `<img src="${escapeHtml(sanitizeUrl(s.logo_url))}" loading="lazy" decoding="async" class="w-56 h-56 sm:w-64 sm:h-64 object-contain grayscale hover:grayscale-0 transition-all duration-500" alt="${escapeHtml(s.name)}" />` : `<div class="w-56 h-56 sm:w-64 sm:h-64 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-white/50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>`}
           </div>`;
         const html = list.map(card).join("");
-        if (list.length <= 3) {
-          const container = document.getElementById("sponsor-grid");
-          container.innerHTML = '';
-          container.style.maskImage = 'none';
-          const gridCols = list.length === 1 ? "flex justify-center" : (list.length === 2 ? "grid grid-cols-1 sm:grid-cols-2 gap-10 max-w-2xl mx-auto" : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 max-w-4xl mx-auto");
-          const innerHtml = list.map(s => {
-            const logo = s.logo_url
-              ? `<img src="${escapeHtml(sanitizeUrl(s.logo_url))}" loading="lazy" decoding="async" class="w-56 h-56 sm:w-64 sm:h-64 object-contain grayscale hover:grayscale-0 transition-all duration-500" alt="${escapeHtml(s.name)}" />`
-              : `<div class="w-56 h-56 sm:w-64 sm:h-64 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-white/50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>`;
-            return `<div class="sponsor-card cursor-pointer transition-all duration-300 hover:scale-110 active:scale-95 mx-auto" data-id="${s.id}">${logo}</div>`;
-          }).join("");
-          container.innerHTML = `<div class="${gridCols}">${innerHtml}</div>`;
+        if (list.length === 1) {
+          container.innerHTML = `<div class="flex justify-center">${html}</div>`;
         } else {
-          document.querySelector('[data-copy="1"]').innerHTML = html;
-          document.querySelector('[data-copy="2"]').innerHTML = html;
-          const track = document.querySelector(".sponsor-track");
-          track?.classList.remove("hidden");
-          if (track) setTimeout(function() { marquee(track); }, 50);
+          container.innerHTML = `
+            <div class="overflow-hidden" style="mask-image: linear-gradient(to right, transparent 0, black 40px, black calc(100% - 40px), transparent 100%);">
+              <div class="flex gap-16 sm:gap-24" style="width: max-content;">
+                <div class="flex gap-16 sm:gap-24">${html}</div>
+                <div class="flex gap-16 sm:gap-24" aria-hidden="true">${html}</div>
+              </div>
+            </div>`;
+          const track = container.querySelector(".overflow-hidden > div");
+          if (track) marquee(track);
         }
       } catch {
         document.getElementById("sponsor-grid").innerHTML = `<div class="text-center py-12 text-red-500"><p>Gagal memuat data sponsor.</p></div>`;
