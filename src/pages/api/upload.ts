@@ -56,14 +56,24 @@ export const POST: APIRoute = async ({ request }) => {
       return new Response(JSON.stringify({ error: "File tidak valid atau rusak" }), { status: 400, headers: { "Content-Type": "application/json" } });
     }
 
-    // Auto-remove white/light backgrounds (common for logos)
+    // Auto-remove solid backgrounds from logos
     const { data, info } = await sharp(buffer)
       .ensureAlpha()
       .raw()
       .toBuffer({ resolveWithObject: true });
-    const bgThreshold = 230;
+    // Detect background color from top-left corner and remove matching pixels
+    const cornerSize = Math.min(10, Math.floor(info.width / 8), Math.floor(info.height / 8));
+    let bgR = 0, bgG = 0, bgB = 0, count = 0;
+    for (let y = 0; y < cornerSize && y < info.height; y++) {
+      for (let x = 0; x < cornerSize && x < info.width; x++) {
+        const idx = (y * info.width + x) * 4;
+        bgR += data[idx]; bgG += data[idx+1]; bgB += data[idx+2]; count++;
+      }
+    }
+    bgR /= count; bgG /= count; bgB /= count;
+    const tolerance = 40;
     for (let i = 0; i < data.length; i += 4) {
-      if (data[i] > bgThreshold && data[i+1] > bgThreshold && data[i+2] > bgThreshold) {
+      if (Math.abs(data[i] - bgR) < tolerance && Math.abs(data[i+1] - bgG) < tolerance && Math.abs(data[i+2] - bgB) < tolerance) {
         data[i+3] = 0;
       }
     }
