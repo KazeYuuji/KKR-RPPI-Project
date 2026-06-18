@@ -108,7 +108,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   }
 
   // ---- Public GET endpoints (no auth required) ----
-  if ((url.startsWith("/api/tickets") || url.startsWith("/api/settings") || url.startsWith("/api/speakers") || url.startsWith("/api/sponsors") || url.startsWith("/api/altar-servers") || url.startsWith("/api/geocode")) && method === "GET") {
+  if ((url.startsWith("/api/tickets") || url.startsWith("/api/settings") || url.startsWith("/api/speakers") || url.startsWith("/api/sponsors") || url.startsWith("/api/altar-servers") || url.startsWith("/api/geocode") || url.startsWith("/api/ticket-pdf")) && method === "GET") {
     const response = await next();
     response.headers.set("Cache-Control", "private, no-store, max-age=0, must-revalidate");
     response.headers.set("Pragma", "no-cache");
@@ -126,7 +126,6 @@ export const onRequest = defineMiddleware(async (context, next) => {
   // ---- Auth check for protected routes ----
   const isProtected = protectedPaths.some((p) => url.startsWith(p)) ||
     url.startsWith("/api/registrants") ||
-    url.startsWith("/api/ticket-pdf") ||
     (url.startsWith("/api/tickets") && method !== "GET") ||
     (url.startsWith("/api/settings") && method !== "GET") ||
     (url.startsWith("/api/speakers") && method !== "GET") ||
