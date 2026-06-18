@@ -4,8 +4,7 @@ import { checkRateLimit } from "../../lib/security";
 const cache = new Map<string, { url: string; lat: number; lon: number; ttl: number }>();
 
 function buildEmbedUrl(lat: number, lon: number): string {
-  const pad = 0.02;
-  return `https://www.openstreetmap.org/export/embed.html?bbox=${lon - pad},${lat - pad},${lon + pad},${lat + pad}&layer=mapnik&marker=${lat},${lon}`;
+  return `https://www.google.com/maps?q=${lat},${lon}&output=embed`;
 }
 
 function extractCoords(text: string): { lat: number; lon: number } | null {

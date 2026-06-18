@@ -84,28 +84,6 @@ import RegistrationForm from "../components/RegistrationForm.astro";
       return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
     }
 
-    function setGmaps(url, mapsLink) {
-      var iframe = document.getElementById("reg-maps");
-      var gmapLink = document.getElementById("gmaps-link");
-      if (iframe && url) {
-        iframe.src = url;
-      }
-      if (gmapLink && mapsLink) {
-        gmapLink.href = mapsLink;
-      }
-    }
-
-    async function osmCoords(venue, mapsLink) {
-      try {
-        var params = "venue=" + encodeURIComponent(venue || "Lokasi Acara");
-        if (mapsLink) params += "&mapsLink=" + encodeURIComponent(mapsLink);
-        var res = await fetch("/api/geocode?" + params);
-        var data = await res.json();
-        return data;
-      } catch(e) {}
-      return null;
-    }
-
     async function loadSettings() {
       try {
         const s = await (window.__SETTINGS_CACHE || fetch("/api/settings").then(r => r.json()).then(d => d.settings || {}));
@@ -125,11 +103,16 @@ import RegistrationForm from "../components/RegistrationForm.astro";
           if (el) el.textContent = s[regLabelKeys[i]] || regLabelFalls[i];
         });
 
-        osmCoords(venue, mapsLink).then(function(data) {
-          if (data && data.url) {
-            setGmaps(data.url, mapsLink);
-          }
-        });
+        // Map iframe: use admin embed URL, or construct Google Maps embed from venue/address
+        var iframe = document.getElementById("reg-maps");
+        var gmapLink = document.getElementById("gmaps-link");
+        if (s.locMaps && iframe) {
+          iframe.src = s.locMaps;
+        } else if (iframe) {
+          const loc = s.locAddress || venue || "Kediri";
+          iframe.src = "https://www.google.com/maps?q=" + encodeURIComponent(loc) + "&output=embed";
+        }
+        if (gmapLink && mapsLink) gmapLink.href = mapsLink;
       } catch {}
     }
 
