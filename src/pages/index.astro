@@ -660,8 +660,8 @@ import ChatBot from "../components/ChatBot.astro";
         const container = document.getElementById("sponsor-grid");
         container.style.maskImage = 'none';
         const card = (s) =>
-          `<div class="sponsor-card shrink-0 cursor-pointer transition-all duration-300 hover:scale-110 active:scale-95" data-id="${s.id}">
-            ${s.logo_url ? `<img src="${escapeHtml(sanitizeUrl(s.logo_url))}" loading="lazy" decoding="async" class="w-56 h-56 sm:w-64 sm:h-64 object-contain grayscale-0 sm:grayscale hover:grayscale-0 transition-all duration-500" alt="${escapeHtml(s.name)}" />` : `<div class="w-56 h-56 sm:w-64 sm:h-64 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-white/50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>`}
+          `<div class="sponsor-card shrink-0 flex items-center justify-center cursor-pointer transition-all duration-300 hover:scale-110 active:scale-95" data-id="${s.id}">
+            ${s.logo_url ? `<img src="${escapeHtml(sanitizeUrl(s.logo_url))}" loading="lazy" decoding="async" class="w-40 h-40 sm:w-48 sm:h-48 lg:w-56 lg:h-56 object-contain grayscale-0 sm:grayscale hover:grayscale-0 transition-all duration-500" alt="${escapeHtml(s.name)}" />` : `<div class="w-40 h-40 sm:w-48 sm:h-48 lg:w-56 lg:h-56 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-white/50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>`}
           </div>`;
         const html = list.map(card).join("");
         if (list.length === 1) {
@@ -669,9 +669,9 @@ import ChatBot from "../components/ChatBot.astro";
         } else {
           container.innerHTML = `
             <div class="overflow-hidden" style="mask-image: linear-gradient(to right, transparent 0, black 40px, black calc(100% - 40px), transparent 100%);">
-              <div class="flex gap-16 sm:gap-24" style="width: max-content;">
-                <div class="flex gap-16 sm:gap-24">${html}</div>
-                <div class="flex gap-16 sm:gap-24" aria-hidden="true">${html}</div>
+              <div class="flex gap-8 sm:gap-12 md:gap-16 items-center" style="width: max-content;">
+                <div class="flex gap-8 sm:gap-12 md:gap-16 items-center">${html}</div>
+                <div class="flex gap-8 sm:gap-12 md:gap-16 items-center" aria-hidden="true">${html}</div>
               </div>
             </div>`;
           const track = container.querySelector(".overflow-hidden > div");
