@@ -659,9 +659,13 @@ import ChatBot from "../components/ChatBot.astro";
         document.getElementById("sponsor-skeleton")?.classList.add("hidden");
         const container = document.getElementById("sponsor-grid");
         container.style.maskImage = 'none';
+        container.style.minHeight = '';
+        const mq = window.matchMedia.bind(window);
+        const w = mq("(min-width:1024px)").matches ? "220px" : mq("(min-width:640px)").matches ? "180px" : "130px";
+        const h = mq("(min-width:1024px)").matches ? "160px" : mq("(min-width:640px)").matches ? "140px" : "110px";
         const card = (s) =>
-          `<div class="sponsor-card shrink-0 flex items-center justify-center cursor-pointer transition-all duration-300 hover:scale-110 active:scale-95" data-id="${s.id}">
-            ${s.logo_url ? `<img src="${escapeHtml(sanitizeUrl(s.logo_url))}" loading="lazy" decoding="async" class="w-40 h-40 sm:w-48 sm:h-48 lg:w-56 lg:h-56 object-contain grayscale-0 sm:grayscale hover:grayscale-0 transition-all duration-500" alt="${escapeHtml(s.name)}" />` : `<div class="w-40 h-40 sm:w-48 sm:h-48 lg:w-56 lg:h-56 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-white/50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>`}
+          `<div class="sponsor-card shrink-0 flex items-center justify-center cursor-pointer transition-all duration-300 hover:scale-110 active:scale-95 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10" style="width:${w};height:${h}" data-id="${s.id}">
+            ${s.logo_url ? `<img src="${escapeHtml(sanitizeUrl(s.logo_url))}" loading="lazy" decoding="async" class="max-w-[75%] max-h-[70%] w-auto h-auto object-contain grayscale-0 sm:grayscale hover:grayscale-0 transition-all duration-500" alt="${escapeHtml(s.name)}" />` : `<svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-white/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>`}
           </div>`;
         const html = list.map(card).join("");
         if (list.length === 1) {
