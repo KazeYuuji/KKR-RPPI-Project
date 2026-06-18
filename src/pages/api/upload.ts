@@ -56,7 +56,20 @@ export const POST: APIRoute = async ({ request }) => {
       return new Response(JSON.stringify({ error: "File tidak valid atau rusak" }), { status: 400, headers: { "Content-Type": "application/json" } });
     }
 
-    const webpBuffer = await sharp(buffer).webp({ quality: 80, effort: 4 }).toBuffer();
+    // Auto-remove white/light backgrounds (common for logos)
+    const { data, info } = await sharp(buffer)
+      .ensureAlpha()
+      .raw()
+      .toBuffer({ resolveWithObject: true });
+    const bgThreshold = 230;
+    for (let i = 0; i < data.length; i += 4) {
+      if (data[i] > bgThreshold && data[i+1] > bgThreshold && data[i+2] > bgThreshold) {
+        data[i+3] = 0;
+      }
+    }
+    const webpBuffer = await sharp(data, { raw: { width: info.width, height: info.height, channels: 4 } })
+      .webp({ quality: 80, effort: 4 })
+      .toBuffer();
     const filename = `${Date.now()}-${Math.random().toString(36).substring(2, 8)}.webp`;
     await uploadBuffer(webpBuffer, filename, "image/webp");
 
