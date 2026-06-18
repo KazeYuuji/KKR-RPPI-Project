@@ -650,8 +650,8 @@ import ChatBot from "../components/ChatBot.astro";
         document.getElementById("sponsor-skeleton")?.classList.add("hidden");
         const container = document.getElementById("sponsor-grid");
         const card = (s) =>
-          `<div class="sponsor-card rounded-2xl p-2 sm:p-3 text-center hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 shrink-0 w-[150px] sm:w-[180px] lg:w-[200px] flex flex-col items-center justify-center cursor-pointer" data-id="${s.id}">
-            ${s.logo_url ? `<img src="${escapeHtml(sanitizeUrl(s.logo_url))}" loading="lazy" decoding="async" class="w-32 h-32 sm:w-40 sm:h-40 lg:w-44 lg:h-44 object-contain grayscale-0 sm:grayscale hover:grayscale-0 transition-all duration-500" alt="${escapeHtml(s.name)}" />` : `<div class="w-32 h-32 sm:w-40 sm:h-40 lg:w-44 lg:h-44 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-white/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>`}
+          `<div class="sponsor-card rounded-2xl p-3 sm:p-4 text-center hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 shrink-0 w-[150px] sm:w-[180px] lg:w-[200px] flex flex-col items-center justify-center cursor-pointer" data-id="${s.id}">
+            ${s.logo_url ? `<img src="${escapeHtml(sanitizeUrl(s.logo_url))}" loading="lazy" decoding="async" class="w-full max-w-[120px] sm:max-w-[150px] lg:max-w-[170px] h-auto max-h-[100px] sm:max-h-[120px] lg:max-h-[140px] object-contain grayscale-0 sm:grayscale hover:grayscale-0 transition-all duration-500" alt="${escapeHtml(s.name)}" />` : `<div class="w-16 h-16 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-white/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>`}
           </div>`;
         const html = list.map(card).join("");
         if (list.length === 1) {
