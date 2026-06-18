@@ -597,11 +597,23 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
       document.getElementById("scan-qr-btn").disabled = false;
     });
 
-    function startPolling() {
-      setInterval(function() { loadStats(); loadRegistrants(); }, 5000);
-      setInterval(function() { loadTickets(); }, 10000);
+    function startSse() {
+      var source = new EventSource("/api/sse");
+      source.onmessage = function(e) {
+        if (e.data === "refresh") {
+          loadStats(); loadRegistrants(); loadTickets();
+        }
+      };
+      source.onerror = function() {
+        if (!window._sseFallback) {
+          window._sseFallback = setInterval(function() { loadStats(); loadRegistrants(); }, 5000);
+        }
+      };
+      source.onopen = function() {
+        if (window._sseFallback) { clearInterval(window._sseFallback); window._sseFallback = null; }
+      };
     }
 
-    document.addEventListener("DOMContentLoaded", function() { loadStats(); loadRegistrants(); loadTickets(); startPolling(); });
+    document.addEventListener("DOMContentLoaded", function() { loadStats(); loadRegistrants(); loadTickets(); startSse(); });
   </script>
 </AdminLayout>
