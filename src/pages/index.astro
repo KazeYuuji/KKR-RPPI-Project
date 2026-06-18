@@ -660,8 +660,8 @@ import ChatBot from "../components/ChatBot.astro";
           const copies = 5;
           let sets = '';
           for (let i = 0; i < copies; i++) sets += `<div class="flex gap-16 sm:gap-24">${html}</div>`;
-          container.innerHTML = `<div class="overflow-hidden"><div class="flex" style="width: max-content;">${sets}</div></div>`;
-          const track = container.querySelector(".overflow-hidden > div");
+          container.innerHTML = `<div class="flex" style="width: max-content;">${sets}</div>`;
+          const track = container.firstElementChild;
           if (track) marquee(track);
         }
       } catch {
