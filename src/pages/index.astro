@@ -661,7 +661,7 @@ import ChatBot from "../components/ChatBot.astro";
         container.style.maskImage = 'none';
         const card = (s) =>
           `<div class="sponsor-card shrink-0 cursor-pointer transition-all duration-300 hover:scale-110 active:scale-95" data-id="${s.id}">
-            ${s.logo_url ? `<img src="${escapeHtml(sanitizeUrl(s.logo_url))}" loading="lazy" decoding="async" class="w-56 h-56 sm:w-64 sm:h-64 object-contain grayscale hover:grayscale-0 transition-all duration-500" alt="${escapeHtml(s.name)}" />` : `<div class="w-56 h-56 sm:w-64 sm:h-64 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-white/50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>`}
+            ${s.logo_url ? `<img src="${escapeHtml(sanitizeUrl(s.logo_url))}" loading="lazy" decoding="async" class="w-56 h-56 sm:w-64 sm:h-64 object-contain grayscale-0 sm:grayscale hover:grayscale-0 transition-all duration-500" alt="${escapeHtml(s.name)}" />` : `<div class="w-56 h-56 sm:w-64 sm:h-64 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-white/50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>`}
           </div>`;
         const html = list.map(card).join("");
         if (list.length === 1) {
