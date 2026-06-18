@@ -103,16 +103,19 @@ import RegistrationForm from "../components/RegistrationForm.astro";
           if (el) el.textContent = s[regLabelKeys[i]] || regLabelFalls[i];
         });
 
-        // Map iframe: use admin embed URL, or construct Google Maps embed from venue/address
+        // Map iframe: Google Maps embed from admin, or OSM fallback via geocode
         var iframe = document.getElementById("reg-maps");
         var gmapLink = document.getElementById("gmaps-link");
+        if (gmapLink && mapsLink) gmapLink.href = mapsLink;
         if (s.locMaps && iframe) {
           iframe.src = s.locMaps;
         } else if (iframe) {
-          const loc = s.locAddress || venue || "Kediri";
-          iframe.src = "https://www.google.com/maps?q=" + encodeURIComponent(loc) + "&output=embed";
+          var params = "venue=" + encodeURIComponent(venue || "Lokasi Acara");
+          if (mapsLink) params += "&mapsLink=" + encodeURIComponent(mapsLink);
+          fetch("/api/geocode?" + params).then(function(r) { return r.json(); }).then(function(data) {
+            if (data && data.url && iframe) iframe.src = data.url;
+          }).catch(function() {});
         }
-        if (gmapLink && mapsLink) gmapLink.href = mapsLink;
       } catch {}
     }
 

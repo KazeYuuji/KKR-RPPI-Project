@@ -312,6 +312,18 @@ import ChatBot from "../components/ChatBot.astro";
       return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
     }
 
+    async function setEmbedMap(venue, mapsLink) {
+      try {
+        var params = "venue=" + encodeURIComponent(venue || "Lokasi Acara");
+        if (mapsLink) params += "&mapsLink=" + encodeURIComponent(mapsLink);
+        var res = await fetch("/api/geocode?" + params);
+        var data = await res.json();
+        return { url: data?.url || "" };
+      } catch(e) {
+        return { url: "" };
+      }
+    }
+
     function sanitizeUrl(url) {
       if (!url) return "";
       try {
@@ -478,14 +490,15 @@ import ChatBot from "../components/ChatBot.astro";
         if (safe("loc-wa")) { safe("loc-wa").href = "https://wa.me/" + wa; safe("loc-wa").textContent = "WhatsApp: +" + wa; }
         if (safe("loc-maps-btn")) safe("loc-maps-btn").href = sanitizeUrl(mapsLink);
         
-        // Map iframe: use admin embed URL, or construct Google Maps embed from venue/address
+        // Map iframe: Google Maps embed from admin, or OSM fallback via geocode
         if (safe("loc-maps-iframe")) {
           const iframe = safe("loc-maps-iframe");
           if (s.locMaps) {
             iframe.src = s.locMaps;
+          } else if (mapsLink) {
+            setEmbedMap(venue, mapsLink).then(({url}) => { if (url && iframe) iframe.src = url; });
           } else {
-            const loc = s.locAddress || venue || "Kediri";
-            iframe.src = "https://www.google.com/maps?q=" + encodeURIComponent(loc) + "&output=embed";
+            setEmbedMap(venue, "").then(({url}) => { if (url && iframe) iframe.src = url; });
           }
         }
 
