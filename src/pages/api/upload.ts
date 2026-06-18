@@ -61,17 +61,23 @@ export const POST: APIRoute = async ({ request }) => {
       .ensureAlpha()
       .raw()
       .toBuffer({ resolveWithObject: true });
-    // Detect background color from top-left corner and remove matching pixels
-    const cornerSize = Math.min(10, Math.floor(info.width / 8), Math.floor(info.height / 8));
+    // Sample all four corners to detect background color
+    const cs = Math.min(10, Math.floor(info.width / 12), Math.floor(info.height / 12));
+    const corners = [
+      { x: 0, y: 0 }, { x: info.width - cs, y: 0 },
+      { x: 0, y: info.height - cs }, { x: info.width - cs, y: info.height - cs }
+    ];
     let bgR = 0, bgG = 0, bgB = 0, count = 0;
-    for (let y = 0; y < cornerSize && y < info.height; y++) {
-      for (let x = 0; x < cornerSize && x < info.width; x++) {
-        const idx = (y * info.width + x) * 4;
-        bgR += data[idx]; bgG += data[idx+1]; bgB += data[idx+2]; count++;
+    for (const c of corners) {
+      for (let y = Math.max(0, c.y); y < Math.min(info.height, c.y + cs); y++) {
+        for (let x = Math.max(0, c.x); x < Math.min(info.width, c.x + cs); x++) {
+          const idx = (y * info.width + x) * 4;
+          bgR += data[idx]; bgG += data[idx+1]; bgB += data[idx+2]; count++;
+        }
       }
     }
     bgR /= count; bgG /= count; bgB /= count;
-    const tolerance = 40;
+    const tolerance = 55;
     for (let i = 0; i < data.length; i += 4) {
       if (Math.abs(data[i] - bgR) < tolerance && Math.abs(data[i+1] - bgG) < tolerance && Math.abs(data[i+2] - bgB) < tolerance) {
         data[i+3] = 0;
