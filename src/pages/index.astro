@@ -571,11 +571,17 @@ import ChatBot from "../components/ChatBot.astro";
       if (!el) return;
       el.classList.add("mq-track");
       let pos = 0, running = true, id = null;
+      const center = () => {
+        const vw = window.innerWidth;
+        const tw = el.scrollWidth / 2;
+        return (vw - tw) / 2;
+      };
+      pos = center();
       function tick() {
         if (!running) return;
         pos -= 0.5;
         const full = el.scrollWidth / 2;
-        if (pos <= -full || Math.abs(pos) >= full) { pos = 0; }
+        if (pos <= -full) { pos = center(); }
         el.style.transform = "translateX(" + pos + "px)";
         id = requestAnimationFrame(tick);
       }
@@ -586,6 +592,7 @@ import ChatBot from "../components/ChatBot.astro";
       el.addEventListener("mouseleave", function () {
         if (id) cancelAnimationFrame(id);
         running = true;
+        pos = center();
         id = requestAnimationFrame(tick);
       });
       id = requestAnimationFrame(tick);
@@ -668,14 +675,8 @@ import ChatBot from "../components/ChatBot.astro";
         if (list.length === 1) {
           container.innerHTML = `<div class="flex justify-center">${html}</div>`;
         } else {
-          container.innerHTML = `
-            <div class="overflow-hidden" style="mask-image: linear-gradient(to right, transparent 0, black 40px, black calc(100% - 40px), transparent 100%);">
-              <div class="flex gap-16 sm:gap-24" style="width: max-content;">
-                <div class="flex gap-16 sm:gap-24">${html}</div>
-                <div class="flex gap-16 sm:gap-24" aria-hidden="true">${html}</div>
-              </div>
-            </div>`;
-          const track = container.querySelector(".overflow-hidden > div");
+          container.innerHTML = `<div class="flex gap-16 sm:gap-24" style="width: max-content;"><div class="flex gap-16 sm:gap-24">${html}</div><div class="flex gap-16 sm:gap-24" aria-hidden="true">${html}</div></div>`;
+          const track = container.querySelector("div.flex");
           if (track) marquee(track);
         }
       } catch {
