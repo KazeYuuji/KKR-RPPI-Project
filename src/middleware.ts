@@ -21,7 +21,7 @@ function withSecurityHeaders(res: Response): Response {
     "img-src 'self' data: blob: https://*.tile.openstreetmap.org https://www.openstreetmap.org https://openstreetmap.org",
     "font-src 'self'",
     "form-action 'self'",
-    "frame-src https://www.openstreetmap.org https://maps.google.com",
+    "frame-src https://www.openstreetmap.org https://www.google.com https://maps.google.com",
     "frame-ancestors 'none'",
     "base-uri 'self'",
     "object-src 'none'",
