@@ -669,10 +669,10 @@ import ChatBot from "../components/ChatBot.astro";
           container.innerHTML = `<div class="flex justify-center">${html}</div>`;
         } else {
           container.innerHTML = `
-            <div class="overflow-hidden">
-              <div class="flex" style="width: max-content;">
-                <div class="flex gap-10 sm:gap-14 lg:gap-20 items-center">${html}</div>
-                <div class="flex gap-10 sm:gap-14 lg:gap-20 items-center" aria-hidden="true">${html}</div>
+            <div class="overflow-hidden" style="mask-image: linear-gradient(to right, transparent 0, black 40px, black calc(100% - 40px), transparent 100%);">
+              <div class="flex gap-16 sm:gap-24" style="width: max-content;">
+                <div class="flex gap-16 sm:gap-24">${html}</div>
+                <div class="flex gap-16 sm:gap-24" aria-hidden="true">${html}</div>
               </div>
             </div>`;
           const track = container.querySelector(".overflow-hidden > div");
