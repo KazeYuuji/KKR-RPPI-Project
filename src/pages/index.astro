@@ -241,6 +241,13 @@ import ChatBot from "../components/ChatBot.astro";
                   <p id="reg-deadline" class="text-xs text-white/90">Memuat...</p>
                 </div>
               </div>
+              <div id="reg-open-info" class="flex items-start gap-2 hidden">
+                <span class="w-6 h-6 rounded-lg bg-white/10 flex items-center justify-center text-white shrink-0 mt-0.5"><svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
+                <div>
+                  <p id="loc-label-buka-daftar" class="text-[10px] font-semibold uppercase tracking-wider text-white/60">Buka Pendaftaran</p>
+                  <p id="reg-open-date" class="text-xs text-white/90">—</p>
+                </div>
+              </div>
             </div>
             <div class="mt-3 flex items-start gap-2 border-t border-white/10 pt-3">
               <span class="w-6 h-6 rounded-lg bg-white/10 flex items-center justify-center text-white shrink-0"><svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>
@@ -448,13 +455,28 @@ import ChatBot from "../components/ChatBot.astro";
         if (s.btnHeroSecondary && safe("btn-hero-secondary")) safe("btn-hero-secondary").textContent = s.btnHeroSecondary;
         if (s.btnSponsorContact && safe("btn-sponsor-contact")) safe("btn-sponsor-contact").textContent = s.btnSponsorContact;
 
-        // Registration open date check - disable hero button
+        // Registration open date check - disable hero button, show open date info
+        var _beforeOpen = false;
         if (s.regOpenDateISO) {
           var od = s.regOpenDateISO;
           if (!od.endsWith("Z") && !/[+-]\d{2}:\d{2}$/.test(od)) od += "+07:00";
           if (Date.now() < new Date(od).getTime()) {
+            _beforeOpen = true;
             var heroBtn = safe("btn-hero-primary")?.closest("a");
             if (heroBtn) { heroBtn.href = "#"; heroBtn.classList.add("opacity-60", "cursor-not-allowed", "pointer-events-none"); }
+            // Show open date info, hide deadline
+            var openInfo = safe("reg-open-info");
+            if (openInfo) openInfo.classList.remove("hidden");
+            var dlEl = safe("reg-deadline");
+            if (dlEl && dlEl.closest(".flex.items-start")) dlEl.closest(".flex.items-start").classList.add("hidden");
+            var openDateEl = safe("reg-open-date");
+            if (openDateEl) {
+              try {
+                var d = new Date(od);
+                var months = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+                openDateEl.textContent = d.getDate() + " " + months[d.getMonth()] + " " + d.getFullYear();
+              } catch {}
+            }
           }
         }
 
@@ -463,7 +485,7 @@ import ChatBot from "../components/ChatBot.astro";
         if (safe("loc-address")) safe("loc-address").textContent = s.locAddress || "Lihat peta di bawah";
         if (safe("loc-date")) safe("loc-date").textContent = date;
         if (safe("loc-time")) safe("loc-time").textContent = time;
-        if (safe("reg-deadline")) safe("reg-deadline").textContent = regDeadline;
+        if (safe("reg-deadline") && !_beforeOpen) safe("reg-deadline").textContent = regDeadline;
         if (safe("loc-phone")) safe("loc-phone").textContent = phone;
         if (safe("loc-wa")) { safe("loc-wa").href = "https://wa.me/" + wa; safe("loc-wa").textContent = "WhatsApp: +" + wa; }
         if (safe("loc-maps-btn")) safe("loc-maps-btn").href = sanitizeUrl(mapsLink);
