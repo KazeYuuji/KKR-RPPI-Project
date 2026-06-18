@@ -103,13 +103,11 @@ import RegistrationForm from "../components/RegistrationForm.astro";
           if (el) el.textContent = s[regLabelKeys[i]] || regLabelFalls[i];
         });
 
-        // Map iframe: Google Maps embed from admin, or OSM fallback via geocode
+        // Map iframe: use OpenStreetMap (reliable), Google Maps via button only
         var iframe = document.getElementById("reg-maps");
         var gmapLink = document.getElementById("gmaps-link");
         if (gmapLink && mapsLink) gmapLink.href = mapsLink;
-        if (s.locMaps && iframe) {
-          iframe.src = s.locMaps;
-        } else if (iframe) {
+        if (iframe) {
           var params = "venue=" + encodeURIComponent(venue || "Lokasi Acara");
           if (mapsLink) params += "&mapsLink=" + encodeURIComponent(mapsLink);
           fetch("/api/geocode?" + params).then(function(r) { return r.json(); }).then(function(data) {

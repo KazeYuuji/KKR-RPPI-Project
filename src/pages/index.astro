@@ -490,12 +490,10 @@ import ChatBot from "../components/ChatBot.astro";
         if (safe("loc-wa")) { safe("loc-wa").href = "https://wa.me/" + wa; safe("loc-wa").textContent = "WhatsApp: +" + wa; }
         if (safe("loc-maps-btn")) safe("loc-maps-btn").href = sanitizeUrl(mapsLink);
         
-        // Map iframe: Google Maps embed from admin, or OSM fallback via geocode
+        // Map iframe: use OpenStreetMap (reliable), Google Maps via button only
         if (safe("loc-maps-iframe")) {
           const iframe = safe("loc-maps-iframe");
-          if (s.locMaps) {
-            iframe.src = s.locMaps;
-          } else if (mapsLink) {
+          if (mapsLink) {
             setEmbedMap(venue, mapsLink).then(({url}) => { if (url && iframe) iframe.src = url; });
           } else {
             setEmbedMap(venue, "").then(({url}) => { if (url && iframe) iframe.src = url; });

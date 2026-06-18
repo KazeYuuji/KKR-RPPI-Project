@@ -29,7 +29,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
         <div>
           <label class="block text-sm font-medium text-kkr-purple mb-1">URL Embed Peta (iframe src)</label>
           <input id="loc-maps-embed" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="https://www.google.com/maps/embed?pb=..." />
-          <p class="text-xs text-kkr-maroon/60 mt-1">Cara dapatkan: Buka Google Maps → klik bagikan/share → pilih "Embed peta" → salin URL <code>src</code> dari iframe. Jika dikosongkan, akan otomatis menggunakan Google Maps link di atas.</p>
+          <p class="text-xs text-kkr-maroon/60 mt-1">Cara dapatkan: Buka Google Maps → klik bagikan/share → pilih "Embed peta" → salin URL <code>src</code> dari iframe. Jika dikosongkan, akan menggunakan OpenStreetMap (selalu berfungsi). Google Maps tetap bisa diakses melalui tombol "Buka di Google Maps".</p>
           <div id="embed-preview-settings" class="mt-2 hidden">
             <iframe id="embed-preview-iframe" class="w-full rounded-xl border border-kkr-light/50 shadow-sm" style="aspect-ratio:16/9" loading="lazy"></iframe>
           </div>
