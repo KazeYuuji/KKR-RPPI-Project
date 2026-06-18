@@ -448,6 +448,16 @@ import ChatBot from "../components/ChatBot.astro";
         if (s.btnHeroSecondary && safe("btn-hero-secondary")) safe("btn-hero-secondary").textContent = s.btnHeroSecondary;
         if (s.btnSponsorContact && safe("btn-sponsor-contact")) safe("btn-sponsor-contact").textContent = s.btnSponsorContact;
 
+        // Registration open date check - disable hero button
+        if (s.regOpenDateISO) {
+          var od = s.regOpenDateISO;
+          if (!od.endsWith("Z") && !/[+-]\d{2}:\d{2}$/.test(od)) od += "+07:00";
+          if (Date.now() < new Date(od).getTime()) {
+            var heroBtn = safe("btn-hero-primary")?.closest("a");
+            if (heroBtn) { heroBtn.href = "#"; heroBtn.classList.add("opacity-60", "cursor-not-allowed", "pointer-events-none"); }
+          }
+        }
+
         // Location section
         if (safe("loc-venue")) safe("loc-venue").textContent = venue;
         if (safe("loc-address")) safe("loc-address").textContent = s.locAddress || "Lihat peta di bawah";

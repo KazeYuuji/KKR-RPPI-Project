@@ -6,7 +6,7 @@ import { checkRateLimit } from "../../lib/security";
 const ALLOWED_SETTING_KEYS = new Set([
   "locVenue", "locAddress", "locDate", "locTime", "locMapsLink", "locMaps",
   "eventDateISO", "eventTimeEnd", "eventYear", "eventName",
-  "regDeadline", "regDeadlineISO",
+  "regDeadline", "regDeadlineISO", "regOpenDateISO",
   "contactEmail", "contactPhone", "contactWa", "waGroupLink",
   "churchLogo",
   "sectionLabelSpeakers", "sectionHeadingSpeakers", "sectionLabelStory",
@@ -76,6 +76,12 @@ export const POST: APIRoute = async ({ request }) => {
       const d = new Date(updates.regDeadlineISO);
       if (isNaN(d.getTime())) {
         return new Response(JSON.stringify({ error: "Format tanggal regDeadlineISO tidak valid" }), { status: 400, headers: { "Content-Type": "application/json" } });
+      }
+    }
+    if (updates.regOpenDateISO) {
+      const d = new Date(updates.regOpenDateISO);
+      if (isNaN(d.getTime())) {
+        return new Response(JSON.stringify({ error: "Format tanggal regOpenDateISO tidak valid" }), { status: 400, headers: { "Content-Type": "application/json" } });
       }
     }
     if (updates.eventDateISO) {

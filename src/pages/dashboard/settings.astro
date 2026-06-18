@@ -276,6 +276,11 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
           <p id="preview-time" class="text-kkr-dark">Waktu: —</p>
         </div>
         <div>
+          <label class="block text-sm font-medium text-kkr-purple mb-1">Tanggal Buka Pendaftaran</label>
+          <input id="reg-open-date-iso" type="datetime-local" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" />
+          <p id="preview-open-date" class="text-xs text-kkr-maroon/60 mt-1">Tampilan: —</p>
+        </div>
+        <div>
           <label class="block text-sm font-medium text-kkr-purple mb-1">Batas Akhir Pendaftaran</label>
           <input id="reg-deadline-iso" type="datetime-local" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" />
           <p id="preview-deadline" class="text-xs text-kkr-maroon/60 mt-1">Tampilan: —</p>
@@ -566,6 +571,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
         setVal("event-date-iso", s.eventDateISO ? utcToLocal(s.eventDateISO) : "");
         setVal("event-time-end", s.eventTimeEnd || "");
         setVal("event-year", s.eventYear || "");
+        setVal("reg-open-date-iso", s.regOpenDateISO ? utcToLocal(s.regOpenDateISO) : "");
         setVal("reg-deadline-iso", s.regDeadlineISO ? utcToLocal(s.regDeadlineISO) : "");
         setVal("contact-email", s.contactEmail || "");
         setVal("contact-phone", s.contactPhone || "");
@@ -816,11 +822,14 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
 
       const deadlineIso = document.getElementById("reg-deadline-iso").value;
       document.getElementById("preview-deadline").textContent = "Tampilan: " + (formatDateIndo(deadlineIso) || "—");
+      const openDateIso = document.getElementById("reg-open-date-iso").value;
+      document.getElementById("preview-open-date").textContent = "Tampilan: " + (formatDateIndo(openDateIso) || "—");
     }
 
     document.getElementById("event-date-iso")?.addEventListener("change", updatePreview);
     document.getElementById("event-time-end")?.addEventListener("change", updatePreview);
     document.getElementById("reg-deadline-iso")?.addEventListener("change", updatePreview);
+    document.getElementById("reg-open-date-iso")?.addEventListener("change", updatePreview);
 
     function localToUTC(val) {
       if (!val) return "";
@@ -843,6 +852,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
       const eventIso = document.getElementById("event-date-iso").value;
       const timeEnd = document.getElementById("event-time-end").value;
       const deadlineIso = document.getElementById("reg-deadline-iso").value;
+      const openDateIso = document.getElementById("reg-open-date-iso").value;
       const eventYear = document.getElementById("event-year").value.trim();
 
       try {
@@ -853,6 +863,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
           eventDateISO: localToUTC(eventIso),
           eventTimeEnd: timeEnd,
           regDeadlineISO: localToUTC(deadlineIso),
+          regOpenDateISO: localToUTC(openDateIso),
           eventYear: eventYear,
         })});
         if (res.ok) toast("Jadwal berhasil disimpan!");
