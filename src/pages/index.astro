@@ -661,19 +661,21 @@ import ChatBot from "../components/ChatBot.astro";
         document.getElementById("sponsor-skeleton")?.classList.add("hidden");
         const container = document.getElementById("sponsor-grid");
         const card = (s) =>
-          `<div class="sponsor-card shrink-0 flex items-center justify-center cursor-pointer transition-all duration-300 hover:scale-110 active:scale-95" data-id="${s.id}">
-            ${s.logo_url ? `<img src="${escapeHtml(sanitizeUrl(s.logo_url))}" loading="lazy" decoding="async" class="w-32 sm:w-40 lg:w-48 h-auto max-h-28 sm:max-h-36 lg:max-h-44 object-contain grayscale-0 sm:grayscale hover:grayscale-0 transition-all duration-500" alt="${escapeHtml(s.name)}" />` : `<svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-white/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>`}
+          `<div class="sponsor-card rounded-2xl p-4 sm:p-5 text-center hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 shrink-0 w-[180px] sm:w-[200px] lg:w-[220px] flex flex-col items-center justify-center cursor-pointer" data-id="${s.id}">
+            ${s.logo_url ? `<img src="${escapeHtml(sanitizeUrl(s.logo_url))}" loading="lazy" decoding="async" class="w-24 h-24 sm:w-28 sm:h-28 lg:w-32 lg:h-32 object-contain grayscale-0 sm:grayscale hover:grayscale-0 transition-all duration-500" alt="${escapeHtml(s.name)}" />` : `<div class="w-24 h-24 sm:w-28 sm:h-28 lg:w-32 lg:h-32 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-white/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>`}
           </div>`;
         const html = list.map(card).join("");
         if (list.length === 1) {
           container.innerHTML = `<div class="flex justify-center">${html}</div>`;
         } else {
           container.innerHTML = `
-            <div class="flex items-center" style="width: max-content;">
-              <div class="flex gap-10 sm:gap-14 md:gap-20 items-center">${html}</div>
-              <div class="flex gap-10 sm:gap-14 md:gap-20 items-center" aria-hidden="true">${html}</div>
+            <div class="overflow-hidden" style="mask-image: linear-gradient(to right, transparent 0, black 40px, black calc(100% - 40px), transparent 100%);">
+              <div class="flex gap-12 sm:gap-16 lg:gap-20" style="width: max-content;">
+                <div class="flex gap-12 sm:gap-16 lg:gap-20 items-center">${html}</div>
+                <div class="flex gap-12 sm:gap-16 lg:gap-20 items-center" aria-hidden="true">${html}</div>
+              </div>
             </div>`;
-          const track = container.querySelector("div.flex");
+          const track = container.querySelector(".overflow-hidden > div");
           if (track) marquee(track);
         }
       } catch {
