@@ -570,25 +570,13 @@ import ChatBot from "../components/ChatBot.astro";
     function marquee(el) {
       if (!el) return;
       el.classList.add("mq-track");
-      let pos = 0, running = true, id = null;
-      function tick() {
-        if (!running) return;
-        pos -= 0.5;
-        const full = el.scrollWidth / 2;
-        if (pos <= -full || Math.abs(pos) >= full) { pos = 0; }
-        el.style.transform = "translateX(" + pos + "px)";
-        id = requestAnimationFrame(tick);
-      }
+      el.style.animationDuration = Math.max(15, el.scrollWidth / 80) + "s";
       el.addEventListener("mouseenter", function () {
-        running = false;
-        if (id) cancelAnimationFrame(id);
+        el.style.animationPlayState = "paused";
       });
       el.addEventListener("mouseleave", function () {
-        if (id) cancelAnimationFrame(id);
-        running = true;
-        id = requestAnimationFrame(tick);
+        el.style.animationPlayState = "running";
       });
-      id = requestAnimationFrame(tick);
     }
 
     let allAltarServers = [];
@@ -708,3 +696,13 @@ import ChatBot from "../components/ChatBot.astro";
     });
   </script>
 </PublicLayout>
+
+<style is:global>
+  @keyframes mq-scroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  .mq-track {
+    animation: mq-scroll 30s linear infinite;
+  }
+</style>
