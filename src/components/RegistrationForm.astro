@@ -83,11 +83,11 @@ export interface TicketType {
     </div>
   </form>
 
-  <!-- Success Modal -->
+  <!-- Success Modal (cannot close until ticket downloaded) -->
   <div id="success-modal" class="pointer-events-none fixed inset-0 z-[60] flex items-center justify-center bg-black/50 backdrop-blur-sm opacity-0 transition-all duration-300 p-3 sm:p-4">
     <div class="relative w-full max-w-sm rounded-2xl bg-white shadow-2xl shadow-black/20 animate-scale-in overflow-hidden">
       <div class="pointer-events-none absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-kkr-red via-kkr-gold to-kkr-red"></div>
-      <button id="modal-close" class="absolute right-3 top-4 z-10 rounded-full bg-white/80 backdrop-blur p-1.5 text-kkr-dark/40 shadow-sm transition hover:bg-white hover:text-kkr-dark hover:shadow-md" aria-label="Tutup">
+      <button id="modal-close" class="hidden absolute right-3 top-4 z-10 rounded-full bg-white/80 backdrop-blur p-1.5 text-kkr-dark/40 shadow-sm transition hover:bg-white hover:text-kkr-dark hover:shadow-md" aria-label="Tutup">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
       <div class="flex flex-col items-center px-8 pt-10 pb-8 text-center">
@@ -95,14 +95,20 @@ export interface TicketType {
           <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-emerald-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
         </div>
         <h3 class="text-xl font-bold text-kkr-dark tracking-tight">Pendaftaran Berhasil!</h3>
-        <p class="text-sm text-kkr-maroon/60 mt-1.5 max-w-xs">Terima kasih telah mendaftar. Unduh tiket PDF Anda untuk check-in.</p>
+        <p class="text-sm text-kkr-maroon/60 mt-1.5 max-w-xs">Unduh tiket PDF Anda sekarang untuk check-in di lokasi.</p>
         <div class="mt-6 w-full">
           <a id="pdf-download-btn" href="#" rel="noopener noreferrer" class="flex items-center justify-center gap-2.5 rounded-xl bg-gradient-to-r from-kkr-red to-kkr-gold px-5 py-3 text-base font-bold text-white shadow-lg shadow-kkr-maroon/20 transition-all duration-200 hover:shadow-xl hover:-translate-y-0.5 w-full">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
             Unduh Tiket PDF
           </a>
           <p class="text-[11px] text-kkr-maroon/40 mt-2.5">Tunjukkan tiket PDF saat check-in di lokasi</p>
+          <p id="download-warning" class="text-[11px] text-kkr-red/60 mt-2 hidden">⚠️ Anda harus mengunduh tiket sebelum meninggalkan halaman ini</p>
         </div>
+      </div>
+      <div id="modal-footer-after-download" class="hidden px-8 pb-6 text-center">
+        <button id="modal-close-after-download" class="rounded-xl bg-kkr-dark/10 px-5 py-2.5 text-sm font-semibold text-kkr-dark/60 transition hover:bg-kkr-dark/20 hover:text-kkr-dark active:scale-95">
+          Tutup
+        </button>
       </div>
     </div>
   </div>
@@ -246,6 +252,7 @@ export interface TicketType {
           (function(dlId) {
             pdfBtn.onclick = async function(e) {
               e.preventDefault();
+              if (ticketDownloaded) return;
               const btn = this;
               const orig = btn.innerHTML;
               btn.innerHTML = '<span class="flex items-center gap-2"><svg class="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Mengunduh...</span>';
@@ -261,13 +268,21 @@ export interface TicketType {
                 a.click();
                 document.body.removeChild(a);
                 setTimeout(function(){ URL.revokeObjectURL(url); }, 10000);
+                ticketDownloaded = true;
+                document.getElementById("modal-close").classList.remove("hidden");
+                document.getElementById("modal-footer-after-download").classList.remove("hidden");
+                document.getElementById("download-warning").classList.add("hidden");
+                btn.innerHTML = '<span class="flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Berhasil diunduh</span>';
+                btn.style.pointerEvents = "none";
+                btn.style.opacity = "0.7";
               } catch(e2) {
                 alert("Terjadi kesalahan. Silakan coba lagi.");
+                btn.innerHTML = orig;
               }
-              btn.innerHTML = orig;
             };
           })(serverId);
           modal.classList.remove("pointer-events-none", "opacity-0");
+          document.getElementById("download-warning").classList.remove("hidden");
           form.reset();
           loadTickets();
         } else {
@@ -282,11 +297,24 @@ export interface TicketType {
       }
     });
 
+    let ticketDownloaded = false;
+
+    window.addEventListener("beforeunload", (e) => {
+      if (!ticketDownloaded && !modal.classList.contains("pointer-events-none")) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    });
+
     closeModalBtn.addEventListener("click", () => {
+      if (!ticketDownloaded) return;
+      modal.classList.add("pointer-events-none", "opacity-0");
+    });
+    document.getElementById("modal-close-after-download")?.addEventListener("click", () => {
       modal.classList.add("pointer-events-none", "opacity-0");
     });
     modal.addEventListener("click", (e) => {
-      if (e.target === modal) modal.classList.add("pointer-events-none", "opacity-0");
+      if (e.target === modal && ticketDownloaded) modal.classList.add("pointer-events-none", "opacity-0");
     });
 
     async function checkDeadline() {
