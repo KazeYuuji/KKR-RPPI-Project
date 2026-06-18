@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
 import { pgGetSettings } from "../../lib/pg-db";
+import { queryOne, query } from "../../lib/pg-db";
 import { checkRateLimit } from "../../lib/security";
 
 const GEMINI_API_KEY = import.meta.env.GEMINI_API_KEY || "";
@@ -56,7 +57,7 @@ export const POST: APIRoute = async ({ request }) => {
     const clientPart = typeof body.sessionId === "string" ? body.sessionId.replace(/[^a-zA-Z0-9_-]/g, "").slice(0, 10) : "";
     const sessionId = "sess_" + ip.replace(/[^0-9a-fA-F:.]/g, "") + "_" + clientPart;
 
-    const settings = await loadAllSettings();
+    const [settings, dynamicData] = await Promise.all([loadAllSettings(), loadDynamicData()]);
 
     // Limit total conversations to prevent memory exhaustion
     if (conversations.size >= MAX_CONVERSATIONS) {
@@ -73,7 +74,7 @@ export const POST: APIRoute = async ({ request }) => {
 
     // Try Gemini AI if API key is available
     if (GEMINI_API_KEY) {
-      const systemPrompt = buildSystemPrompt(settings);
+      const systemPrompt = buildSystemPrompt(settings, dynamicData);
       const messages = conv.history.slice(-6);
       messages.push({ role: "user", content: userMessage, ts: Date.now() });
 
@@ -114,7 +115,7 @@ export const POST: APIRoute = async ({ request }) => {
     // Smart fallback with conversation memory (no lock needed since single-threaded)
     const lastTopic = conv.history.filter(m => m.role === "user").pop()?.content || "";
 
-    const reply = await handleSmartReply(settings, userMessage, lastTopic);
+    const reply = await handleSmartReply(settings, dynamicData, userMessage, lastTopic);
 
     conv.history.push({ role: "user", content: userMessage, ts: Date.now() });
     conv.history.push({ role: "assistant", content: reply, ts: Date.now() });
@@ -131,6 +132,36 @@ export const POST: APIRoute = async ({ request }) => {
   }
 };
 
+interface DynamicData {
+  registrantCount: number;
+  speakers: Array<{ name: string; title: string; organization: string }>;
+  sponsors: Array<{ name: string }>;
+  altarServers: Array<{ name: string }>;
+  tickets: Array<{ name: string; remaining: number }>;
+}
+
+async function loadDynamicData(): Promise<DynamicData> {
+  const empty = { registrantCount: 0, speakers: [], sponsors: [], altarServers: [], tickets: [] };
+  try {
+    const [registrantRow, speakers, sponsors, altarServers, tickets] = await Promise.all([
+      queryOne<{ count: string }>("SELECT COUNT(*) as count FROM registrants"),
+      query<{ name: string; title: string; organization: string }>("SELECT name, title, organization FROM speakers WHERE is_active = 1"),
+      query<{ name: string }>("SELECT name FROM sponsors WHERE is_active = 1"),
+      query<{ name: string }>("SELECT name FROM altar_servers WHERE is_active = 1"),
+      query<{ name: string; remaining: number }>("SELECT name, remaining FROM tickets"),
+    ]);
+    return {
+      registrantCount: parseInt(registrantRow?.count || "0", 10),
+      speakers,
+      sponsors,
+      altarServers,
+      tickets,
+    };
+  } catch {
+    return empty;
+  }
+}
+
 async function loadAllSettings(): Promise<Record<string, string>> {
   try {
     return await pgGetSettings();
@@ -139,12 +170,39 @@ async function loadAllSettings(): Promise<Record<string, string>> {
   }
 }
 
-function buildSystemPrompt(s: Record<string, string>): string {
+function buildSystemPrompt(s: Record<string, string>, d: DynamicData): string {
   const venue = s.locVenue || "GPI IMANUEL Kediri";
   const address = s.locAddress || "Jl. Himalaya No.06, Kediri";
   const date = s.locDate || "Sabtu, 10 Januari 2026";
   const time = s.locTime || "08.00 - 12.30 WIB";
-  return `Kamu adalah Elias, asisten KKR RPPI. Info acara: ${date}, ${time}, ${venue} (${address}). Tiket GRATIS. Kontak: ${s.contactWa || "6285800753804"}, ${s.contactEmail || "kkrrppi@gmail.com"}. Jawab ramah dan natural dalam Bahasa Indonesia.`;
+  const deadline = s.regDeadline || "belum ditentukan";
+  const speakers = d.speakers.map(sp => `${sp.name}${sp.title ? " (" + sp.title + ")" : ""}${sp.organization ? " - " + sp.organization : ""}`).join("; ") || "belum diumumkan";
+  const sponsors = d.sponsors.map(sp => sp.name).join(", ") || "belum ada";
+  const altarServers = d.altarServers.map(a => a.name).join(", ") || "belum diumumkan";
+  const ticketInfo = d.tickets.map(t => `${t.name}: ${t.remaining} tersisa`).join(", ") || "GRATIS";
+  return `Kamu adalah Elias, asisten KKR RPPI. Jawab ramah dan natural dalam Bahasa Indonesia. Gunakan data real-time berikut untuk menjawab pertanyaan:
+
+INFORMASI ACARA:
+- Tanggal: ${date}
+- Waktu: ${time}
+- Tempat: ${venue} (${address})
+- Batas Pendaftaran: ${deadline}
+- Tiket: ${ticketInfo}
+- Total Pendaftar Saat Ini: ${d.registrantCount} orang
+
+PEMBICARA:
+${speakers}
+
+SPONSOR:
+${sponsors}
+
+PELAYAN ALTAR:
+${altarServers}
+
+KONTAK:
+WA: ${s.contactWa || "6285800753804"}, Email: ${s.contactEmail || "kkrrppi@gmail.com"}
+
+Kamu WAJIB menggunakan data di atas untuk menjawab. Jika tidak tahu, katakan tidak tahu. Jangan membuat informasi palsu. Jaga jawaban tetap singkat dan ramah.`;
 }
 
 function getTimeGreeting(): string {
@@ -164,7 +222,7 @@ function score(msg: string, ...keywords: string[]): number {
   return total;
 }
 
-async function handleSmartReply(s: Record<string, string>, msg: string, lastTopic: string): Promise<string> {
+async function handleSmartReply(s: Record<string, string>, d: DynamicData, msg: string, lastTopic: string): Promise<string> {
   const m = msg.toLowerCase().trim();
 
   const venue = s.locVenue || "GPI IMANUEL Kediri";
@@ -263,28 +321,43 @@ async function handleSmartReply(s: Record<string, string>, msg: string, lastTopi
 
   switch (top.topic) {
     case "event":
-      return `KKR RPPI ${year} adalah Kebaktian Kebangunan Rohani yang mempersatukan siswa, alumni, guru, dan masyarakat untuk mengalami kebangunan rohani dalam Yesus Kristus.\n\n📅 ${date}\n🕐 ${time}\n📍 ${venue}\n🎟️ GRATIS!\n\nYuk daftar sekarang, jangan sampai terlewat!`;
+      return `KKR RPPI ${year} adalah Kebaktian Kebangunan Rohani yang mempersatukan siswa, alumni, guru, dan masyarakat untuk mengalami kebangunan rohani dalam Yesus Kristus.\n\n📅 ${date}\n🕐 ${time}\n📍 ${venue}\n🎟️ GRATIS! (${d.registrantCount} sudah mendaftar)\n\nYuk daftar sekarang, jangan sampai terlewat!`;
 
     case "schedule":
-      return `KKR RPPI ${year} akan dilaksanakan:\n📅 ${date}\n🕐 ${time}\n📍 ${venue}\n\nAcara dimulai pukul ${time.split("-")[0]?.trim() || time} dan selesai sekitar ${endTime}. Yuk daftar sekarang, gratis! 🎉`;
+      return `KKR RPPI ${year} akan dilaksanakan:\n📅 ${date}\n🕐 ${time}\n📍 ${venue}\n\nAcara dimulai pukul ${time.split("-")[0]?.trim() || time} dan selesai sekitar ${endTime}. Saat ini sudah ${d.registrantCount} orang mendaftar. Yuk segera daftar, gratis! 🎉`;
 
     case "location":
       return `Lokasi acara KKR RPPI ${year}:\n📍 ${venue}\n📮 ${address}\n\nKamu bisa lihat peta interaktif di halaman utama website atau klik "Buka di Google Maps" untuk petunjuk arah dari lokasimu.`;
 
-    case "ticket":
+    case "ticket": {
       if (isExpired) {
         return `Maaf, pendaftaran KKR RPPI ${year} sudah ditutup pada ${deadline}. Terima kasih atas minat Anda. Nantikan KKR RPPI berikutnya ya! 🙏`;
       }
-      return `Tiket KKR RPPI ${year} GRATIS! 🎉\n\nCara daftar:\n1️⃣ Buka halaman pendaftaran di website\n2️⃣ Isi Nama Lengkap, Email, dan WhatsApp\n3️⃣ Pilih jenis tiket yang tersedia\n4️⃣ Klik "Konfirmasi Pendaftaran"\n5️⃣ Tiket digital langsung didapatkan!\n\n⏰ Batas pendaftaran: ${deadline}\n\nAyo segera daftar, jangan sampai kehabisan!`;
+      const ticketList = d.tickets.map(t => `• ${t.name}: ${t.remaining} tiket tersisa`).join("\n");
+      return `Tiket KKR RPPI ${year} GRATIS! 🎉\n\nHingga saat ini sudah ${d.registrantCount} orang mendaftar.\n\nKetersediaan tiket:\n${ticketList}\n\nCara daftar:\n1️⃣ Buka halaman pendaftaran\n2️⃣ Isi data diri\n3️⃣ Pilih jenis tiket\n4️⃣ Klik "Konfirmasi Pendaftaran"\n\n⏰ Batas pendaftaran: ${deadline}\n\nAyo segera daftar!`;
+    }
 
-    case "speaker":
-      return `${s.sectionHeadingSpeakers || "KKR RPPI"} menghadirkan pembicara-pembicara rohani yang akan menginspirasi dan memberkati kita semua. Untuk melihat profil lengkap para pembicara, kunjungi halaman utama website dan scroll ke bagian Pembicara.`;
+    case "speaker": {
+      if (d.speakers.length === 0) {
+        return `Informasi pembicara KKR RPPI ${year} akan segera diumumkan. Pantau terus website kami ya!`;
+      }
+      const speakerList = d.speakers.map(sp => `• ${sp.name}${sp.title ? " (" + sp.title + ")" : ""}${sp.organization ? " - " + sp.organization : ""}`).join("\n");
+      return `KKR RPPI ${year} menghadirkan pembicara-pembicara rohani:\n\n${speakerList}\n\nLihat profil lengkapnya di halaman utama website!`;
+    }
 
-    case "altar":
-      return `${s.sectionHeadingAltar || "Pelayan Altar KKR RPPI"} adalah mereka yang akan melayani dalam ibadah. Lihat profil lengkapnya di halaman utama ya!`;
+    case "altar": {
+      if (d.altarServers.length === 0) {
+        return `Informasi pelayan altar KKR RPPI ${year} akan segera diumumkan. Pantau terus website kami!`;
+      }
+      const altarList = d.altarServers.map(a => `• ${a.name}`).join("\n");
+      return `Pelayan altar yang akan melayani di KKR RPPI ${year}:\n\n${altarList}\n\nLihat profil lengkapnya di halaman utama website!`;
+    }
 
-    case "sponsor":
-      return `${s.sectionHeadingSponsors || "Sponsor dan mitra"} yang mendukung terselenggaranya KKR RPPI ${year}. Informasi lengkap ada di halaman utama website.`;
+    case "sponsor": {
+      if (d.sponsors.length === 0) return `Informasi sponsor KKR RPPI ${year} akan segera diumumkan.`;
+      const sponsorList = d.sponsors.map(sp => `• ${sp.name}`).join("\n");
+      return `KKR RPPI ${year} didukung oleh:\n\n${sponsorList}\n\nTerima kasih atas dukungannya! 🙏`;
+    }
 
     case "contact":
       return `Hubungi panitia KKR RPPI ${year}:\n📱 WhatsApp: ${waDisplay}\n📧 Email: ${email}\n\nKami siap membantu kamu!`;
