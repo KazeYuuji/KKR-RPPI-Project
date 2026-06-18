@@ -1,8 +1,25 @@
 import type { APIRoute } from "astro";
 import { pgGet, pgGetSettings } from "../../../lib/pg-db";
-import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
+import { PDFDocument, rgb, StandardFonts, type PDFFont } from "pdf-lib";
 import QRCode from "qrcode";
 import { isValidId } from "../../../lib/security";
+
+function wrapText(text: string, font: PDFFont, size: number, maxWidth: number): string[] {
+  const words = text.split(" ");
+  const lines: string[] = [];
+  let current = "";
+  for (const word of words) {
+    const test = current ? current + " " + word : word;
+    if (font.widthOfTextAtSize(test, size) > maxWidth && current) {
+      lines.push(current);
+      current = word;
+    } else {
+      current = test;
+    }
+  }
+  if (current) lines.push(current);
+  return lines;
+}
 
 export const prerender = false;
 
@@ -88,17 +105,24 @@ export const GET: APIRoute = async ({ params }) => {
     page.drawText("LOKASI & WAKTU", { x: M, y: yy, size: 9, font: fontB, color: cGold });
     yy -= 22;
 
+    const addrWidth = 200;
+    const venueLines = wrapText(venue, fontB, 11, addrWidth);
     page.drawText("TEMPAT", { x: M, y: yy, size: 8, font: fontR, color: cGray });
-    page.drawText(venue, { x: M, y: yy - 14, size: 11, font: fontB, color: cDark });
     page.drawText("TANGGAL", { x: 260, y: yy, size: 8, font: fontR, color: cGray });
     page.drawText(date, { x: 260, y: yy - 14, size: 11, font: fontB, color: cDark });
-    yy -= 36;
+    venueLines.forEach((line, i) => {
+      page.drawText(line, { x: M, y: yy - 14 - i * 15, size: 11, font: fontB, color: cDark });
+    });
+    yy -= 36 + (venueLines.length - 1) * 15;
 
+    const addrLines = wrapText(address, fontB, 11, addrWidth);
     page.drawText("ALAMAT", { x: M, y: yy, size: 8, font: fontR, color: cGray });
-    page.drawText(address, { x: M, y: yy - 14, size: 11, font: fontB, color: cDark });
     page.drawText("WAKTU", { x: 260, y: yy, size: 8, font: fontR, color: cGray });
     page.drawText(time, { x: 260, y: yy - 14, size: 11, font: fontB, color: cDark });
-    yy -= 36;
+    addrLines.forEach((line, i) => {
+      page.drawText(line, { x: M, y: yy - 14 - i * 15, size: 11, font: fontB, color: cDark });
+    });
+    yy -= 36 + (addrLines.length - 1) * 15;
 
     const infoBottomY = yy + 10;
     page.drawRectangle({ x: M, y: infoBottomY, width: PW - 2 * M, height: 1, color: cLight });
