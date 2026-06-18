@@ -570,32 +570,17 @@ import ChatBot from "../components/ChatBot.astro";
     function marquee(el) {
       if (!el) return;
       el.classList.add("mq-track");
-      let pos = 0, running = true, id = null;
-      const center = () => {
-        const vw = window.innerWidth;
-        const tw = el.scrollWidth / 2;
-        return (vw - tw) / 2;
-      };
-      pos = center();
+      const vw = window.innerWidth;
+      const copies = el.children.length;
+      const one = el.scrollWidth / copies;
+      let pos = (vw - one) / 2;
       function tick() {
-        if (!running) return;
         pos -= 0.5;
-        const full = el.scrollWidth / 2;
-        if (pos <= -full) { pos = center(); }
+        if (pos <= -one) pos += one;
         el.style.transform = "translateX(" + pos + "px)";
-        id = requestAnimationFrame(tick);
+        requestAnimationFrame(tick);
       }
-      el.addEventListener("mouseenter", function () {
-        running = false;
-        if (id) cancelAnimationFrame(id);
-      });
-      el.addEventListener("mouseleave", function () {
-        if (id) cancelAnimationFrame(id);
-        running = true;
-        pos = center();
-        id = requestAnimationFrame(tick);
-      });
-      id = requestAnimationFrame(tick);
+      requestAnimationFrame(tick);
     }
 
     let allAltarServers = [];
@@ -628,13 +613,10 @@ import ChatBot from "../components/ChatBot.astro";
         if (list.length > 3) {
           const base = "rounded-2xl glass-card p-4 sm:p-5 text-center hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 shrink-0 w-[200px] sm:w-[220px] flex flex-col cursor-pointer";
           const html = list.map(makeCard(base)).join("");
-          container.innerHTML = `
-            <div class="overflow-hidden" style="mask-image: linear-gradient(to right, transparent 0, black 40px, black calc(100% - 40px), transparent 100%);">
-              <div class="flex gap-16 sm:gap-24" style="width: max-content;">
-                <div class="flex gap-16 sm:gap-24">${html}</div>
-                <div class="flex gap-16 sm:gap-24" aria-hidden="true">${html}</div>
-              </div>
-            </div>`;
+          const copies = 5;
+          let sets = '';
+          for (let i = 0; i < copies; i++) sets += `<div class="flex gap-16 sm:gap-24">${html}</div>`;
+          container.innerHTML = `<div class="overflow-hidden"><div class="flex" style="width: max-content;">${sets}</div></div>`;
           const track = container.querySelector(".overflow-hidden > div");
           if (track) marquee(track);
         } else {
@@ -675,8 +657,11 @@ import ChatBot from "../components/ChatBot.astro";
         if (list.length === 1) {
           container.innerHTML = `<div class="flex justify-center">${html}</div>`;
         } else {
-          container.innerHTML = `<div class="flex gap-16 sm:gap-24" style="width: max-content;"><div class="flex gap-16 sm:gap-24">${html}</div><div class="flex gap-16 sm:gap-24" aria-hidden="true">${html}</div></div>`;
-          const track = container.querySelector("div.flex");
+          const copies = 5;
+          let sets = '';
+          for (let i = 0; i < copies; i++) sets += `<div class="flex gap-16 sm:gap-24">${html}</div>`;
+          container.innerHTML = `<div class="overflow-hidden"><div class="flex" style="width: max-content;">${sets}</div></div>`;
+          const track = container.querySelector(".overflow-hidden > div");
           if (track) marquee(track);
         }
       } catch {
