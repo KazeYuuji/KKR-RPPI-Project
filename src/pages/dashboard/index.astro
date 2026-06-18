@@ -114,19 +114,19 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
             </div>
           </div>
         </div>
-        <div id="registrant-count" class="px-5 pt-4 text-xs text-kkr-maroon/60"></div>
+        <div id="registrant-count" class="px-5 pt-3 pb-1 text-xs text-kkr-maroon/60"></div>
         <div class="overflow-x-auto">
-          <table class="min-w-full text-sm">
+          <table class="min-w-[600px] w-full text-sm">
             <thead>
-              <tr class="text-kkr-dark/80 text-xs uppercase tracking-wider">
-                <th class="py-3.5 px-5 font-semibold text-left">Nama</th>
-                <th class="py-3.5 px-5 font-semibold text-left">ID Tiket</th>
-                <th class="py-3.5 px-5 font-semibold text-left hidden md:table-cell">Kontak</th>
-                <th class="py-3.5 px-5 font-semibold text-left hidden md:table-cell">Check-in</th>
-                <th class="py-3.5 px-5 font-semibold text-right">Aksi</th>
+              <tr class="bg-kkr-light/30 text-kkr-dark/70 text-[11px] uppercase tracking-wider">
+                <th class="py-2.5 px-4 font-semibold text-left w-[35%]">Nama</th>
+                <th class="py-2.5 px-4 font-semibold text-left w-[22%]">ID Tiket</th>
+                <th class="py-2.5 px-4 font-semibold text-left w-[25%] hidden sm:table-cell">Kontak</th>
+                <th class="py-2.5 px-4 font-semibold text-center w-[18%]">Check-in</th>
+                <th class="py-2.5 px-4 font-semibold text-right w-[52px]">Aksi</th>
               </tr>
             </thead>
-            <tbody id="registrant-rows" class="divide-y divide-kkr-light/30">
+            <tbody id="registrant-rows" class="divide-y divide-kkr-light/20">
               <tr><td colspan="5" class="py-12 text-center text-kkr-maroon/60 text-sm">Memuat data...</td></tr>
             </tbody>
           </table>
@@ -477,26 +477,27 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
         var ticketId = escapeHtml(String(r.id));
         var email = escapeHtml(r.email || "");
         var wa = escapeHtml(r.whatsapp || "");
-        var statusClass = r.checked_in ? "bg-kkr-dark text-white" : "bg-kkr-light/40 text-kkr-maroon";
-        var statusText = r.checked_in ? "✓ Checked-in" : "— Belum";
-        var actionHtml = r.checked_in
-          ? '<span class="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-semibold bg-kkr-dark text-white"><svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Done</span>'
-          : '<button data-action="checkin" data-id="' + ticketId + '" class="rounded-lg px-2.5 py-1.5 text-xs font-semibold transition bg-emerald-100 text-emerald-700 hover:bg-emerald-200">Check-in</button>';
+        var color = (r.name || "").split("").reduce(function(a, c) { return a + c.charCodeAt(0); }, 0) % 360;
+        var avatarBg = "hsl(" + color + ", 35%, 60%)";
+        var isChecked = r.checked_in;
         var contactHtml = '';
-        if (email) contactHtml += '<a href="mailto:' + email + '" class="inline-flex items-center gap-1 text-xs text-kkr-maroon/70 hover:text-kkr-red transition-colors" title="' + email + '"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>Email</a>';
+        if (email) contactHtml += '<a href="mailto:' + email + '" class="inline-flex items-center gap-1 text-xs text-kkr-maroon/65 hover:text-kkr-red transition-colors" title="' + email + '"><svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>Email</a>';
         if (wa) {
           var waNum = wa.replace(/[^0-9]/g, "");
-          if (contactHtml) contactHtml += ' <span class="text-kkr-light/50">|</span> ';
-          contactHtml += '<a href="https://wa.me/' + waNum + '" target="_blank" class="inline-flex items-center gap-1 text-xs text-emerald-600 hover:text-emerald-700 transition-colors" title="' + wa + '"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>WA</a>';
+          if (contactHtml) contactHtml += '<span class="mx-1.5 text-kkr-light/40">|</span>';
+          contactHtml += '<a href="https://wa.me/' + waNum + '" target="_blank" class="inline-flex items-center gap-1 text-xs text-emerald-600 hover:text-emerald-700 transition-colors" title="' + wa + '"><svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>WA</a>';
         }
-        if (!contactHtml) contactHtml = '<span class="text-xs text-kkr-maroon/40">—</span>';
+        if (!contactHtml) contactHtml = '<span class="text-xs text-kkr-maroon/35">—</span>';
 
-        return '<tr class="hover:bg-white/50 transition-colors">' +
-          '<td class="py-3.5 px-5"><div class="flex items-center gap-2.5"><div class="w-8 h-8 rounded-full bg-gradient-to-br from-kkr-light to-kkr-light flex items-center justify-center text-xs font-bold text-kkr-red shrink-0">' + initial + '</div><span class="font-medium text-kkr-dark">' + name + '</span></div></td>' +
-          '<td class="py-3.5 px-5"><span class="text-xs font-medium text-kkr-maroon">' + ticketType + '</span><br><code class="font-mono text-xs text-kkr-dark select-all">' + ticketId + '</code><button data-copy="' + ticketId + '" class="ml-1.5 rounded-md px-1.5 py-0.5 text-kkr-maroon/50 hover:text-kkr-red hover:bg-kkr-light/30 transition align-middle active:scale-90" title="Salin ID tiket"><svg class="w-3 h-3 inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button></td>' +
-          '<td class="py-3.5 px-5 hidden md:table-cell"><div class="flex flex-col gap-1">' + contactHtml + '</div></td>' +
-          '<td class="py-3.5 px-5 hidden md:table-cell"><span class="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold ' + statusClass + '">' + statusText + '</span></td>' +
-          '<td class="py-3.5 px-5 text-right"><div class="flex items-center justify-end gap-1">' + actionHtml + '<button data-action="delete" data-id="' + ticketId + '" class="rounded-lg px-2.5 py-1.5 text-xs font-semibold transition bg-red-50 text-red-600 hover:bg-red-100" title="Hapus peserta"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button></div></td>' +
+        var statusDot = isChecked ? "bg-emerald-500" : "bg-kkr-light/50";
+        var statusLabel = isChecked ? "Checked-in" : "Belum";
+
+        return '<tr class="hover:bg-white/40 transition-colors">' +
+          '<td class="py-3 px-4"><div class="flex items-center gap-2.5"><div class="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold text-white shrink-0" style="background:' + avatarBg + '">' + initial + '</div><div class="min-w-0"><div class="font-medium text-kkr-dark text-sm truncate">' + name + '</div><div class="text-[11px] text-kkr-maroon/55 truncate">' + ticketType + '</div></div></div></td>' +
+          '<td class="py-3 px-4"><div class="font-mono text-xs text-kkr-dark select-all bg-kkr-light/20 rounded-md px-2 py-1 inline-block">' + ticketId + '</div><button data-copy="' + ticketId + '" class="ml-1 rounded-md px-1.5 py-1 text-kkr-maroon/40 hover:text-kkr-red hover:bg-kkr-light/30 transition align-middle active:scale-90" title="Salin"><svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button></td>' +
+          '<td class="py-3 px-4 hidden sm:table-cell"><div class="flex flex-wrap items-center gap-x-1">' + contactHtml + '</div></td>' +
+          '<td class="py-3 px-4 text-center"><div class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-full ' + statusDot + '"></span><span class="text-xs font-medium ' + (isChecked ? 'text-emerald-700' : 'text-kkr-maroon/50') + '">' + statusLabel + '</span></div></td>' +
+          '<td class="py-3 px-4 text-right"><div class="flex items-center justify-end gap-0.5">' + (isChecked ? '' : '<button data-action="checkin" data-id="' + ticketId + '" class="rounded-lg p-1.5 text-xs font-semibold transition bg-emerald-50 text-emerald-600 hover:bg-emerald-100 active:scale-90" title="Check-in"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></button>') + '<button data-action="delete" data-id="' + ticketId + '" class="rounded-lg p-1.5 text-xs font-semibold transition bg-red-50 text-red-400 hover:bg-red-100 hover:text-red-600 active:scale-90" title="Hapus"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button></div></td>' +
           '</tr>';
       }).join("");
     }

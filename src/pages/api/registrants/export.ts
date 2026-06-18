@@ -1,16 +1,9 @@
 import type { APIRoute } from "astro";
 import { pgList } from "../../../lib/pg-db";
 import { getAdminFromRequest } from "../../../lib/auth";
+import * as XLSX from "xlsx";
 
 export const prerender = false;
-
-function escapeCsv(val: unknown): string {
-  const s = String(val ?? "");
-  if (s.includes(",") || s.includes('"') || s.includes("\n") || s.includes("\r")) {
-    return '"' + s.replace(/"/g, '""') + '"';
-  }
-  return s;
-}
 
 export const GET: APIRoute = async ({ request }) => {
   try {
@@ -19,24 +12,34 @@ export const GET: APIRoute = async ({ request }) => {
 
     const registrants = await pgList<Record<string, any>>("registrants", "created_at DESC");
 
-    const headers = ["ID", "Nama", "Email", "WhatsApp", "Tiket", "Check-in", "Tanggal Daftar"];
-    const rows = registrants.map(r => [
-      r.id,
-      r.name,
-      r.email,
-      r.whatsapp,
-      r.ticket,
-      r.checked_in ? "Ya" : "Belum",
-      r.created_at,
-    ].map(escapeCsv).join(","));
+    const rows = registrants.map((r, i) => ({
+      No: i + 1,
+      "ID Tiket": String(r.id),
+      Nama: r.name || "",
+      Email: r.email || "",
+      WhatsApp: r.whatsapp || "",
+      Tiket: r.ticket || "",
+      "Check-in": r.checked_in ? "Ya" : "Belum",
+      "Tanggal Daftar": r.created_at ? new Date(r.created_at).toLocaleString("id-ID", { timeZone: "Asia/Jakarta" }) : "",
+    }));
 
-    const csv = "\uFEFF" + headers.join(",") + "\n" + rows.join("\n");
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.json_to_sheet(rows);
 
-    return new Response(csv, {
+    const colWidths = [
+      { wch: 4 }, { wch: 16 }, { wch: 28 }, { wch: 32 }, { wch: 20 }, { wch: 16 }, { wch: 10 }, { wch: 22 },
+    ];
+    ws["!cols"] = colWidths;
+
+    XLSX.utils.book_append_sheet(wb, ws, "Peserta");
+
+    const buf = XLSX.write(wb, { type: "buffer", bookType: "xlsx" });
+
+    return new Response(buf, {
       status: 200,
       headers: {
-        "Content-Type": "text/csv; charset=utf-8",
-        "Content-Disposition": 'attachment; filename="peserta-kkr-rppi.csv"',
+        "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "Content-Disposition": 'attachment; filename="peserta-kkr-rppi.xlsx"',
         "Cache-Control": "private, no-store",
       },
     });
