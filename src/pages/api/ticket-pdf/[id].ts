@@ -53,9 +53,9 @@ export const GET: APIRoute = async ({ params }) => {
     }
 
     // Decorative glow blobs
-    page.drawRectangle({ x: PW - 80, y: PH - 100, width: 160, height: 160, color: rgb(1, 0.84, 0), opacity: 0.06, borderRadius: 80 });
-    page.drawRectangle({ x: -40, y: -40, width: 160, height: 160, color: rgb(1, 0.84, 0), opacity: 0.06, borderRadius: 80 });
-    page.drawRectangle({ x: PW - 80, y: -40, width: 140, height: 140, color: rgb(1, 0.84, 0), opacity: 0.04, borderRadius: 70 });
+    page.drawRectangle({ x: PW - 80, y: PH - 100, width: 160, height: 160, color: rgb(1, 0.84, 0), opacity: 0.06 });
+    page.drawRectangle({ x: -40, y: -40, width: 160, height: 160, color: rgb(1, 0.84, 0), opacity: 0.06 });
+    page.drawRectangle({ x: PW - 80, y: -40, width: 140, height: 140, color: rgb(1, 0.84, 0), opacity: 0.04 });
 
     const cWhite = rgb(1, 1, 1);
     const cGold = rgb(0.98, 0.75, 0.14);
@@ -95,7 +95,7 @@ export const GET: APIRoute = async ({ params }) => {
       const qrY = 120;
 
       // White QR card with rounded corners
-      page.drawRectangle({ x: qrX - 14, y: qrY - 14, width: qrS + 28, height: qrS + 28, color: cWhite, borderRadius: 14 });
+      page.drawRectangle({ x: qrX - 14, y: qrY - 14, width: qrS + 28, height: qrS + 28, color: cWhite });
       page.drawImage(qrImg, { x: qrX, y: qrY, width: qrS, height: qrS });
     } catch (qrErr) {
       console.error("QR generation failed:", qrErr);
