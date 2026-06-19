@@ -18,9 +18,6 @@ export const GET: APIRoute = async ({ params }) => {
       return new Response("Pendaftar tidak ditemukan", { status: 404, headers: { "Content-Type": "text/plain" } });
     }
 
-    const ticketData = await pgGet<Record<string, any>>("tickets", registrant.ticket);
-    const ticketName = ticketData?.name || "GRATIS";
-
     const s = await pgGetSettings();
     const year = s.eventYear || "2026";
     const date = s.locDate || "Sabtu, 10 Januari 2026";
@@ -36,87 +33,88 @@ export const GET: APIRoute = async ({ params }) => {
     const PH = 780;
     const page = pdfDoc.addPage([PW, PH]);
 
-    // Background gradient: purple (#4C1D95) to dark red (#9F1239)
+    // Background gradient
     const pR = 0.298, pG = 0.114, pB = 0.584;
     const eR = 0.622, eG = 0.071, eB = 0.224;
-    const steps = 60;
-    for (let i = 0; i < steps; i++) {
-      const t = i / steps;
+    for (let i = 0; i < 60; i++) {
+      const t = i / 60;
       page.drawRectangle({
-        x: 0, y: (PH / steps) * i,
-        width: PW, height: Math.ceil(PH / steps) + 1,
+        x: 0, y: (PH / 60) * i, width: PW, height: Math.ceil(PH / 60) + 1,
         color: rgb(pR + (eR - pR) * t, pG + (eG - pG) * t, pB + (eB - pB) * t),
       });
     }
 
-    // Decorative glow blobs
-    page.drawRectangle({ x: PW - 80, y: PH - 100, width: 160, height: 160, color: rgb(1, 0.84, 0), opacity: 0.06 });
-    page.drawRectangle({ x: -40, y: -40, width: 160, height: 160, color: rgb(1, 0.84, 0), opacity: 0.06 });
-    page.drawRectangle({ x: PW - 80, y: -40, width: 140, height: 140, color: rgb(1, 0.84, 0), opacity: 0.04 });
-
-    const cWhite = rgb(1, 1, 1);
+    const cW = rgb(1, 1, 1);
     const cGold = rgb(0.98, 0.75, 0.14);
-    const cGray = rgb(0.85, 0.82, 0.88);
+    const cG = rgb(0.82, 0.78, 0.84);
 
-    // Header
-    page.drawText("KKR RPPI", { x: 250 - fontT.widthOfTextAtSize("KKR RPPI", 36) / 2, y: PH - 110, size: 36, font: fontT, color: cWhite });
-    page.drawText(year, {
-      x: 250 - fontB.widthOfTextAtSize(year, 18) / 2, y: PH - 148, size: 18, font: fontB, color: cGold,
-    });
+    // ── Header ──
+    const tW = fontT.widthOfTextAtSize("KKR RPPI", 36);
+    page.drawText("KKR RPPI", { x: (PW - tW) / 2, y: 700, size: 36, font: fontT, color: cW });
+    const yW = fontB.widthOfTextAtSize(year, 16);
+    page.drawText(year, { x: (PW - yW) / 2, y: 665, size: 16, font: fontB, color: cGold });
 
-    // Name
-    page.drawText("Nama", { x: 40, y: PH - 210, size: 10, font: fontR, color: cGray });
+    // ── Separator ──
+    page.drawRectangle({ x: 50, y: 640, width: PW - 100, height: 1, color: cG, opacity: 0.25 });
+
+    // ── Name ──
+    page.drawText("Nama", { x: 40, y: 605, size: 10, font: fontR, color: cG });
     page.drawText(String(registrant.name || "-").toUpperCase(), {
-      x: 40, y: PH - 250, size: 26, font: fontB, color: cWhite,
+      x: 40, y: 573, size: 22, font: fontB, color: cW,
     });
 
-    // ID Tiket
-    page.drawText("ID Tiket", { x: 40, y: PH - 300, size: 10, font: fontR, color: cGray });
+    // ── ID Tiket ──
+    page.drawText("ID Tiket", { x: 40, y: 523, size: 10, font: fontR, color: cG });
     page.drawText(String(registrant.id || "-"), {
-      x: 40, y: PH - 326, size: 14, font: fontM, color: cWhite,
+      x: 40, y: 498, size: 13, font: fontM, color: cW,
     });
 
-    // Two-column: Tanggal | Waktu
-    page.drawText("Tanggal", { x: 40, y: PH - 370, size: 10, font: fontR, color: cGray });
-    page.drawText(date, { x: 40, y: PH - 392, size: 12, font: fontB, color: cWhite });
+    // ── Separator ──
+    page.drawRectangle({ x: 50, y: 478, width: PW - 100, height: 1, color: cG, opacity: 0.25 });
 
-    page.drawText("Waktu", { x: 270, y: PH - 370, size: 10, font: fontR, color: cGray });
-    page.drawText(time, { x: 270, y: PH - 392, size: 12, font: fontB, color: cWhite });
+    // ── Tanggal + Waktu (two-column) ──
+    page.drawText("Tanggal", { x: 40, y: 448, size: 10, font: fontR, color: cG });
+    page.drawText(date, { x: 40, y: 426, size: 12, font: fontB, color: cW });
 
-    // QR Code
-    const qrS = 170;
-    const qrY = 120;
+    page.drawText("Waktu", { x: 270, y: 448, size: 10, font: fontR, color: cG });
+    page.drawText(time, { x: 270, y: 426, size: 12, font: fontB, color: cW });
+
+    // ── Separator ──
+    page.drawRectangle({ x: 50, y: 400, width: PW - 100, height: 1, color: cG, opacity: 0.25 });
+
+    // ── QR Code ──
+    const qrS = 160;
+    const qrY = 155;
     try {
       const qrBuf = await QRCode.toBuffer(registrant.id, { width: 400, margin: 2, color: { dark: "#141416", light: "#ffffff" } });
       const qrImg = await pdfDoc.embedPng(qrBuf);
       const qrX = (PW - qrS) / 2;
 
-      page.drawRectangle({ x: qrX - 14, y: qrY - 14, width: qrS + 28, height: qrS + 28, color: cWhite });
+      page.drawText("Scan QR Code untuk Check-in", {
+        x: (PW - fontB.widthOfTextAtSize("Scan QR Code untuk Check-in", 11)) / 2,
+        y: qrY + qrS + 24, size: 11, font: fontB, color: cGold,
+      });
+      page.drawRectangle({ x: qrX - 12, y: qrY - 12, width: qrS + 24, height: qrS + 24, color: cW });
       page.drawImage(qrImg, { x: qrX, y: qrY, width: qrS, height: qrS });
-      qrOk = true;
     } catch (qrErr) {
       console.error("QR generation failed:", qrErr);
     }
 
-    // Divider line
-    page.drawRectangle({ x: 40, y: qrY + qrS + 46, width: PW - 80, height: 1, color: cGray, opacity: 0.2 });
-
-    // Footer
-    const footY = qrY + qrS + 20;
+    // ── Footer ──
     page.drawText("Tunjukkan QR ini saat datang", {
-      x: 250 - fontB.widthOfTextAtSize("Tunjukkan QR ini saat datang", 11) / 2, y: footY, size: 11, font: fontB, color: cWhite,
+      x: (PW - fontB.widthOfTextAtSize("Tunjukkan QR ini saat datang", 11)) / 2,
+      y: 136, size: 11, font: fontB, color: cW,
     });
     page.drawText("Terima kasih telah mendaftar. Tuhan Yesus memberkati.", {
-      x: 250 - fontR.widthOfTextAtSize("Terima kasih telah mendaftar. Tuhan Yesus memberkati.", 9) / 2, y: footY - 18, size: 9, font: fontR, color: cGray,
+      x: (PW - fontR.widthOfTextAtSize("Terima kasih telah mendaftar. Tuhan Yesus memberkati.", 9)) / 2,
+      y: 118, size: 9, font: fontR, color: cG,
     });
 
-    // Bottom gold accent bar
-    const gs = 20;
-    for (let i = 0; i < gs; i++) {
-      const t = i / gs;
+    // ── Gold bottom bar ──
+    for (let i = 0; i < 20; i++) {
+      const t = i / 20;
       page.drawRectangle({
-        x: (PW / gs) * i, y: 0,
-        width: Math.ceil(PW / gs) + 1, height: 6,
+        x: (PW / 20) * i, y: 0, width: Math.ceil(PW / 20) + 1, height: 6,
         color: rgb(0.98 + (0.96 - 0.98) * t, 0.75 + (0.70 - 0.75) * t, 0.14 + (0.10 - 0.14) * t),
       });
     }
@@ -132,6 +130,6 @@ export const GET: APIRoute = async ({ params }) => {
     });
   } catch (err) {
     console.error("ticket-pdf error:", err);
-    return new Response("Maaf, terjadi kesalahan saat membuat tiket PDF. (" + String(err).slice(0, 200) + ")", { status: 500, headers: { "Content-Type": "text/plain" } });
+    return new Response("Maaf, terjadi kesalahan saat membuat tiket PDF. Silakan coba lagi.", { status: 500, headers: { "Content-Type": "text/plain" } });
   }
 };
