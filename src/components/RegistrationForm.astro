@@ -298,6 +298,9 @@ export interface TicketType {
                 a.click();
                 document.body.removeChild(a);
                 setTimeout(function(){ URL.revokeObjectURL(url); }, 10000);
+                ticketDownloaded = true;
+                document.getElementById("modal-close").classList.remove("hidden");
+                document.getElementById("modal-footer-after-download").classList.remove("hidden");
                 btn.innerHTML = '<span class="flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Berhasil diunduh</span>';
                 btn.style.pointerEvents = "none";
                 btn.style.opacity = "0.7";
@@ -310,8 +313,6 @@ export interface TicketType {
           pdfBtn.onclick = makeDownloader("/api/ticket-pdf/" + serverId, "pdf");
           imgBtn.onclick = makeDownloader("/api/ticket-img/" + serverId, "png");
           modal.classList.remove("pointer-events-none", "opacity-0");
-          document.getElementById("modal-close").classList.remove("hidden");
-          document.getElementById("modal-footer-after-download").classList.remove("hidden");
           form.reset();
           loadTickets();
         } else {
@@ -328,14 +329,24 @@ export interface TicketType {
       }
     });
 
+    let ticketDownloaded = false;
+
+    window.addEventListener("beforeunload", (e) => {
+      if (!ticketDownloaded && !modal.classList.contains("pointer-events-none")) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    });
+
     closeModalBtn.addEventListener("click", () => {
+      if (!ticketDownloaded) return;
       modal.classList.add("pointer-events-none", "opacity-0");
     });
     document.getElementById("modal-close-after-download")?.addEventListener("click", () => {
       modal.classList.add("pointer-events-none", "opacity-0");
     });
     modal.addEventListener("click", (e) => {
-      if (e.target === modal) modal.classList.add("pointer-events-none", "opacity-0");
+      if (e.target === modal && ticketDownloaded) modal.classList.add("pointer-events-none", "opacity-0");
     });
 
     errorModalClose.addEventListener("click", () => {
