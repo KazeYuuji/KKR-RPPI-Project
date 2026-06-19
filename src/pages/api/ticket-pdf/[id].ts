@@ -87,16 +87,16 @@ export const GET: APIRoute = async ({ params }) => {
     page.drawText(time, { x: 270, y: PH - 392, size: 12, font: fontB, color: cWhite });
 
     // QR Code
+    const qrS = 170;
+    const qrY = 120;
     try {
       const qrBuf = await QRCode.toBuffer(registrant.id, { width: 400, margin: 2, color: { dark: "#141416", light: "#ffffff" } });
       const qrImg = await pdfDoc.embedPng(qrBuf);
-      const qrS = 170;
       const qrX = (PW - qrS) / 2;
-      const qrY = 120;
 
-      // White QR card with rounded corners
       page.drawRectangle({ x: qrX - 14, y: qrY - 14, width: qrS + 28, height: qrS + 28, color: cWhite });
       page.drawImage(qrImg, { x: qrX, y: qrY, width: qrS, height: qrS });
+      qrOk = true;
     } catch (qrErr) {
       console.error("QR generation failed:", qrErr);
     }
