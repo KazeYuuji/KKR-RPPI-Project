@@ -94,7 +94,7 @@ export const GET: APIRoute = async ({ params }) => {
         x: (PW - fontB.widthOfTextAtSize("Scan QR Code untuk Check-in", 11)) / 2,
         y: qrY + qrS + 24, size: 11, font: fontB, color: cGold,
       });
-      page.drawRectangle({ x: qrX - 12, y: qrY - 12, width: qrS + 24, height: qrS + 24, color: cW });
+      page.drawRectangle({ x: qrX - 6, y: qrY - 6, width: qrS + 12, height: qrS + 12, color: cW });
       page.drawImage(qrImg, { x: qrX, y: qrY, width: qrS, height: qrS });
     } catch (qrErr) {
       console.error("QR generation failed:", qrErr);
