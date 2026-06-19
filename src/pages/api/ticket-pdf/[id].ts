@@ -138,6 +138,6 @@ export const GET: APIRoute = async ({ params }) => {
     });
   } catch (err) {
     console.error("ticket-pdf error:", err);
-    return new Response("Maaf, terjadi kesalahan saat membuat tiket PDF. Silakan coba lagi.", { status: 500, headers: { "Content-Type": "text/plain" } });
+    return new Response("Maaf, terjadi kesalahan saat membuat tiket PDF. (" + String(err).slice(0, 200) + ")", { status: 500, headers: { "Content-Type": "text/plain" } });
   }
 };
