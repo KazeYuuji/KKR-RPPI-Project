@@ -5,7 +5,7 @@ import { checkRateLimit } from "../../lib/security";
 
 const ALLOWED_SETTING_KEYS = new Set([
   "locVenue", "locAddress", "locDate", "locTime", "locMapsLink", "locMaps",
-  "eventDateISO", "eventTimeEnd", "eventYear", "eventName",
+  "eventDateISO", "eventTimeEnd", "eventTimeUntilFinished", "eventYear", "eventName",
   "regDeadline", "regDeadlineISO", "regOpenDateISO",
   "contactEmail", "contactPhone", "contactWa", "waGroupLink",
   "churchLogo",

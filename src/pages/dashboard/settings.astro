@@ -270,6 +270,10 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
             <input id="event-time-end" type="time" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" />
           </div>
         </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" id="event-time-until-finished" class="w-4 h-4 rounded border-kkr-light/80 text-kkr-red focus:ring-kkr-maroon/20" />
+          <label for="event-time-until-finished" class="text-sm text-kkr-maroon">Tampilkan "Sampai Selesai" alih-alih jam selesai</label>
+        </div>
         <div class="rounded-xl bg-kkr-light/30 p-4 text-sm text-kkr-maroon/80 space-y-1">
           <p><strong>Preview tampilan:</strong></p>
           <p id="preview-date" class="text-kkr-dark">Tanggal: —</p>
@@ -570,6 +574,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
         updateEmbedPreview();
         setVal("event-date-iso", s.eventDateISO ? utcToLocal(s.eventDateISO) : "");
         setVal("event-time-end", s.eventTimeEnd || "");
+        document.getElementById("event-time-until-finished").checked = s.eventTimeUntilFinished === "1";
         setVal("event-year", s.eventYear || "");
         setVal("reg-open-date-iso", s.regOpenDateISO ? utcToLocal(s.regOpenDateISO) : "");
         setVal("reg-deadline-iso", s.regDeadlineISO ? utcToLocal(s.regDeadlineISO) : "");
@@ -796,7 +801,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
       return d.toLocaleDateString("id-ID", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
     }
 
-    function formatTimeRange(dateStr, endTime) {
+    function formatTimeRange(dateStr, endTime, untilFinished) {
       if (!dateStr) return "";
       let d;
       if (dateStr.endsWith("Z") || /[+-]\d{2}:\d{2}$/.test(dateStr)) {
@@ -810,6 +815,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
       }
       if (isNaN(d)) return "";
       const start = d.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
+      if (untilFinished) return `${start} WIB - Sampai Selesai`;
       const end = endTime || "";
       return `${start}${end ? " - " + end : ""} WIB`;
     }
@@ -817,8 +823,9 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
     function updatePreview() {
       const iso = document.getElementById("event-date-iso").value;
       const end = document.getElementById("event-time-end").value;
+      const until = document.getElementById("event-time-until-finished").checked;
       document.getElementById("preview-date").textContent = "Tanggal: " + (formatDateIndo(iso) || "—");
-      document.getElementById("preview-time").textContent = "Waktu: " + (iso ? formatTimeRange(iso, end) : "—");
+      document.getElementById("preview-time").textContent = "Waktu: " + (iso ? formatTimeRange(iso, end, until) : "—");
 
       const deadlineIso = document.getElementById("reg-deadline-iso").value;
       document.getElementById("preview-deadline").textContent = "Tampilan: " + (formatDateIndo(deadlineIso) || "—");
@@ -851,6 +858,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
 
       const eventIso = document.getElementById("event-date-iso").value;
       const timeEnd = document.getElementById("event-time-end").value;
+      const untilFinished = document.getElementById("event-time-until-finished").checked;
       const deadlineIso = document.getElementById("reg-deadline-iso").value;
       const openDateIso = document.getElementById("reg-open-date-iso").value;
       const eventYear = document.getElementById("event-year").value.trim();
@@ -858,10 +866,11 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
       try {
         const res = await fetch("/api/settings", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({
           locDate: formatDateIndo(eventIso),
-          locTime: formatTimeRange(eventIso, timeEnd),
+          locTime: formatTimeRange(eventIso, timeEnd, untilFinished),
           regDeadline: formatDateIndo(deadlineIso),
           eventDateISO: localToUTC(eventIso),
           eventTimeEnd: timeEnd,
+          eventTimeUntilFinished: untilFinished ? "1" : "0",
           regDeadlineISO: localToUTC(deadlineIso),
           regOpenDateISO: localToUTC(openDateIso),
           eventYear: eventYear,
