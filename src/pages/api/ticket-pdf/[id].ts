@@ -37,18 +37,15 @@ export const GET: APIRoute = async ({ params }) => {
     const page = pdfDoc.addPage([PW, PH]);
 
     // Background gradient: purple (#4C1D95) to dark red (#9F1239)
-    const cPurple = rgb(0.298, 0.114, 0.584);
-    const cRed = rgb(0.622, 0.071, 0.224);
+    const pR = 0.298, pG = 0.114, pB = 0.584;
+    const eR = 0.622, eG = 0.071, eB = 0.224;
     const steps = 60;
     for (let i = 0; i < steps; i++) {
       const t = i / steps;
-      const r = cPurple.r + (cRed.r - cPurple.r) * t;
-      const g = cPurple.g + (cRed.g - cPurple.g) * t;
-      const b = cPurple.b + (cRed.b - cPurple.b) * t;
       page.drawRectangle({
         x: 0, y: (PH / steps) * i,
         width: PW, height: Math.ceil(PH / steps) + 1,
-        color: rgb(r, g, b),
+        color: rgb(pR + (eR - pR) * t, pG + (eG - pG) * t, pB + (eB - pB) * t),
       });
     }
 
@@ -114,16 +111,13 @@ export const GET: APIRoute = async ({ params }) => {
     });
 
     // Bottom gold accent bar
-    const goldSteps = 20;
-    for (let i = 0; i < goldSteps; i++) {
-      const t = i / goldSteps;
-      const r = 0.98 + (0.96 - 0.98) * t;
-      const g = 0.75 + (0.70 - 0.75) * t;
-      const b = 0.14 + (0.10 - 0.14) * t;
+    const gs = 20;
+    for (let i = 0; i < gs; i++) {
+      const t = i / gs;
       page.drawRectangle({
-        x: (PW / goldSteps) * i, y: 0,
-        width: Math.ceil(PW / goldSteps) + 1, height: 6,
-        color: rgb(r, g, b),
+        x: (PW / gs) * i, y: 0,
+        width: Math.ceil(PW / gs) + 1, height: 6,
+        color: rgb(0.98 + (0.96 - 0.98) * t, 0.75 + (0.70 - 0.75) * t, 0.14 + (0.10 - 0.14) * t),
       });
     }
 
