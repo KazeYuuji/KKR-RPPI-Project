@@ -117,14 +117,17 @@ export interface TicketType {
           <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-emerald-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
         </div>
         <h3 class="text-xl font-bold text-kkr-dark tracking-tight">Pendaftaran Berhasil!</h3>
-        <p class="text-sm text-kkr-maroon/60 mt-1.5 max-w-xs">Unduh tiket PDF Anda sekarang untuk check-in di lokasi.</p>
-        <div class="mt-6 w-full">
+        <p class="text-sm text-kkr-maroon/60 mt-1.5 max-w-xs">Unduh tiket Anda untuk check-in di lokasi.</p>
+        <div class="mt-6 w-full space-y-2">
           <a id="pdf-download-btn" href="#" rel="noopener noreferrer" class="flex items-center justify-center gap-2.5 rounded-xl bg-gradient-to-r from-kkr-red to-kkr-gold px-5 py-3 text-base font-bold text-white shadow-lg shadow-kkr-maroon/20 transition-all duration-200 hover:shadow-xl hover:-translate-y-0.5 w-full">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
             Unduh Tiket PDF
           </a>
-          <p class="text-[11px] text-kkr-maroon/40 mt-2.5">Tunjukkan tiket PDF saat check-in di lokasi</p>
-          <p id="download-warning" class="text-[11px] text-kkr-red/60 mt-2 hidden">⚠️ Anda harus mengunduh tiket sebelum meninggalkan halaman ini</p>
+          <a id="img-download-btn" href="#" rel="noopener noreferrer" class="flex items-center justify-center gap-2.5 rounded-xl border-2 border-kkr-gold/50 bg-white/80 px-5 py-2.5 text-base font-bold text-kkr-dark shadow-sm transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 hover:border-kkr-gold w-full">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            Unduh Tiket Gambar
+          </a>
+          <p class="text-[11px] text-kkr-maroon/40 text-center">Tunjukkan tiket saat check-in di lokasi</p>
         </div>
       </div>
       <div id="modal-footer-after-download" class="hidden px-8 pb-6 text-center">
@@ -147,6 +150,7 @@ export interface TicketType {
     const errorModalOk = document.getElementById("error-modal-ok");
     const stockEl = document.getElementById("ticket-stock");
     const pdfBtn = document.getElementById("pdf-download-btn");
+    const imgBtn = document.getElementById("img-download-btn");
     let ticketInterval;
 
     function escapeHtml(str) {
@@ -275,29 +279,25 @@ export interface TicketType {
           const serverId = result.registrant?.id;
           if (!serverId) { alert("Gagal mendapatkan ID tiket"); btn.innerHTML = '<span class="relative z-10 flex items-center justify-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>Konfirmasi Pendaftaran</span>'; return; }
           pdfBtn.href = "/api/ticket-pdf/" + serverId;
-          (function(dlId) {
-            pdfBtn.onclick = async function(e) {
+          imgBtn.href = "/api/ticket-img/" + serverId;
+          function makeDownloader(endpoint, ext) {
+            return async function(e) {
               e.preventDefault();
-              if (ticketDownloaded) return;
               const btn = this;
               const orig = btn.innerHTML;
               btn.innerHTML = '<span class="flex items-center gap-2"><svg class="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Mengunduh...</span>';
               try {
-                const r = await fetch("/api/ticket-pdf/" + dlId);
+                const r = await fetch(endpoint);
                 if (!r.ok) { alert("Gagal mengunduh: " + (await r.text())); btn.innerHTML = orig; return; }
                 const blob = await r.blob();
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement("a");
                 a.href = url;
-                a.download = "tiket-" + dlId + ".pdf";
+                a.download = "tiket-" + serverId + "." + ext;
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
                 setTimeout(function(){ URL.revokeObjectURL(url); }, 10000);
-                ticketDownloaded = true;
-                document.getElementById("modal-close").classList.remove("hidden");
-                document.getElementById("modal-footer-after-download").classList.remove("hidden");
-                document.getElementById("download-warning").classList.add("hidden");
                 btn.innerHTML = '<span class="flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Berhasil diunduh</span>';
                 btn.style.pointerEvents = "none";
                 btn.style.opacity = "0.7";
@@ -306,9 +306,12 @@ export interface TicketType {
                 btn.innerHTML = orig;
               }
             };
-          })(serverId);
+          }
+          pdfBtn.onclick = makeDownloader("/api/ticket-pdf/" + serverId, "pdf");
+          imgBtn.onclick = makeDownloader("/api/ticket-img/" + serverId, "png");
           modal.classList.remove("pointer-events-none", "opacity-0");
-          document.getElementById("download-warning").classList.remove("hidden");
+          document.getElementById("modal-close").classList.remove("hidden");
+          document.getElementById("modal-footer-after-download").classList.remove("hidden");
           form.reset();
           loadTickets();
         } else {
@@ -325,24 +328,14 @@ export interface TicketType {
       }
     });
 
-    let ticketDownloaded = false;
-
-    window.addEventListener("beforeunload", (e) => {
-      if (!ticketDownloaded && !modal.classList.contains("pointer-events-none")) {
-        e.preventDefault();
-        e.returnValue = "";
-      }
-    });
-
     closeModalBtn.addEventListener("click", () => {
-      if (!ticketDownloaded) return;
       modal.classList.add("pointer-events-none", "opacity-0");
     });
     document.getElementById("modal-close-after-download")?.addEventListener("click", () => {
       modal.classList.add("pointer-events-none", "opacity-0");
     });
     modal.addEventListener("click", (e) => {
-      if (e.target === modal && ticketDownloaded) modal.classList.add("pointer-events-none", "opacity-0");
+      if (e.target === modal) modal.classList.add("pointer-events-none", "opacity-0");
     });
 
     errorModalClose.addEventListener("click", () => {
