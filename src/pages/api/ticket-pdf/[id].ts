@@ -1,31 +1,25 @@
 import type { APIRoute } from "astro";
 import { pgGet, pgGetSettings } from "../../../lib/pg-db";
-import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
+import { PDFDocument, rgb, StandardFonts, type PDFFont } from "pdf-lib";
 import QRCode from "qrcode";
-import sharp from "sharp";
 import { isValidId } from "../../../lib/security";
 
-async function analyzeImage(url: string): Promise<{ avg: number; accent: { r: number; g: number; b: number } }> {
-  try {
-    const res = await fetch(url);
-    if (!res.ok) throw new Error("fetch failed");
-    const buf = Buffer.from(await res.arrayBuffer());
-    const { data, info } = await sharp(buf).resize(50, 50, { fit: "cover" }).raw().toBuffer({ resolveWithObject: true });
-    let total = 0;
-    let rAcc = 0, gAcc = 0, bAcc = 0;
-    for (let i = 0; i < data.length; i += 3) {
-      const r = data[i], g = data[i + 1], b = data[i + 2];
-      total += 0.299 * r + 0.587 * g + 0.114 * b;
-      rAcc += r; gAcc += g; bAcc += b;
+function wrapText(text: string, font: PDFFont, size: number, maxWidth: number): string[] {
+  const words = text.split(" ");
+  const lines: string[] = [];
+  let current = "";
+  for (const word of words) {
+    const test = current ? current + " " + word : word;
+    if (font.widthOfTextAtSize(test, size) > maxWidth && current) {
+      lines.push(current);
+      current = word;
+    } else {
+      current = test;
     }
-    const n = data.length / 3;
-    return { avg: total / n, accent: { r: rAcc / n / 255, g: gAcc / n / 255, b: bAcc / n / 255 } };
-  } catch {
-    return { avg: 255, accent: { r: 0.75, g: 0.2, b: 0.2 } };
   }
+  if (current) lines.push(current);
+  return lines;
 }
-
-function clamp(v: number): number { return Math.max(0, Math.min(1, v)); }
 
 export const prerender = false;
 
@@ -45,95 +39,116 @@ export const GET: APIRoute = async ({ params }) => {
     const ticketName = ticketData?.name || "GRATIS";
 
     const s = await pgGetSettings();
-    const year = s.eventYear || "2026";
-    const bgUrl = s.ticketBg || "";
 
-    const isDark = bgUrl ? (await analyzeImage(bgUrl)).avg < 128 : false;
-    const cText = isDark ? rgb(1, 1, 1) : rgb(0.08, 0.08, 0.1);
-    const cTextMuted = isDark ? rgb(0.8, 0.8, 0.82) : rgb(0.45, 0.45, 0.48);
-    const cAccent = isDark ? rgb(1, 1, 1) : rgb(0.75, 0.2, 0.2);
-    const cWhite = rgb(1, 1, 1);
-    const cOverlay = isDark ? rgb(0, 0, 0) : rgb(1, 1, 1);
+    const venue = s.locVenue || "GPI IMANUEL Kediri";
+    const address = s.locAddress || "Jl. Himalaya No.06, Kediri";
+    const date = s.locDate || "Sabtu, 10 Januari 2026";
+    const time = s.locTime || "08.00 - 12.30 WIB";
+    const year = s.eventYear || "2026";
 
     const pdfDoc = await PDFDocument.create();
     const fontB = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
     const fontR = await pdfDoc.embedFont(StandardFonts.Helvetica);
+    const fontO = await pdfDoc.embedFont(StandardFonts.HelveticaOblique);
 
     const PW = 500;
     const PH = 780;
     const page = pdfDoc.addPage([PW, PH]);
+    const M = 30;
+    const cDark = rgb(0.08, 0.08, 0.1);
+    const cGray = rgb(0.45, 0.45, 0.48);
+    const cLight = rgb(0.92, 0.92, 0.94);
+    const cWhite = rgb(1, 1, 1);
+    const cAccent = rgb(0.75, 0.2, 0.2);
+    const cGold = rgb(0.78, 0.58, 0.16);
+    const cGoldLight = rgb(0.85, 0.72, 0.35);
 
-    // Background image
-    if (bgUrl) {
-      try {
-        const res = await fetch(bgUrl);
-        if (res.ok) {
-          const buf = Buffer.from(await res.arrayBuffer());
-          const { data, info } = await sharp(buf).resize(PW, PH, { fit: "cover" }).raw().toBuffer({ resolveWithObject: true });
-          const img = await pdfDoc.embedPng(await sharp(buf).resize(PW, PH, { fit: "cover" }).png().toBuffer());
-          const scale = Math.max(PW / img.width, PH / img.height);
-          const iw = img.width * scale;
-          const ih = img.height * scale;
-          page.drawImage(img, { x: (PW - iw) / 2, y: (PH - ih) / 2, width: iw, height: ih });
+    page.drawRectangle({ x: 6, y: 6, width: PW - 12, height: PH - 12, color: cWhite, borderColor: cAccent, borderWidth: 2 });
+    page.drawRectangle({ x: 10, y: 10, width: PW - 20, height: PH - 20, color: cWhite, borderColor: cLight, borderWidth: 1 });
 
-          // Semi-transparent overlay for readability
-          for (let i = 0; i < 50; i++) {
-            const f = 1 - i / 50;
-            page.drawRectangle({
-              x: 0, y: PH - PH / 50 * (i + 1), width: PW, height: PH / 50 + 1,
-              color: rgb(cOverlay.r * f, cOverlay.g * f, cOverlay.b * f),
-              opacity: 0.15,
-            });
-          }
-        }
-      } catch {}
-    }
+    page.drawLine({ start: { x: 12, y: PH - 144 }, end: { x: PW - 12, y: PH - 144 }, color: cGold, thickness: 1 });
+    page.drawLine({ start: { x: 12, y: PH - 12 }, end: { x: PW - 12, y: PH - 12 }, color: cGold, thickness: 1 });
 
-    // Header bar
-    page.drawRectangle({ x: 0, y: PH - 100, width: PW, height: 100, color: cAccent, opacity: 0.25 });
-    page.drawText("KKR RPPI", { x: 30, y: PH - 50, size: 22, font: fontB, color: cText });
-    page.drawText(year, { x: 32, y: PH - 76, size: 13, font: fontR, color: cTextMuted });
+    page.drawRectangle({ x: 12, y: PH - 140, width: PW - 24, height: 128, color: cAccent });
+    page.drawText("KKR RPPI", { x: 40, y: PH - 94, size: 28, font: fontB, color: cWhite });
+    page.drawText(year, { x: 42, y: PH - 120, size: 14, font: fontO, color: cGoldLight });
+    page.drawRectangle({ x: PW - 145, y: PH - 128, width: 115, height: 30, color: cGold });
+    page.drawText("TIKET MASUK", { x: PW - 138, y: PH - 120, size: 13, font: fontB, color: cWhite });
+    page.drawText(ticketName.toUpperCase(), { x: PW - 138, y: PH - 137, size: 9, font: fontR, color: cGoldLight });
 
-    // Ticket type badge
-    page.drawRectangle({ x: PW - 155, y: PH - 82, width: 125, height: 28, color: cAccent, opacity: 0.3 });
-    page.drawText("TIKET MASUK", { x: PW - 148, y: PH - 74, size: 11, font: fontB, color: cText });
-    page.drawText(ticketName.toUpperCase(), { x: PW - 148, y: PH - 89, size: 8, font: fontR, color: cTextMuted });
+    const divY = PH - 162;
+    page.drawRectangle({ x: M, y: divY, width: PW - 2 * M, height: 1, color: cLight });
 
-    // Divider
-    page.drawRectangle({ x: 30, y: PH - 115, width: PW - 60, height: 1, color: cTextMuted, opacity: 0.4 });
+    let yy = divY - 30;
+    page.drawText("DATA PENDAFTAR", { x: M, y: yy + 4, size: 9, font: fontB, color: cGold });
+    yy -= 22;
 
-    // Registrant name - large and prominent
-    page.drawText("NAMA", { x: 30, y: PH - 150, size: 9, font: fontR, color: cTextMuted });
-    page.drawText(String(registrant.name || "-").toUpperCase(), { x: 30, y: PH - 180, size: 20, font: fontB, color: cText });
+    const rowRight = (label: string, value: string) => {
+      const lx = 260;
+      page.drawText(label, { x: lx, y: yy, size: 8, font: fontR, color: cGray });
+      page.drawText(String(value || "-"), { x: lx, y: yy - 14, size: 11, font: fontB, color: cDark });
+    };
 
-    // ID Ticket
-    page.drawText("ID TIKET", { x: PW - 210, y: PH - 150, size: 9, font: fontR, color: cTextMuted });
-    page.drawText(String(registrant.id || "-"), { x: PW - 210, y: PH - 172, size: 11, font: fontB, color: cText });
+    page.drawText("NAMA LENGKAP", { x: M, y: yy, size: 8, font: fontR, color: cGray });
+    page.drawText(String(registrant.name || "-"), { x: M, y: yy - 14, size: 11, font: fontB, color: cDark });
+    rowRight("ID TIKET", registrant.id);
+    yy -= 36;
 
-    // QR Code
+    page.drawText("EMAIL", { x: M, y: yy, size: 8, font: fontR, color: cGray });
+    page.drawText(String(registrant.email || "-"), { x: M, y: yy - 14, size: 11, font: fontB, color: cDark });
+    rowRight("WHATSAPP", registrant.whatsapp);
+    yy -= 36;
+
+    yy -= 6;
+    page.drawRectangle({ x: M, y: yy + 6, width: PW - 2 * M, height: 1, color: cLight });
+    yy -= 4;
+    page.drawText("LOKASI & WAKTU", { x: M, y: yy, size: 9, font: fontB, color: cGold });
+    yy -= 22;
+
+    const addrWidth = 200;
+    const venueLines = wrapText(venue, fontB, 11, addrWidth);
+    page.drawText("TEMPAT", { x: M, y: yy, size: 8, font: fontR, color: cGray });
+    page.drawText("TANGGAL", { x: 260, y: yy, size: 8, font: fontR, color: cGray });
+    page.drawText(date, { x: 260, y: yy - 14, size: 11, font: fontB, color: cDark });
+    venueLines.forEach((line, i) => {
+      page.drawText(line, { x: M, y: yy - 14 - i * 15, size: 11, font: fontB, color: cDark });
+    });
+    yy -= 36 + (venueLines.length - 1) * 15;
+
+    const addrLines = wrapText(address, fontB, 11, addrWidth);
+    page.drawText("ALAMAT", { x: M, y: yy, size: 8, font: fontR, color: cGray });
+    page.drawText("WAKTU", { x: 260, y: yy, size: 8, font: fontR, color: cGray });
+    page.drawText(time, { x: 260, y: yy - 14, size: 11, font: fontB, color: cDark });
+    addrLines.forEach((line, i) => {
+      page.drawText(line, { x: M, y: yy - 14 - i * 15, size: 11, font: fontB, color: cDark });
+    });
+    yy -= 36 + (addrLines.length - 1) * 15;
+
+    const infoBottomY = yy + 10;
+    page.drawRectangle({ x: M, y: infoBottomY, width: PW - 2 * M, height: 1, color: cLight });
+
     try {
-      const qrBuf = await QRCode.toBuffer(registrant.id, {
-        width: 400, margin: 2,
-        color: { dark: isDark ? "#ffffff" : "#141416", light: isDark ? "#00000000" : "#ffffff" },
-      });
+      const qrBuf = await QRCode.toBuffer(registrant.id, { width: 400, margin: 2, color: { dark: "#141416", light: "#ffffff" } });
       const qrImg = await pdfDoc.embedPng(qrBuf);
-      const qrS = 170;
+      const qrS = 180;
       const qrX = (PW - qrS) / 2;
-      const qrY = (PH - qrS) / 2 - 20;
+      const qrY = infoBottomY - qrS - 48;
 
-      page.drawText("Scan untuk Check-in", {
-        x: (PW - 96) / 2, y: qrY + qrS + 20, size: 11, font: fontB, color: cAccent,
+      page.drawText("Scan QR Code untuk Check-in", {
+        x: (PW - 140) / 2, y: qrY + qrS + 24, size: 11, font: fontB, color: cAccent,
       });
-      page.drawRectangle({ x: qrX - 10, y: qrY - 10, width: qrS + 20, height: qrS + 20, color: cWhite, opacity: 0.9, borderColor: rgb(0.8, 0.8, 0.8), borderWidth: 1 });
+      page.drawRectangle({ x: qrX - 10, y: qrY - 10, width: qrS + 20, height: qrS + 46, color: cWhite, borderColor: cGold, borderWidth: 1 });
       page.drawImage(qrImg, { x: qrX, y: qrY, width: qrS, height: qrS });
+      page.drawText("Tunjukkan QR ini saat datang", {
+        x: (PW - 122) / 2, y: qrY - 18, size: 8, font: fontR, color: cGray,
+      });
     } catch (qrErr) {
-      console.error("QR generation failed:", qrErr);
+      console.error("QR generation failed (non-fatal):", qrErr);
     }
 
-    // Footer
-    page.drawRectangle({ x: 0, y: 0, width: PW, height: 44, color: cAccent, opacity: 0.2 });
-    page.drawText("Terima kasih telah mendaftar. Sampai jumpa di KKR RPPI! Tuhan Yesus memberkati.", {
-      x: 30, y: 16, size: 9, font: fontR, color: cText,
+    page.drawRectangle({ x: 12, y: 12, width: PW - 24, height: 38, color: cAccent });
+    page.drawText("Terima kasih telah mendaftar. Sampai jumpa di KKR RPPI! Tuhan Yesus memberkati", {
+      x: M, y: 32, size: 9, font: fontR, color: cWhite,
     });
 
     const pdfBytes = await pdfDoc.save();

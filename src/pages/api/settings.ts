@@ -8,7 +8,7 @@ const ALLOWED_SETTING_KEYS = new Set([
   "eventDateISO", "eventTimeEnd", "eventTimeUntilFinished", "eventYear", "eventName",
   "regDeadline", "regDeadlineISO", "regOpenDateISO",
   "contactEmail", "contactPhone", "contactWa", "waGroupLink",
-  "churchLogo", "ticketBg",
+  "churchLogo",
   "sectionLabelSpeakers", "sectionHeadingSpeakers", "sectionLabelStory",
   "btnSpeakerPrev", "btnSpeakerNext",
   "sectionLabelAltar", "sectionHeadingAltar", "sectionDescAltar",

@@ -68,18 +68,6 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
           <input id="wa-group-link" class="w-full rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="https://chat.whatsapp.com/..." />
           <p class="text-xs text-kkr-maroon/60 mt-1">Link undangan grup WhatsApp yang muncul setelah pendaftaran berhasil.</p>
         </div>
-        <div>
-          <label class="block text-sm font-medium text-kkr-purple mb-1">Background Tiket PDF (URL)</label>
-          <div class="flex items-center gap-2">
-            <input id="ticket-bg" class="flex-1 min-w-0 rounded-xl border border-kkr-light/80 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-kkr-red focus:ring-4 focus:ring-kkr-maroon/20" placeholder="https://example.com/ticket-bg.jpg" />
-            <button type="button" id="upload-ticket-bg-btn" class="rounded-xl bg-kkr-light/40 hover:bg-kkr-light/60 px-4 py-2.5 text-sm font-semibold text-kkr-maroon transition-colors shrink-0">Upload</button>
-          </div>
-          <input type="file" id="ticket-bg-file" accept="image/*" class="hidden" />
-          <div id="ticket-bg-preview" class="mt-2 hidden">
-            <img id="ticket-bg-preview-img" class="w-full max-h-32 rounded-xl object-cover border border-kkr-light/50 bg-white shadow-sm" />
-          </div>
-          <p class="text-xs text-kkr-maroon/60 mt-1">Gambar latar belakang untuk tiket PDF. Teks dan warna akan menyesuaikan otomatis dengan gambar.</p>
-        </div>
         <button type="submit" class="rounded-xl bg-kkr-red px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-kkr-maroon">Simpan Info Umum</button>
       </form>
     </div>
@@ -618,9 +606,6 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
         setVal("church-logo", s.churchLogo || "");
         updateLogoPreview();
         setVal("wa-group-link", s.waGroupLink || "");
-        setVal("ticket-bg", s.ticketBg || "");
-        if (s.ticketBg) { document.getElementById("ticket-bg-preview").classList.remove("hidden"); document.getElementById("ticket-bg-preview-img").src = s.ticketBg; }
-        else { document.getElementById("ticket-bg-preview").classList.add("hidden"); }
 
         // Nav labels
         setVal("nav-label-home", s.navLabelHome || "");
@@ -732,7 +717,6 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
           eventName: document.getElementById("event-name").value.trim(),
           churchLogo: document.getElementById("church-logo").value.trim(),
           waGroupLink: document.getElementById("wa-group-link").value.trim(),
-          ticketBg: document.getElementById("ticket-bg").value.trim(),
         })});
         if (res.ok) toast("Info umum berhasil disimpan!");
         else throw new Error();
@@ -1059,24 +1043,6 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
     document.getElementById("logo-file-settings")?.addEventListener("change", async (e) => {
       const file = e.target.files?.[0]; if (!file) return;
       try { const url = await uploadFile(file); if (url) { document.getElementById("church-logo").value = url; updateLogoPreview(); toast("Logo berhasil diupload"); } } catch (e) { toast(e.message || "Gagal upload logo", "error"); }
-      e.target.value = "";
-    });
-
-    function updateTicketBgPreview() {
-      const val = document.getElementById("ticket-bg").value.trim();
-      if (val) {
-        document.getElementById("ticket-bg-preview").classList.remove("hidden");
-        document.getElementById("ticket-bg-preview-img").src = val;
-      } else {
-        document.getElementById("ticket-bg-preview").classList.add("hidden");
-      }
-    }
-
-    document.getElementById("ticket-bg")?.addEventListener("input", updateTicketBgPreview);
-    document.getElementById("upload-ticket-bg-btn")?.addEventListener("click", () => document.getElementById("ticket-bg-file").click());
-    document.getElementById("ticket-bg-file")?.addEventListener("change", async (e) => {
-      const file = e.target.files?.[0]; if (!file) return;
-      try { const url = await uploadFile(file); if (url) { document.getElementById("ticket-bg").value = url; updateTicketBgPreview(); toast("Background berhasil diupload"); } } catch (e) { toast(e.message || "Gagal upload background", "error"); }
       e.target.value = "";
     });
 
