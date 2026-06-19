@@ -29,7 +29,7 @@ function clamp(v: number): number { return Math.max(0, Math.min(1, v)); }
 
 export const prerender = false;
 
-export const GET: APIRoute = async ({ params }) => {
+export const GET: APIRoute = async ({ params, request }) => {
   try {
     const { id } = params;
     if (!id || !isValidId(id)) {
@@ -46,14 +46,19 @@ export const GET: APIRoute = async ({ params }) => {
 
     const s = await pgGetSettings();
     const year = s.eventYear || "2026";
-    const bgUrl = s.ticketBg || "";
+    let bgUrl = s.ticketBg || "";
+
+    // Resolve relative image URLs
+    if (bgUrl && bgUrl.startsWith("/")) {
+      try { const u = new URL(request.url); bgUrl = u.protocol + "//" + u.host + bgUrl; } catch {}
+    }
 
     const isDark = bgUrl ? (await analyzeImage(bgUrl)).avg < 128 : false;
     const cText = isDark ? rgb(1, 1, 1) : rgb(0.08, 0.08, 0.1);
     const cTextMuted = isDark ? rgb(0.8, 0.8, 0.82) : rgb(0.45, 0.45, 0.48);
     const cAccent = isDark ? rgb(1, 1, 1) : rgb(0.75, 0.2, 0.2);
     const cWhite = rgb(1, 1, 1);
-    const cOverlay = isDark ? rgb(0, 0, 0) : rgb(1, 1, 1);
+    const overlayColor = isDark ? rgb(0, 0, 0) : rgb(1, 1, 1);
 
     const pdfDoc = await PDFDocument.create();
     const fontB = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
@@ -63,30 +68,19 @@ export const GET: APIRoute = async ({ params }) => {
     const PH = 780;
     const page = pdfDoc.addPage([PW, PH]);
 
-    // Background image
+    // Background image with overlay
     if (bgUrl) {
       try {
         const res = await fetch(bgUrl);
         if (res.ok) {
           const buf = Buffer.from(await res.arrayBuffer());
-          const { data, info } = await sharp(buf).resize(PW, PH, { fit: "cover" }).raw().toBuffer({ resolveWithObject: true });
-          const img = await pdfDoc.embedPng(await sharp(buf).resize(PW, PH, { fit: "cover" }).png().toBuffer());
-          const scale = Math.max(PW / img.width, PH / img.height);
-          const iw = img.width * scale;
-          const ih = img.height * scale;
-          page.drawImage(img, { x: (PW - iw) / 2, y: (PH - ih) / 2, width: iw, height: ih });
-
-          // Semi-transparent overlay for readability
-          for (let i = 0; i < 50; i++) {
-            const f = 1 - i / 50;
-            page.drawRectangle({
-              x: 0, y: PH - PH / 50 * (i + 1), width: PW, height: PH / 50 + 1,
-              color: rgb(cOverlay.r * f, cOverlay.g * f, cOverlay.b * f),
-              opacity: 0.15,
-            });
-          }
+          const png = await sharp(buf).resize(PW, PH, { fit: "fill" }).png().toBuffer();
+          const img = await pdfDoc.embedPng(png);
+          page.drawImage(img, { x: 0, y: 0, width: PW, height: PH });
+          // Overlay for readability
+          page.drawRectangle({ x: 0, y: 0, width: PW, height: PH, color: overlayColor, opacity: 0.25 });
         }
-      } catch {}
+      } catch (e) { console.error("ticket bg error:", e); }
     }
 
     // Header bar
