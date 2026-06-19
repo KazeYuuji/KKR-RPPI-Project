@@ -103,15 +103,22 @@ export const POST: APIRoute = async ({ request }) => {
       return new Response(JSON.stringify({ error: "Maaf, tiket sudah habis saat diproses" }), { status: 400, headers: { "Content-Type": "application/json" } });
     }
 
-    // Check duplicate: same email AND whatsapp already registered
+    // Check duplicate: same email OR whatsapp already registered
     const duplicate = await queryOne<Record<string, any>>(
-      "SELECT id FROM registrants WHERE email = $1 AND whatsapp = $2",
+      "SELECT id, email, whatsapp FROM registrants WHERE email = $1 OR whatsapp = $2",
       [registrantData.email, registrantData.whatsapp]
     );
     if (duplicate) {
       // Rollback ticket decrement
       await queryOne("UPDATE tickets SET remaining = remaining + 1 WHERE id = $1", [ticketType]);
-      return new Response(JSON.stringify({ error: "Email dan WhatsApp sudah terdaftar. Silakan gunakan data yang berbeda." }), { status: 400, headers: { "Content-Type": "application/json" } });
+      const dupEmail = duplicate.email === registrantData.email;
+      const dupWa = duplicate.whatsapp === registrantData.whatsapp;
+      let msg = "Data sudah terdaftar: ";
+      if (dupEmail && dupWa) msg += "Email dan WhatsApp";
+      else if (dupEmail) msg += "Email";
+      else msg += "WhatsApp";
+      msg += " sudah digunakan. Silakan gunakan data yang berbeda.";
+      return new Response(JSON.stringify({ error: msg }), { status: 400, headers: { "Content-Type": "application/json" } });
     }
 
     // Write registrant

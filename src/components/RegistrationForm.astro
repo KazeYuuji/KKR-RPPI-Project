@@ -83,6 +83,28 @@ export interface TicketType {
     </div>
   </form>
 
+  <!-- Error Modal -->
+  <div id="error-modal" class="pointer-events-none fixed inset-0 z-[60] flex items-center justify-center bg-black/50 backdrop-blur-sm opacity-0 transition-all duration-300 p-3 sm:p-4">
+    <div class="relative w-full max-w-sm rounded-2xl bg-white shadow-2xl shadow-black/20 animate-scale-in overflow-hidden">
+      <div class="pointer-events-none absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-red-500 via-red-600 to-red-500"></div>
+      <button id="error-modal-close" class="absolute right-3 top-3 z-10 rounded-full bg-white/80 backdrop-blur p-1.5 text-kkr-dark/40 shadow-sm transition hover:bg-white hover:text-kkr-dark hover:shadow-md" aria-label="Tutup">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <div class="flex flex-col items-center px-8 pt-10 pb-8 text-center">
+        <div class="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-red-50 to-red-100 shadow-inner shadow-red-200/50 mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        </div>
+        <h3 class="text-xl font-bold text-kkr-dark tracking-tight">Gagal Mendaftar</h3>
+        <p id="error-modal-message" class="text-sm text-kkr-maroon/60 mt-1.5 max-w-xs"></p>
+        <div class="mt-6 w-full">
+          <button id="error-modal-ok" class="flex items-center justify-center gap-2.5 rounded-xl bg-gradient-to-r from-red-500 to-red-600 px-5 py-3 text-base font-bold text-white shadow-lg shadow-red-500/20 transition-all duration-200 hover:shadow-xl hover:-translate-y-0.5 w-full">
+            Mengerti
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Success Modal (cannot close until ticket downloaded) -->
   <div id="success-modal" class="pointer-events-none fixed inset-0 z-[60] flex items-center justify-center bg-black/50 backdrop-blur-sm opacity-0 transition-all duration-300 p-3 sm:p-4">
     <div class="relative w-full max-w-sm rounded-2xl bg-white shadow-2xl shadow-black/20 animate-scale-in overflow-hidden">
@@ -119,6 +141,10 @@ export interface TicketType {
     const btn = document.getElementById("submit-btn");
     const modal = document.getElementById("success-modal");
     const closeModalBtn = document.getElementById("modal-close");
+    const errorModal = document.getElementById("error-modal");
+    const errorModalMsg = document.getElementById("error-modal-message");
+    const errorModalClose = document.getElementById("error-modal-close");
+    const errorModalOk = document.getElementById("error-modal-ok");
     const stockEl = document.getElementById("ticket-stock");
     const pdfBtn = document.getElementById("pdf-download-btn");
     let ticketInterval;
@@ -286,10 +312,12 @@ export interface TicketType {
           form.reset();
           loadTickets();
         } else {
-          alert(result.error || "Gagal mendaftar");
+          errorModalMsg.textContent = result.error || "Gagal mendaftar";
+          errorModal.classList.remove("pointer-events-none", "opacity-0");
         }
       } catch {
-        alert("Terjadi kesalahan. Silakan coba lagi.");
+        errorModalMsg.textContent = "Terjadi kesalahan. Silakan coba lagi.";
+        errorModal.classList.remove("pointer-events-none", "opacity-0");
       } finally {
         if (!btn.dataset.preventReset) {
           validateSubmit();
@@ -315,6 +343,16 @@ export interface TicketType {
     });
     modal.addEventListener("click", (e) => {
       if (e.target === modal && ticketDownloaded) modal.classList.add("pointer-events-none", "opacity-0");
+    });
+
+    errorModalClose.addEventListener("click", () => {
+      errorModal.classList.add("pointer-events-none", "opacity-0");
+    });
+    errorModalOk.addEventListener("click", () => {
+      errorModal.classList.add("pointer-events-none", "opacity-0");
+    });
+    errorModal.addEventListener("click", (e) => {
+      if (e.target === errorModal) errorModal.classList.add("pointer-events-none", "opacity-0");
     });
 
     async function checkRegStatus() {
