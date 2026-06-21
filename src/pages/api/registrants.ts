@@ -1,5 +1,5 @@
 import type { APIRoute } from "astro";
-import { pgList, pgGet, pgSet, queryOne, pgGetSettings } from "../../lib/pg-db";
+import { pgList, pgGet, pgSet, queryOne, query, pgGetSettings } from "../../lib/pg-db";
 import { newId } from "../../lib/minio-db";
 import { getAdminFromRequest } from "../../lib/auth";
 import { sanitizeString, sanitizeEmail, sanitizePhone, sanitizeId, isValidId, isValidOrigin, checkRateLimit } from "../../lib/security";
@@ -48,10 +48,25 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     if (action === "checkin") {
-      const id = sanitizeId(body.id);
-      if (!id) return new Response(JSON.stringify({ error: "ID pendaftar tidak valid" }), { status: 400, headers: { "Content-Type": "application/json" } });
       const admin = getAdminFromRequest(request);
       if (!admin) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { "Content-Type": "application/json" } });
+
+      const nameSearch = (body.name || "").trim();
+      const id = sanitizeId(body.id);
+      if (!id && !nameSearch) return new Response(JSON.stringify({ error: "ID atau nama pendaftar diperlukan" }), { status: 400, headers: { "Content-Type": "application/json" } });
+
+      if (nameSearch && !id) {
+        const rows = await query<Record<string, any>>(
+          "SELECT * FROM registrants WHERE LOWER(name) = LOWER($1) ORDER BY created_at DESC",
+          [nameSearch]
+        );
+        if (rows.length === 0) return new Response(JSON.stringify({ error: "Pendaftar dengan nama \"" + nameSearch + "\" tidak ditemukan" }), { status: 404, headers: { "Content-Type": "application/json" } });
+        if (rows.length > 1) return new Response(JSON.stringify({ error: "Ditemukan " + rows.length + " pendaftar dengan nama \"" + nameSearch + "\". Gunakan ID tiket untuk check-in spesifik.", candidates: rows.map(r => ({ id: r.id, name: r.name, ticket: r.ticket, checked_in: r.checked_in })) }), { status: 300, headers: { "Content-Type": "application/json" } });
+        const existing = rows[0];
+        if (existing?.checked_in) return new Response(JSON.stringify({ error: "Pendaftar \"" + nameSearch + "\" sudah check-in sebelumnya" }), { status: 400, headers: { "Content-Type": "application/json" } });
+        await pgSet("registrants", { ...existing, checked_in: 1, id: existing.id });
+        return new Response(JSON.stringify({ registrant: { ...existing, checked_in: 1 } }), { status: 200, headers: { "Content-Type": "application/json" } });
+      }
 
       const existing = await pgGet<Record<string, any>>("registrants", id);
       if (!existing) return new Response(JSON.stringify({ error: "Pendaftar tidak ditemukan" }), { status: 404, headers: { "Content-Type": "application/json" } });
