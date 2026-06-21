@@ -597,10 +597,11 @@ const ticketIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" view
       document.getElementById("scan-qr-btn").disabled = false;
     });
 
-    function startPolling() {
-      setInterval(function() { loadStats(); loadRegistrants(); loadTickets(); }, 2000);
+    async function pollAll() {
+      await Promise.allSettled([loadStats(), loadRegistrants(), loadTickets()]);
+      setTimeout(pollAll, 10000);
     }
 
-    document.addEventListener("DOMContentLoaded", function() { loadStats(); loadRegistrants(); loadTickets(); startPolling(); });
+    document.addEventListener("DOMContentLoaded", function() { loadStats(); loadRegistrants(); loadTickets(); setTimeout(pollAll, 10000); });
   </script>
 </AdminLayout>
