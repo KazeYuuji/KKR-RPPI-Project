@@ -50,7 +50,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
   // ---- Global rate limiting per IP ----
   if (url.startsWith(apiPrefix)) {
-    const { allowed } = checkRateLimit(`global:${ip}`, 200, 60_000);
+    const { allowed } = checkRateLimit(`global:${ip}`, 300, 60_000);
     if (!allowed) {
       return withSecurityHeaders(new Response(JSON.stringify({ error: "Too many requests" }), {
         status: 429,
@@ -144,12 +144,14 @@ export const onRequest = defineMiddleware(async (context, next) => {
     }
     context.locals.admin = admin;
 
-    // Rate limit per admin action
-    const { allowed } = checkRateLimit(`admin:${admin.username}:${ip}`, 60, 60_000);
-    if (!allowed) {
-      return withSecurityHeaders(new Response(JSON.stringify({ error: "Too many requests" }), {
-        status: 429, headers: { "Content-Type": "application/json" },
-      }));
+    // Rate limit per admin action (API only, not page loads)
+    if (url.startsWith(apiPrefix)) {
+      const { allowed } = checkRateLimit(`admin:${admin.username}:${ip}`, 120, 60_000);
+      if (!allowed) {
+        return withSecurityHeaders(new Response(JSON.stringify({ error: "Too many requests" }), {
+          status: 429, headers: { "Content-Type": "application/json" },
+        }));
+      }
     }
   }
 
